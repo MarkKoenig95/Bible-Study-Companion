@@ -70,7 +70,7 @@ function addSchedule(
     );
 
     txn.executeSql(
-      `SELECT 1 FROM table_name WHERE unique_key = "${scheduleName}"`,
+      `SELECT 1 FROM tblSchedules WHERE ScheduleName = "${scheduleName}"`,
       [],
       (txn, res) => {
         if (res.rows.length < 1) {
