@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Text} from 'react-native';
 import CustomButton from './CustomButton';
 
-import styles from '../styles/styles';
+import {colors} from '../styles/styles';
 
 export default function ScheduleDayButton(props) {
   const [isFinished, setIsFinished] = useState(props.isFinished);
@@ -10,14 +10,22 @@ export default function ScheduleDayButton(props) {
   function onPress() {
     props.onPress(status => setIsFinished(status));
   }
+
   return (
-    <CustomButton style={props.style} onPress={onPress}>
+    <CustomButton
+      style={
+        (props.style,
+        {
+          display: isFinished && props.completedHidden ? 'none' : '',
+        })
+      }
+      onPress={onPress}>
       <Text
         style={[
-          styles.text,
+          props.textStyle,
           {
+            color: colors.darkGray,
             textDecorationLine: !isFinished ? 'none' : 'line-through',
-            // display: !isFinished ? 'none' : 'line-through',
           },
         ]}>
         {props.readingPortion}

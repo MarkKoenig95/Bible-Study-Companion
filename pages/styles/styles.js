@@ -13,15 +13,26 @@ const colors = {
 };
 
 const styles = StyleSheet.create({
+  background: {
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    zIndex: 2,
+  },
   button: {
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: smoke,
     borderRadius: 10,
+    flex: 1,
     padding: 10,
     margin: 10,
   },
+  buttonText: {
+    color: darkGray,
+  },
   container: {
-    flex: 1,
+    height: '100%',
+    width: '100%',
     flexDirection: 'column',
     backgroundColor: lightBlue,
     alignItems: 'center',
@@ -47,6 +58,8 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
     position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
     top: 0,
     backgroundColor: lightGray,
   },
@@ -64,20 +77,19 @@ const styles = StyleSheet.create({
     color: smoke,
   },
   popup: {
+    alignItems: 'center',
     backgroundColor: lightGray,
     borderRadius: 10,
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginTop: '25%',
-    width: '75%',
     minHeight: 300,
+    overflow: 'hidden',
+    width: '75%',
     zIndex: 2,
   },
   versePicker: {
-    width: '90%',
-    padding: 10,
     margin: 10,
+    padding: 10,
+    width: '90%',
   },
 });
 

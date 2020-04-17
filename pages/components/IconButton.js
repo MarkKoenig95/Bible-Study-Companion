@@ -1,22 +1,22 @@
 import React from 'react';
-import TextButton from './TextButton';
+
+import {Icon} from 'react-native-elements';
+
+import styles, {colors} from '../styles/styles';
 
 export default function IconButton(props) {
-  const size = props.size || 5;
-  const buttonStyle = {
-    ...props.buttonStyle,
-    borderRadius: size * 5,
-    height: size * 10,
-    width: size * 10,
-    padding: size,
-    margin: 10,
-  };
+  const buttonBackground = styles.button.backgroundColor;
+  const buttonText = styles.buttonText.color;
 
   return (
-    <TextButton
-      buttonStyle={buttonStyle}
-      textStyle={[props.textStyle, {fontSize: size * 6}]}
-      text={props.icon}
+    <Icon
+      reverse
+      reverseColor={!props.invertColor ? buttonText : buttonBackground}
+      name={props.name}
+      type={props.type || 'material'}
+      color={!props.invertColor ? buttonBackground : colors.lightGray}
+      containerStyle={props.containerStyle}
+      iconStyle={[{fontSize: 30}, props.iconStyle]}
       onPress={props.onPress}
     />
   );

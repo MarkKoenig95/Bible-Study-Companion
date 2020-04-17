@@ -3,7 +3,7 @@ import {SafeAreaView, View, Text, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 
 import ScheduleDayButton from './components/ScheduleDayButton';
-import TextButton from './components/TextButton';
+import IconButton from './components/IconButton';
 import {CheckBox} from 'react-native-elements';
 
 import styles from './styles/styles';
@@ -17,7 +17,7 @@ import {
 
 const db = Database.getConnection();
 
-function SchedulePage(props, {navigation}) {
+function SchedulePage(props) {
   const [flatListItems, setFlatListItems] = useState([]);
   const [completedHidden, setCompletedHidden] = useState(false);
 
@@ -46,15 +46,23 @@ function SchedulePage(props, {navigation}) {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <CheckBox
-          center
+          left
+          containerStyle={[
+            styles.button,
+            {
+              backgroundColor: 'transparent',
+              borderWidth: 0,
+            },
+          ]}
           title="Hide Completed"
           checked={completedHidden}
-          onPress={() => {
+          onIconPress={() => {
             setCompletedHidden(!completedHidden);
           }}
         />
-        <TextButton
-          title="Delete"
+        <IconButton
+          name="delete"
+          color={styles.button.backgroundColor}
           onPress={() => {
             props.navigation.dispatch(StackActions.pop(1));
             deleteSchedule(db, tableName, scheduleName);
@@ -69,7 +77,8 @@ function SchedulePage(props, {navigation}) {
             <ScheduleDayButton
               key={item.ReadingDayID}
               readingPortion={item.ReadingPortion}
-              textDecoration={!item.IsFinished ? 'none' : 'line-through'}
+              completedHidden={completedHidden}
+              isFinished={item.IsFinished}
               onPress={cb => {
                 updateReadStatus(
                   db,

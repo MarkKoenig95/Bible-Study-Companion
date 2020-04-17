@@ -3,7 +3,7 @@ import {SafeAreaView, View, Text, FlatList} from 'react-native';
 
 import TextButton from './components/TextButton';
 import CreateSchedulePopup from './components/CreateSchedulePopup';
-import ErrorPopup from './components/ErrorPopup';
+import MessagePopup from './components/MessagePopup';
 import styles from './styles/styles';
 import Database from '../scripts/Database/Database';
 import {openTable, addSchedule} from '../scripts/Database/generalTransactions';
@@ -69,6 +69,17 @@ function Home({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <MessagePopup
+        displayPopup={isErrorPopupDisplayed}
+        title="Error"
+        message={errorMessage}
+        onClosePress={() => setIsErrorPopupDisplayed(false)}
+      />
+      <CreateSchedulePopup
+        displayPopup={isCreateSchedulePopupDisplayed}
+        onAdd={onAddSchedule}
+        onClosePress={() => setIsCreateSchedulePopupDisplayed(false)}
+      />
       <View style={styles.header}>
         <TextButton
           text="Add New Schedule"
@@ -77,17 +88,6 @@ function Home({navigation}) {
           }}
         />
       </View>
-      <CreateSchedulePopup
-        displayPopup={isCreateSchedulePopupDisplayed}
-        icon="+"
-        onAdd={onAddSchedule}
-        onClosePress={() => setIsCreateSchedulePopupDisplayed(false)}
-      />
-      <ErrorPopup
-        displayPopup={isErrorPopupDisplayed}
-        message={errorMessage}
-        onClosePress={() => setIsErrorPopupDisplayed(false)}
-      />
       <View style={styles.content}>
         <FlatList
           data={flatListItems}

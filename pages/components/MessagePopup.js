@@ -1,14 +1,14 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import Popup from './Popup';
 
-import styles, {colors} from '../styles/styles';
+import styles from '../styles/styles';
 
-export default function ErrorPopup(props) {
+export default function MessagePopup(props) {
   return (
     <Popup
       displayPopup={props.displayPopup}
-      title="Error"
+      title={props.title}
       onClosePress={props.onClosePress}>
       <Text style={style.text}>{props.message}</Text>
     </Popup>

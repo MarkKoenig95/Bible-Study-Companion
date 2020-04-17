@@ -21,6 +21,8 @@ export default function CreateSchedulePopup(props) {
     defaults.scheduleDuration,
   );
 
+  //TODO: Sanitize input fields and throw error if values are still defaults
+
   const [versePicker, setVersePicker] = useState({
     book: defaults.book,
     chapter: defaults.chapter,
@@ -66,7 +68,7 @@ export default function CreateSchedulePopup(props) {
         verseValue={versePicker.verse}
         defaultVerseValue={defaults.verse}
       /> */}
-      <IconButton icon="+" onPress={onAddPress} />
+      <IconButton name="add" onPress={onAddPress} />
     </Popup>
   );
 }
