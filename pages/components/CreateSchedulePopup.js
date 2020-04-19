@@ -10,6 +10,9 @@ export default function CreateSchedulePopup(props) {
   const defaults = {
     scheduleName: 'Schedule Name',
     scheduleDuration: 'In years',
+    chapter: 1,
+    verse: 1,
+    selectedItems: [],
   };
 
   const [scheduleName, setScheduleName] = useState(defaults.scheduleName);
@@ -17,12 +20,10 @@ export default function CreateSchedulePopup(props) {
     defaults.scheduleDuration,
   );
 
-  //TODO: Sanitize input fields and throw error if values are still defaults
-
   const [versePicker, setVersePicker] = useState({
     chapter: defaults.chapter,
     verse: defaults.verse,
-    selectedItems: [],
+    selectedItems: defaults.selectedItems,
   });
 
   function onVersePickerChange(key, value) {
@@ -32,9 +33,25 @@ export default function CreateSchedulePopup(props) {
   }
 
   function onAddPress() {
-    props.onAdd(scheduleName, scheduleDuration);
-    setScheduleName(defaults.scheduleName);
-    setScheduleDuration(defaults.scheduleDuration);
+    //TODO: Check input values to validate
+    if (versePicker.selectedItems[0].id) {
+      let bookId = versePicker.selectedItems[0].id;
+
+      props.onAdd(
+        scheduleName,
+        scheduleDuration,
+        bookId,
+        versePicker.chapter,
+        versePicker.verse,
+      );
+      setScheduleName(defaults.scheduleName);
+      setScheduleDuration(defaults.scheduleDuration);
+      setVersePicker({
+        chapter: defaults.chapter,
+        verse: defaults.verse,
+        selectedItems: defaults.selectedItems,
+      });
+    }
   }
 
   return (

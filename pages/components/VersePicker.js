@@ -46,6 +46,7 @@ export default function VersePicker(props) {
         <SearchableDropdown
           onItemSelect={item => {
             const items = selectedItems;
+            items.pop();
             items.push(item);
             setSelectedItems(items);
           }}

@@ -48,11 +48,14 @@ function Home({navigation}) {
     });
   }
 
-  function onAddSchedule(scheduleName, duration) {
+  function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
     addSchedule(
       db,
       scheduleName,
       duration,
+      bookId,
+      chapter,
+      verse,
       () => {
         setIsCreateSchedulePopupDisplayed(false);
       },

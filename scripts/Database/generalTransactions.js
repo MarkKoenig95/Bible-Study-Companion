@@ -39,6 +39,7 @@ function clearSchedules(txn) {
 
   txn.executeSql('DELETE FROM tblSchedules', []);
 }
+
 function updateReadStatus(db, tableName, id, status) {
   db.transaction(txn => {
     let sql = `UPDATE ${tableName}
@@ -60,6 +61,9 @@ function addSchedule(
   db,
   scheduleName,
   duration,
+  bookId,
+  chapter,
+  verse,
   successCallBack,
   errorCallBack,
 ) {
@@ -86,7 +90,15 @@ function addSchedule(
             [],
           );
 
-          generateSequentialSchedule(txn, duration, tableName, successCallBack);
+          generateSequentialSchedule(
+            txn,
+            duration,
+            bookId,
+            chapter,
+            verse,
+            tableName,
+            successCallBack,
+          );
         } else {
           errorCallBack({
             message: "Please select a schedule name you haven't used",
@@ -152,14 +164,22 @@ function checkVerseBuffer(query, endPortion, buffer) {
   return 0;
 }
 
-function generateSequentialSchedule(txn, duration, tableName, cb) {
+function generateSequentialSchedule(
+  txn,
+  duration,
+  bookId,
+  chapter,
+  verse,
+  tableName,
+  cb,
+) {
   const sql = `SELECT BookName, Verse, Chapter, ChapterMax, BibleBook
-    FROM tblVerseIndex
-    INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
-  txn.executeSql(sql, [], (txn, results) => {
+                FROM tblVerseIndex
+                INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
+  txn.executeSql(sql, [], (txn, tblVerseIndex) => {
     txn.executeSql('SELECT * FROM qryMaxVerses', [], (txn, query) => {
       duration *= 365;
-      const totalVerses = results.rows.length;
+      const totalVerses = tblVerseIndex.rows.length;
       const versesPerDay = Math.floor(totalVerses / duration);
       const buffer = versesPerDay / 10 + 1;
       var temp = [];
@@ -171,51 +191,69 @@ function generateSequentialSchedule(txn, duration, tableName, cb) {
       let endChapter;
       let endVerse;
 
-      let pointer = 0;
+      const sql = `SELECT VerseID FROM tblVerseIndex 
+      WHERE BibleBook = ${bookId} AND Chapter = ${chapter} AND Verse = ${verse};`;
 
-      for (let i = 0; i < duration; i++) {
-        let tempString = '';
-        let flag = false;
+      txn.executeSql(sql, [], (txn, res) => {
+        let pointer = res.rows.item(0).VerseID - 1;
+        const startIndex = pointer;
+        let hasLooped = false;
 
-        startBibleBook = results.rows.item(pointer).BookName;
-        startChapter = results.rows.item(pointer).Chapter;
-        startVerse = results.rows.item(pointer).Verse;
+        for (let i = 0; i < duration; i++) {
+          let tempString = '';
+          let isEnd = false;
 
-        pointer += versesPerDay;
+          startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+          startChapter = tblVerseIndex.rows.item(pointer).Chapter;
+          startVerse = tblVerseIndex.rows.item(pointer).Verse;
 
-        if (pointer > results.rows.length - 1) {
-          pointer = results.rows.length - 1;
-          flag = true;
+          pointer += versesPerDay;
+
+          if (!hasLooped) {
+            if (pointer >= tblVerseIndex.rows.length - 1) {
+              pointer -= tblVerseIndex.rows.length - 1;
+              hasLooped = true;
+              if (pointer >= startIndex - 1) {
+                pointer = startIndex - 1;
+                isEnd = true;
+              }
+            }
+          } else {
+            if (pointer >= startIndex - 1) {
+              pointer = startIndex - 1;
+              isEnd = true;
+            }
+          }
+
+          pointer += checkVerseBuffer(
+            query.rows,
+            tblVerseIndex.rows.item(pointer),
+            buffer,
+          );
+
+          endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+          endChapter = tblVerseIndex.rows.item(pointer).Chapter;
+          endVerse = tblVerseIndex.rows.item(pointer).Verse;
+
+          tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
+
+          temp.push(tempString);
+
+          pointer += 1;
+          if (isEnd) {
+            break;
+          }
         }
 
-        pointer += checkVerseBuffer(
-          query.rows,
-          results.rows.item(pointer),
-          buffer,
+        let readingPortions = temp;
+        let placeholders = readingPortions.map(() => '(?)').join(',');
+
+        txn.executeSql(
+          `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
+          readingPortions,
+          cb,
         );
-
-        endBibleBook = results.rows.item(pointer).BookName;
-        endChapter = results.rows.item(pointer).Chapter;
-        endVerse = results.rows.item(pointer).Verse;
-
-        tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
-
-        temp.push(tempString);
-
-        pointer += 1;
-        if (flag) {
-          break;
-        }
-      }
-
-      let readingPortions = temp;
-      let placeholders = readingPortions.map(() => '(?)').join(',');
-
-      txn.executeSql(
-        `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
-        readingPortions,
-        cb,
-      );
+      });
     });
   });
 }
