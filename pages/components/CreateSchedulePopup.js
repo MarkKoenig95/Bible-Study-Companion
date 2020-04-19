@@ -2,18 +2,14 @@ import React, {useState} from 'react';
 
 import IconButton from './IconButton';
 import CustomInput from './CustomInput';
-// import VersePicker from './VersePicker';
+import VersePicker from './VersePicker';
 import Popup from './Popup';
-import {ShadowPropTypesIOS} from 'react-native';
 
 export default function CreateSchedulePopup(props) {
   //State and defaults for shceudle info inputs
   const defaults = {
     scheduleName: 'Schedule Name',
     scheduleDuration: 'In years',
-    book: 'Genesis',
-    chapter: '1',
-    verse: '1',
   };
 
   const [scheduleName, setScheduleName] = useState(defaults.scheduleName);
@@ -58,7 +54,7 @@ export default function CreateSchedulePopup(props) {
         value={scheduleDuration}
         defaultValue={defaults.scheduleDuration}
       />
-      {/* <VersePicker
+      <VersePicker
         title="Starting Verse"
         onChange={onVersePickerChange}
         bookValue={versePicker.book}
@@ -67,7 +63,7 @@ export default function CreateSchedulePopup(props) {
         defaultChapterValue={defaults.chapter}
         verseValue={versePicker.verse}
         defaultVerseValue={defaults.verse}
-      /> */}
+      />
       <IconButton name="add" onPress={onAddPress} />
     </Popup>
   );
