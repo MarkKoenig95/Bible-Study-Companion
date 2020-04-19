@@ -20,9 +20,9 @@ export default function CreateSchedulePopup(props) {
   //TODO: Sanitize input fields and throw error if values are still defaults
 
   const [versePicker, setVersePicker] = useState({
-    book: defaults.book,
     chapter: defaults.chapter,
     verse: defaults.verse,
+    selectedItems: [],
   });
 
   function onVersePickerChange(key, value) {
@@ -46,23 +46,20 @@ export default function CreateSchedulePopup(props) {
         title="Schedule Name"
         onChange={text => setScheduleName(text)}
         value={scheduleName}
-        defaultValue={defaults.scheduleName}
+        placeholder={defaults.scheduleName}
       />
       <CustomInput
         title="Schedule Duration"
         onChange={text => setScheduleDuration(text)}
         value={scheduleDuration}
-        defaultValue={defaults.scheduleDuration}
+        placeholder={defaults.scheduleDuration}
       />
       <VersePicker
         title="Starting Verse"
         onChange={onVersePickerChange}
-        bookValue={versePicker.book}
-        defaultBookValue={defaults.book}
+        selectedItems={versePicker.selectedItems}
         chapterValue={versePicker.chapter}
-        defaultChapterValue={defaults.chapter}
         verseValue={versePicker.verse}
-        defaultVerseValue={defaults.verse}
       />
       <IconButton name="add" onPress={onAddPress} />
     </Popup>

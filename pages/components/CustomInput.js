@@ -1,17 +1,18 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 
-import styles, { colors } from '../styles/styles';
+import styles from '../styles/styles';
 
 export default function CustomInput(props) {
   return (
-    <View style={{ width: '90%', padding: 10, margin: 10 }}>
-      <Text style={styles.text}>{props.title}</Text>
+    <View style={{...style.container, ...props.containerStyle}}>
+      {props.title && (
+        <Text style={{...styles.text, ...props.titleStyle}}>{props.title}</Text>
+      )}
       <TextInput
         style={styles.input}
         onChangeText={text => props.onChange(text)}
-        value={props.value}
         onBlur={() => {
           if (!props.value) {
             props.onChange(props.defaultValue);
@@ -22,8 +23,16 @@ export default function CustomInput(props) {
             props.onChange('');
           }
         }}
-        defaultValue={props.defaultValue}
+        {...props}
       />
     </View>
   );
 }
+
+const style = StyleSheet.create({
+  container: {
+    width: '90%',
+    padding: 10,
+    margin: 10,
+  },
+});

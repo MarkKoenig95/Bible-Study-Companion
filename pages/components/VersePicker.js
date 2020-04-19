@@ -3,6 +3,8 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
+import CustomInput from './CustomInput';
+
 import styles, {colors} from '../styles/styles';
 
 import Database from '../../scripts/Database/Database';
@@ -28,14 +30,9 @@ function loadData(tableName = 'tblBibleBooks') {
 }
 
 export default function VersePicker(props) {
-  const [selectedItems, setSelectedItems] = useState([]);
+  const selectedItems = props.selectedItems;
+  const setSelectedItems = items => props.onChange('selectedItems', items);
   const [bookName, setBookName] = useState('');
-
-  const defaults = {
-    book: 'Genesis',
-    chapter: '1',
-    verse: '1',
-  };
 
   useEffect(() => {
     loadData();
@@ -43,34 +40,23 @@ export default function VersePicker(props) {
 
   return (
     <View style={styles.versePicker}>
-      <Text style={{...styles.text, width: '100%'}}>{props.title}</Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-        }}>
+      <Text style={style.title}>{props.title}</Text>
+
+      <View style={style.container}>
         <SearchableDropdown
           onItemSelect={item => {
             const items = selectedItems;
             items.push(item);
             setSelectedItems(items);
           }}
-          containerStyle={{
-            padding: 5,
-            paddingLeft: 0,
-            width: 145,
-          }}
+          containerStyle={style.dropdownContainer}
           onRemoveItem={(item, index) => {
             const items = selectedItems.filter(sitem => sitem.id !== item.id);
             setSelectedItems(items);
           }}
           itemStyle={style.item}
           itemTextStyle={styles.buttonText}
-          itemsContainerStyle={{
-            backgroundColor: colors.lightBlue,
-            borderRadius: 10,
-            maxHeight: 140,
-          }}
+          itemsContainerStyle={style.itemContainer}
           items={items}
           defaultIndex={0}
           resetValue={false}
@@ -84,46 +70,27 @@ export default function VersePicker(props) {
             nestedScrollEnabled: true,
           }}
         />
-        <TextInput
-          style={{...styles.input, marginTop: 10, width: 50}}
+
+        <CustomInput
+          style={style.input}
+          containerStyle={style.inputContainer}
+          onChange={text => props.onChange('chapter', text)}
           textAlign="center"
-          onChangeText={text => props.onChange('chapter', text)}
           value={props.chapterValue}
-          onBlur={() => {
-            if (!props.chapterValue) {
-              props.onChange('chapter', props.defaultChapterValue);
-            }
-          }}
-          onFocus={() => {
-            if (
-              !props.chapterValue ||
-              props.chapterValue === props.defaultChapterValue
-            ) {
-              props.onChange('chapter', '');
-            }
-          }}
           defaultValue={props.defaultChapterValue}
+          placeholder={'ch'}
         />
-        <Text style={{...styles.text, fontSize: 35, margin: 5}}>:</Text>
-        <TextInput
-          style={{...styles.input, marginTop: 10, width: 50}}
+
+        <Text style={style.text}>:</Text>
+
+        <CustomInput
+          style={style.input}
+          containerStyle={style.inputContainer}
+          onChange={text => props.onChange('verse', text)}
           textAlign="center"
-          onChangeText={text => props.onChange('verse', text)}
           value={props.verseValue}
-          onBlur={() => {
-            if (!props.verseValue) {
-              props.onChange('verse', props.defaultVerseValue);
-            }
-          }}
-          onFocus={() => {
-            if (
-              !props.verseValue ||
-              props.verseValue === props.defaultVerseValue
-            ) {
-              props.onChange('verse', '');
-            }
-          }}
           defaultValue={props.defaultVerseValue}
+          placeholder={'v'}
         />
       </View>
     </View>
@@ -131,9 +98,42 @@ export default function VersePicker(props) {
 }
 
 const style = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    width: '100%',
+  },
+  dropdownContainer: {
+    padding: 5,
+    paddingLeft: 0,
+    width: 145,
+  },
   item: {
     ...styles.button,
     padding: 10,
     margin: 2,
+  },
+  itemContainer: {
+    backgroundColor: colors.lightBlue,
+    borderRadius: 10,
+    maxHeight: 140,
+  },
+  input: {
+    ...styles.input,
+    marginTop: 10,
+    width: 50,
+  },
+  inputContainer: {
+    width: 50,
+    padding: 0,
+    margin: 0,
+  },
+  text: {
+    ...styles.text,
+    fontSize: 35,
+    margin: 5,
+  },
+  title: {
+    ...styles.text,
+    width: '100%',
   },
 });

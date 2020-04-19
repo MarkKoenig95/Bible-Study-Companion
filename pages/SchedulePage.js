@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, View, Text, FlatList} from 'react-native';
+import {StyleSheet, SafeAreaView, View, Text, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 
 import ScheduleDayButton from './components/ScheduleDayButton';
@@ -47,16 +47,10 @@ function SchedulePage(props) {
       <View style={styles.header}>
         <CheckBox
           left
-          containerStyle={[
-            styles.button,
-            {
-              backgroundColor: 'transparent',
-              borderWidth: 0,
-            },
-          ]}
+          containerStyle={style.checkBox}
           title="Hide Completed"
           checked={completedHidden}
-          onIconPress={() => {
+          onPress={() => {
             setCompletedHidden(!completedHidden);
           }}
         />
@@ -98,5 +92,13 @@ function SchedulePage(props) {
     </SafeAreaView>
   );
 }
+
+const style = StyleSheet.create({
+  checkBox: {
+    ...styles.button,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+  },
+});
 
 export default SchedulePage;
