@@ -8,10 +8,10 @@ import Popup from './Popup';
 export default function CreateSchedulePopup(props) {
   //State and defaults for shceudle info inputs
   const defaults = {
-    scheduleName: 'Schedule Name',
-    scheduleDuration: 'In years',
-    chapter: 1,
-    verse: 1,
+    scheduleName: '',
+    scheduleDuration: '',
+    chapter: '1',
+    verse: '1',
     selectedItems: [],
   };
 
@@ -63,13 +63,13 @@ export default function CreateSchedulePopup(props) {
         title="Schedule Name"
         onChange={text => setScheduleName(text)}
         value={scheduleName}
-        placeholder={defaults.scheduleName}
+        placeholder="Schedule Name"
       />
       <CustomInput
         title="Schedule Duration"
         onChange={text => setScheduleDuration(text)}
         value={scheduleDuration}
-        placeholder={defaults.scheduleDuration}
+        placeholder="In Years"
       />
       <VersePicker
         title="Starting Verse"
