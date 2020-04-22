@@ -64,10 +64,10 @@ function Home({navigation}) {
   }
 
   function displayError(error) {
-    console.log(error.message);
+    let message = error.message || error;
 
     setIsErrorPopupDisplayed(true);
-    setErrorMessage(error.message);
+    setErrorMessage(message);
   }
 
   return (
@@ -82,6 +82,7 @@ function Home({navigation}) {
         displayPopup={isCreateSchedulePopupDisplayed}
         onAdd={onAddSchedule}
         onClosePress={() => setIsCreateSchedulePopupDisplayed(false)}
+        onError={displayError}
       />
       <View style={styles.header}>
         <TextButton

@@ -1,5 +1,3 @@
-import {log} from 'react-native-reanimated';
-
 function errorCB(err) {
   console.log('SQL Error: ' + err.message);
 }
@@ -140,56 +138,50 @@ function listAllTables(db, cb) {
 function findNearestVerse(query, bookID, chapter, verse) {
   var startPointer = 0;
   var endPointer = query.length;
+
   var index = 0;
 
-  var checkBookFunction = index => {
+  var checkFunction = index => {
     let found;
     let isHigh;
-    let idAtIndex = query.item(index).BibleBook;
+    let chapterAtIndex = query.item(index).Chapter;
+    let bookIdAtIndex = query.item(index).BibleBook;
 
-    if (idAtIndex > bookID) {
+    console.log(
+      'chapter:',
+      chapter,
+      'chapterAtIndex:',
+      chapterAtIndex,
+      'bookID:',
+      bookID,
+      'bookIdAtIndex:',
+      bookIdAtIndex,
+    );
+
+    if (bookIdAtIndex > bookID) {
       isHigh = true;
-    } else if (idAtIndex < bookID) {
+    } else if (bookIdAtIndex < bookID) {
       isHigh = false;
     } else {
-      found = true;
+      if (chapterAtIndex > chapter) {
+        isHigh = true;
+      } else if (chapterAtIndex < chapter) {
+        isHigh = false;
+      } else {
+        found = true;
+      }
     }
 
     return [isHigh, found];
   };
 
-  [index, startPointer, endPointer] = searchQuery(
-    startPointer,
-    endPointer,
-    checkBookFunction,
-  );
+  index = searchQuery(startPointer, endPointer, checkFunction);
 
-  var checkChapterFunction = index => {
-    let found;
-    let isHigh;
-    let idAtIndex = query.item(index).Chapter;
-
-    if (idAtIndex > chapter) {
-      isHigh = true;
-    } else if (idAtIndex < chapter) {
-      isHigh = false;
-    } else {
-      found = true;
-    }
-
-    return [isHigh, found];
-  };
-
-  [index, startPointer, endPointer] = searchQuery(
-    startPointer,
-    endPointer,
-    checkChapterFunction,
-  );
-
-  let verseAtIndex = query.item(index).Verse;
+  let verseAtIndex = query.item(index).MaxVerse;
 
   if (verse > verseAtIndex) {
-    verse = verseAtIndex;
+    index++;
+    verse = 1;
   }
 
   chapter = query.item(index).Chapter;
@@ -201,11 +193,26 @@ function findNearestVerse(query, bookID, chapter, verse) {
 function searchQuery(startPointer, endPointer, checkFunction) {
   var index = 0;
   var safetyCheck = 0;
+  var safetyBoundary = 2000;
   var found = false;
+  var prevIndex;
 
-  while (!found || safetyCheck > 50000) {
+  while (!found && safetyCheck < safetyBoundary) {
     let isHigh;
+    prevIndex = index;
+
+    console.log(prevIndex);
+
+    console.log('startPointer:', startPointer, 'endPointer:', endPointer);
     index = (startPointer + endPointer) / 2;
+    index = index | 0;
+
+    console.log(index);
+
+    //Prevent endless loop when start and end pointers are only 1 apart
+    if (index === prevIndex) {
+      index++;
+    }
 
     [isHigh, found] = checkFunction(index);
 
@@ -216,6 +223,7 @@ function searchQuery(startPointer, endPointer, checkFunction) {
     }
     safetyCheck++;
 
+    /////////////////////////
     console.log(
       'found: ',
       found,
@@ -225,43 +233,73 @@ function searchQuery(startPointer, endPointer, checkFunction) {
       startPointer,
       ' endPointer: ',
       endPointer,
+      'safetyCheck:',
+      safetyCheck,
     );
+    if (safetyCheck === safetyBoundary) {
+      console.log('Exited with safety check');
+    }
+    //////////////////////////
   }
 
-  return [index, startPointer, endPointer];
+  return index;
 }
 
-function findVerseIndex(
-  txn,
-  query,
-  bookId,
-  chapter,
-  verse,
-  cb,
-  isNotFirstTime,
-) {
-  const sql = `SELECT VerseID FROM tblVerseIndex 
-      WHERE BibleBook = ${bookId} AND Chapter = ${chapter} AND Verse = ${verse};`;
+function findMaxChapter(query, bookId) {
+  var startPointer = 0;
+  var endPointer = query.length;
 
-  txn.executeSql(sql, [], (txn, res) => {
-    var index = 0;
-    if (res.rows.length < 1 && !isNotFirstTime) {
-      index = findVerseIndex(
-        query,
-        ...findNearestVerse(
-          txn,
-          query,
-          bookId,
-          chapter,
-          verse,
-          res => cb(res),
-          true,
-        ),
-      );
-      console.log('In here index is: ', index);
+  var index = 0;
+
+  var checkFunction = index => {
+    let found;
+    let isHigh;
+    let bookIdAtIndex = query.item(index).BibleBook;
+
+    if (bookIdAtIndex > bookId) {
+      isHigh = true;
+    } else if (bookIdAtIndex < bookId) {
+      isHigh = false;
+    } else {
+      found = true;
     }
-    cb(res);
-  });
+
+    return [isHigh, found];
+  };
+
+  index = searchQuery(startPointer, endPointer, checkFunction);
+
+  return query.item(index).MaxChapter;
+}
+
+function findVerseIndex(txn, query, bookId, chapter, verse, cb, isFirstTime) {
+  txn.executeSql(
+    'SELECT BibleBook, MaxChapter FROM qryMaxChapters',
+    [],
+    (txn, queryMaxChapters) => {
+      const sql = `SELECT VerseID FROM tblVerseIndex 
+        WHERE BibleBook = ${bookId} AND Chapter = ${chapter} AND Verse = ${verse};`;
+
+      txn.executeSql(sql, [], (txn, res) => {
+        var index = 0;
+        if (res.rows.length < 1 && isFirstTime) {
+          let maxChapter = findMaxChapter(queryMaxChapters.rows, bookId);
+          if (chapter > maxChapter) {
+            chapter = maxChapter;
+          }
+
+          index = findVerseIndex(
+            txn,
+            query,
+            ...findNearestVerse(query, bookId, chapter, verse),
+            res => cb(res),
+          );
+        } else {
+          cb(res);
+        }
+      });
+    },
+  );
 }
 
 function checkVerseBuffer(query, endPortion, buffer) {
@@ -320,101 +358,125 @@ function generateSequentialSchedule(
       let endChapter;
       let endVerse;
 
-      findVerseIndex(txn, query, bookId, chapter, verse, res => {
-        let pointer = res.rows.item(0).VerseID - 1;
-        const startIndex = pointer;
-        var endIndex = startIndex - 1;
-        endIndex = endIndex > 0 ? endIndex : maxIndex;
-        let hasLooped = false;
-
-        for (let i = 0; i < duration; i++) {
-          let tempString = '';
-          let isEnd = false;
-
-          console.log('startIndex: ', startIndex, ' pointer: ', pointer);
-
-          startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
-          startChapter = tblVerseIndex.rows.item(pointer).Chapter;
-          startVerse = tblVerseIndex.rows.item(pointer).Verse;
-
+      findVerseIndex(
+        txn,
+        query.rows,
+        bookId,
+        chapter,
+        verse,
+        res => {
+          ///////////////////////////////////////////
+          let tempThis = tblVerseIndex.rows.item(res.rows.item(0).VerseID - 1);
           console.log(
-            startBibleBook,
-            ' ',
-            startChapter,
-            ':',
-            startVerse,
-            ' to...',
+            'Searched for bookId',
+            bookId,
+            'chapter',
+            chapter,
+            'verse',
+            verse,
+            ' and found',
+            tempThis.BookName,
+            tempThis.BibleBook,
+            tempThis.Chapter,
+            tempThis.Verse,
           );
+          ///////////////////////////////////////////
 
-          pointer += versesPerDay;
+          let pointer = res.rows.item(0).VerseID - 1;
+          const startIndex = pointer;
+          var endIndex = startIndex - 1;
+          let hasLooped = false;
 
-          console.log('Here 1 the pointer is: ', pointer);
+          for (let i = 0; i < duration; i++) {
+            let tempString = '';
+            let isEnd = false;
 
-          if (!hasLooped) {
-            if (pointer >= maxIndex) {
-              pointer -= maxIndex;
-              hasLooped = true;
+            console.log('startIndex: ', startIndex, ' pointer: ', pointer);
+
+            startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+            startChapter = tblVerseIndex.rows.item(pointer).Chapter;
+            startVerse = tblVerseIndex.rows.item(pointer).Verse;
+
+            console.log(
+              startBibleBook,
+              ' ',
+              startChapter,
+              ':',
+              startVerse,
+              ' to...',
+            );
+
+            pointer += versesPerDay;
+
+            console.log('Here 1 the pointer is: ', pointer);
+
+            if (!hasLooped) {
+              if (pointer >= maxIndex) {
+                pointer -= maxIndex;
+                hasLooped = true;
+                if (pointer >= endIndex - buffer) {
+                  pointer = endIndex;
+                  isEnd = true;
+                }
+              }
+            } else {
               if (pointer >= endIndex - buffer) {
                 pointer = endIndex;
                 isEnd = true;
               }
             }
-          } else {
-            if (pointer >= endIndex - buffer) {
-              pointer = endIndex;
-              isEnd = true;
+
+            console.log('Here 2 the pointer is: ', pointer);
+
+            if (!isEnd) {
+              pointer += checkVerseBuffer(
+                query.rows,
+                tblVerseIndex.rows.item(pointer),
+                buffer,
+              );
+            }
+
+            if (pointer < 0) {
+              pointer = maxIndex;
+            }
+
+            console.log('Here 3 the pointer is: ', pointer);
+
+            endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+            endChapter = tblVerseIndex.rows.item(pointer).Chapter;
+            endVerse = tblVerseIndex.rows.item(pointer).Verse;
+
+            console.log(endBibleBook, ' ', endChapter, ':', endVerse);
+
+            tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
+
+            temp.push(tempString);
+
+            console.log('isEnd: ', isEnd);
+            console.log('hasLooped: ', hasLooped);
+
+            pointer += 1;
+
+            if (hasLooped && pointer > maxIndex) {
+              pointer = 0;
+            }
+
+            if (isEnd) {
+              break;
             }
           }
 
-          console.log('Here 2 the pointer is: ', pointer);
+          let readingPortions = temp;
+          let placeholders = readingPortions.map(() => '(?)').join(',');
 
-          if (!isEnd) {
-            pointer += checkVerseBuffer(
-              query.rows,
-              tblVerseIndex.rows.item(pointer),
-              buffer,
-            );
-          }
-
-          if (pointer < 0) {
-            pointer = maxIndex;
-          }
-
-          console.log('Here 3 the pointer is: ', pointer);
-
-          endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
-          endChapter = tblVerseIndex.rows.item(pointer).Chapter;
-          endVerse = tblVerseIndex.rows.item(pointer).Verse;
-
-          console.log(endBibleBook, ' ', endChapter, ':', endVerse);
-
-          tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
-
-          temp.push(tempString);
-
-          console.log('isEnd: ', isEnd);
-          console.log('hasLooped: ', hasLooped);
-
-          pointer += 1;
-
-          if (hasLooped && pointer > maxIndex) {
-            pointer = 0;
-          }
-
-          if (isEnd) {
-            break;
-          }
-        }
-
-        let readingPortions = temp;
-        let placeholders = readingPortions.map(() => '(?)').join(',');
-
-        txn.executeSql(
-          `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
-          readingPortions,
-          cb,
-        );
-      });
+          txn.executeSql(
+            `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
+            readingPortions,
+            cb,
+          );
+        },
+        true,
+      );
     });
   });
 }

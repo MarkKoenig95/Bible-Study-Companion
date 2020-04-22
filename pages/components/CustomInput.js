@@ -12,15 +12,14 @@ export default function CustomInput(props) {
       )}
       <TextInput
         style={styles.input}
-        onChangeText={text => props.onChange(text)}
         onBlur={() => {
           if (!props.value) {
-            props.onChange(props.defaultValue);
+            props.onChangeText(props.defaultValue);
           }
         }}
         onFocus={() => {
           if (!props.value || props.value === props.defaultValue) {
-            props.onChange('');
+            props.onChangeText('');
           }
         }}
         {...props}
@@ -33,6 +32,6 @@ const style = StyleSheet.create({
   container: {
     width: '90%',
     padding: 10,
-    margin: 10,
+    paddingBottom: 5,
   },
 });

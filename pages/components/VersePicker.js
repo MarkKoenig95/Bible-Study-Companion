@@ -65,7 +65,7 @@ export default function VersePicker(props) {
             placeholder: 'Bible Book',
             underlineColorAndroid: 'transparent',
             style: {...styles.input, marginLeft: 0},
-            onTextChange: text => setBookName,
+            onChangeText: text => setBookName,
           }}
           listProps={{
             nestedScrollEnabled: true,
@@ -75,7 +75,7 @@ export default function VersePicker(props) {
         <CustomInput
           style={style.input}
           containerStyle={style.inputContainer}
-          onChange={text => props.onChange('chapter', text)}
+          onChangeText={text => props.onChange('chapter', text)}
           textAlign="center"
           value={props.chapterValue}
           defaultValue={props.defaultChapterValue}
@@ -87,7 +87,7 @@ export default function VersePicker(props) {
         <CustomInput
           style={style.input}
           containerStyle={style.inputContainer}
-          onChange={text => props.onChange('verse', text)}
+          onChangeText={text => props.onChange('verse', text)}
           textAlign="center"
           value={props.verseValue}
           defaultValue={props.defaultVerseValue}
@@ -116,7 +116,7 @@ const style = StyleSheet.create({
   itemContainer: {
     backgroundColor: colors.lightBlue,
     borderRadius: 10,
-    maxHeight: 140,
+    maxHeight: 120,
   },
   input: {
     ...styles.input,
