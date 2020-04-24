@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     position: 'relative',
-    marginBottom: 30,
+    marginBottom: 83,
     top: 77,
   },
   footer: {
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
   },
   header: {
     minHeight: 50,
-    height: 'auto',
     padding: 10,
     width: '100%',
     position: 'absolute',

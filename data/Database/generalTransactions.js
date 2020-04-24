@@ -48,7 +48,7 @@ function clearSchedules(txn) {
 
 function timeKeeper(message) {
   let time = new Date();
-  console.log(message, time.toLocaleTimeString('en-US'));
+  console.log(message, time);
 }
 
 function updateReadStatus(db, tableName, id, status) {
@@ -75,6 +75,8 @@ function addSchedule(
   bookId,
   chapter,
   verse,
+  tblVerseIndex,
+  qryMaxVerses,
   successCallBack,
   errorCallBack,
 ) {
@@ -92,12 +94,14 @@ function addSchedule(
       [],
       (txn, res) => {
         if (res.rows.length < 1) {
+          log('Creating schehdule table');
           //If it doesn't already exist, add a value to the schedules table with correlating info
           txn.executeSql(
             `INSERT INTO tblSchedules (ScheduleName) VALUES ('${scheduleName}')`,
             [],
           );
 
+          log('Formatting table name');
           //Format a name for the new table to be created for this schedule
           let tableName = formatTableName(scheduleName);
 
@@ -109,6 +113,7 @@ function addSchedule(
               IsFinished BOOLEAN)`,
             [],
           );
+          log('Table created successfully');
 
           //Populate the table with reading information
           generateSequentialSchedule(
@@ -118,6 +123,8 @@ function addSchedule(
             chapter,
             verse,
             tableName,
+            tblVerseIndex,
+            qryMaxVerses,
             successCallBack,
           );
         } else {
@@ -350,134 +357,132 @@ function generateSequentialSchedule(
   chapter,
   verse,
   tableName,
+  tblVerseIndex,
+  qryMaxVerses,
   cb,
 ) {
-  const sql = `SELECT BookName, Verse, Chapter, ChapterMax, BibleBook
-                FROM tblVerseIndex
-                INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
   //Get all required table and query references to be used in populating the table
-  txn.executeSql(sql, [], (txn, tblVerseIndex) => {
-    txn.executeSql('SELECT * FROM qryMaxVerses', [], (txn, qryMaxVerses) => {
-      duration *= 365;
-      const totalVerses = tblVerseIndex.rows.length;
-      const maxIndex = tblVerseIndex.rows.length - 1;
-      const versesPerDay = Math.floor(totalVerses / duration);
-      const buffer = versesPerDay / 10 + 1;
-      var temp = [];
+  log('tblVerseIndex:', tblVerseIndex, 'qryMaxVerses:', qryMaxVerses);
+  duration *= 365;
+  const totalVerses = tblVerseIndex.rows.length;
+  const maxIndex = tblVerseIndex.rows.length - 1;
+  const versesPerDay = Math.floor(totalVerses / duration);
+  const buffer = versesPerDay / 10 + 1;
+  var temp = [];
 
-      let startBibleBook;
-      let startChapter;
-      let startVerse;
-      let endBibleBook;
-      let endChapter;
-      let endVerse;
+  let startBibleBook;
+  let startChapter;
+  let startVerse;
+  let endBibleBook;
+  let endChapter;
+  let endVerse;
 
-      findVerseIndex(
-        txn,
-        qryMaxVerses,
-        bookId,
-        chapter,
-        verse,
-        res => {
-          let pointer = res.rows.item(0).VerseID - 1;
-          const startIndex = pointer;
-          var endIndex = startIndex - 1;
-          let hasLooped = false;
+  log('Starting schedule generation');
 
-          for (let i = 0; i < duration; i++) {
-            let tempString = '';
-            let isEnd = false;
+  findVerseIndex(
+    txn,
+    qryMaxVerses,
+    bookId,
+    chapter,
+    verse,
+    res => {
+      let pointer = res.rows.item(0).VerseID - 1;
+      const startIndex = pointer;
+      var endIndex = startIndex - 1;
+      let hasLooped = false;
 
-            startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
-            startChapter = tblVerseIndex.rows.item(pointer).Chapter;
-            startVerse = tblVerseIndex.rows.item(pointer).Verse;
+      for (let i = 0; i < duration; i++) {
+        let tempString = '';
+        let isEnd = false;
 
-            log(
-              'Generating Sequential schedule starting at: ',
-              startBibleBook,
-              startChapter,
-              ':',
-              startVerse,
-            );
+        startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+        startChapter = tblVerseIndex.rows.item(pointer).Chapter;
+        startVerse = tblVerseIndex.rows.item(pointer).Verse;
 
-            pointer += versesPerDay;
+        log(
+          'Generating Sequential schedule starting at: ',
+          startBibleBook,
+          startChapter,
+          ':',
+          startVerse,
+        );
 
-            if (!hasLooped) {
-              if (pointer >= maxIndex) {
-                pointer -= maxIndex;
-                hasLooped = true;
-                if (pointer >= endIndex - buffer) {
-                  pointer = endIndex;
-                  isEnd = true;
-                }
-              }
-            } else {
-              if (pointer >= endIndex - buffer) {
-                pointer = endIndex;
-                isEnd = true;
-              }
-            }
+        pointer += versesPerDay;
 
-            if (!isEnd) {
-              pointer += checkVerseBuffer(
-                qryMaxVerses,
-                tblVerseIndex.rows.item(pointer),
-                buffer,
-              );
-            }
-
-            if (pointer < 0) {
-              pointer = maxIndex;
-            }
-
-            endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
-            endChapter = tblVerseIndex.rows.item(pointer).Chapter;
-            endVerse = tblVerseIndex.rows.item(pointer).Verse;
-
-            log('And ending at: ', endBibleBook, endChapter, ':', endVerse);
-
-            tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
-
-            log(tempString);
-
-            temp.push(tempString);
-
-            pointer += 1;
-
-            log(
-              'pointer',
-              pointer,
-              'isEnd',
-              isEnd,
-              'hasLooped',
-              hasLooped,
-              'maxIndex',
-              maxIndex,
-            );
-
-            if (pointer > maxIndex) {
-              pointer = 0;
-            }
-            if (isEnd) {
-              break;
+        if (!hasLooped) {
+          if (pointer >= maxIndex) {
+            pointer -= maxIndex;
+            hasLooped = true;
+            if (pointer >= endIndex - buffer) {
+              pointer = endIndex;
+              isEnd = true;
             }
           }
+        } else {
+          if (pointer >= endIndex - buffer) {
+            pointer = endIndex;
+            isEnd = true;
+          }
+        }
 
-          let readingPortions = temp;
-          let placeholders = readingPortions.map(() => '(?)').join(',');
-
-          timeKeeper('Ended at...');
-
-          txn.executeSql(
-            `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
-            readingPortions,
-            cb,
+        if (!isEnd) {
+          pointer += checkVerseBuffer(
+            qryMaxVerses,
+            tblVerseIndex.rows.item(pointer),
+            buffer,
           );
-        },
-        true,
+        }
+
+        if (pointer < 0) {
+          pointer = maxIndex;
+        }
+
+        endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+        endChapter = tblVerseIndex.rows.item(pointer).Chapter;
+        endVerse = tblVerseIndex.rows.item(pointer).Verse;
+
+        log('And ending at: ', endBibleBook, endChapter, ':', endVerse);
+
+        tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
+
+        log(tempString);
+
+        temp.push(tempString);
+
+        pointer += 1;
+
+        log(
+          'pointer',
+          pointer,
+          'isEnd',
+          isEnd,
+          'hasLooped',
+          hasLooped,
+          'maxIndex',
+          maxIndex,
+        );
+
+        if (pointer > maxIndex) {
+          pointer = 0;
+        }
+        if (isEnd) {
+          break;
+        }
+      }
+
+      let readingPortions = temp;
+      let placeholders = readingPortions.map(() => '(?)').join(',');
+
+      timeKeeper('Ended at...');
+
+      txn.executeSql(
+        `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
+        readingPortions,
+        cb,
       );
-    });
-  });
+    },
+    true,
+  );
 }
 
 export {

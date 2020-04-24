@@ -1,6 +1,6 @@
 import React, {createContext, useReducer} from 'react';
 import Database from '../Database/Database';
-import {SET_FIRST_RENDER} from './actions';
+import {UPDATE_VALUE} from './actions';
 
 const db = Database.getConnection();
 
@@ -12,8 +12,8 @@ const StateProvider = ({children}) => {
   const [state, dispatch] = useReducer((state, action) => {
     const {type, key, value} = action;
     switch (type) {
-      case SET_FIRST_RENDER:
-        return {...state, isFirstRender: value};
+      case UPDATE_VALUE:
+        return {...state, [key]: value};
       default:
         throw new Error();
     }

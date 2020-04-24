@@ -92,9 +92,7 @@ function SchedulePage(props) {
           )}
         />
       </View>
-      <View style={styles.footer}>
-        <Text style={styles.text}>Footer</Text>
-      </View>
+      <View style={styles.footer} />
     </SafeAreaView>
   );
 }

@@ -6,14 +6,18 @@ import CreateSchedulePopup from '../components/CreateSchedulePopup';
 import MessagePopup from '../components/MessagePopup';
 import styles from '../styles/styles';
 import {store} from '../data/Store/store.js';
-import {setFirstRender} from '../data/Store/actions';
+import {
+  setFirstRender,
+  setQryMaxVerses,
+  setTblVerseIndex,
+} from '../data/Store/actions';
 import {openTable, addSchedule} from '../data/Database/generalTransactions';
 
 function Home({navigation}) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {db, isFirstRender} = globalState.state;
+  const {db, isFirstRender, qryMaxVerses, tblVerseIndex} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -33,7 +37,6 @@ function Home({navigation}) {
       dispatch(setFirstRender(false));
       runQueries();
     }
-
     const interval = setInterval(() => {
       loadData();
     }, 100);
@@ -59,8 +62,23 @@ function Home({navigation}) {
       });
     });
   }
-
-  function runQueries() {}
+  function runQueries() {
+    db.transaction(txn => {
+      let sql = `SELECT BookName, Verse, Chapter, ChapterMax, BibleBook
+                    FROM tblVerseIndex
+                    INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
+      txn.executeSql(sql, [], (txn, tblVerseIndex) => {
+        txn.executeSql(
+          'SELECT * FROM qryMaxVerses',
+          [],
+          (txn, qryMaxVerses) => {
+            dispatch(setQryMaxVerses(qryMaxVerses));
+            dispatch(setTblVerseIndex(tblVerseIndex));
+          },
+        );
+      });
+    });
+  }
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
     addSchedule(
@@ -70,6 +88,8 @@ function Home({navigation}) {
       bookId,
       chapter,
       verse,
+      tblVerseIndex,
+      qryMaxVerses,
       () => {
         setIsCreateSchedulePopupDisplayed(false);
       },
@@ -125,9 +145,7 @@ function Home({navigation}) {
           )}
         />
       </View>
-      <View style={styles.footer}>
-        <Text style={styles.text}>Navigation Will Go Here</Text>
-      </View>
+      <View style={styles.footer} />
     </SafeAreaView>
   );
 }
