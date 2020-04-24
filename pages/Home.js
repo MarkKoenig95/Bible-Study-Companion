@@ -6,11 +6,14 @@ import CreateSchedulePopup from '../components/CreateSchedulePopup';
 import MessagePopup from '../components/MessagePopup';
 import styles from '../styles/styles';
 import {store} from '../data/Store/store.js';
+import {setFirstRender} from '../data/Store/actions';
 import {openTable, addSchedule} from '../data/Database/generalTransactions';
 
 function Home({navigation}) {
   const globalState = useContext(store);
-  const {db} = globalState.state;
+
+  const {dispatch} = globalState;
+  const {db, isFirstRender} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -26,6 +29,11 @@ function Home({navigation}) {
   //TODO: Don't reload so much. Only reload on first render and when new schedule is added
 
   useEffect(() => {
+    if (isFirstRender) {
+      dispatch(setFirstRender(false));
+      runQueries();
+    }
+
     const interval = setInterval(() => {
       loadData();
     }, 100);
@@ -51,6 +59,8 @@ function Home({navigation}) {
       });
     });
   }
+
+  function runQueries() {}
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
     addSchedule(

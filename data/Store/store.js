@@ -1,10 +1,10 @@
 import React, {createContext, useReducer} from 'react';
 import Database from '../Database/Database';
+import {SET_FIRST_RENDER} from './actions';
 
 const db = Database.getConnection();
-console.log('db is:', db);
 
-const initialState = {db: db, test: 'Hello'};
+const initialState = {db: db, isFirstRender: true};
 const store = createContext(initialState);
 const {Provider} = store;
 
@@ -12,8 +12,8 @@ const StateProvider = ({children}) => {
   const [state, dispatch] = useReducer((state, action) => {
     const {type, key, value} = action;
     switch (type) {
-      case 'UPDATE_VALUE':
-        return {...state, [key]: value};
+      case SET_FIRST_RENDER:
+        return {...state, isFirstRender: value};
       default:
         throw new Error();
     }

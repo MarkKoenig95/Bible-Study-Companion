@@ -1,3 +1,11 @@
+const shouldLog = false;
+
+function log() {
+  if (shouldLog) {
+    console.log(...arguments);
+  }
+}
+
 function errorCB(err) {
   console.log('SQL Error: ' + err.message);
 }
@@ -40,7 +48,7 @@ function clearSchedules(txn) {
 
 function timeKeeper(message) {
   let time = new Date();
-  console.log(message, time);
+  console.log(message, time.toLocaleTimeString('en-US'));
 }
 
 function updateReadStatus(db, tableName, id, status) {
@@ -70,9 +78,8 @@ function addSchedule(
   successCallBack,
   errorCallBack,
 ) {
-  ///////////////////////////
   timeKeeper('Started at...');
-  ////////////////////////////
+
   db.transaction(txn => {
     txn.executeSql(
       'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE)',
@@ -147,21 +154,11 @@ function listAllTables(db, cb) {
 }
 
 function findNearestVerse(qryMaxVerses, bookId, chapter, verse) {
-  var startPointer = 0;
-  var endPointer = qryMaxVerses.rows.length;
   let index = 0;
 
-  console.log('bookId:', bookId, 'chapter:', chapter, 'verse:', verse);
+  log('bookId:', bookId, 'chapter:', chapter, 'verse:', verse);
 
-  index = searchQuery(
-    startPointer,
-    endPointer,
-    qryMaxVerses,
-    'BibleBook',
-    bookId,
-    'Chapter',
-    chapter,
-  );
+  index = searchQuery(qryMaxVerses, 'BibleBook', bookId, 'Chapter', chapter);
 
   let verseAtIndex = qryMaxVerses.rows.item(index).MaxVerse;
 
@@ -177,8 +174,6 @@ function findNearestVerse(qryMaxVerses, bookId, chapter, verse) {
 }
 
 function searchQuery(
-  startPointer,
-  endPointer,
   query,
   primaryKey,
   primaryTargetValue,
@@ -190,12 +185,17 @@ function searchQuery(
   var safetyBoundary = 2000;
   var found = false;
   var prevIndex;
+  var startPointer = 0;
+  var endPointer = query.rows.length;
 
   while (!found && safetyCheck < safetyBoundary) {
     let isHigh;
     prevIndex = index;
 
     index = (startPointer + endPointer) / 2;
+
+    // eslint-disable-next-line no-bitwise
+    //This is a fast way to remove trailing decimal digits
     index = index | 0;
 
     //Prevent endless loop when start and end pointers are only 1 apart
@@ -236,6 +236,20 @@ function searchQuery(
     }
     safetyCheck++;
 
+    log(
+      'Search query:',
+      'safetyCheck=',
+      safetyCheck,
+      'startPointer=',
+      startPointer,
+      'endPointer=',
+      endPointer,
+      'found=',
+      found,
+      'isHigh=',
+      isHigh,
+    );
+
     if (safetyCheck >= safetyBoundary) {
       console.log('Exited with safety check');
     }
@@ -248,13 +262,7 @@ function findMaxChapter(qryMaxChapters, bookId) {
   var startPointer = 0;
   var endPointer = qryMaxChapters.rows.length;
 
-  let index = searchQuery(
-    startPointer,
-    endPointer,
-    qryMaxChapters,
-    'BibleBook',
-    bookId,
-  );
+  let index = searchQuery(qryMaxChapters, 'BibleBook', bookId);
 
   return qryMaxChapters.rows.item(index).MaxChapter;
 }
@@ -283,6 +291,7 @@ function findVerseIndex(
         if (res.rows.length < 1 && isFirstTime) {
           //First check if the chapter is out of bounds and adjust. This makes later processses easier
           let maxChapter = findMaxChapter(qryMaxChapters, bookId);
+
           if (chapter > maxChapter) {
             chapter = maxChapter;
           }
@@ -294,6 +303,8 @@ function findVerseIndex(
             chapter,
             verse,
           );
+
+          log('Nearest verse:', ...nearestVerse);
 
           //With a new adjusted verse let's search again to see what the index for this verse is
           index = findVerseIndex(txn, qryMaxVerses, ...nearestVerse, res =>
@@ -308,7 +319,7 @@ function findVerseIndex(
   );
 }
 
-function checkVerseBuffer(query, endPortion, buffer) {
+function checkVerseBuffer(qryMaxVerses, endPortion, buffer) {
   let endChapter = endPortion.Chapter;
   let endVerse = endPortion.Verse;
 
@@ -316,22 +327,18 @@ function checkVerseBuffer(query, endPortion, buffer) {
     return 0 - endVerse;
   }
 
-  // replace below with this function
-  // searchQuery(startPointer, endPointer, checkFunction);
+  let index = searchQuery(
+    qryMaxVerses,
+    'BibleBook',
+    endPortion.BibleBook,
+    'Chapter',
+    endChapter,
+  );
+  const element = qryMaxVerses.rows.item(index);
 
-  for (let i = 0; i < query.length; i++) {
-    const element = query.item(i);
-
-    if (
-      element.BibleBook === endPortion.BibleBook &&
-      element.Chapter === endChapter
-    ) {
-      let difference = element.MaxVerse - endVerse;
-      if (difference < buffer) {
-        return difference;
-      }
-      return 0;
-    }
+  let difference = element.MaxVerse - endVerse;
+  if (difference < buffer) {
+    return difference;
   }
   return 0;
 }
@@ -385,6 +392,14 @@ function generateSequentialSchedule(
             startChapter = tblVerseIndex.rows.item(pointer).Chapter;
             startVerse = tblVerseIndex.rows.item(pointer).Verse;
 
+            log(
+              'Generating Sequential schedule starting at: ',
+              startBibleBook,
+              startChapter,
+              ':',
+              startVerse,
+            );
+
             pointer += versesPerDay;
 
             if (!hasLooped) {
@@ -405,7 +420,7 @@ function generateSequentialSchedule(
 
             if (!isEnd) {
               pointer += checkVerseBuffer(
-                qryMaxVerses.rows,
+                qryMaxVerses,
                 tblVerseIndex.rows.item(pointer),
                 buffer,
               );
@@ -419,13 +434,28 @@ function generateSequentialSchedule(
             endChapter = tblVerseIndex.rows.item(pointer).Chapter;
             endVerse = tblVerseIndex.rows.item(pointer).Verse;
 
+            log('And ending at: ', endBibleBook, endChapter, ':', endVerse);
+
             tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
+
+            log(tempString);
 
             temp.push(tempString);
 
             pointer += 1;
 
-            if (hasLooped && pointer > maxIndex) {
+            log(
+              'pointer',
+              pointer,
+              'isEnd',
+              isEnd,
+              'hasLooped',
+              hasLooped,
+              'maxIndex',
+              maxIndex,
+            );
+
+            if (pointer > maxIndex) {
               pointer = 0;
             }
             if (isEnd) {
@@ -436,9 +466,7 @@ function generateSequentialSchedule(
           let readingPortions = temp;
           let placeholders = readingPortions.map(() => '(?)').join(',');
 
-          ///////////////////////////
           timeKeeper('Ended at...');
-          ////////////////////////////
 
           txn.executeSql(
             `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
