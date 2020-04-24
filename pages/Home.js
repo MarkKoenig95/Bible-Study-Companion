@@ -1,22 +1,26 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {SafeAreaView, View, Text, FlatList} from 'react-native';
 
-import TextButton from './components/TextButton';
-import CreateSchedulePopup from './components/CreateSchedulePopup';
-import MessagePopup from './components/MessagePopup';
-import styles from './styles/styles';
-import Database from '../scripts/Database/Database';
-import {openTable, addSchedule} from '../scripts/Database/generalTransactions';
-
-const db = Database.getConnection();
+import TextButton from '../components/TextButton';
+import CreateSchedulePopup from '../components/CreateSchedulePopup';
+import MessagePopup from '../components/MessagePopup';
+import styles from '../styles/styles';
+import {store} from '../data/Store/store.js';
+import {openTable, addSchedule} from '../data/Database/generalTransactions';
 
 function Home({navigation}) {
+  const globalState = useContext(store);
+  const {db} = globalState.state;
+
   const [flatListItems, setFlatListItems] = useState([]);
+
   const [
     isCreateSchedulePopupDisplayed,
     setIsCreateSchedulePopupDisplayed,
   ] = useState(false);
+
   const [isErrorPopupDisplayed, setIsErrorPopupDisplayed] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState('');
 
   //TODO: Don't reload so much. Only reload on first render and when new schedule is added

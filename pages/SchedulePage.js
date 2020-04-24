@@ -1,24 +1,40 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {StyleSheet, SafeAreaView, View, Text, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 
-import ScheduleDayButton from './components/ScheduleDayButton';
-import IconButton from './components/IconButton';
+import ScheduleDayButton from '../components/ScheduleDayButton';
+import IconButton from '../components/IconButton';
 import {CheckBox} from 'react-native-elements';
 
-import styles from './styles/styles';
-import Database from '../scripts/Database/Database';
+import styles from '../styles/styles';
+import {store} from '../data/Store/store.js';
 import {
   openTable,
   deleteSchedule,
   updateReadStatus,
   formatTableName,
-} from '../scripts/Database/generalTransactions';
+} from '../data/Database/generalTransactions';
 
-const db = Database.getConnection();
+function loadData(db, setState, tableName) {
+  openTable(db, tableName, function(txn, res) {
+    txn.executeSql('SELECT * FROM ' + tableName, [], (txn, results) => {
+      var temp = [];
+
+      for (let i = 0; i < results.rows.length; ++i) {
+        temp.push(results.rows.item(i));
+      }
+
+      setState(temp);
+    });
+  });
+}
 
 function SchedulePage(props) {
+  const globalState = useContext(store);
+  const {db} = globalState.state;
+
   const [flatListItems, setFlatListItems] = useState([]);
+
   const [completedHidden, setCompletedHidden] = useState(false);
 
   const scheduleName = props.route.params.name;
@@ -27,20 +43,10 @@ function SchedulePage(props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      openTable(db, tableName, function(txn, res) {
-        txn.executeSql('SELECT * FROM ' + tableName, [], (txn, results) => {
-          var temp = [];
-
-          for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i));
-          }
-
-          setFlatListItems(temp);
-        });
-      });
+      loadData(db, setFlatListItems, tableName);
     }, 200);
     return () => clearInterval(interval);
-  }, [tableName]);
+  }, [db, tableName]);
 
   return (
     <SafeAreaView style={styles.container}>

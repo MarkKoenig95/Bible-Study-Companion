@@ -1,13 +1,11 @@
 import React from 'react';
 import SQLite from 'react-native-sqlite-storage';
 
-// SQLite.DEBUG(true);
-
-function errorCB(err) {
-  console.log('SQL Error: ' + err);
+export function errorCB(err) {
+  console.log('SQL Error: ' + err.message);
 }
 
-function successCB() {
+export function successCB() {
   console.log('SQL executed fine');
 }
 
@@ -18,7 +16,7 @@ function openCB() {
 var databaseName = 'BibleStudyCompanion.db';
 
 let conn = SQLite.openDatabase(
-  { name: databaseName, createFromLocation: 1 },
+  {name: databaseName, createFromLocation: 1},
   openCB,
   errorCB,
 );
@@ -29,5 +27,4 @@ class Database {
   }
 }
 
-module.exports = new Database();
-module.exports.errorCB = errorCB;
+export default new Database();
