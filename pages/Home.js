@@ -11,7 +11,8 @@ import {
   setQryMaxVerses,
   setTblVerseIndex,
 } from '../data/Store/actions';
-import {openTable, addSchedule} from '../data/Database/generalTransactions';
+import {openTable} from '../data/Database/generalTransactions';
+import {addSchedule} from '../data/Database/scheduleTransactions';
 
 function Home({navigation}) {
   const globalState = useContext(store);

@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {StyleSheet, SafeAreaView, View, Text, FlatList} from 'react-native';
+import {StyleSheet, SafeAreaView, View, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 
 import ScheduleDayButton from '../components/ScheduleDayButton';
@@ -8,13 +8,14 @@ import IconButton from '../components/IconButton';
 import {CheckBox} from 'react-native-elements';
 
 import styles from '../styles/styles';
+
 import {store} from '../data/Store/store.js';
+import {openTable} from '../data/Database/generalTransactions';
 import {
-  openTable,
   deleteSchedule,
   updateReadStatus,
   formatTableName,
-} from '../data/Database/generalTransactions';
+} from '../data/Database/scheduleTransactions';
 
 function loadData(db, setState, tableName) {
   openTable(db, tableName, function(txn, res) {
