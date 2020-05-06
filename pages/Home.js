@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View, Text, FlatList} from 'react-native';
+import {SafeAreaView, View, FlatList} from 'react-native';
 
 import TextButton from '../components/TextButton';
 import CreateSchedulePopup from '../components/CreateSchedulePopup';
@@ -26,22 +26,24 @@ function Home({navigation}) {
     setIsCreateSchedulePopupDisplayed,
   ] = useState(false);
 
-  const [isErrorPopupDisplayed, setIsErrorPopupDisplayed] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState('');
-
-  //TODO: Don't reload so much. Only reload on first render and when new schedule is added
+  const [messagePopup, setMessagePopup] = useState({
+    isDisplayed: false,
+    message: '',
+    title: '',
+  });
 
   useEffect(() => {
     if (isFirstRender) {
       dispatch(setFirstRender(false));
       runQueries();
+      console.log('ran');
     }
+
     const interval = setInterval(() => {
       loadData();
-    }, 100);
+    }, 200);
     return () => clearInterval(interval);
-  }, []);
+  });
 
   function loadData() {
     openTable(db, 'tblSchedules', function(txn, res) {
@@ -62,6 +64,7 @@ function Home({navigation}) {
       });
     });
   }
+
   function runQueries() {
     db.transaction(txn => {
       let sql = `SELECT BookName, Verse, Chapter, ChapterMax, BibleBook
@@ -93,30 +96,38 @@ function Home({navigation}) {
       () => {
         setIsCreateSchedulePopupDisplayed(false);
       },
-      displayError,
+      openMessagePopup,
     );
   }
 
-  function displayError(error) {
-    let message = error.message || error;
+  function openMessagePopup(thisMessage, thisTitle) {
+    let message = thisMessage.message || thisMessage;
+    let title = thisTitle || 'Warning';
 
-    setIsErrorPopupDisplayed(true);
-    setErrorMessage(message);
+    setMessagePopup({isDisplayed: true, message: message, title: title});
+  }
+
+  function closeMessagePopup() {
+    setMessagePopup(prevValue => {
+      return {...prevValue, isDisplayed: false};
+    });
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <MessagePopup
-        displayPopup={isErrorPopupDisplayed}
-        title="Error"
-        message={errorMessage}
-        onClosePress={() => setIsErrorPopupDisplayed(false)}
+        displayPopup={messagePopup.isDisplayed}
+        title={messagePopup.title}
+        message={messagePopup.message}
+        onClosePress={closeMessagePopup}
       />
       <CreateSchedulePopup
         displayPopup={isCreateSchedulePopupDisplayed}
         onAdd={onAddSchedule}
-        onClosePress={() => setIsCreateSchedulePopupDisplayed(false)}
-        onError={displayError}
+        onClosePress={() => {
+          setIsCreateSchedulePopupDisplayed(false);
+        }}
+        onError={(message, title) => openMessagePopup(message, title)}
       />
       <View style={styles.header}>
         <TextButton

@@ -14,7 +14,7 @@ import styles, {colors} from '../styles/styles';
 export default function Popup(props) {
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.background, {display: !props.displayPopup ? 'none' : ''}]}>
       <View
         style={{
@@ -23,11 +23,7 @@ export default function Popup(props) {
         }}>
         <View style={style.title}>
           <Text style={style.text}>{props.title}</Text>
-          <IconButton
-            name="close"
-            invertColor={true}
-            onPress={props.onClosePress}
-          />
+          <IconButton name="close" invertColor onPress={props.onClosePress} />
         </View>
         <View style={style.content}>{props.children}</View>
       </View>
@@ -45,9 +41,9 @@ const style = StyleSheet.create({
   content: {
     alignItems: 'center',
     flexDirection: 'column',
-    justifyContent: 'center',
-    marginTop: 80,
-    marginBottom: 30,
+    justifyContent: 'space-around',
+    marginTop: 70,
+    marginBottom: 10,
     width: '100%',
   },
   text: {
@@ -63,6 +59,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     height: 60,
     justifyContent: 'space-around',
+    padding: 10,
     position: 'absolute',
     top: 0,
     width: '100%',
