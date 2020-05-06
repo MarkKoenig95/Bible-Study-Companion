@@ -37,7 +37,6 @@ function Home({navigation}) {
     if (isFirstRender) {
       dispatch(setFirstRender(false));
       runQueries();
-      console.log('ran');
     }
 
     const interval = setInterval(() => {

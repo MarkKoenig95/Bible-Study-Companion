@@ -82,10 +82,12 @@ function SchedulePage(props) {
       />
       <View style={styles.header}>
         <CheckBox
-          left
+          center
           containerStyle={style.checkBox}
           title="Hide Completed"
           checked={completedHidden}
+          textStyle={styles.text}
+          uncheckedColor={styles.text.color}
           onPress={() => {
             setCompletedHidden(!completedHidden);
           }}
@@ -107,6 +109,7 @@ function SchedulePage(props) {
             <ScheduleDayButton
               key={item.ReadingDayID}
               readingPortion={item.ReadingPortion}
+              completionDate={item.CompletionDate}
               completedHidden={completedHidden}
               isFinished={item.IsFinished}
               onPress={cb => {
