@@ -126,6 +126,7 @@ function addSchedule(
             tblVerseIndex,
             qryMaxVerses,
             successCallBack,
+            errorCallBack,
           );
         } else {
           errorCallBack("Please select a schedule name you haven't used");
@@ -201,8 +202,8 @@ function searchQuery(
 
     index = (startPointer + endPointer) / 2;
 
-    // eslint-disable-next-line no-bitwise
     //This is a fast way to remove trailing decimal digits
+    // eslint-disable-next-line no-bitwise
     index = index | 0;
 
     //Prevent endless loop when start and end pointers are only 1 apart
@@ -266,9 +267,6 @@ function searchQuery(
 }
 
 function findMaxChapter(qryMaxChapters, bookId) {
-  var startPointer = 0;
-  var endPointer = qryMaxChapters.rows.length;
-
   let index = searchQuery(qryMaxChapters, 'BibleBook', bookId);
 
   return qryMaxChapters.rows.item(index).MaxChapter;
@@ -359,15 +357,33 @@ function generateSequentialSchedule(
   tableName,
   tblVerseIndex,
   qryMaxVerses,
-  cb,
+  successCB,
+  messageCB,
 ) {
   //Get all required table and query references to be used in populating the table
   log('tblVerseIndex:', tblVerseIndex, 'qryMaxVerses:', qryMaxVerses);
-  duration *= 365;
+
+  //Transform the duration into an amount of days based on the years given by user
+  /*
+  Apparently, though (I assume because of truncating of decimal places) the schedules get farther
+  and farther off target the more years they run, thus the "+ duration * 7" adjustment.
+  It matches the target numbers well even all the way up to a 7 year schedule.
+  */
+  duration = parseInt(duration);
+  let initialDuration = duration;
+  duration *= 365 + duration * 7;
+  // duration -= initialDuration;
+  // duration = newDuration;
+  console.log(duration);
+
   const totalVerses = tblVerseIndex.rows.length;
   const maxIndex = tblVerseIndex.rows.length - 1;
-  const versesPerDay = Math.floor(totalVerses / duration);
-  const buffer = versesPerDay / 10 + 1;
+  const versesPerDay = totalVerses / duration;
+
+  let tempBuffer = versesPerDay / 4;
+
+  const buffer = Math.round(tempBuffer);
+
   var temp = [];
 
   let startBibleBook;
@@ -376,6 +392,14 @@ function generateSequentialSchedule(
   let endBibleBook;
   let endChapter;
   let endVerse;
+
+  let tempPointer = searchQuery(qryMaxVerses, 'BibleBook', bookId);
+
+  let initialBibleBook = qryMaxVerses.rows.item(tempPointer).BookName;
+  let initialChapter = chapter;
+  let initialVerse = verse;
+
+  let adjustedVerseMessage;
 
   log('Starting schedule generation');
 
@@ -391,7 +415,22 @@ function generateSequentialSchedule(
       var endIndex = startIndex - 1;
       let hasLooped = false;
 
-      for (let i = 0; i < duration; i++) {
+      startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+      startChapter = tblVerseIndex.rows.item(pointer).Chapter;
+      startVerse = tblVerseIndex.rows.item(pointer).Verse;
+
+      if (
+        startBibleBook != initialBibleBook ||
+        startChapter != initialChapter ||
+        startVerse != initialVerse
+      ) {
+        adjustedVerseMessage = `Adjusted start verse from ${initialBibleBook} ${initialChapter}:${initialVerse} to ${startBibleBook} ${startChapter}:${startVerse} because initial request was out of bounds.`;
+      }
+
+      let verseOverflow = 0;
+      let versesToday = 0;
+
+      for (let i = 0; i < duration * 2; i++) {
         let tempString = '';
         let isEnd = false;
 
@@ -407,7 +446,11 @@ function generateSequentialSchedule(
           startVerse,
         );
 
-        pointer += versesPerDay;
+        versesToday = versesPerDay + verseOverflow;
+
+        verseOverflow = versesToday - Math.floor(versesToday);
+
+        pointer += Math.round(versesToday);
 
         if (!hasLooped) {
           if (pointer >= maxIndex) {
@@ -426,14 +469,34 @@ function generateSequentialSchedule(
         }
 
         if (!isEnd) {
-          pointer += checkVerseBuffer(
+          let verseBuffer = checkVerseBuffer(
             qryMaxVerses,
             tblVerseIndex.rows.item(pointer),
             buffer,
           );
+
+          verseOverflow -= verseBuffer;
+
+          pointer += Math.round(verseBuffer);
         }
 
-        if (pointer < 0) {
+        if (!hasLooped) {
+          if (pointer >= maxIndex) {
+            pointer -= maxIndex;
+            hasLooped = true;
+            if (pointer >= endIndex - buffer) {
+              pointer = endIndex;
+              isEnd = true;
+            }
+          }
+        } else {
+          if (pointer >= endIndex - buffer) {
+            pointer = endIndex;
+            isEnd = true;
+          }
+        }
+
+        if (pointer < 0 || pointer > maxIndex) {
           pointer = maxIndex;
         }
 
@@ -465,7 +528,10 @@ function generateSequentialSchedule(
         if (pointer > maxIndex) {
           pointer = 0;
         }
+
         if (isEnd) {
+          //////////////////////////////
+          console.log(i);
           break;
         }
       }
@@ -473,12 +539,17 @@ function generateSequentialSchedule(
       let readingPortions = temp;
       let placeholders = readingPortions.map(() => '(?)').join(',');
 
-      timeKeeper('Ended at...');
+      timeKeeper('Ended at.....');
 
       txn.executeSql(
         `INSERT INTO ${tableName} (ReadingPortion) VALUES ${placeholders}`,
         readingPortions,
-        cb,
+        () => {
+          if (adjustedVerseMessage) {
+            messageCB(adjustedVerseMessage);
+          }
+          successCB();
+        },
       );
     },
     true,
