@@ -11,7 +11,6 @@ export default function CreateSchedulePopup(props) {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
 
-    // cleanup function
     return () => {
       Keyboard.removeListener('keyboardWillShow', _keyboardWillShow);
       Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
@@ -26,7 +25,7 @@ export default function CreateSchedulePopup(props) {
     setMarginTop(100);
   };
 
-  //State and defaults for shceudle info inputs
+  //State and defaults for schedule info inputs
   const defaults = {
     scheduleName: '',
     scheduleDuration: '',
@@ -84,7 +83,8 @@ export default function CreateSchedulePopup(props) {
 
       if (
         (newChar >= 'a' && newChar <= 'z') ||
-        (newChar >= 'A' && newChar <= 'Z')
+        (newChar >= 'A' && newChar <= 'Z') ||
+        newChar === ' '
       ) {
         result = newValue;
       } else {
