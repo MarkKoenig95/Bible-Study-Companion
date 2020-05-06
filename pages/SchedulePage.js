@@ -3,6 +3,7 @@ import {StyleSheet, SafeAreaView, View, Text, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 
 import ScheduleDayButton from '../components/ScheduleDayButton';
+import MessagePopup from '../components/MessagePopup';
 import IconButton from '../components/IconButton';
 import {CheckBox} from 'react-native-elements';
 
@@ -37,6 +38,12 @@ function SchedulePage(props) {
 
   const [completedHidden, setCompletedHidden] = useState(false);
 
+  const [messagePopup, setMessagePopup] = useState({
+    isDisplayed: false,
+    message: '',
+    title: '',
+  });
+
   const scheduleName = props.route.params.name;
 
   const tableName = formatTableName(scheduleName);
@@ -48,8 +55,30 @@ function SchedulePage(props) {
     return () => clearInterval(interval);
   }, [db, tableName]);
 
+  function onDeleteSchedule() {
+    props.navigation.dispatch(StackActions.pop(1));
+    deleteSchedule(db, tableName, scheduleName);
+  }
+
+  function closeMessagePopup() {
+    setMessagePopup(prevValue => {
+      return {...prevValue, isDisplayed: false};
+    });
+  }
+
+  function openMessagePopup(message, title) {
+    setMessagePopup({isDisplayed: true, message: message, title: title});
+  }
+
   return (
     <SafeAreaView style={styles.container}>
+      <MessagePopup
+        displayPopup={messagePopup.isDisplayed}
+        title={messagePopup.title}
+        message={messagePopup.message}
+        onClosePress={closeMessagePopup}
+        onConfirm={onDeleteSchedule}
+      />
       <View style={styles.header}>
         <CheckBox
           left
@@ -62,10 +91,10 @@ function SchedulePage(props) {
         />
         <IconButton
           name="delete"
-          color={styles.button.backgroundColor}
           onPress={() => {
-            props.navigation.dispatch(StackActions.pop(1));
-            deleteSchedule(db, tableName, scheduleName);
+            let title = 'Warning';
+            let message = `Are you sure you want to delete "${scheduleName}" schedule?`;
+            openMessagePopup(message, title);
           }}
         />
       </View>
