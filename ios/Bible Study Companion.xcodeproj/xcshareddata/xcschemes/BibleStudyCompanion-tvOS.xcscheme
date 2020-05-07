@@ -17,7 +17,7 @@
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
                BuildableName = "BibleStudyCompanion-tvOS.app"
                BlueprintName = "BibleStudyCompanion-tvOS"
-               ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
+               ReferencedContainer = "container:Bible Study Companion.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
                BuildableName = "BibleStudyCompanion-tvOSTests.xctest"
                BlueprintName = "BibleStudyCompanion-tvOSTests"
-               ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
+               ReferencedContainer = "container:Bible Study Companion.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,7 +57,7 @@
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
             BuildableName = "BibleStudyCompanion-tvOS.app"
             BlueprintName = "BibleStudyCompanion-tvOS"
-            ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
+            ReferencedContainer = "container:Bible Study Companion.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -74,7 +74,7 @@
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
             BuildableName = "BibleStudyCompanion-tvOS.app"
             BlueprintName = "BibleStudyCompanion-tvOS"
-            ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
+            ReferencedContainer = "container:Bible Study Companion.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
