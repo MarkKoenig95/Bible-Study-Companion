@@ -63,6 +63,7 @@ export default function VersePicker(props) {
           resetValue={false}
           textInputProps={{
             placeholder: 'Bible Book',
+            placeholderTextColor: colors.gray,
             underlineColorAndroid: 'transparent',
             style: {...styles.input, marginLeft: 0},
             onChangeText: text => setBookName,

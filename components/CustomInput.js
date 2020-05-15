@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 
-import styles from '../styles/styles';
+import styles, {colors} from '../styles/styles';
 
 export default function CustomInput(props) {
   return (
@@ -11,6 +11,7 @@ export default function CustomInput(props) {
         <Text style={{...styles.text, ...props.titleStyle}}>{props.title}</Text>
       )}
       <TextInput
+        placeholderTextColor={colors.gray}
         style={styles.input}
         onBlur={() => {
           if (!props.value) {

@@ -1,12 +1,14 @@
 import {StyleSheet} from 'react-native';
 
-var lightGray = '#93b5b3';
-var darkGray = '#63707e';
-var lightBlue = '#c8dad3';
-var smoke = '#f2f6f5';
+const lightGray = '#93b5b3';
+const gray = '#bdbdbd';
+const darkGray = '#63707e';
+const lightBlue = '#c8dad3';
+const smoke = '#f2f6f5';
 
 const colors = {
   lightGray: lightGray,
+  gray: gray,
   darkGray: darkGray,
   lightBlue: lightBlue,
   smoke: smoke,
