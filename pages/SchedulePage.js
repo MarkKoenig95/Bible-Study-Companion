@@ -111,7 +111,7 @@ function SchedulePage(props) {
               readingPortion={item.ReadingPortion}
               completionDate={item.CompletionDate}
               completedHidden={completedHidden}
-              isFinished={item.IsFinished}
+              isFinished={item.IsFinished ? true : false}
               onPress={cb => {
                 updateReadStatus(
                   db,
