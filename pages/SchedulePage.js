@@ -2,9 +2,10 @@ import React, {useContext, useState, useEffect} from 'react';
 import {StyleSheet, SafeAreaView, View, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 
-import ScheduleDayButton from '../components/ScheduleDayButton';
-import MessagePopup from '../components/MessagePopup';
-import IconButton from '../components/IconButton';
+import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
+import MessagePopup from '../components/popups/MessagePopup';
+import ReadingRemindersPopup from '../components/popups/ReadingRemindersPopup';
+import IconButton from '../components/buttons/IconButton';
 import {CheckBox} from 'react-native-elements';
 
 import styles from '../styles/styles';
@@ -16,6 +17,7 @@ import {
   updateReadStatus,
   formatTableName,
 } from '../data/Database/scheduleTransactions';
+import TextButton from '../components/buttons/TextButton';
 
 function loadData(db, setState, tableName) {
   openTable(db, tableName, function(txn, res) {
@@ -45,9 +47,29 @@ function SchedulePage(props) {
     title: '',
   });
 
+  const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
+    false,
+  );
+
   const scheduleName = props.route.params.name;
 
   const tableName = formatTableName(scheduleName);
+
+  //Set delete button in nav bar with appropriate onPress attribute
+  props.navigation.setOptions({
+    headerRight: () => (
+      <IconButton
+        iconOnly
+        invertColor
+        onPress={() => {
+          let title = 'Warning';
+          let message = `Are you sure you want to delete "${scheduleName}" schedule?`;
+          openMessagePopup(message, title);
+        }}
+        name="delete"
+      />
+    ),
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,6 +89,10 @@ function SchedulePage(props) {
     });
   }
 
+  function closeMessagePopup() {
+    setMessagePopup(false);
+  }
+
   function openMessagePopup(message, title) {
     setMessagePopup({isDisplayed: true, message: message, title: title});
   }
@@ -80,24 +106,28 @@ function SchedulePage(props) {
         onClosePress={closeMessagePopup}
         onConfirm={onDeleteSchedule}
       />
+      <ReadingRemindersPopup
+        displayPopup={isRemindersPopupDisplayed}
+        onClosePress={() => {
+          setIsRemindersPopupDisplayed(false);
+        }}
+      />
       <View style={styles.header}>
         <CheckBox
           center
           containerStyle={style.checkBox}
           title="Hide Completed"
           checked={completedHidden}
-          textStyle={styles.text}
-          uncheckedColor={styles.text.color}
+          textStyle={styles.lightText}
+          uncheckedColor={styles.lightText.color}
           onPress={() => {
             setCompletedHidden(!completedHidden);
           }}
         />
-        <IconButton
-          name="delete"
+        <TextButton
+          text="Reading Reminders"
           onPress={() => {
-            let title = 'Warning';
-            let message = `Are you sure you want to delete "${scheduleName}" schedule?`;
-            openMessagePopup(message, title);
+            setIsRemindersPopupDisplayed(true);
           }}
         />
       </View>

@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 const lightGray = '#93b5b3';
 const gray = '#bdbdbd';
 const darkGray = '#63707e';
+const darkBlue = '#1269c7';
 const lightBlue = '#c8dad3';
 const smoke = '#f2f6f5';
 
@@ -10,6 +11,7 @@ const colors = {
   lightGray: lightGray,
   gray: gray,
   darkGray: darkGray,
+  darkBlue: darkBlue,
   lightBlue: lightBlue,
   smoke: smoke,
 };
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
   },
-  text: {
+  lightText: {
     color: smoke,
   },
   popup: {
@@ -85,6 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightGray,
     borderRadius: 10,
     marginTop: 100,
+    maxHeight: '75%',
     minHeight: 300,
     overflow: 'hidden',
     width: '75%',

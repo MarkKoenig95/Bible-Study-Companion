@@ -1,9 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {SafeAreaView, View, FlatList} from 'react-native';
 
-import TextButton from '../components/TextButton';
-import CreateSchedulePopup from '../components/CreateSchedulePopup';
-import MessagePopup from '../components/MessagePopup';
+import TextButton from '../components/buttons/TextButton';
+
+import IconButton from '../components/buttons/IconButton';
+import CreateSchedulePopup from '../components/popups/CreateSchedulePopup';
+import MessagePopup from '../components/popups/MessagePopup';
 import styles from '../styles/styles';
 import {store} from '../data/Store/store.js';
 import {
@@ -14,7 +16,8 @@ import {
 import {openTable} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
-function Home({navigation}) {
+function Home(props) {
+  const navigation = props.navigation;
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
@@ -31,6 +34,20 @@ function Home({navigation}) {
     isDisplayed: false,
     message: '',
     title: '',
+  });
+
+  //Set delete button in nav bar with appropriate onPress attribute
+  props.navigation.setOptions({
+    headerRight: () => (
+      <IconButton
+        iconOnly
+        invertColor
+        onPress={() => {
+          setIsCreateSchedulePopupDisplayed(!isCreateSchedulePopupDisplayed);
+        }}
+        name="add"
+      />
+    ),
   });
 
   useEffect(() => {
@@ -129,14 +146,6 @@ function Home({navigation}) {
         }}
         onError={(message, title) => openMessagePopup(message, title)}
       />
-      <View style={styles.header}>
-        <TextButton
-          text="Add New Schedule"
-          onPress={() => {
-            setIsCreateSchedulePopupDisplayed(!isCreateSchedulePopupDisplayed);
-          }}
-        />
-      </View>
       <View style={styles.content}>
         <FlatList
           data={flatListItems}
@@ -154,6 +163,13 @@ function Home({navigation}) {
               }
             />
           )}
+        />
+        <IconButton
+          buttonStyle={{alignSelf: 'center'}}
+          onPress={() => {
+            setIsCreateSchedulePopupDisplayed(!isCreateSchedulePopupDisplayed);
+          }}
+          name="add"
         />
       </View>
       <View style={styles.footer} />
