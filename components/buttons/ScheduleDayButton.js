@@ -4,7 +4,7 @@ import {CheckBox} from 'react-native-elements';
 
 import CustomButton from './CustomButton';
 
-import styles, {colors} from '../styles/styles';
+import styles, {colors} from '../../styles/styles';
 
 export default function ScheduleDayButton(props) {
   const [isFinished, setIsFinished] = useState(props.isFinished);

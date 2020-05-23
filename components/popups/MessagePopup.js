@@ -1,10 +1,10 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 import Popup from './Popup';
-import IconButton from './IconButton';
+import IconButton from '../buttons/IconButton';
 
-import styles from '../styles/styles';
+import styles from '../../styles/styles';
 
 export default function MessagePopup(props) {
   const hasConfirmButton = props.onConfirm && true;
@@ -14,7 +14,9 @@ export default function MessagePopup(props) {
       displayPopup={props.displayPopup}
       title={props.title}
       onClosePress={props.onClosePress}>
-      <Text style={style.text}>{props.message}</Text>
+      <View style={style.content}>
+        <Text style={style.text}>{props.message}</Text>
+      </View>
       {hasConfirmButton && (
         <IconButton name="check" onPress={props.onConfirm} />
       )}
@@ -23,5 +25,6 @@ export default function MessagePopup(props) {
 }
 
 const style = StyleSheet.create({
-  text: {...styles.text, fontSize: 30, padding: 20},
+  content: {paddingLeft: 10, paddingRight: 10},
+  text: {...styles.lightText, fontSize: 30, padding: 20},
 });

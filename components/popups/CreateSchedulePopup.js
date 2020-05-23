@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {Keyboard} from 'react-native';
 
-import IconButton from './IconButton';
-import CustomInput from './CustomInput';
-import VersePicker from './VersePicker';
+import IconButton from '../buttons/IconButton';
+import CustomInput from '../CustomInput';
+import VersePicker from '../VersePicker';
 import Popup from './Popup';
 
 export default function CreateSchedulePopup(props) {
@@ -118,7 +118,7 @@ export default function CreateSchedulePopup(props) {
   function onAddPress() {
     //TODO: Check input values to validate
     if (
-      versePicker.selectedItems[0].id &&
+      versePicker.selectedItems &&
       scheduleName &&
       scheduleDuration &&
       versePicker.chapter &&
@@ -149,6 +149,7 @@ export default function CreateSchedulePopup(props) {
 
   return (
     <Popup
+      flatView
       style={marginTop && {marginTop: marginTop}}
       displayPopup={props.displayPopup}
       title="Create Schedule"
