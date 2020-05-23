@@ -8,7 +8,9 @@ export default function CustomInput(props) {
   return (
     <View style={{...style.container, ...props.containerStyle}}>
       {props.title && (
-        <Text style={{...styles.text, ...props.titleStyle}}>{props.title}</Text>
+        <Text style={{...styles.lightText, ...props.titleStyle}}>
+          {props.title}
+        </Text>
       )}
       <TextInput
         placeholderTextColor={colors.gray}

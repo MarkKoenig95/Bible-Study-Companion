@@ -130,12 +130,12 @@ const style = StyleSheet.create({
     margin: 0,
   },
   text: {
-    ...styles.text,
+    ...styles.lightText,
     fontSize: 35,
     margin: 5,
   },
   title: {
-    ...styles.text,
+    ...styles.lightText,
     width: '100%',
   },
 });
