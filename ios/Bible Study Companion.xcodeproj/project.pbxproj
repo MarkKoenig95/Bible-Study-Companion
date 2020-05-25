@@ -12,6 +12,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		253F57CA247B9F5100CC3509 /* Bible_with_Shadow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 253F57C9247B9F5100CC3509 /* Bible_with_Shadow.jpg */; };
 		25A488FA244047130029655C /* www in Resources */ = {isa = PBXBuildFile; fileRef = 25A488F9244047130029655C /* www */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -56,6 +57,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = BibleStudyCompanion/main.m; sourceTree = "<group>"; };
 		1B5D9843EADA57E7FD9ED111 /* Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-BibleStudyCompanionTests/Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		232EF5A6FDECEBBBD67D7D6C /* Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-tvOSTests/Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		253F57C9247B9F5100CC3509 /* Bible_with_Shadow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Bible_with_Shadow.jpg; path = assets/Bible_with_Shadow.jpg; sourceTree = "<group>"; };
 		25A488F9244047130029655C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../android/app/src/main/assets/www; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* BibleStudyCompanion-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BibleStudyCompanion-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* BibleStudyCompanion-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BibleStudyCompanion-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +172,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				253F57C9247B9F5100CC3509 /* Bible_with_Shadow.jpg */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 			files = (
 				25A488FA244047130029655C /* www in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				253F57CA247B9F5100CC3509 /* Bible_with_Shadow.jpg in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
