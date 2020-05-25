@@ -5,7 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {StateProvider} from './data/Store/store';
 
-import Home from './pages/Home';
+import Schedules from './pages/Schedules';
 import SchedulePage from './pages/SchedulePage';
 
 import IconButton from './components/buttons/IconButton';
@@ -23,7 +23,11 @@ function App() {
     <StateProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={navigationOptions}>
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen
+            name="Schedules"
+            component={Schedules}
+            options={{title: 'Reading Schedules'}}
+          />
           <Stack.Screen
             name="SchedulePage"
             component={SchedulePage}

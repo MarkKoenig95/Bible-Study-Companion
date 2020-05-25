@@ -6,6 +6,8 @@ import CustomInput from '../CustomInput';
 import VersePicker from '../VersePicker';
 import Popup from './Popup';
 
+const debug = false;
+
 export default function CreateSchedulePopup(props) {
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
@@ -133,13 +135,15 @@ export default function CreateSchedulePopup(props) {
         versePicker.chapter,
         versePicker.verse,
       );
-      // setScheduleName(defaults.scheduleName);
-      // setScheduleDuration(defaults.scheduleDuration);
-      // setVersePicker({
-      //   chapter: defaults.chapter,
-      //   verse: defaults.verse,
-      //   selectedItems: versePicker.selectedItems,
-      // });
+      if (!debug) {
+        setScheduleName(defaults.scheduleName);
+        setScheduleDuration(defaults.scheduleDuration);
+        setVersePicker({
+          chapter: defaults.chapter,
+          verse: defaults.verse,
+          selectedItems: versePicker.selectedItems,
+        });
+      }
     } else {
       props.onError(
         'Please fill in all of the required fields to make a schedule',
