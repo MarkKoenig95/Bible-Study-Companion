@@ -5,9 +5,7 @@ import styles from '../../styles/styles';
 
 export default function CustomButton(props) {
   return (
-    <TouchableOpacity
-      style={[styles.button, props.style]}
-      onPress={props.onPress}>
+    <TouchableOpacity {...props} style={[styles.button, props.style]}>
       {props.children}
     </TouchableOpacity>
   );

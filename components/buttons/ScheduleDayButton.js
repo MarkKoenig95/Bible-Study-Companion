@@ -18,8 +18,8 @@ export default function ScheduleDayButton(props) {
     setIsDatePassed(date < today);
   }, [completionDate]);
 
-  function onPress() {
-    props.onPress(status => setIsFinished(status));
+  function onPress(press) {
+    press(status => setIsFinished(status));
   }
 
   return (
@@ -31,13 +31,14 @@ export default function ScheduleDayButton(props) {
           display: isFinished && props.completedHidden ? 'none' : '',
         },
       ]}
-      onPress={onPress}>
+      onPress={() => onPress(props.onPress)}
+      onLongPress={() => onPress(props.onLongPress)}>
       <View style={{...style.rowContainer}}>
         <CheckBox
           containerStyle={style.checkBox}
           checked={isFinished}
           left
-          onPress={onPress}
+          onPress={() => onPress(props.onLongPress)}
           checkedColor={colors.lightGray}
           uncheckedColor={colors.lightGray}
         />

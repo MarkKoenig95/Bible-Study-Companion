@@ -5,6 +5,7 @@ import {StackActions} from '@react-navigation/native';
 import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
 import MessagePopup from '../components/popups/MessagePopup';
 import ReadingRemindersPopup from '../components/popups/ReadingRemindersPopup';
+import ReadingInfoPopup from '../components/popups/ReadingInfoPopup';
 import IconButton from '../components/buttons/IconButton';
 import {CheckBox} from 'react-native-elements';
 
@@ -45,6 +46,15 @@ function SchedulePage(props) {
     isDisplayed: false,
     message: '',
     title: '',
+  });
+
+  const [readingPopup, setReadingPopup] = useState({
+    isDisplayed: false,
+    bookNumber: 1,
+    bookName: '',
+    chapter: 1,
+    verse: 1,
+    readingPortion: '',
   });
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
@@ -89,12 +99,42 @@ function SchedulePage(props) {
     });
   }
 
-  function closeMessagePopup() {
-    setMessagePopup(false);
+  function closeReadingPopup() {
+    setReadingPopup(prevValue => {
+      return {...prevValue, isDisplayed: false};
+    });
+  }
+
+  function openReadingPopup(
+    bookNumber,
+    bookName,
+    chapter,
+    verse,
+    readingPortion,
+    isFinished,
+    readingDayID,
+    cb,
+  ) {
+    setReadingPopup({
+      isDisplayed: true,
+      bookNumber: bookNumber,
+      bookName: bookName,
+      chapter: chapter,
+      verse: verse,
+      readingPortion: readingPortion,
+      isFinished: isFinished,
+      readingDayID: readingDayID,
+      cb: cb,
+    });
   }
 
   function openMessagePopup(message, title) {
     setMessagePopup({isDisplayed: true, message: message, title: title});
+  }
+
+  function onUpdateReadStatus(cb, status) {
+    updateReadStatus(db, tableName, readingPopup.readingDayID, !status);
+    cb(!status);
   }
 
   return (
@@ -111,6 +151,23 @@ function SchedulePage(props) {
         onClosePress={() => {
           setIsRemindersPopupDisplayed(false);
         }}
+      />
+      <ReadingInfoPopup
+        popupProps={{
+          displayPopup: readingPopup.isDisplayed,
+          title: readingPopup.title,
+          message: readingPopup.message,
+          onClosePress: closeReadingPopup,
+        }}
+        onConfirm={() => {
+          onUpdateReadStatus(readingPopup.cb, readingPopup.isFinished);
+          closeReadingPopup();
+        }}
+        bookNumber={readingPopup.bookNumber}
+        bookName={readingPopup.bookName}
+        chapter={readingPopup.chapter}
+        verse={readingPopup.verse}
+        readingPortion={readingPopup.readingPortion}
       />
       <View style={styles.header}>
         <CheckBox
@@ -142,14 +199,20 @@ function SchedulePage(props) {
               completionDate={item.CompletionDate}
               completedHidden={completedHidden}
               isFinished={item.IsFinished ? true : false}
+              onLongPress={cb => {
+                onUpdateReadStatus(cb, item.IsFinished);
+              }}
               onPress={cb => {
-                updateReadStatus(
-                  db,
-                  tableName,
+                openReadingPopup(
+                  item.StartBookNumber,
+                  item.StartBookName,
+                  item.StartChapter,
+                  item.StartVerse,
+                  item.ReadingPortion,
+                  item.IsFinished,
                   item.ReadingDayID,
-                  !item.IsFinished,
+                  cb,
                 );
-                cb(!item.IsFinished);
               }}
             />
           )}

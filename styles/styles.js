@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 const lightGray = '#93b5b3';
 const gray = '#bdbdbd';
 const darkGray = '#63707e';
-const darkBlue = '#1269c7';
+const darkBlue = '#0f7a72';
 const lightBlue = '#c8dad3';
 const smoke = '#f2f6f5';
 

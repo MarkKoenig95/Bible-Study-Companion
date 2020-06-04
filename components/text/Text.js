@@ -45,13 +45,13 @@ const style = StyleSheet.create({
   body: {...base, fontSize: 20},
   subheading: {
     ...base,
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: 'bold',
     paddingTop: 20,
   },
   heading: {
     ...base,
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
     paddingTop: 20,
   },

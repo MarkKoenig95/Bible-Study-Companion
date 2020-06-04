@@ -84,6 +84,10 @@ export function addSchedule(
           txn.executeSql(
             `CREATE TABLE IF NOT EXISTS ${tableName}
               (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+              StartBookName VARCHAR(20), 
+              StartBookNumber INTEGER, 
+              StartChapter INTEGER, 
+              StartVerse INTEGER,
               CompletionDate DATE,
               ReadingPortion VARCHAR(20), 
               IsFinished BOOLEAN)`,
@@ -214,12 +218,46 @@ function checkVerseBuffer(qryMaxVerses, endPortion, buffer) {
   return 0;
 }
 
-function createReadingPortionArray(date, description) {
+// Declaring values to be input into schedule table here for easier understanding of structure.
+// Values to be used later in schedule Generator
+const valuesArray = [
+  'StartBookName',
+  'StartBookNumber',
+  'StartChapter',
+  'StartVerse',
+  'CompletionDate',
+  'ReadingPortion',
+];
+
+function createReadingPortionArray(
+  startBookName,
+  startBookNumber,
+  startChapter,
+  startVerse,
+  date,
+  description,
+) {
   let result = [];
   const options = {year: '2-digit', month: 'numeric', day: 'numeric'};
 
+  //StartBookName
+  result.push(startBookName);
+
+  //StartBookNumber
+  result.push(startBookNumber);
+
+  //StartChapter
+  result.push(startChapter);
+
+  //StartVerse
+  result.push(startVerse);
+
+  //CompletionDate
   result.push(date.toLocaleDateString(undefined, options));
+
+  //ReadingPortion
   result.push(description);
+
   return result;
 }
 
@@ -257,9 +295,11 @@ function generateSequentialSchedule(
 
   let readingPortions = [];
 
+  let startBookNumber;
   let startBibleBook;
   let startChapter;
   let startVerse;
+  let endBookNumber;
   let endBibleBook;
   let endChapter;
   let endVerse;
@@ -286,6 +326,7 @@ function generateSequentialSchedule(
       var endIndex = startIndex - 1;
       let hasLooped = false;
 
+      startBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
       startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
       startChapter = tblVerseIndex.rows.item(pointer).Chapter;
       startVerse = tblVerseIndex.rows.item(pointer).Verse;
@@ -307,6 +348,7 @@ function generateSequentialSchedule(
         let tempString = '';
         let isEnd = false;
 
+        startBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
         startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
         startChapter = tblVerseIndex.rows.item(pointer).Chapter;
         startVerse = tblVerseIndex.rows.item(pointer).Verse;
@@ -373,6 +415,7 @@ function generateSequentialSchedule(
           pointer = maxIndex;
         }
 
+        endBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
         endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
         endChapter = tblVerseIndex.rows.item(pointer).Chapter;
         endVerse = tblVerseIndex.rows.item(pointer).Verse;
@@ -383,7 +426,14 @@ function generateSequentialSchedule(
 
         log(tempString);
 
-        let temp = createReadingPortionArray(date, tempString);
+        let temp = createReadingPortionArray(
+          startBibleBook,
+          startBookNumber,
+          startChapter,
+          startVerse,
+          date,
+          tempString,
+        );
         date.setDate(date.getDate() + 1);
 
         readingPortions.push(temp);
@@ -430,7 +480,7 @@ function generateSequentialSchedule(
 
       readingPortions = temp;
 
-      let sql = `INSERT INTO ${tableName} (CompletionDate, ReadingPortion) VALUES ${placeholders}`;
+      let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders}`;
 
       try {
         txn.executeSql(sql, readingPortions, (tx, results) => {
