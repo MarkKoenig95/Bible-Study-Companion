@@ -1,0 +1,60 @@
+{
+  "bibleBook": "书卷",
+  "createSchedulePopup": {
+    "createSchedule": "造成度进表",
+    "scheduleName": "度进表题目",
+    "scheduleDuration": "度进表时常",
+    "scheduleDurPhld": "年",
+    "startingVerse": "开始经文"
+  },
+  "home": "首页",
+  "links": {
+    "languageTag": "cmn-hans",
+    "www": {
+      "bible": "圣经",
+      "how-to-read-the-bible": "怎样阅读圣经",
+      "introduction": "圣经入门",
+      "library": "多媒体图书馆",
+      "study-bible": "nwt"
+    },
+    "wol": {"lp-e": "lp-chs", "r1": "r23", "nwtsty": "nwt"}
+  },
+  "readingRemindersPopup": {
+    "heading0": "创造良好的环境",
+    "body0-1": "找个安静的地方，也要排除干扰。",
+    "body0-2": "(也许把手机跳到静音模式)",
+    "heading1": "读圣经前要祷告",
+    "body1-1": "求耶和华帮你怀着正确的态度还有赐下给你他的神圣力量才能帮你理解并运用你所学到的事",
+    "heading2": "仔细沉思你所读到的内容",
+    "body2-1": "不要读得太快，边读边思考。",
+    "subheading2-1": "你可以问问自己：",
+
+    "body2-2": "关于耶和华上帝，经文让我看出什么？",
+    "body2-3": "经文跟圣经的主线有什么关系？",
+    "body2-4": "我可以怎样把从经文里学到的应用在生活上？",
+    "body2-5": "我可以怎样用经文来帮助别人？",
+
+    "subheading2-2": "想象自己置身其中:",
+    "body2-6": "你能看到什么？听到什么？闻到什么？",
+    "body2-7": "如果你是其中的人物，会有什么感觉？",
+    "subheading2-3": "查找相关资料为了.....",
+    "body2-8": "正确的明白这部分的背景。",
+    "body2-9": "完整的还有清楚的理解很难理解的事。",
+    "heading3": "运用你所学到的资料",
+    "body3-1": "我们看出自己所做的事有实用价值，得益就会更大。研读圣经也一样。",
+    "body3-2": "我们为了在自己身上还有为别人要采取行动运用我们所学到的事。",
+    "subheading3-1": "提醒来自下边的资料：",
+    "body3-3": "请查看上面的资料为了多深入了解相关的意思"
+  },
+  "readingSchedules": "阅读进度表",
+  "schedules": "进度表",
+  "schedulePage": {
+    "readingReminders": "阅读前提醒",
+    "hideCompleted": "隐藏完成的"
+  },
+  "versePicker": {
+    "chapterAbrev": "章",
+    "verseAbrev": "节"
+  },
+  "warning": "请确认"
+}

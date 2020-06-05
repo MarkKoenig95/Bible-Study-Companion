@@ -16,7 +16,7 @@ import {
 import {openTable} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
-function Home(props) {
+export default function Schedules(props) {
   const navigation = props.navigation;
   const globalState = useContext(store);
 
@@ -176,5 +176,3 @@ function Home(props) {
     </SafeAreaView>
   );
 }
-
-export default Home;

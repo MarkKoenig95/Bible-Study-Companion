@@ -1,91 +1,85 @@
 import React from 'react';
-
 import {View} from 'react-native';
+import {translate, linkFormulator} from '../../localization/localization';
 
 import Popup from './Popup';
 import {Body, SubHeading, Heading} from '../text/Text';
 import Link from '../text/Link';
 
+const prefix = 'readingRemindersPopup.';
+
+//Links translated
+const nwt36 = linkFormulator(
+  'www',
+  'library',
+  'bible',
+  'study-bible',
+  'introduction',
+  'how-to-read-the-bible',
+);
+
+const pubLinkBase = linkFormulator('wol', 'wol', 'd', 'r1', 'lp-e');
+
+const mwb18 = pubLinkBase + '/202018087#h=3:652-6:400';
+
+const w12 = pubLinkBase + '/2012049#h=1:0-6:503';
+
+const wp17 = pubLinkBase + '/2017006#h=2:0-17:37';
+
+const w16 = pubLinkBase + '/2016364#h=14:0-25:930';
+
 export default function ReadingRemindersPopup(props) {
   return (
-    <Popup {...props} title="Reading Reminders">
+    <Popup {...props} title={translate('schedulePage.readingReminders')}>
       <View>
-        <Heading>Create the right surroundings</Heading>
-        <Body>Find a location that is quiet and free from distractions</Body>
-        <Body>(Perhaps put your phone into silent mode)</Body>
+        <Heading>{translate(prefix + 'heading0')}</Heading>
+        <Body>{translate(prefix + 'body0-1')}</Body>
+        <Body>{translate(prefix + 'body0-2')}</Body>
 
-        <Heading>Pray before you read</Heading>
-        <Body>
-          Ask Jehovah to put you in the proper frame of mind and to give you his
-          Holy Spirit to help you understand and apply what you read.
-        </Body>
+        <Heading>{translate(prefix + 'heading1')}</Heading>
+        <Body>{translate(prefix + 'body1-1')}</Body>
 
-        <Heading>Meditate on what you read</Heading>
+        <Heading>{translate(prefix + 'heading2')}</Heading>
 
-        <Body>Don’t rush, read to understand.</Body>
+        <Body>{translate(prefix + 'body2-1')}</Body>
 
-        <SubHeading>You could ask these questions:</SubHeading>
-        <Body>What does this tell me about Jehovah God?</Body>
-        <Body>
-          How does this section of the Scriptures contribute to the Bible’s
-          message?
-        </Body>
-        <Body>How can I apply this in my life?</Body>
-        <Body>How can I use these verses to help others?</Body>
+        <SubHeading>{translate(prefix + 'subheading2-1')}</SubHeading>
+        <Body>{translate(prefix + 'body2-2')}</Body>
+        <Body>{translate(prefix + 'body2-3')}</Body>
+        <Body>{translate(prefix + 'body2-4')}</Body>
+        <Body>{translate(prefix + 'body2-5')}</Body>
 
-        <SubHeading>Imagine yourself in the scene:</SubHeading>
+        <SubHeading>{translate(prefix + 'subheading2-2')}</SubHeading>
 
-        <Body>What would you see, hear, and smell? </Body>
-        <Body>What may be the feelings of those involved?</Body>
+        <Body>{translate(prefix + 'body2-6')}</Body>
+        <Body>{translate(prefix + 'body2-7')}</Body>
 
-        <SubHeading>Do research in order to:</SubHeading>
+        <SubHeading>{translate(prefix + 'subheading2-3')}</SubHeading>
 
-        <Body>Understand the reading portion’s context.</Body>
-        <Body>Understand difficult concepts clearly.</Body>
+        <Body>{translate(prefix + 'body2-8')}</Body>
+        <Body>{translate(prefix + 'body2-9')}</Body>
 
-        <Heading>Apply what you read</Heading>
+        <Heading>{translate(prefix + 'heading3')}</Heading>
 
-        <Body>
-          If we see the practical value of an activity, we benefit more from it.
-        </Body>
+        <Body>{translate(prefix + 'body3-1')}</Body>
 
-        <Body>
-          We need to take action to apply what we learned in our life and
-          understand how we can use what we learned to help others.
-        </Body>
+        <Body>{translate(prefix + 'body3-2')}</Body>
       </View>
 
       <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-        <SubHeading>Reminders derived from:</SubHeading>
-        <Link
-          href="https://wol.jw.org/en/wol/d/r1/lp-e/1001070190"
-          text="nwt 36; "
-        />
+        <SubHeading>{translate(prefix + 'subheading3-1')}</SubHeading>
 
-        <Link
-          href="https://wol.jw.org/en/wol/pc/r1/lp-e/1200270805/284/0"
-          text="mwb18.03 8; "
-        />
+        <Link href={nwt36} text="nwt 36; " />
 
-        <Link
-          href="https://wol.jw.org/en/wol/pc/r1/lp-e/1200275571/75/2"
-          text="w12 1/15 15; "
-        />
+        <Link href={mwb18} text="mwb18.03 8; " />
 
-        <Link
-          href="https://wol.jw.org/en/wol/pc/r1/lp-e/1200270805/283/2"
-          text="wp17.1 4; "
-        />
+        <Link href={w12} text="w12 1/15 15; " />
 
-        <Link
-          href="https://wol.jw.org/en/wol/pc/r1/lp-e/1200270805/283/4"
-          text="w16.05 24-26; "
-        />
+        <Link href={wp17} text="wp17.1 4; " />
 
-        <Body>
-          Please go to those links do get a deeper understanding of the thoughts
-          expressed
-        </Body>
+        <Link href={w16} text="w16.05 24-26; " />
+
+        <Body>{translate(prefix + 'body3-3')}</Body>
       </View>
     </Popup>
   );

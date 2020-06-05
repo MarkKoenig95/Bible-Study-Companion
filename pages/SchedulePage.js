@@ -1,6 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {StyleSheet, SafeAreaView, View, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
+import {translate} from '../localization/localization';
 
 import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
 import MessagePopup from '../components/popups/MessagePopup';
@@ -19,6 +20,8 @@ import {
   formatTableName,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
+
+const prefix = 'schedulePage.';
 
 function loadData(db, setState, tableName) {
   openTable(db, tableName, function(txn, res) {
@@ -72,7 +75,7 @@ function SchedulePage(props) {
         iconOnly
         invertColor
         onPress={() => {
-          let title = 'Warning';
+          let title = translate('warning');
           let message = `Are you sure you want to delete "${scheduleName}" schedule?`;
           openMessagePopup(message, title);
         }}
@@ -173,7 +176,7 @@ function SchedulePage(props) {
         <CheckBox
           center
           containerStyle={style.checkBox}
-          title="Hide Completed"
+          title={translate(prefix + 'hideCompleted')}
           checked={completedHidden}
           textStyle={styles.lightText}
           uncheckedColor={styles.lightText.color}
@@ -182,7 +185,7 @@ function SchedulePage(props) {
           }}
         />
         <TextButton
-          text="Reading Reminders"
+          text={translate(prefix + 'readingReminders')}
           onPress={() => {
             setIsRemindersPopupDisplayed(true);
           }}

@@ -1,0 +1,65 @@
+{
+  "bibleBook": "Bible Book",
+  "bibleBooks": {
+    "1": {
+      "name": "",
+      "whereWritten": "",
+      "": ""
+    }
+  },
+  "createSchedulePopup": {
+    "createSchedule": "Create Schedule",
+    "scheduleName": "Schedule Name",
+    "scheduleDuration": "Schedule Duration",
+    "scheduleDurPhld": "In Years",
+    "startingVerse": "Starting Verse"
+  },
+  "home": "Home",
+  "links": {
+    "languageTag": "en",
+    "www": {
+      "bible": "bible",
+      "how-to-read-the-bible": "how-to-read-the-bible",
+      "introduction": "introduction",
+      "library": "library",
+      "study-bible": "study-bible"
+    },
+    "wol": {"lp-e": "lp-e", "r1": "r1", "nwtsty": "nwtsty"}
+  },
+  "readingRemindersPopup": {
+    "heading0": "Create the right surroundings",
+    "body0-1": "Find a location that is quiet and free from distractions",
+    "body0-2": "(Perhaps put your phone into silent mode)",
+    "heading1": "Pray before you read",
+    "body1-1": "Ask Jehovah to put you in the proper frame of mind and to give you his Holy Spirit to help you understand and apply what you read.",
+    "heading2": "Meditate on what you read",
+    "body2-1": "Don’t rush, read to understand.",
+    "subheading2-1": "You could ask these questions:",
+    "body2-2": "What does this tell me about Jehovah God?",
+    "body2-3": "How does this section of the Scriptures contribute to the Bible’s message?",
+    "body2-4": "How can I apply this in my life?",
+    "body2-5": "How can I use these verses to help others?",
+    "subheading2-2": "Imagine yourself in the scene:",
+    "body2-6": "What would you see, hear, and smell?",
+    "body2-7": "What may be the feelings of those involved?",
+    "subheading2-3": "Do research in order to:",
+    "body2-8": "Understand the reading portion’s context.",
+    "body2-9": "Understand difficult concepts clearly.",
+    "heading3": "Apply what you read",
+    "body3-1": "If we see the practical value of an activity, we benefit more from it.",
+    "body3-2": "We need to take action to apply what we learned in our life and understand how we can use what we learned to help others.",
+    "subheading3-1": "Reminders derived from:",
+    "body3-3": "Please go to those links do get a deeper understanding of the thoughts expressed"
+  },
+  "readingSchedules": "Reading Schedules",
+  "schedules": "Schedules",
+  "schedulePage": {
+    "readingReminders": "Reading Reminders",
+    "hideCompleted": "Hide Completed"
+  },
+  "versePicker": {
+    "chapterAbrev": "ch",
+    "verseAbrev": "v"
+  },
+  "warning": "Warning"
+}

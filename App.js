@@ -5,10 +5,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {StateProvider} from './data/Store/store';
 
+import {useLocalization, translate} from './localization/localization';
+
+import Home from './pages/Home';
 import Schedules from './pages/Schedules';
 import SchedulePage from './pages/SchedulePage';
-
-import IconButton from './components/buttons/IconButton';
 
 import styles, {colors} from './styles/styles';
 
@@ -18,15 +19,21 @@ const navigationOptions = {
   headerTintColor: colors.smoke,
 };
 
-function App() {
+export default function App() {
+  useLocalization();
   return (
     <StateProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={navigationOptions}>
           <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{title: translate('home')}}
+          />
+          <Stack.Screen
             name="Schedules"
             component={Schedules}
-            options={{title: 'Reading Schedules'}}
+            options={{title: translate('readingSchedules')}}
           />
           <Stack.Screen
             name="SchedulePage"
@@ -40,5 +47,3 @@ function App() {
     </StateProvider>
   );
 }
-
-export default App;

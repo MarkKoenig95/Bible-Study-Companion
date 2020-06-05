@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 import React, {useState, useEffect, useContext} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import {translate} from '../localization/localization';
 
 import CustomInput from './CustomInput';
 
@@ -62,7 +63,7 @@ export default function VersePicker(props) {
           defaultIndex={0}
           resetValue={false}
           textInputProps={{
-            placeholder: 'Bible Book',
+            placeholder: translate('bibleBook'),
             placeholderTextColor: colors.gray,
             underlineColorAndroid: 'transparent',
             style: {...styles.input, marginLeft: 0},
@@ -80,7 +81,7 @@ export default function VersePicker(props) {
           textAlign="center"
           value={props.chapterValue}
           defaultValue={props.defaultChapterValue}
-          placeholder={'ch'}
+          placeholder={translate('versePicker.chapterAbrev')}
         />
 
         <Text style={style.text}>:</Text>
@@ -92,7 +93,7 @@ export default function VersePicker(props) {
           textAlign="center"
           value={props.verseValue}
           defaultValue={props.defaultVerseValue}
-          placeholder={'v'}
+          placeholder={translate('versePicker.verseAbrev')}
         />
       </View>
     </View>

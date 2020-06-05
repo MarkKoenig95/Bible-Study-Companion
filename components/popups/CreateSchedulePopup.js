@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Keyboard} from 'react-native';
+import {translate} from '../../localization/localization';
 
 import IconButton from '../buttons/IconButton';
 import CustomInput from '../CustomInput';
@@ -7,6 +8,8 @@ import VersePicker from '../VersePicker';
 import Popup from './Popup';
 
 const debug = false;
+
+const prefix = 'createSchedulePopup.';
 
 export default function CreateSchedulePopup(props) {
   useEffect(() => {
@@ -156,22 +159,22 @@ export default function CreateSchedulePopup(props) {
       flatView
       style={marginTop && {marginTop: marginTop}}
       displayPopup={props.displayPopup}
-      title="Create Schedule"
+      title={translate(prefix + 'createSchedule')}
       onClosePress={props.onClosePress}>
       <CustomInput
-        title="Schedule Name"
+        title={translate(prefix + 'scheduleName')}
         onChangeText={text => onScheduleNameChange(text)}
         value={scheduleName}
-        placeholder="Schedule Name"
+        placeholder={translate(prefix + 'scheduleName')}
       />
       <CustomInput
-        title="Schedule Duration"
+        title={translate(prefix + 'scheduleDuration')}
         onChangeText={text => onScheduleDurationChange(text)}
         value={scheduleDuration}
-        placeholder="In Years"
+        placeholder={translate(prefix + 'scheduleDurPhld')}
       />
       <VersePicker
-        title="Starting Verse"
+        title={translate(prefix + 'startingVerse')}
         onChange={onVersePickerChange}
         selectedItems={versePicker.selectedItems}
         chapterValue={versePicker.chapter}
