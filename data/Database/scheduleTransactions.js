@@ -1,6 +1,8 @@
 import {log, timeKeeper, searchQuery} from './generalTransactions';
 import {translate} from '../../localization/localization';
 
+const prefix = 'scheduleTransactions.';
+
 export function deleteSchedule(db, tableName, scheduleName) {
   db.transaction(txn => {
     txn.executeSql(
@@ -110,7 +112,7 @@ export function addSchedule(
             errorCallBack,
           );
         } else {
-          errorCallBack("Please select a schedule name you haven't used");
+          errorCallBack(translate(prefix + 'scheduleNameTakenPrompt'));
         }
       },
     );
@@ -346,7 +348,14 @@ function generateSequentialSchedule(
         startChapter != initialChapter ||
         startVerse != initialVerse
       ) {
-        adjustedVerseMessage = `Adjusted start verse from ${initialBibleBook} ${initialChapter}:${initialVerse} to ${startBibleBook} ${startChapter}:${startVerse} because initial request was out of bounds.`;
+        adjustedVerseMessage = translate(prefix + 'adjustedVersePrompt', {
+          initialBibleBook: initialBibleBook,
+          initialChapter: initialChapter,
+          initialVerse: initialVerse,
+          startBibleBook: startBibleBook,
+          startChapter: startChapter,
+          startVerse: startVerse,
+        });
       }
 
       let verseOverflow = 0;

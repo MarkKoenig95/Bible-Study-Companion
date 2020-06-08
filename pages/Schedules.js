@@ -15,6 +15,7 @@ import {
 } from '../data/Store/actions';
 import {openTable} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
+import {translate} from '../localization/localization';
 
 export default function Schedules(props) {
   const navigation = props.navigation;
@@ -119,7 +120,7 @@ export default function Schedules(props) {
 
   function openMessagePopup(thisMessage, thisTitle) {
     let message = thisMessage.message || thisMessage;
-    let title = thisTitle || 'Warning';
+    let title = thisTitle || translate('warning');
 
     setMessagePopup({isDisplayed: true, message: message, title: title});
   }

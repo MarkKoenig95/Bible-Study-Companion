@@ -21,7 +21,10 @@ function loadData(db, tableName = 'tblBibleBooks') {
       (txn, results) => {
         for (let i = 0; i < results.rows.length; ++i) {
           let item = results.rows.item(i);
-          items.push({id: item.BibleBookID, name: item.BookName});
+          items.push({
+            id: item.BibleBookID,
+            name: translate('bibleBooks.' + item.BibleBookID + '.name'),
+          });
         }
       },
     );

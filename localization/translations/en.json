@@ -322,6 +322,10 @@
     "hideCompleted": "Hide Completed",
     "readingReminders": "Reading Reminders"
   },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "Adjusted start verse from '{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}' to '{{startBibleBook}} {{startChapter}}:{{startVerse}}' because initial request was out of bounds.",
+    "scheduleNameTakenPrompt": "Please select a schedule name you haven't used"
+  },
   "versePicker": {
     "chapterAbrev": "ch",
     "verseAbrev": "v"
