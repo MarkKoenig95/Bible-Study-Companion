@@ -75,7 +75,7 @@ export function linkFormulator(type) {
       res = item;
     }
 
-    console.log(res[0]);
+    res = encodeURIComponent(res);
 
     temp.push(res);
   });

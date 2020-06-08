@@ -1,4 +1,5 @@
 import {log, timeKeeper, searchQuery} from './generalTransactions';
+import {translate} from '../../localization/localization';
 
 export function deleteSchedule(db, tableName, scheduleName) {
   db.transaction(txn => {
@@ -288,6 +289,8 @@ function generateSequentialSchedule(
   const totalVerses = tblVerseIndex.rows.length;
   const maxIndex = tblVerseIndex.rows.length - 1;
   const versesPerDay = totalVerses / duration;
+  const bibleBookPrefix = 'bibleBooks.';
+  const bibleBookSuffix = '.name';
 
   let tempBuffer = versesPerDay / 4;
 
@@ -306,7 +309,10 @@ function generateSequentialSchedule(
 
   let tempPointer = searchQuery(qryMaxVerses, 'BibleBook', bookId);
 
-  let initialBibleBook = qryMaxVerses.rows.item(tempPointer).BookName;
+  let initialBookNumber = qryMaxVerses.rows.item(tempPointer).BibleBook;
+  let initialBibleBook = translate(
+    bibleBookPrefix + initialBookNumber + bibleBookSuffix,
+  );
   let initialChapter = chapter;
   let initialVerse = verse;
 
@@ -327,7 +333,9 @@ function generateSequentialSchedule(
       let hasLooped = false;
 
       startBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
-      startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+      startBibleBook = translate(
+        bibleBookPrefix + startBookNumber + bibleBookSuffix,
+      );
       startChapter = tblVerseIndex.rows.item(pointer).Chapter;
       startVerse = tblVerseIndex.rows.item(pointer).Verse;
 
@@ -349,7 +357,9 @@ function generateSequentialSchedule(
         let isEnd = false;
 
         startBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
-        startBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+        startBibleBook = translate(
+          bibleBookPrefix + startBookNumber + bibleBookSuffix,
+        );
         startChapter = tblVerseIndex.rows.item(pointer).Chapter;
         startVerse = tblVerseIndex.rows.item(pointer).Verse;
 
@@ -416,7 +426,9 @@ function generateSequentialSchedule(
         }
 
         endBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
-        endBibleBook = tblVerseIndex.rows.item(pointer).BookName;
+        endBibleBook = translate(
+          bibleBookPrefix + endBookNumber + bibleBookSuffix,
+        );
         endChapter = tblVerseIndex.rows.item(pointer).Chapter;
         endVerse = tblVerseIndex.rows.item(pointer).Verse;
 

@@ -54,7 +54,6 @@ function SchedulePage(props) {
   const [readingPopup, setReadingPopup] = useState({
     isDisplayed: false,
     bookNumber: 1,
-    bookName: '',
     chapter: 1,
     verse: 1,
     readingPortion: '',
@@ -76,7 +75,9 @@ function SchedulePage(props) {
         invertColor
         onPress={() => {
           let title = translate('warning');
-          let message = `Are you sure you want to delete "${scheduleName}" schedule?`;
+          let message = translate('schedulePage.deleteScheduleMessage', {
+            scheduleName: scheduleName,
+          });
           openMessagePopup(message, title);
         }}
         name="delete"
@@ -110,7 +111,6 @@ function SchedulePage(props) {
 
   function openReadingPopup(
     bookNumber,
-    bookName,
     chapter,
     verse,
     readingPortion,
@@ -121,7 +121,6 @@ function SchedulePage(props) {
     setReadingPopup({
       isDisplayed: true,
       bookNumber: bookNumber,
-      bookName: bookName,
       chapter: chapter,
       verse: verse,
       readingPortion: readingPortion,
@@ -208,7 +207,6 @@ function SchedulePage(props) {
               onPress={cb => {
                 openReadingPopup(
                   item.StartBookNumber,
-                  item.StartBookName,
                   item.StartChapter,
                   item.StartVerse,
                   item.ReadingPortion,
