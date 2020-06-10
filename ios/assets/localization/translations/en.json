@@ -1,0 +1,334 @@
+{
+  "bibleBook": "Bible Book",
+  "bibleBooks": {
+    "1": {
+      "name": "Genesis",
+      "whereWritten": "Wilderness"
+    },
+    "2": {
+      "name": "Exodus",
+      "whereWritten": "Wilderness"
+    },
+    "3": {
+      "name": "Leviticus",
+      "whereWritten": "Wilderness"
+    },
+    "4": {
+      "name": "Numbers",
+      "whereWritten": "Wilderness and Plains of Moab"
+    },
+    "5": {
+      "name": "Deuteronomy",
+      "whereWritten": "Plains of Moab"
+    },
+    "6": {
+      "name": "Joshua",
+      "whereWritten": "Canaan"
+    },
+    "7": {
+      "name": "Judges",
+      "whereWritten": "Israel"
+    },
+    "8": {
+      "name": "Ruth",
+      "whereWritten": "Israel"
+    },
+    "9": {
+      "name": "1 Samuel",
+      "whereWritten": "Israel"
+    },
+    "10": {
+      "name": "2 Samuel",
+      "whereWritten": "Israel"
+    },
+    "11": {
+      "name": "1 Kings",
+      "whereWritten": "Judah"
+    },
+    "12": {
+      "name": "2 Kings",
+      "whereWritten": "Judah and Egypt"
+    },
+    "13": {
+      "name": "1 Chronicles",
+      "whereWritten": "Jerusalem (?)"
+    },
+    "14": {
+      "name": "2 Chronicles",
+      "whereWritten": "Jerusalem (?)"
+    },
+    "15": {
+      "name": "Ezra",
+      "whereWritten": "Jerusalem"
+    },
+    "16": {
+      "name": "Nehemiah",
+      "whereWritten": "Jerusalem"
+    },
+    "17": {
+      "name": "Esther",
+      "whereWritten": "Shushan, Elam"
+    },
+    "18": {
+      "name": "Job",
+      "whereWritten": "Wilderness"
+    },
+    "19": {
+      "name": "Psalms",
+      "whereWritten": ""
+    },
+    "20": {
+      "name": "Proverbs",
+      "whereWritten": "Jerusalem"
+    },
+    "21": {
+      "name": "Ecclesiastes",
+      "whereWritten": "Jerusalem"
+    },
+    "22": {
+      "name": "Song of Solomon",
+      "whereWritten": "Jerusalem"
+    },
+    "23": {
+      "name": "Isaiah",
+      "whereWritten": "Jerusalem"
+    },
+    "24": {
+      "name": "Jeremiah",
+      "whereWritten": "Judah; Egypt"
+    },
+    "25": {
+      "name": "Lamentations",
+      "whereWritten": "Near Jerusalem"
+    },
+    "26": {
+      "name": "Ezekiel",
+      "whereWritten": "Babylon"
+    },
+    "27": {
+      "name": "Daniel",
+      "whereWritten": "Babylon"
+    },
+    "28": {
+      "name": "Hosea",
+      "whereWritten": "Samaria (District)"
+    },
+    "29": {
+      "name": "Joel",
+      "whereWritten": "Judah"
+    },
+    "30": {
+      "name": "Amos",
+      "whereWritten": "Judah"
+    },
+    "31": {
+      "name": "Obadiah",
+      "whereWritten": ""
+    },
+    "32": {
+      "name": "Jonah",
+      "whereWritten": ""
+    },
+    "33": {
+      "name": "Micah",
+      "whereWritten": "Judah"
+    },
+    "34": {
+      "name": "Nahum",
+      "whereWritten": "Judah"
+    },
+    "35": {
+      "name": "Habakkuk",
+      "whereWritten": "Judah"
+    },
+    "36": {
+      "name": "Zephaniah",
+      "whereWritten": "Judah"
+    },
+    "37": {
+      "name": "Haggai",
+      "whereWritten": "Jerusalem rebuilt"
+    },
+    "38": {
+      "name": "Zechariah",
+      "whereWritten": "Jerusalem rebuilt"
+    },
+    "39": {
+      "name": "Malachi",
+      "whereWritten": "Jerusalem rebuilt"
+    },
+    "40": {
+      "name": "Matthew",
+      "whereWritten": "Israel"
+    },
+    "41": {
+      "name": "Mark",
+      "whereWritten": "Rome"
+    },
+    "42": {
+      "name": "Luke",
+      "whereWritten": "Caesarea"
+    },
+    "43": {
+      "name": "John",
+      "whereWritten": "Ephesus, or near"
+    },
+    "44": {
+      "name": "Acts",
+      "whereWritten": "Rome"
+    },
+    "45": {
+      "name": "Romans",
+      "whereWritten": "Corinth"
+    },
+    "46": {
+      "name": "1 Corinthians",
+      "whereWritten": "Ephesus"
+    },
+    "47": {
+      "name": "2 Corinthians",
+      "whereWritten": "Macedonia"
+    },
+    "48": {
+      "name": "Galatians",
+      "whereWritten": "Corinth or Syrian Antioch"
+    },
+    "49": {
+      "name": "Ephesians",
+      "whereWritten": "Rome"
+    },
+    "50": {
+      "name": "Philipians",
+      "whereWritten": "Rome"
+    },
+    "51": {
+      "name": "Colossians",
+      "whereWritten": "Rome"
+    },
+    "52": {
+      "name": "1 Thessalonians",
+      "whereWritten": "Corinth"
+    },
+    "53": {
+      "name": "2 Thessalonians",
+      "whereWritten": "Corinth"
+    },
+    "54": {
+      "name": "1 Timothy",
+      "whereWritten": "Macedonia"
+    },
+    "55": {
+      "name": "2 Timothy",
+      "whereWritten": "Rome"
+    },
+    "56": {
+      "name": "Titus",
+      "whereWritten": "Macedonia (?)"
+    },
+    "57": {
+      "name": "Philemon",
+      "whereWritten": "Rome"
+    },
+    "58": {
+      "name": "Hebrews",
+      "whereWritten": "Rome"
+    },
+    "59": {
+      "name": "James",
+      "whereWritten": "Jerusalem"
+    },
+    "60": {
+      "name": "1 Peter",
+      "whereWritten": "Babylon"
+    },
+    "61": {
+      "name": "2 Peter",
+      "whereWritten": "Babylon (?)"
+    },
+    "62": {
+      "name": "1 John",
+      "whereWritten": "Ephesus, or near"
+    },
+    "63": {
+      "name": "2 John",
+      "whereWritten": "Ephesus, or near"
+    },
+    "64": {
+      "name": "3 John",
+      "whereWritten": "Ephesus, or near"
+    },
+    "65": {
+      "name": "Jude",
+      "whereWritten": "Israel (?)"
+    },
+    "66": {
+      "name": "Revelation",
+      "whereWritten": "Patamos"
+    }
+  },
+  "createSchedulePopup": {
+    "createSchedule": "Create Schedule",
+    "scheduleName": "Schedule Name",
+    "scheduleDuration": "Schedule Duration",
+    "scheduleDurPhld": "In Years",
+    "startingVerse": "Starting Verse"
+  },
+  "home": "Home",
+  "links": {
+    "languageTag": "en",
+    "www": {
+      "bible": "bible",
+      "books": "books",
+      "how-to-read-the-bible": "how-to-read-the-bible",
+      "introduction": "introduction",
+      "library": "library",
+      "study-bible": "study-bible"
+    },
+    "wol": {"lp-e": "lp-e", "r1": "r1", "nwtsty": "nwtsty"}
+  },
+  "readingRemindersPopup": {
+    "heading0": "Create the right surroundings",
+    "body0-1": "Find a location that is quiet and free from distractions",
+    "body0-2": "(Perhaps put your phone into silent mode)",
+    "heading1": "Pray before you read",
+    "body1-1": "Ask Jehovah to put you in the proper frame of mind and to give you his Holy Spirit to help you understand and apply what you read.",
+    "heading2": "Meditate on what you read",
+    "body2-1": "Don’t rush, read to understand.",
+    "subheading2-1": "You could ask these questions:",
+    "body2-2": "What does this tell me about Jehovah God?",
+    "body2-3": "How does this section of the Scriptures contribute to the Bible’s message?",
+    "body2-4": "How can I apply this in my life?",
+    "body2-5": "How can I use these verses to help others?",
+    "subheading2-2": "Imagine yourself in the scene:",
+    "body2-6": "What would you see, hear, and smell?",
+    "body2-7": "What may be the feelings of those involved?",
+    "subheading2-3": "Do research in order to:",
+    "body2-8": "Understand the reading portion’s context.",
+    "body2-9": "Understand difficult concepts clearly.",
+    "heading3": "Apply what you read",
+    "body3-1": "If we see the practical value of an activity, we benefit more from it.",
+    "body3-2": "We need to take action to apply what we learned in our life and understand how we can use what we learned to help others.",
+    "subheading3-1": "Reminders derived from:",
+    "body3-3": "Please go to those links do get a deeper understanding of the thoughts expressed"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "Reading Info",
+    "readingPortion": "Reading Portion"
+  },
+  "readingSchedules": "Reading Schedules",
+  "schedules": "Schedules",
+  "schedulePage": {
+    "deleteScheduleMessage": "Are you sure you want to delete '{{scheduleName}}' schedule?",
+    "hideCompleted": "Hide Completed",
+    "readingReminders": "Reading Reminders"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "Adjusted start verse from '{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}' to '{{startBibleBook}} {{startChapter}}:{{startVerse}}' because initial request was out of bounds.",
+    "scheduleNameTakenPrompt": "Please select a schedule name you haven't used"
+  },
+  "versePicker": {
+    "chapterAbrev": "ch",
+    "verseAbrev": "v"
+  },
+  "warning": "Warning"
+}

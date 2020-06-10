@@ -1,0 +1,336 @@
+{
+  "bibleBook": "书卷",
+  "bibleBooks": {
+    "1": {
+      "name": "创世记",
+      "whereWritten": "旷野"
+    },
+    "2": {
+      "name": "出埃及记",
+      "whereWritten": "旷野"
+    },
+    "3": {
+      "name": "利未记",
+      "whereWritten": "旷野"
+    },
+    "4": {
+      "name": "民数记",
+      "whereWritten": "旷野和摩押平原"
+    },
+    "5": {
+      "name": "申命记",
+      "whereWritten": "摩押平原"
+    },
+    "6": {
+      "name": "约书亚记",
+      "whereWritten": "迦南"
+    },
+    "7": {
+      "name": "士师记",
+      "whereWritten": "以色列"
+    },
+    "8": {
+      "name": "路得记",
+      "whereWritten": "以色列"
+    },
+    "9": {
+      "name": "撒母耳记上",
+      "whereWritten": "以色列"
+    },
+    "10": {
+      "name": "撒母耳记下",
+      "whereWritten": "以色列"
+    },
+    "11": {
+      "name": "列王纪上",
+      "whereWritten": "犹大地区"
+    },
+    "12": {
+      "name": "列王纪下",
+      "whereWritten": "犹大地区和埃及"
+    },
+    "13": {
+      "name": "历代志上",
+      "whereWritten": "耶路撒冷（?"
+    },
+    "14": {
+      "name": "历代志下",
+      "whereWritten": "耶路撒冷（?"
+    },
+    "15": {
+      "name": "以斯拉记",
+      "whereWritten": "耶路撒冷"
+    },
+    "16": {
+      "name": "尼希米记",
+      "whereWritten": "耶路撒冷"
+    },
+    "17": {
+      "name": "以斯帖记",
+      "whereWritten": "埃兰的书珊"
+    },
+    "18": {
+      "name": "约伯记",
+      "whereWritten": "旷野"
+    },
+    "19": {
+      "name": "诗篇",
+      "whereWritten": ""
+    },
+    "20": {
+      "name": "箴言",
+      "whereWritten": "耶路撒冷"
+    },
+    "21": {
+      "name": "传道书",
+      "whereWritten": "耶路撒冷"
+    },
+    "22": {
+      "name": "雅歌",
+      "whereWritten": "耶路撒冷"
+    },
+    "23": {
+      "name": "以赛亚书",
+      "whereWritten": "耶路撒冷"
+    },
+    "24": {
+      "name": "耶利米书",
+      "whereWritten": "犹大地区、埃及"
+    },
+    "25": {
+      "name": "耶利米哀歌",
+      "whereWritten": "耶路撒冷附近"
+    },
+    "26": {
+      "name": "以西结书",
+      "whereWritten": "巴比伦"
+    },
+    "27": {
+      "name": "但以理书",
+      "whereWritten": "巴比伦"
+    },
+    "28": {
+      "name": "何西阿书",
+      "whereWritten": "撒马利亚地区"
+    },
+    "29": {
+      "name": "约珥书",
+      "whereWritten": "犹大地区"
+    },
+    "30": {
+      "name": "阿摩司书",
+      "whereWritten": "犹大地区"
+    },
+    "31": {
+      "name": "俄巴底亚书",
+      "whereWritten": ""
+    },
+    "32": {
+      "name": "约拿书",
+      "whereWritten": ""
+    },
+    "33": {
+      "name": "弥迦书",
+      "whereWritten": "犹大地区"
+    },
+    "34": {
+      "name": "那鸿书",
+      "whereWritten": "犹大地区"
+    },
+    "35": {
+      "name": "哈巴谷书",
+      "whereWritten": "犹大地区"
+    },
+    "36": {
+      "name": "西番雅书",
+      "whereWritten": "犹大地区"
+    },
+    "37": {
+      "name": "哈该书",
+      "whereWritten": "重建的耶路撒冷"
+    },
+    "38": {
+      "name": "撒迦利亚书",
+      "whereWritten": "重建的耶路撒冷"
+    },
+    "39": {
+      "name": "玛拉基书",
+      "whereWritten": "重建的耶路撒冷"
+    },
+    "40": {
+      "name": "马太福音",
+      "whereWritten": "以色列"
+    },
+    "41": {
+      "name": "马可福音",
+      "whereWritten": "罗马"
+    },
+    "42": {
+      "name": "路加福音",
+      "whereWritten": "凯撒里亚"
+    },
+    "43": {
+      "name": "约翰福音",
+      "whereWritten": "以弗所或附近地区"
+    },
+    "44": {
+      "name": "使徒行传",
+      "whereWritten": "罗马"
+    },
+    "45": {
+      "name": "罗马书",
+      "whereWritten": "哥林多"
+    },
+    "46": {
+      "name": "哥林多前书",
+      "whereWritten": "以弗所"
+    },
+    "47": {
+      "name": "哥林多后书",
+      "whereWritten": "马其顿"
+    },
+    "48": {
+      "name": "加拉太书",
+      "whereWritten": "哥林多或叙利亚的安提阿"
+    },
+    "49": {
+      "name": "以弗所书",
+      "whereWritten": "罗马"
+    },
+    "50": {
+      "name": "腓立比书",
+      "whereWritten": "罗马"
+    },
+    "51": {
+      "name": "歌罗西书",
+      "whereWritten": "罗马"
+    },
+    "52": {
+      "name": "帖撒罗尼迦前书",
+      "whereWritten": "哥林多"
+    },
+    "53": {
+      "name": "帖撒罗尼迦后书",
+      "whereWritten": "哥林多"
+    },
+    "54": {
+      "name": "提摩太前书",
+      "whereWritten": "马其顿"
+    },
+    "55": {
+      "name": "提摩太后书",
+      "whereWritten": "罗马"
+    },
+    "56": {
+      "name": "提多书",
+      "whereWritten": "马其顿（?）"
+    },
+    "57": {
+      "name": "腓利门书",
+      "whereWritten": "罗马"
+    },
+    "58": {
+      "name": "希伯来书",
+      "whereWritten": "罗马"
+    },
+    "59": {
+      "name": "雅各书",
+      "whereWritten": "耶路撒冷 "
+    },
+    "60": {
+      "name": "彼得前书",
+      "whereWritten": "巴比伦"
+    },
+    "61": {
+      "name": "彼得后书",
+      "whereWritten": "巴比伦（?）"
+    },
+    "62": {
+      "name": "约翰一书",
+      "whereWritten": "以弗所或附近地区"
+    },
+    "63": {
+      "name": "约翰二书",
+      "whereWritten": "以弗所或附近地区"
+    },
+    "64": {
+      "name": "约翰三书",
+      "whereWritten": "以弗所或附近地区"
+    },
+    "65": {
+      "name": "犹大书",
+      "whereWritten": "以色列（?）"
+    },
+    "66": {
+      "name": "启示录",
+      "whereWritten": "拔摩岛"
+    }
+  },
+  "createSchedulePopup": {
+    "createSchedule": "造成度进表",
+    "scheduleName": "度进表题目",
+    "scheduleDuration": "度进表时常",
+    "scheduleDurPhld": "年",
+    "startingVerse": "开头经文"
+  },
+  "home": "首页",
+  "links": {
+    "languageTag": "cmn-hans",
+    "www": {
+      "bible": "圣经",
+      "books": "圣经卷目",
+      "how-to-read-the-bible": "怎样阅读圣经",
+      "introduction": "圣经入门",
+      "library": "多媒体图书馆",
+      "study-bible": "nwt"
+    },
+    "wol": {"lp-e": "lp-chs", "r1": "r23", "nwtsty": "nwt"}
+  },
+  "readingRemindersPopup": {
+    "heading0": "创造良好的环境",
+    "body0-1": "找个安静的地方，也要排除干扰。",
+    "body0-2": "（也许把手机跳到静音模式）",
+    "heading1": "读圣经前要祷告",
+    "body1-1": "求耶和华帮你怀着正确的态度还有赐下给你他的神圣力量才能帮你理解并运用你所学到的事",
+    "heading2": "仔细沉思你所读到的内容",
+    "body2-1": "不要读得太快，边读边思考。",
+    "subheading2-1": "你可以问问自己：",
+
+    "body2-2": "关于耶和华上帝，经文让我看出什么？",
+    "body2-3": "经文跟圣经的主线有什么关系？",
+    "body2-4": "我可以怎样把从经文里学到的应用在生活上？",
+    "body2-5": "我可以怎样用经文来帮助别人？",
+
+    "subheading2-2": "想象自己置身其中:",
+    "body2-6": "你能看到什么？听到什么？闻到什么？",
+    "body2-7": "如果你是其中的人物，会有什么感觉？",
+    "subheading2-3": "查找相关资料为了.....",
+    "body2-8": "正确的明白这部分的背景。",
+    "body2-9": "完整的还有清楚的理解很难理解的事。",
+    "heading3": "运用你所学到的资料",
+    "body3-1": "我们看出自己所做的事有实用价值，得益就会更大。研读圣经也一样。",
+    "body3-2": "我们为了在自己身上还有为别人要采取行动运用我们所学到的事。",
+    "subheading3-1": "提醒来自下边的资料：",
+    "body3-3": "请查看上面的资料为了多深入了解相关的意思"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "阅读部分资料",
+    "readingPortion": "阅读部分"
+  },
+  "readingSchedules": "阅读进度表",
+  "schedules": "进度表",
+  "schedulePage": {
+    "deleteScheduleMessage": "请确认你想删除叫 ‘{{scheduleName}}’ 的进度表?",
+    "hideCompleted": "隐藏完成的",
+    "readingReminders": "阅读前提醒"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "开头经文因为你请求的经文超过界限了从你请求的经文 ‘{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}’ 被改到最进的经文 ‘{{startBibleBook}} {{startChapter}}:{{startVerse}}‘",
+    "scheduleNameTakenPrompt": "这个进度表题目已经运用了请选择还没用的题目"
+  },
+  "versePicker": {
+    "chapterAbrev": "章",
+    "verseAbrev": "节"
+  },
+  "warning": "请注意"
+}
