@@ -36,8 +36,6 @@ function makeJWORGLink(chapter, verse, bookNumber) {
 
   const result = href + hash;
 
-  console.log(result);
-
   return result;
 }
 
@@ -56,8 +54,6 @@ function makeWOLLink(chapter, verse, bookNumber) {
   );
 
   const result = href + hash;
-
-  console.log(result);
 
   return result;
 }

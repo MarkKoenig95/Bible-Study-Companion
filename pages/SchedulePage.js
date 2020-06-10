@@ -134,8 +134,10 @@ function SchedulePage(props) {
     setMessagePopup({isDisplayed: true, message: message, title: title});
   }
 
-  function onUpdateReadStatus(cb, status) {
-    updateReadStatus(db, tableName, readingPopup.readingDayID, !status);
+  function onUpdateReadStatus(cb, status, readingDayID) {
+    readingDayID = readingDayID || readingPopup.readingDayID;
+
+    updateReadStatus(db, tableName, readingDayID, !status);
     cb(!status);
   }
 
@@ -202,7 +204,7 @@ function SchedulePage(props) {
               completedHidden={completedHidden}
               isFinished={item.IsFinished ? true : false}
               onLongPress={cb => {
-                onUpdateReadStatus(cb, item.IsFinished);
+                onUpdateReadStatus(cb, item.IsFinished, item.ReadingDayID);
               }}
               onPress={cb => {
                 openReadingPopup(

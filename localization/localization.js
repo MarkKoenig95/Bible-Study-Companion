@@ -70,8 +70,6 @@ export function linkFormulator(type) {
     if (trans[0] !== '[') {
       res = trans;
     } else {
-      console.log('trans', trans, 'item', item);
-
       res = item;
     }
 
