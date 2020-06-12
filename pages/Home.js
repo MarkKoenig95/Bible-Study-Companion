@@ -4,6 +4,7 @@ import {SafeAreaView, View, FlatList} from 'react-native';
 import TextButton from '../components/buttons/TextButton';
 import Text from '../components/text/Text';
 import MessagePopup from '../components/popups/MessagePopup';
+import Footer from './components/Footer';
 
 import styles from '../styles/styles';
 
@@ -17,8 +18,6 @@ import {
 } from '../data/Store/actions';
 
 import {openTable} from '../data/Database/generalTransactions';
-
-import Footer from './components/Footer';
 
 export default function Home(props) {
   const navigation = props.navigation;
@@ -63,7 +62,7 @@ export default function Home(props) {
         text={translate('schedules')}
         onPress={() => navigation.navigate('Schedules')}
       />
-      <Footer />
+      <Footer navigation={props.navigation} />
     </SafeAreaView>
   );
 }

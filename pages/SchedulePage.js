@@ -9,6 +9,7 @@ import ReadingRemindersPopup from '../components/popups/ReadingRemindersPopup';
 import ReadingInfoPopup from '../components/popups/ReadingInfoPopup';
 import IconButton from '../components/buttons/IconButton';
 import {CheckBox} from 'react-native-elements';
+import Footer from './components/Footer';
 
 import styles from '../styles/styles';
 
@@ -221,7 +222,7 @@ function SchedulePage(props) {
           )}
         />
       </View>
-      <View style={styles.footer} />
+      <Footer navigation={props.navigation} />
     </SafeAreaView>
   );
 }

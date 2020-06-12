@@ -6,10 +6,14 @@ import TextButton from '../components/buttons/TextButton';
 import IconButton from '../components/buttons/IconButton';
 import CreateSchedulePopup from '../components/popups/CreateSchedulePopup';
 import MessagePopup from '../components/popups/MessagePopup';
+import Footer from './components/Footer';
+
 import styles from '../styles/styles';
+
 import {store} from '../data/Store/store.js';
 import {openTable} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
+
 import {translate} from '../localization/localization';
 
 export default function Schedules(props) {
@@ -145,7 +149,7 @@ export default function Schedules(props) {
           name="add"
         />
       </View>
-      <View style={styles.footer} />
+      <Footer navigation={props.navigation} />
     </SafeAreaView>
   );
 }
