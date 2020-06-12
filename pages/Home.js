@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {I18nManager, SafeAreaView, View, FlatList} from 'react-native';
+import {SafeAreaView, View, FlatList} from 'react-native';
 
 import TextButton from '../components/buttons/TextButton';
 import Text from '../components/text/Text';
@@ -15,25 +15,52 @@ import {
   setQryMaxVerses,
   setTblVerseIndex,
 } from '../data/Store/actions';
+
 import {openTable} from '../data/Database/generalTransactions';
+
+import Footer from './components/Footer';
 
 export default function Home(props) {
   const navigation = props.navigation;
   const globalState = useContext(store);
 
-  console.log(
-    linkFormulator(
-      'www',
-      'library',
-      'bible',
-      'nwt',
-      'introduction',
-      'how-to-read-the-bible',
-    ),
-  );
-
   const {dispatch} = globalState;
-  const {db, isFirstRender, qryMaxVerses, tblVerseIndex} = globalState.state;
+  const {db, isFirstRender} = globalState.state;
+
+  useEffect(() => {
+    if (isFirstRender) {
+      dispatch(setFirstRender(false));
+      runQueries();
+    }
+  });
+
+  function runQueries() {
+    console.log('here');
+
+    db.transaction(
+      txn => {
+        let sql = `SELECT BookName, Verse, Chapter, BibleBook
+                    FROM tblVerseIndex
+                    INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
+        txn.executeSql(sql, [], (txn, tblVerseIndex) => {
+          console.log(tblVerseIndex.rows.length);
+          txn.executeSql(
+            'SELECT * FROM qryMaxVerses',
+            [],
+            (txn, qryMaxVerses) => {
+              console.log(qryMaxVerses.rows.length);
+
+              dispatch(setQryMaxVerses(qryMaxVerses));
+              dispatch(setTblVerseIndex(tblVerseIndex));
+            },
+          );
+        });
+      },
+      err => {
+        console.log('SQL Error: ' + err.message);
+      },
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,9 +68,7 @@ export default function Home(props) {
         text={translate('schedules')}
         onPress={() => navigation.navigate('Schedules')}
       />
-      <View style={styles.footer}>
-        <Text>Footer</Text>
-      </View>
+      <Footer />
     </SafeAreaView>
   );
 }

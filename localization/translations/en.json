@@ -270,8 +270,29 @@
     "createSchedule": "Create Schedule",
     "scheduleName": "Schedule Name",
     "scheduleDuration": "Schedule Duration",
-    "scheduleDurPhld": "In Years",
+    "scheduleDurPhld": "How many years?",
     "startingVerse": "Starting Verse"
+  },
+  "date": {
+    "approxDesc": {
+      "approxDate": "{{about}}{{after}}{{before}} {{date}}",
+      "about": "About",
+      "after": "After",
+      "before": "Before"
+    },
+    "ancientDate": "{{year}} {{bceOrCe}}",
+    "bce": "B.C.E.",
+    "ce": "C.E.",
+    "dateSpan": "{{startDate}} - {{endDate}}",
+    "specialCases": {
+      "1": "\"In the begining\" to {{endYear}}",
+      "5": "1 Month in {{endYear}}",
+      "8": "11 Years of Judges rule from about {{startYear}} to {{endYear}}",
+      "13": "After 1 Chronicles 9:44: about {{startYear}} to {{endYear}}",
+      "18": "Over 140 years between {{startYear}} and {{endYear}}",
+      "37": "112 days in {{endYear}}",
+      "43": "After prologue, {{startYear}} to {{endYear}}"
+    }
   },
   "home": "Home",
   "links": {
@@ -313,17 +334,21 @@
   },
   "readingInfoPopup": {
     "readingInfo": "Reading Info",
-    "readingPortion": "Reading Portion"
+    "readingPortion": "Reading Portion",
+    "timeCovered": "Time Covered",
+    "whereWritten": "Where Written",
+    "whenWritten": "When Written",
+    "writers": "Writer(s)"
   },
   "readingSchedules": "Reading Schedules",
   "schedules": "Schedules",
   "schedulePage": {
-    "deleteScheduleMessage": "Are you sure you want to delete '{{scheduleName}}' schedule?",
+    "deleteScheduleMessage": "Are you sure you want to delete \"{{scheduleName}}\" schedule?",
     "hideCompleted": "Hide Completed",
     "readingReminders": "Reading Reminders"
   },
   "scheduleTransactions": {
-    "adjustedVersePrompt": "Adjusted start verse from '{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}' to '{{startBibleBook}} {{startChapter}}:{{startVerse}}' because initial request was out of bounds.",
+    "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds.",
     "scheduleNameTakenPrompt": "Please select a schedule name you haven't used"
   },
   "versePicker": {

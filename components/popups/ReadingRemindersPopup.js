@@ -8,27 +8,27 @@ import Link from '../text/Link';
 
 const prefix = 'readingRemindersPopup.';
 
-//Links translated
-const nwt36 = linkFormulator(
-  'www',
-  'library',
-  'bible',
-  'study-bible',
-  'introduction',
-  'how-to-read-the-bible',
-);
-
-const pubLinkBase = linkFormulator('wol', 'wol', 'd', 'r1', 'lp-e');
-
-const mwb18 = pubLinkBase + '/202018087#h=3:652-6:400';
-
-const w12 = pubLinkBase + '/2012049#h=1:0-6:503';
-
-const wp17 = pubLinkBase + '/2017006#h=2:0-17:37';
-
-const w16 = pubLinkBase + '/2016364#h=14:0-25:930';
-
 export default function ReadingRemindersPopup(props) {
+  //Links translated
+  const nwt36 = linkFormulator(
+    'www',
+    'library',
+    'bible',
+    'study-bible',
+    'introduction',
+    'how-to-read-the-bible',
+  );
+
+  const pubLinkBase = linkFormulator('wol', 'wol', 'd', 'r1', 'lp-e');
+
+  const mwb18 = pubLinkBase + '/202018087#h=3:652-6:400';
+
+  const w12 = pubLinkBase + '/2012049#h=1:0-6:503';
+
+  const wp17 = pubLinkBase + '/2017006#h=2:0-17:37';
+
+  const w16 = pubLinkBase + '/2016364#h=14:0-25:930';
+
   return (
     <Popup {...props} title={translate('schedulePage.readingReminders')}>
       <View>

@@ -8,11 +8,6 @@ import CreateSchedulePopup from '../components/popups/CreateSchedulePopup';
 import MessagePopup from '../components/popups/MessagePopup';
 import styles from '../styles/styles';
 import {store} from '../data/Store/store.js';
-import {
-  setFirstRender,
-  setQryMaxVerses,
-  setTblVerseIndex,
-} from '../data/Store/actions';
 import {openTable} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 import {translate} from '../localization/localization';
@@ -22,7 +17,7 @@ export default function Schedules(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {db, isFirstRender, qryMaxVerses, tblVerseIndex} = globalState.state;
+  const {db, qryMaxVerses, tblVerseIndex} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -52,11 +47,6 @@ export default function Schedules(props) {
   });
 
   useEffect(() => {
-    if (isFirstRender) {
-      dispatch(setFirstRender(false));
-      runQueries();
-    }
-
     const interval = setInterval(() => {
       loadData();
     }, 200);
@@ -79,24 +69,6 @@ export default function Schedules(props) {
           temp.push(results.rows.item(i));
         }
         setFlatListItems(temp);
-      });
-    });
-  }
-
-  function runQueries() {
-    db.transaction(txn => {
-      let sql = `SELECT BookName, Verse, Chapter, ChapterMax, BibleBook
-                    FROM tblVerseIndex
-                    INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
-      txn.executeSql(sql, [], (txn, tblVerseIndex) => {
-        txn.executeSql(
-          'SELECT * FROM qryMaxVerses',
-          [],
-          (txn, qryMaxVerses) => {
-            dispatch(setQryMaxVerses(qryMaxVerses));
-            dispatch(setTblVerseIndex(tblVerseIndex));
-          },
-        );
       });
     });
   }
