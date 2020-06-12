@@ -62,6 +62,7 @@ export function linkFormulator(type) {
 
   temp.push(base);
 
+  //Remove type argument and leave all others meant for link
   args.shift();
   args.map(item => {
     let res;
@@ -70,8 +71,6 @@ export function linkFormulator(type) {
     if (trans[0] !== '[') {
       res = trans;
     } else {
-      console.log('trans', trans, 'item', item);
-
       res = item;
     }
 
@@ -83,4 +82,39 @@ export function linkFormulator(type) {
   let result = temp.join('/');
 
   return result;
+}
+
+export function dateFormulator(year, approxDesc) {
+  const prefix = 'date.';
+  year = parseInt(year, 10);
+  let desc = '';
+
+  if (year < 0) {
+    desc = translate(prefix + 'bce');
+  } else {
+    desc = translate(prefix + 'ce');
+  }
+
+  let date = translate(prefix + 'ancientDate', {
+    year: Math.abs(year),
+    bceOrCe: desc,
+  });
+
+  let approxPrefix = prefix + 'approxDesc.';
+
+  let approxDateValues = {
+    about: '',
+    after: '',
+    before: '',
+    date: date,
+  };
+
+  if (approxDesc) {
+    let approx = translate(approxPrefix + approxDesc);
+    approxDateValues[approxDesc] = approx;
+  }
+
+  let dateString = translate(approxPrefix + 'approxDate', approxDateValues);
+
+  return dateString;
 }

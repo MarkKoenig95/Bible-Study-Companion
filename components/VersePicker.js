@@ -40,7 +40,7 @@ export default function VersePicker(props) {
 
   useEffect(() => {
     loadData(db);
-  }, []);
+  }, [db]);
 
   return (
     <View style={styles.versePicker}>

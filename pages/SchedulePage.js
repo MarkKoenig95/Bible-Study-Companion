@@ -53,9 +53,9 @@ function SchedulePage(props) {
 
   const [readingPopup, setReadingPopup] = useState({
     isDisplayed: false,
-    bookNumber: 1,
-    chapter: 1,
-    verse: 1,
+    bookNumber: 0,
+    chapter: 0,
+    verse: 0,
     readingPortion: '',
   });
 

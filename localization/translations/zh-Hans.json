@@ -270,8 +270,29 @@
     "createSchedule": "造成度进表",
     "scheduleName": "度进表题目",
     "scheduleDuration": "度进表时常",
-    "scheduleDurPhld": "年",
+    "scheduleDurPhld": "几年了？",
     "startingVerse": "开头经文"
+  },
+  "date": {
+    "approxDesc": {
+      "approxDate": "{{about}}{{date}}{{after}}{{before}}",
+      "about": "约",
+      "after": "后",
+      "before": "前"
+    },
+    "ancientDate": "{{bceOrCe}}{{year}}年",
+    "bce": "公元前",
+    "ce": "公元",
+    "dateSpan": "{{startDate}}-{{endDate}}",
+    "specialCases": {
+      "1": "从“最初”到{{endYear}}",
+      "5": "{{endYear}}的一个月",
+      "8": "士师统治（{{startYear}}到{{endYear}}）期间的11年",
+      "13": "历代志上9:44后：约{{startYear}}-{{endYear}}",
+      "18": "{{startYear}}和{{endYear}}之间逾140年",
+      "37": "{{endYear}}的112天",
+      "43": "序言后：{{startYear}}-{{endYear}}"
+    }
   },
   "home": "首页",
   "links": {
@@ -315,17 +336,21 @@
   },
   "readingInfoPopup": {
     "readingInfo": "阅读部分资料",
-    "readingPortion": "阅读部分"
+    "readingPortion": "阅读部分",
+    "timeCovered": "覆盖时期",
+    "whereWritten": "写作地点",
+    "whenWritten": "成书时间",
+    "writers": "执笔者"
   },
   "readingSchedules": "阅读进度表",
   "schedules": "进度表",
   "schedulePage": {
-    "deleteScheduleMessage": "请确认你想删除叫 ‘{{scheduleName}}’ 的进度表?",
+    "deleteScheduleMessage": "请确认你想删除叫 “{{scheduleName}}” 的进度表?",
     "hideCompleted": "隐藏完成的",
     "readingReminders": "阅读前提醒"
   },
   "scheduleTransactions": {
-    "adjustedVersePrompt": "开头经文因为你请求的经文超过界限了从你请求的经文 ‘{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}’ 被改到最进的经文 ‘{{startBibleBook}} {{startChapter}}:{{startVerse}}‘",
+    "adjustedVersePrompt": "开头经文因为你请求的经文超过界限了从你请求的经文 “{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}” 被改到最进的经文 “{{startBibleBook}} {{startChapter}}:{{startVerse}}”",
     "scheduleNameTakenPrompt": "这个进度表题目已经运用了请选择还没用的题目"
   },
   "versePicker": {
