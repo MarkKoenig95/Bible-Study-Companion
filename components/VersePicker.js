@@ -5,7 +5,7 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import {translate} from '../localization/localization';
 
 import CustomInput from './CustomInput';
-import Text from '../text/Text';
+import Text from './text/Text';
 
 import styles, {colors} from '../styles/styles';
 import {store} from '../data/Store/store.js';

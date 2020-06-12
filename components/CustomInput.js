@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 
-import Text from '../text/Text';
+import Text from './text/Text';
 
 import styles, {colors} from '../styles/styles';
 
