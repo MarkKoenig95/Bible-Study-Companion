@@ -1,5 +1,7 @@
 import React from 'react';
-import {Linking, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Linking, TouchableOpacity, StyleSheet} from 'react-native';
+
+import Text from '../text/Text';
 
 import {colors} from '../../styles/styles';
 

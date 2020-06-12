@@ -1,20 +1,15 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {Platform, ScrollView, StyleSheet, View} from 'react-native';
+
 import IconButton from '../buttons/IconButton';
+import Text from '../text/Text';
 
 import styles, {colors} from '../../styles/styles';
 
 export default function Popup(props) {
   return (
-    <KeyboardAvoidingView
+    <View
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.background, {display: !props.displayPopup ? 'none' : ''}]}>
       <View
@@ -28,7 +23,7 @@ export default function Popup(props) {
         </View>
         {!props.flatView ? (
           <ScrollView
-            style={styles.content}
+            style={style.content}
             contentContainerStyle={style.contentContainer}>
             {props.children}
           </ScrollView>
@@ -38,7 +33,7 @@ export default function Popup(props) {
           </View>
         )}
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 const style = StyleSheet.create({
@@ -50,7 +45,7 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
   },
   content: {
-    marginTop: 70,
+    marginTop: 60,
     marginBottom: 10,
     width: '100%',
   },
@@ -58,6 +53,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'space-around',
+    padding: 10,
   },
   text: {
     ...styles.lightText,

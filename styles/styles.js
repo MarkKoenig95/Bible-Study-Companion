@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     maxHeight: '75%',
     minHeight: 300,
     overflow: 'hidden',
-    width: '75%',
+    width: '85%',
     zIndex: 2,
   },
   versePicker: {

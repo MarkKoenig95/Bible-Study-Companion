@@ -3,7 +3,7 @@ import React, {useContext, useEffect} from 'react';
 import {View} from 'react-native';
 
 import Popup from './Popup';
-import {Body, SubHeading, Heading} from '../text/Text';
+import {Body, SubHeading} from '../text/Text';
 import Link from '../text/Link';
 import IconButton from '../buttons/IconButton';
 

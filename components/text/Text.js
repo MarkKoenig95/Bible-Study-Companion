@@ -3,38 +3,6 @@ import {Text, StyleSheet} from 'react-native';
 
 import styles from '../../styles/styles';
 
-export default function CustomText(props) {
-  return (
-    <Text {...props} style={[styles.lightText, props.style]}>
-      {props.children}
-    </Text>
-  );
-}
-
-export function Body(props) {
-  return (
-    <Text {...props} style={{...style.body, ...props.style}}>
-      {props.children}
-    </Text>
-  );
-}
-
-export function SubHeading(props) {
-  return (
-    <Text {...props} style={{...style.subheading, ...props.style}}>
-      {props.children}
-    </Text>
-  );
-}
-
-export function Heading(props) {
-  return (
-    <Text {...props} style={{...style.heading, ...props.style}}>
-      {props.children}
-    </Text>
-  );
-}
-
 const base = {
   ...styles.lightText,
   padding: 10,
@@ -56,3 +24,23 @@ const style = StyleSheet.create({
     paddingTop: 20,
   },
 });
+
+export function createCustomTextComponent(thisStyle) {
+  return props => {
+    return (
+      <Text {...props} style={[thisStyle, props.style]}>
+        {props.children}
+      </Text>
+    );
+  };
+}
+
+export const Main = createCustomTextComponent();
+
+export const Body = createCustomTextComponent({...style.body});
+
+export default Main;
+
+export const SubHeading = createCustomTextComponent({...style.subheading});
+
+export const Heading = createCustomTextComponent({...style.heading});

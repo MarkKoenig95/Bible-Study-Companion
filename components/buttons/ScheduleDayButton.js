@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {CheckBox} from 'react-native-elements';
 
 import CustomButton from './CustomButton';
+import Text from '../text/Text';
 
 import styles, {colors} from '../../styles/styles';
 

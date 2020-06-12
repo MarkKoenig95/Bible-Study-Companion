@@ -35,21 +35,16 @@ export default function Home(props) {
   });
 
   function runQueries() {
-    console.log('here');
-
     db.transaction(
       txn => {
         let sql = `SELECT BookName, Verse, Chapter, BibleBook
                     FROM tblVerseIndex
                     INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
         txn.executeSql(sql, [], (txn, tblVerseIndex) => {
-          console.log(tblVerseIndex.rows.length);
           txn.executeSql(
             'SELECT * FROM qryMaxVerses',
             [],
             (txn, qryMaxVerses) => {
-              console.log(qryMaxVerses.rows.length);
-
               dispatch(setQryMaxVerses(qryMaxVerses));
               dispatch(setTblVerseIndex(tblVerseIndex));
             },

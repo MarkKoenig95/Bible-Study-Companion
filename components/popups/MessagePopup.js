@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import Popup from './Popup';
 import IconButton from '../buttons/IconButton';
+import Text from '../text/Text';
 
 import styles from '../../styles/styles';
 
