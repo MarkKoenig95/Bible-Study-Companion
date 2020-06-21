@@ -6,7 +6,6 @@ import TextButton from '../components/buttons/TextButton';
 import IconButton from '../components/buttons/IconButton';
 import CreateSchedulePopup from '../components/popups/CreateSchedulePopup';
 import MessagePopup from '../components/popups/MessagePopup';
-import Footer from './components/Footer';
 
 import styles from '../styles/styles';
 
@@ -149,7 +148,6 @@ export default function Schedules(props) {
           name="add"
         />
       </View>
-      <Footer navigation={props.navigation} />
     </SafeAreaView>
   );
 }

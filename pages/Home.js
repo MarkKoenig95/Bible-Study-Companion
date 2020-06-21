@@ -4,7 +4,6 @@ import {SafeAreaView, View, FlatList} from 'react-native';
 import TextButton from '../components/buttons/TextButton';
 import Text from '../components/text/Text';
 import MessagePopup from '../components/popups/MessagePopup';
-import Footer from './components/Footer';
 
 import styles from '../styles/styles';
 
@@ -58,11 +57,7 @@ export default function Home(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TextButton
-        text={translate('schedules')}
-        onPress={() => navigation.navigate('Schedules')}
-      />
-      <Footer navigation={props.navigation} />
+      <Text>To-Do</Text>
     </SafeAreaView>
   );
 }
