@@ -14,8 +14,8 @@ import {openTable} from '../data/Database/generalTransactions';
 
 const items = [];
 
-function loadData(db, tableName = 'tblBibleBooks') {
-  openTable(db, tableName, function(txn, res) {
+function loadData(bibleDB, tableName = 'tblBibleBooks') {
+  openTable(bibleDB, tableName, function(txn, res) {
     txn.executeSql(
       'SELECT BibleBookID, BookName FROM ' + tableName,
       [],
@@ -34,14 +34,14 @@ function loadData(db, tableName = 'tblBibleBooks') {
 
 export default function VersePicker(props) {
   const globalState = useContext(store);
-  const {db} = globalState.state;
+  const {bibleDB} = globalState.state;
   const selectedItems = props.selectedItems;
   const setSelectedItems = items => props.onChange('selectedItems', items);
   const [bookName, setBookName] = useState('');
 
   useEffect(() => {
-    loadData(db);
-  }, [db]);
+    loadData(bibleDB);
+  }, [bibleDB]);
 
   return (
     <View style={styles.versePicker}>

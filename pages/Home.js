@@ -23,7 +23,7 @@ export default function Home(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {db, isFirstRender} = globalState.state;
+  const {scheduleDB, bibleDB, isFirstRender} = globalState.state;
 
   useEffect(() => {
     if (isFirstRender) {
@@ -33,7 +33,7 @@ export default function Home(props) {
   });
 
   function runQueries() {
-    db.transaction(
+    bibleDB.transaction(
       txn => {
         let sql = `SELECT BookName, Verse, Chapter, BibleBook
                     FROM tblVerseIndex

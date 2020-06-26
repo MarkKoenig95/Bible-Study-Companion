@@ -13,18 +13,20 @@ function openCB() {
   console.log('Database OPENED');
 }
 
-var databaseName = 'BibleStudyCompanion.db';
-
-let conn = SQLite.openDatabase(
-  {name: databaseName, createFromLocation: 1},
-  openCB,
-  errorCB,
-);
-
 class Database {
+  constructor(databaseName) {
+    this.databaseName = databaseName;
+  }
   getConnection() {
+    let conn = SQLite.openDatabase(
+      {name: this.databaseName, createFromLocation: 1},
+      openCB,
+      errorCB,
+    );
+
     return conn;
   }
 }
 
-export default new Database();
+export const BibleInfoDB = new Database('BibleStudyCompanion.db');
+export const ScheduleInfoDB = new Database('ScheduleInfo.db');

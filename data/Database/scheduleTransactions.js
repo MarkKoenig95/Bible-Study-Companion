@@ -91,7 +91,8 @@ export function setHideCompleted(db, scheduleName, value, successCallBack) {
 }
 
 export function addSchedule(
-  db,
+  scheduleDB,
+  bibleDB,
   scheduleName,
   duration,
   bookId,
@@ -107,7 +108,7 @@ export function addSchedule(
   );
   timeKeeper('Started at...');
 
-  db.transaction(txn => {
+  scheduleDB.transaction(txn => {
     txn.executeSql(
       'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, HideCompleted BOOLEAN)',
       [],
@@ -162,7 +163,8 @@ export function addSchedule(
 
                   //Populate the table with reading information
                   generateSequentialSchedule(
-                    txn,
+                    scheduleDB,
+                    bibleDB,
                     duration,
                     bookId,
                     chapter,
@@ -212,7 +214,7 @@ function findMaxChapter(qryMaxChapters, bookId) {
 }
 
 function findVerseIndex(
-  txn,
+  bibleDB,
   qryMaxVerses,
   bookId,
   chapter,
@@ -221,46 +223,48 @@ function findVerseIndex(
   isFirstTime,
 ) {
   //Obtain max chapters info
-  txn.executeSql(
-    'SELECT BibleBook, MaxChapter FROM qryMaxChapters',
-    [],
-    (txn, qryMaxChapters) => {
-      const sql = `SELECT VerseID FROM tblVerseIndex 
+  bibleDB.transaction(txn => {
+    txn.executeSql(
+      'SELECT BibleBook, MaxChapter FROM qryMaxChapters',
+      [],
+      (txn, qryMaxChapters) => {
+        const sql = `SELECT VerseID FROM tblVerseIndex 
         WHERE BibleBook = ${bookId} AND Chapter = ${chapter} AND Verse = ${verse};`;
-      //Find index in table for specific verse
-      txn.executeSql(sql, [], (txn, res) => {
-        var index = 0;
-        //If there is no such verse, then we have to adjust
-        //(Make sure the recurssive call only runs twice too)
-        if (res.rows.length < 1 && isFirstTime) {
-          //First check if the chapter is out of bounds and adjust. This makes later processses easier
-          let maxChapter = findMaxChapter(qryMaxChapters, bookId);
+        //Find index in table for specific verse
+        txn.executeSql(sql, [], (txn, res) => {
+          var index = 0;
+          //If there is no such verse, then we have to adjust
+          //(Make sure the recurssive call only runs twice too)
+          if (res.rows.length < 1 && isFirstTime) {
+            //First check if the chapter is out of bounds and adjust. This makes later processses easier
+            let maxChapter = findMaxChapter(qryMaxChapters, bookId);
 
-          if (chapter > maxChapter) {
-            chapter = maxChapter;
+            if (chapter > maxChapter) {
+              chapter = maxChapter;
+            }
+
+            //Find the verse which most closely matches the one which was requested
+            let nearestVerse = findNearestVerse(
+              qryMaxVerses,
+              bookId,
+              chapter,
+              verse,
+            );
+
+            log('Nearest verse:', ...nearestVerse);
+
+            //With a new adjusted verse let's search again to see what the index for this verse is
+            index = findVerseIndex(txn, qryMaxVerses, ...nearestVerse, res =>
+              cb(res),
+            );
+          } else {
+            //The verse searched for exists
+            cb(res);
           }
-
-          //Find the verse which most closely matches the one which was requested
-          let nearestVerse = findNearestVerse(
-            qryMaxVerses,
-            bookId,
-            chapter,
-            verse,
-          );
-
-          log('Nearest verse:', ...nearestVerse);
-
-          //With a new adjusted verse let's search again to see what the index for this verse is
-          index = findVerseIndex(txn, qryMaxVerses, ...nearestVerse, res =>
-            cb(res),
-          );
-        } else {
-          //The verse searched for exists
-          cb(res);
-        }
-      });
-    },
-  );
+        });
+      },
+    );
+  });
 }
 
 function checkVerseBuffer(qryMaxVerses, endPortion, buffer) {
@@ -331,7 +335,8 @@ function createReadingPortionArray(
 }
 
 function generateSequentialSchedule(
-  txn,
+  scheduleDB,
+  bibleDB,
   duration,
   bookId,
   chapter,
@@ -389,7 +394,7 @@ function generateSequentialSchedule(
   log('Starting schedule generation');
 
   findVerseIndex(
-    txn,
+    bibleDB,
     qryMaxVerses,
     bookId,
     chapter,
@@ -570,16 +575,18 @@ function generateSequentialSchedule(
       let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders}`;
 
       try {
-        txn.executeSql(sql, readingPortions, (tx, results) => {
-          if (results.rowsAffected > 0) {
-            console.log('Insert success');
-            if (adjustedVerseMessage) {
-              messageCB(adjustedVerseMessage);
+        scheduleDB.transaction(txn => {
+          txn.executeSql(sql, readingPortions, (tx, results) => {
+            if (results.rowsAffected > 0) {
+              console.log('Insert success');
+              if (adjustedVerseMessage) {
+                messageCB(adjustedVerseMessage);
+              }
+              successCB();
+            } else {
+              console.log('Insert failed');
             }
-            successCB();
-          } else {
-            console.log('Insert failed');
-          }
+          });
         });
       } catch (error) {
         console.log(error);

@@ -26,8 +26,8 @@ const blankInfo = {
 
 const items = [blankInfo];
 
-function loadData(db, tableName = 'tblBibleBooks') {
-  openTable(db, tableName, function(txn, res) {
+function loadData(bibleDB, tableName = 'tblBibleBooks') {
+  openTable(bibleDB, tableName, function(txn, res) {
     txn.executeSql('SELECT * FROM ' + tableName, [], (txn, results) => {
       for (let i = 0; i < results.rows.length; ++i) {
         let item = results.rows.item(i);
@@ -149,11 +149,11 @@ export default function ReadingInfoPopup(props) {
   } = props;
 
   const globalState = useContext(store);
-  const {db} = globalState.state;
+  const {bibleDB} = globalState.state;
 
   useEffect(() => {
-    loadData(db);
-  }, [db]);
+    loadData(bibleDB);
+  }, [bibleDB]);
 
   const href = makeWOLLink(chapter, verse, bookNumber);
 

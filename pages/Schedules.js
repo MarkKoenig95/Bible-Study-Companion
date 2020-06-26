@@ -20,7 +20,7 @@ export default function Schedules(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {db, qryMaxVerses, tblVerseIndex} = globalState.state;
+  const {bibleDB, scheduleDB, qryMaxVerses, tblVerseIndex} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -57,7 +57,7 @@ export default function Schedules(props) {
   });
 
   function loadData() {
-    openTable(db, 'tblSchedules', function(txn, res) {
+    openTable(scheduleDB, 'tblSchedules', (txn, res) => {
       if (!res.rows.length) {
         txn.executeSql('DROP TABLE IF EXISTS tblSchedules', []);
         txn.executeSql(
@@ -78,7 +78,8 @@ export default function Schedules(props) {
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
     addSchedule(
-      db,
+      scheduleDB,
+      bibleDB,
       scheduleName,
       duration,
       bookId,
