@@ -1,4 +1,4 @@
-const shouldLog = false;
+const shouldLog = true;
 
 export function log() {
   if (shouldLog) {
@@ -15,36 +15,68 @@ export function timeKeeper(message) {
   log(message, time);
 }
 
+export function getVersion(db, cb) {
+  db.transaction(txn => {
+    txn.executeSql('PRAGMA user_version;', [], cb);
+  }, errorCB);
+}
+
+export function upgradeDB(db, upgradeJSON) {
+  getVersion(db, (txn, res) => {
+    let upgradeVersion = upgradeJSON.version;
+    let userVersion = res.rows.item(0).user_version;
+
+    log('upgradeVersion', upgradeVersion, 'userVersion', userVersion);
+
+    if (userVersion < upgradeVersion) {
+      let statements = [];
+      let version = upgradeVersion - (upgradeVersion - userVersion) + 1;
+      let length = Object.keys(upgradeJSON.upgrades).length;
+
+      log('version', version, 'length', length);
+
+      for (let i = 0; i < length; i += 1) {
+        let upgrade = upgradeJSON.upgrades[`to_v${version}`];
+
+        log(upgrade);
+
+        if (upgrade) {
+          statements = [...statements, ...upgrade];
+        } else {
+          break;
+        }
+
+        version++;
+      }
+
+      statements = [
+        ...statements,
+        ...[[`PRAGMA user_version = ${upgradeVersion};`, []]],
+      ];
+
+      log(statements);
+
+      return db.sqlBatch(
+        statements,
+        () => {
+          console.log('Populated database OK');
+        },
+        error => {
+          console.log('SQL batch ERROR: ' + error.message);
+        },
+      );
+    }
+  });
+}
+
 export function openTable(db, tableName, cb) {
-  db.transaction(function(txn) {
+  db.transaction(txn => {
     txn.executeSql(
       `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`,
       [],
       cb,
     );
   }, errorCB);
-}
-
-export function addColumnToTable(txn, tableName, columnName, columnInfo) {
-  txn.executeSql(`PRAGMA table_info(${tableName});`, [], (txn, res) => {
-    let found;
-
-    for (let i = 0; i < res.rows.length; i++) {
-      const element = res.rows.item(i);
-
-      if (element.name === columnName) {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      txn.executeSql(
-        `ALTER TABLE tblSchedules ADD ${columnName} ${columnInfo};`,
-        [],
-      );
-    }
-  });
 }
 
 export function listAllTables(db, cb) {

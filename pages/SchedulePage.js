@@ -25,8 +25,8 @@ import TextButton from '../components/buttons/TextButton';
 
 const prefix = 'schedulePage.';
 
-function loadData(scheduleDB, setState, tableName) {
-  openTable(scheduleDB, tableName, function(txn, res) {
+function loadData(userDB, setState, tableName) {
+  openTable(userDB, tableName, function(txn, res) {
     txn.executeSql('SELECT * FROM ' + tableName, [], (txn, results) => {
       var temp = [];
 
@@ -41,7 +41,7 @@ function loadData(scheduleDB, setState, tableName) {
 
 function SchedulePage(props) {
   const globalState = useContext(store);
-  const {scheduleDB} = globalState.state;
+  const {userDB} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -90,18 +90,18 @@ function SchedulePage(props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadData(scheduleDB, setFlatListItems, tableName);
+      loadData(userDB, setFlatListItems, tableName);
     }, 200);
     return () => clearInterval(interval);
-  }, [scheduleDB, tableName, scheduleName]);
+  }, [userDB, tableName, scheduleName]);
 
   useEffect(() => {
-    getHideCompleted(scheduleDB, scheduleName, setCompletedHidden);
-  }, [scheduleDB, scheduleName]);
+    getHideCompleted(userDB, scheduleName, setCompletedHidden);
+  }, [userDB, scheduleName]);
 
   function onDeleteSchedule() {
     props.navigation.dispatch(StackActions.pop(1));
-    deleteSchedule(scheduleDB, tableName, scheduleName);
+    deleteSchedule(userDB, tableName, scheduleName);
   }
 
   function closeMessagePopup() {
@@ -144,7 +144,7 @@ function SchedulePage(props) {
   function onUpdateReadStatus(cb, status, readingDayID) {
     readingDayID = readingDayID || readingPopup.readingDayID;
 
-    updateReadStatus(scheduleDB, tableName, readingDayID, !status);
+    updateReadStatus(userDB, tableName, readingDayID, !status);
     cb(!status);
   }
 
@@ -191,7 +191,7 @@ function SchedulePage(props) {
           checkedColor={colors.darkBlue}
           onPress={() => {
             setHideCompleted(
-              scheduleDB,
+              userDB,
               scheduleName,
               !completedHidden,
               setCompletedHidden,

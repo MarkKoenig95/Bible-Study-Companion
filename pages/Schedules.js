@@ -11,7 +11,10 @@ import styles from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
 import {openTable} from '../data/Database/generalTransactions';
-import {addSchedule} from '../data/Database/scheduleTransactions';
+import {
+  addSchedule,
+  createtblSchedules,
+} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../localization/localization';
 
@@ -20,7 +23,7 @@ export default function Schedules(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {bibleDB, scheduleDB, qryMaxVerses, tblVerseIndex} = globalState.state;
+  const {bibleDB, userDB, qryMaxVerses, tblVerseIndex} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -57,13 +60,10 @@ export default function Schedules(props) {
   });
 
   function loadData() {
-    openTable(scheduleDB, 'tblSchedules', (txn, res) => {
+    openTable(userDB, 'tblSchedules', (txn, res) => {
       if (!res.rows.length) {
         txn.executeSql('DROP TABLE IF EXISTS tblSchedules', []);
-        txn.executeSql(
-          'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE)',
-          [],
-        );
+        createtblSchedules(txn);
       }
       txn.executeSql('SELECT * FROM tblSchedules', [], (txn, results) => {
         var temp = [];
@@ -78,7 +78,7 @@ export default function Schedules(props) {
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
     addSchedule(
-      scheduleDB,
+      userDB,
       bibleDB,
       scheduleName,
       duration,

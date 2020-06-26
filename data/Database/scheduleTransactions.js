@@ -90,8 +90,15 @@ export function setHideCompleted(db, scheduleName, value, successCallBack) {
   );
 }
 
+export function createtblSchedules(txn) {
+  txn.executeSql(
+    'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, HideCompleted BOOLEAN)',
+    [],
+  );
+}
+
 export function addSchedule(
-  scheduleDB,
+  userDB,
   bibleDB,
   scheduleName,
   duration,
@@ -108,14 +115,7 @@ export function addSchedule(
   );
   timeKeeper('Started at...');
 
-  scheduleDB.transaction(txn => {
-    txn.executeSql(
-      'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, HideCompleted BOOLEAN)',
-      [],
-    );
-    /************************** FIXME: A temporary fix to adjust table structure delete before release ****************************************/
-    addColumnToTable(txn, 'tblSchedules', 'HideCompleted', 'BOOLEAN');
-
+  userDB.transaction(txn => {
     //Check if a schedule with that name already exists
     txn.executeSql(
       `SELECT 1 FROM tblSchedules WHERE ScheduleName = "${scheduleName}"`,
@@ -163,7 +163,7 @@ export function addSchedule(
 
                   //Populate the table with reading information
                   generateSequentialSchedule(
-                    scheduleDB,
+                    userDB,
                     bibleDB,
                     duration,
                     bookId,
@@ -335,7 +335,7 @@ function createReadingPortionArray(
 }
 
 function generateSequentialSchedule(
-  scheduleDB,
+  userDB,
   bibleDB,
   duration,
   bookId,
@@ -575,7 +575,7 @@ function generateSequentialSchedule(
       let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders}`;
 
       try {
-        scheduleDB.transaction(txn => {
+        userDB.transaction(txn => {
           txn.executeSql(sql, readingPortions, (tx, results) => {
             if (results.rowsAffected > 0) {
               console.log('Insert success');

@@ -1,13 +1,13 @@
 import React, {createContext, useReducer} from 'react';
-import {BibleInfoDB, ScheduleInfoDB} from '../Database/Database';
+import {BibleInfoDB, UserInfoDB} from '../Database/Database';
 import {UPDATE_VALUE} from './actions';
 
 const bibleDB = BibleInfoDB.getConnection();
-const scheduleDB = ScheduleInfoDB.getConnection();
+const userDB = UserInfoDB.getConnection();
 
 const initialState = {
   bibleDB: bibleDB,
-  scheduleDB: scheduleDB,
+  userDB: userDB,
   isFirstRender: true,
 };
 const store = createContext(initialState);

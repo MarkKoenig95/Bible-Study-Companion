@@ -16,14 +16,14 @@ import {
   setTblVerseIndex,
 } from '../data/Store/actions';
 
-import {openTable} from '../data/Database/generalTransactions';
+import {openTable, getVersion, log} from '../data/Database/generalTransactions';
 
 export default function Home(props) {
   const navigation = props.navigation;
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {scheduleDB, bibleDB, isFirstRender} = globalState.state;
+  const {userDB, bibleDB, isFirstRender} = globalState.state;
 
   useEffect(() => {
     if (isFirstRender) {
