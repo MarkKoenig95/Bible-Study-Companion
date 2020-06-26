@@ -1,4 +1,9 @@
-import {log, timeKeeper, searchQuery} from './generalTransactions';
+import {
+  log,
+  timeKeeper,
+  searchQuery,
+  addColumnToTable,
+} from './generalTransactions';
 import {translate} from '../../localization/localization';
 
 const prefix = 'scheduleTransactions.';
@@ -38,12 +43,51 @@ export function updateReadStatus(db, tableName, id, status) {
   });
 }
 
-export function formatTableName(scheduleName) {
-  let tableName = 'tbl';
-
-  tableName += scheduleName.replace(/\s/g, '');
+export function formatScheduleTableName(id) {
+  const tableName = 'tblSchedule' + id;
 
   return tableName;
+}
+
+export function getHideCompleted(db, scheduleName, cb) {
+  db.transaction(txn => {
+    txn.executeSql(
+      `SELECT HideCompleted FROM tblSchedules WHERE ScheduleName = "${scheduleName}"`,
+      [],
+      (txn, res) => {
+        if (res.rows.length > 0) {
+          let item = res.rows.item(0).HideCompleted;
+          let value;
+
+          if (item === 0) {
+            value = false;
+          } else if (item === 1) {
+            value = true;
+          }
+
+          cb(value);
+        }
+      },
+    );
+  });
+}
+
+export function setHideCompleted(db, scheduleName, value, successCallBack) {
+  let hideCompleted = value ? 1 : 0;
+
+  successCallBack(value);
+
+  db.transaction(
+    txn => {
+      txn.executeSql(
+        `UPDATE tblSchedules SET HideCompleted = ${hideCompleted} WHERE ScheduleName = "${scheduleName}";`,
+        [],
+      );
+    },
+    err => {
+      console.log(err.message);
+    },
+  );
 }
 
 export function addSchedule(
@@ -58,13 +102,18 @@ export function addSchedule(
   successCallBack,
   errorCallBack,
 ) {
+  log(
+    `_____________________________________New Schedule named ${scheduleName}____________________________________________`,
+  );
   timeKeeper('Started at...');
 
   db.transaction(txn => {
     txn.executeSql(
-      'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE)',
+      'CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, HideCompleted BOOLEAN)',
       [],
     );
+    /************************** FIXME: A temporary fix to adjust table structure delete before release ****************************************/
+    addColumnToTable(txn, 'tblSchedules', 'HideCompleted', 'BOOLEAN');
 
     //Check if a schedule with that name already exists
     txn.executeSql(
@@ -73,19 +122,32 @@ export function addSchedule(
       (txn, res) => {
         if (res.rows.length < 1) {
           log('Creating schehdule table');
+
           //If it doesn't already exist, add a value to the schedules table with correlating info
           txn.executeSql(
-            `INSERT INTO tblSchedules (ScheduleName) VALUES ('${scheduleName}')`,
-            [],
+            'INSERT INTO tblSchedules (ScheduleName, HideCompleted) VALUES (?, 0)',
+            [scheduleName],
+            (txn, res) => {
+              log(scheduleName, 'inserted successfully');
+            },
           );
 
-          log('Formatting table name');
-          //Format a name for the new table to be created for this schedule
-          let tableName = formatTableName(scheduleName);
-
-          //Create a table for this new schedule based on the formated name
           txn.executeSql(
-            `CREATE TABLE IF NOT EXISTS ${tableName}
+            'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName = ?',
+            [scheduleName],
+            (txn, res) => {
+              let id = res.rows.item(0).ScheduleID;
+              let tableName = formatScheduleTableName(id);
+
+              log(
+                'Creating table for schedule',
+                scheduleName,
+                'named',
+                tableName,
+              );
+              //Create a table for this new schedule based on the formated name
+              txn.executeSql(
+                `CREATE TABLE IF NOT EXISTS ${tableName}
               (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
               StartBookName VARCHAR(20), 
               StartBookNumber INTEGER, 
@@ -94,22 +156,26 @@ export function addSchedule(
               CompletionDate DATE,
               ReadingPortion VARCHAR(20), 
               IsFinished BOOLEAN)`,
-            [],
-          );
-          log('Table created successfully');
+                [],
+                () => {
+                  log('Table', tableName, 'created successfully');
 
-          //Populate the table with reading information
-          generateSequentialSchedule(
-            txn,
-            duration,
-            bookId,
-            chapter,
-            verse,
-            tableName,
-            tblVerseIndex,
-            qryMaxVerses,
-            successCallBack,
-            errorCallBack,
+                  //Populate the table with reading information
+                  generateSequentialSchedule(
+                    txn,
+                    duration,
+                    bookId,
+                    chapter,
+                    verse,
+                    tableName,
+                    tblVerseIndex,
+                    qryMaxVerses,
+                    successCallBack,
+                    errorCallBack,
+                  );
+                },
+              );
+            },
           );
         } else {
           errorCallBack(translate(prefix + 'scheduleNameTakenPrompt'));
@@ -285,7 +351,7 @@ function generateSequentialSchedule(
   and farther off target the more years they run, thus the "+ duration * 7" adjustment.
   It matches the target numbers well even all the way up to a 7 year schedule.
   */
-  duration = parseInt(duration, 10);
+  duration = parseFloat(duration, 10);
   duration *= 365 + duration * 7;
 
   const totalVerses = tblVerseIndex.rows.length;

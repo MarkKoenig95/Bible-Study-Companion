@@ -86,6 +86,7 @@ export default function VersePicker(props) {
           value={props.chapterValue}
           defaultValue={props.defaultChapterValue}
           placeholder={translate('versePicker.chapterAbrev')}
+          keyboardType={'number-pad'}
         />
 
         <Text style={style.text}>:</Text>
@@ -98,6 +99,7 @@ export default function VersePicker(props) {
           value={props.verseValue}
           defaultValue={props.defaultVerseValue}
           placeholder={translate('versePicker.verseAbrev')}
+          keyboardType={'numeric'}
         />
       </View>
     </View>

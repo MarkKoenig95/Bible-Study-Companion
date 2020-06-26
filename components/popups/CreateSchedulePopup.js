@@ -63,11 +63,15 @@ export default function CreateSchedulePopup(props) {
     if (change < 1) {
       result = newValue;
     } else {
-      let number = parseInt(newValue, 10);
-      if (!isNaN(number) && (number > lowerLimit && number < upperLimit)) {
-        result = number.toString();
+      if (newValue[newValue.length - 1] === '.') {
+        result = newValue;
       } else {
-        result = prevValue;
+        let number = parseFloat(newValue, 10);
+        if (!isNaN(number) && (number >= lowerLimit && number <= upperLimit)) {
+          result = number.toString();
+        } else {
+          result = prevValue;
+        }
       }
     }
 
@@ -102,7 +106,7 @@ export default function CreateSchedulePopup(props) {
 
   function onVersePickerChange(key, value) {
     if (key !== 'selectedItems') {
-      value = sanitizeNumber(versePicker[key], value, 0, 201);
+      value = sanitizeNumber(versePicker[key], value, 1, 200);
     }
 
     setVersePicker(prevVals => {
@@ -112,11 +116,11 @@ export default function CreateSchedulePopup(props) {
 
   function onScheduleNameChange(text) {
     let sanitizedState = sanitizeLetter(scheduleName, text);
-    setScheduleName(sanitizedState);
+    setScheduleName(text);
   }
 
   function onScheduleDurationChange(text) {
-    let sanitizedState = sanitizeNumber(scheduleDuration, text, 0, 21);
+    let sanitizedState = sanitizeNumber(scheduleDuration, text, 0, 20);
     setScheduleDuration(sanitizedState);
   }
 
@@ -172,6 +176,7 @@ export default function CreateSchedulePopup(props) {
         onChangeText={text => onScheduleDurationChange(text)}
         value={scheduleDuration}
         placeholder={translate(prefix + 'scheduleDurPhld')}
+        keyboardType={'decimal-pad'}
       />
       <VersePicker
         title={translate(prefix + 'startingVerse')}

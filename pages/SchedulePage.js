@@ -10,14 +10,16 @@ import ReadingInfoPopup from '../components/popups/ReadingInfoPopup';
 import IconButton from '../components/buttons/IconButton';
 import {CheckBox} from 'react-native-elements';
 
-import styles from '../styles/styles';
+import styles, {colors} from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
 import {openTable} from '../data/Database/generalTransactions';
 import {
   deleteSchedule,
   updateReadStatus,
-  formatTableName,
+  formatScheduleTableName,
+  setHideCompleted,
+  getHideCompleted,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
 
@@ -64,8 +66,9 @@ function SchedulePage(props) {
   );
 
   const scheduleName = props.route.params.name;
+  const scheduleID = props.route.params.id;
 
-  const tableName = formatTableName(scheduleName);
+  const tableName = formatScheduleTableName(scheduleID);
 
   //Set delete button in nav bar with appropriate onPress attribute
   props.navigation.setOptions({
@@ -90,7 +93,11 @@ function SchedulePage(props) {
       loadData(db, setFlatListItems, tableName);
     }, 200);
     return () => clearInterval(interval);
-  }, [db, tableName]);
+  }, [db, tableName, scheduleName]);
+
+  useEffect(() => {
+    getHideCompleted(db, scheduleName, setCompletedHidden);
+  }, [db, scheduleName]);
 
   function onDeleteSchedule() {
     props.navigation.dispatch(StackActions.pop(1));
@@ -181,8 +188,14 @@ function SchedulePage(props) {
           checked={completedHidden}
           textStyle={styles.lightText}
           uncheckedColor={styles.lightText.color}
+          checkedColor={colors.darkBlue}
           onPress={() => {
-            setCompletedHidden(!completedHidden);
+            setHideCompleted(
+              db,
+              scheduleName,
+              !completedHidden,
+              setCompletedHidden,
+            );
           }}
         />
         <TextButton

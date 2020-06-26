@@ -25,6 +25,28 @@ export function openTable(db, tableName, cb) {
   }, errorCB);
 }
 
+export function addColumnToTable(txn, tableName, columnName, columnInfo) {
+  txn.executeSql(`PRAGMA table_info(${tableName});`, [], (txn, res) => {
+    let found;
+
+    for (let i = 0; i < res.rows.length; i++) {
+      const element = res.rows.item(i);
+
+      if (element.name === columnName) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      txn.executeSql(
+        `ALTER TABLE tblSchedules ADD ${columnName} ${columnInfo};`,
+        [],
+      );
+    }
+  });
+}
+
 export function listAllTables(db, cb) {
   if (!cb) {
     cb = (txn, results) => {
