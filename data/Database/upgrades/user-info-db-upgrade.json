@@ -1,6 +1,22 @@
 {
   "version": 1,
   "upgrades": {
-    "to_v1": [["ALTER TABLE tblSchedules ADD HideCompleted BOOLEAN;"]]
+    "to_v1": [
+      [
+        "CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, HideCompleted BOOLEAN);"
+      ],
+      [
+        "CREATE TABLE IF NOT EXISTS tblUserPrefs(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20) UNIQUE, Value BYTE, ShouldDisplay BOOLEAN);"
+      ],
+      [
+        "CREATE TABLE IF NOT EXISTS tblDates(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20) UNIQUE, Date DATE);"
+      ],
+      [
+        "INSERT INTO tblUserPrefs (Name, Description, Value, ShouldDisplay) VALUES (\"Name\", \"Description\", 1, 0);"
+      ],
+      [
+        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"DailyText\", \"Last read date of the daily text\", \"@{baseDate}\"), (\"FamilyWorship\", \"Date of next Family Worship\", \"@{baseDate}\");"
+      ]
+    ]
   }
 }

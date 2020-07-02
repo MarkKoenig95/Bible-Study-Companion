@@ -1,4 +1,4 @@
-const shouldLog = true;
+const shouldLog = false;
 
 export function log() {
   if (shouldLog) {
@@ -7,100 +7,170 @@ export function log() {
 }
 
 export function errorCB(err) {
-  console.log('SQL Error: ' + err.message);
+  console.warn('SQL Error: ' + err.message);
+}
+
+function createSqlString() {
+  let args = [...arguments];
+  return args.join(' ');
+}
+
+export function createPlaceholdersFromArray(array) {
+  const thisFunc = innerArray => {
+    let innerString = innerArray.map(() => '?').join(',');
+
+    let result = `( ${innerString} )`;
+    return result;
+  };
+
+  let placeholders;
+
+  if (Array.isArray(array[0])) {
+    placeholders = array.map(thisFunc).join(',');
+  } else {
+    thisFunc(array);
+  }
+
+  return placeholders;
 }
 
 export function timeKeeper(message) {
   let time = new Date();
-  log(message, time);
+  let milliseconds = time.getMilliseconds();
+  let seconds = time.getSeconds();
+  console.log(message, seconds + '.' + milliseconds, 'seconds');
 }
 
-export function getVersion(db, cb) {
-  db.transaction(txn => {
-    txn.executeSql('PRAGMA user_version;', [], cb);
-  }, errorCB);
+export function formatDate(date) {
+  const options = {year: '2-digit', month: 'numeric', day: 'numeric'};
+  return date.toLocaleDateString(undefined, options);
 }
 
-export function upgradeDB(db, upgradeJSON) {
-  getVersion(db, (txn, res) => {
-    let upgradeVersion = upgradeJSON.version;
-    let userVersion = res.rows.item(0).user_version;
+export async function loadData(db, setState, tableName) {
+  let results;
+  await db
+    .transaction(txn => {
+      txn.executeSql('SELECT * FROM ' + tableName, []).then(([t, res]) => {
+        results = res;
+      });
+    })
+    .catch(errorCB);
 
-    log('upgradeVersion', upgradeVersion, 'userVersion', userVersion);
+  var temp = [];
 
-    if (userVersion < upgradeVersion) {
-      let statements = [];
-      let version = upgradeVersion - (upgradeVersion - userVersion) + 1;
-      let length = Object.keys(upgradeJSON.upgrades).length;
+  for (let i = 0; i < results.rows.length; ++i) {
+    temp.push(results.rows.item(i));
+  }
 
-      log('version', version, 'length', length);
+  setState(temp);
+}
 
-      for (let i = 0; i < length; i += 1) {
-        let upgrade = upgradeJSON.upgrades[`to_v${version}`];
+export async function getVersion(db) {
+  let result;
 
-        log(upgrade);
+  await db
+    .transaction(txn => {
+      txn.executeSql('PRAGMA user_version;', []).then(([txn, res]) => {
+        result = res;
+      });
+    })
+    .catch(errorCB);
 
-        if (upgrade) {
-          statements = [...statements, ...upgrade];
-        } else {
-          break;
-        }
+  return result;
+}
 
-        version++;
+export async function getQuery(bibleDB, sql) {
+  let result;
+  await bibleDB
+    .transaction(txn => {
+      txn.executeSql(sql, []).then(([t, res]) => {
+        result = res;
+      });
+    })
+    .catch(errorCB);
+
+  return result;
+}
+
+export async function upgradeDB(db, upgradeJSON) {
+  let res = await getVersion(db);
+
+  var json = JSON.parse(
+    JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
+      if (group === 'baseDate') {
+        let date = formatDate(new Date(0));
+        return date;
+      }
+    }),
+  );
+
+  let upgradeVersion = json.version;
+  let userVersion = res.rows.item(0).user_version;
+
+  log('upgradeVersion', upgradeVersion, 'userVersion', userVersion);
+
+  if (userVersion < upgradeVersion) {
+    let statements = [];
+    let version = upgradeVersion - (upgradeVersion - userVersion) + 1;
+    let length = Object.keys(upgradeJSON.upgrades).length;
+
+    log('version', version, 'length', length);
+
+    for (let i = 0; i < length; i += 1) {
+      let upgrade = json.upgrades[`to_v${version}`];
+
+      log(upgrade);
+
+      if (upgrade) {
+        statements = [...statements, ...upgrade];
+      } else {
+        break;
       }
 
-      statements = [
-        ...statements,
-        ...[[`PRAGMA user_version = ${upgradeVersion};`, []]],
-      ];
-
-      log(statements);
-
-      return db.sqlBatch(
-        statements,
-        () => {
-          console.log('Populated database OK');
-        },
-        error => {
-          console.log('SQL batch ERROR: ' + error.message);
-        },
-      );
+      version++;
     }
-  });
-}
 
-export function openTable(db, tableName, cb) {
-  db.transaction(txn => {
-    txn.executeSql(
-      `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`,
-      [],
-      cb,
-    );
-  }, errorCB);
+    statements = [
+      ...statements,
+      ...[[`PRAGMA user_version = ${upgradeVersion};`, []]],
+    ];
+
+    log(statements);
+
+    return db
+      .sqlBatch(statements)
+      .then(() => {
+        console.log('Populated database OK');
+      })
+      .catch(error => {
+        console.log('SQL batch ERROR: ' + error.message);
+      });
+  }
 }
 
 export function listAllTables(db, cb) {
   if (!cb) {
-    cb = (txn, results) => {
+    cb = ([txn, results]) => {
       for (let i = 0; i < results.rows.length; i++) {
         console.log(results.rows.item(i));
       }
     };
   }
 
-  db.transaction(function(txn) {
-    txn.executeSql(
-      `
-    SELECT 
-        name
-    FROM 
-        sqlite_master 
-    WHERE 
-        type ='table' AND 
-        name NOT LIKE 'sqlite_%';`,
-      [],
-      cb,
-    );
+  db.transaction(txn => {
+    txn
+      .executeSql(
+        `
+        SELECT 
+            name
+        FROM 
+            sqlite_master 
+        WHERE 
+            type ='table' AND 
+            name NOT LIKE 'sqlite_%';`,
+        [],
+      )
+      .then(cb);
   });
 }
 

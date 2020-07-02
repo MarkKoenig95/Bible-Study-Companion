@@ -117,9 +117,12 @@ function SchedulePage(props) {
   }
 
   function openReadingPopup(
-    bookNumber,
-    chapter,
-    verse,
+    startBookNumber,
+    startChapter,
+    startVerse,
+    endBookNumber,
+    endChapter,
+    endVerse,
     readingPortion,
     isFinished,
     readingDayID,
@@ -127,9 +130,12 @@ function SchedulePage(props) {
   ) {
     setReadingPopup({
       isDisplayed: true,
-      bookNumber: bookNumber,
-      chapter: chapter,
-      verse: verse,
+      startBookNumber: startBookNumber,
+      startChapter: startChapter,
+      startVerse: startVerse,
+      endBookNumber: endBookNumber,
+      endChapter: endChapter,
+      endVerse: endVerse,
       readingPortion: readingPortion,
       isFinished: isFinished,
       readingDayID: readingDayID,
@@ -174,10 +180,12 @@ function SchedulePage(props) {
           onUpdateReadStatus(readingPopup.cb, readingPopup.isFinished);
           closeReadingPopup();
         }}
-        bookNumber={readingPopup.bookNumber}
-        bookName={readingPopup.bookName}
-        chapter={readingPopup.chapter}
-        verse={readingPopup.verse}
+        startBookNumber={readingPopup.startBookNumber}
+        startChapter={readingPopup.startChapter}
+        startVerse={readingPopup.startVerse}
+        endBookNumber={readingPopup.endBookNumber}
+        endChapter={readingPopup.endChapter}
+        endVerse={readingPopup.endVerse}
         readingPortion={readingPopup.readingPortion}
       />
       <View style={styles.header}>
@@ -224,6 +232,9 @@ function SchedulePage(props) {
                   item.StartBookNumber,
                   item.StartChapter,
                   item.StartVerse,
+                  item.EndBookNumber,
+                  item.EndChapter,
+                  item.EndVerse,
                   item.ReadingPortion,
                   item.IsFinished,
                   item.ReadingDayID,

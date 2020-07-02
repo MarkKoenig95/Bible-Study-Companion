@@ -15,6 +15,7 @@ import {
 
 import {openTable} from '../../data/Database/generalTransactions';
 import {store} from '../../data/Store/store.js';
+import {log} from 'react-native-reanimated';
 
 const blankInfo = {
   id: 0,
@@ -25,6 +26,8 @@ const blankInfo = {
 };
 
 const items = [blankInfo];
+
+const prefix = 'readingInfoPopup.';
 
 function loadData(bibleDB, tableName = 'tblBibleBooks') {
   openTable(bibleDB, tableName, function(txn, res) {
@@ -53,6 +56,35 @@ function loadData(bibleDB, tableName = 'tblBibleBooks') {
       }
     });
   });
+}
+
+async function queryMaxInfo(bibleDB, bookNumber) {
+  let maxChapter;
+  let maxVerse;
+
+  await bibleDB
+    .transaction(txn => {
+      txn
+        .executeSql('SELECT MaxChapter FROM qryMaxChapters WHERE BibleBook=?', [
+          bookNumber,
+        ])
+        .then((txn, res) => {
+          maxChapter = res.rows.item(0).MaxChapter;
+          txn
+            .executeSql(
+              'SELECT MaxChapter FROM qryMaxChapters WHERE BibleBook=? AND Chapter=?',
+              [bookNumber, maxChapter],
+            )
+            .then((txn, res) => {
+              maxVerse = res.rows.item(0).MaxVerse;
+            });
+        });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+
+  return {maxChapter: maxChapter, maxVerse: maxVerse};
 }
 
 function formatDate(start, startApproxDesc, end, endApproxDesc, bibleBookID) {
@@ -138,11 +170,48 @@ function makeWOLLink(chapter, verse, bookNumber) {
   return result;
 }
 
+function InfoSegment(props) {
+  const {info, segment} = props;
+
+  const hasInfo = info[segment] ? true : false;
+
+  return (
+    <View>
+      {hasInfo && <SubHeading>{translate(prefix + segment)}:</SubHeading>}
+      {hasInfo && <Body>{info[segment]}</Body>}
+    </View>
+  );
+}
+
+function ReadingInfoSection(props) {
+  const {chapter, verse, bookNumber, readingPortion} = props;
+
+  const href = makeWOLLink(chapter, verse, bookNumber);
+
+  const info = items[bookNumber];
+
+  return (
+    <View style={{marginBottom: 20}}>
+      <SubHeading>{translate(prefix + 'readingPortion')}:</SubHeading>
+      <Link href={href} text={readingPortion} />
+
+      <InfoSegment segment="whereWritten" info={info} />
+
+      <InfoSegment segment="whenWritten" info={info} />
+
+      <InfoSegment segment="timeCovered" info={info} />
+    </View>
+  );
+}
+
 export default function ReadingInfoPopup(props) {
   const {
-    bookNumber,
-    chapter,
-    verse,
+    startBookNumber,
+    startChapter,
+    startVerse,
+    endBookNumber,
+    endChapter,
+    endVerse,
     readingPortion,
     onConfirm,
     popupProps,
@@ -151,31 +220,61 @@ export default function ReadingInfoPopup(props) {
   const globalState = useContext(store);
   const {bibleDB} = globalState.state;
 
+  const bibleBookSpan = endBookNumber - startBookNumber + 1;
+
+  const readingSections = [];
+
+  let tempStartChapter = startChapter;
+  let tempStartVerse = startVerse;
+  let tempEndChapter = endChapter;
+  let tempEndVerse = endVerse;
+
+  for (let i = 0; i < bibleBookSpan; i++) {
+    let bookNumber = startBookNumber + i;
+    let readingPortion;
+
+    if (endBookNumber !== bookNumber) {
+      let {maxChapter, maxVerse} = queryMaxInfo(bibleDB, bookNumber);
+      tempEndChapter = maxChapter;
+      tempEndVerse = maxVerse;
+    } else {
+      tempEndChapter = endChapter;
+      tempEndVerse = endVerse;
+    }
+    readingPortion =
+      translate('bibleBooks.' + bookNumber + '.name') +
+      ' ' +
+      tempStartChapter +
+      ':' +
+      tempStartVerse +
+      ' - ' +
+      tempEndChapter +
+      ':' +
+      tempEndVerse;
+
+    let section = {
+      bookNumber: bookNumber,
+      startChapter: tempEndChapter,
+      startVerse: tempStartVerse,
+      readingPortion: readingPortion,
+    };
+    readingSections.push(section);
+  }
+
   useEffect(() => {
     loadData(bibleDB);
   }, [bibleDB]);
 
-  const href = makeWOLLink(chapter, verse, bookNumber);
-
-  const prefix = 'readingInfoPopup.';
-
-  const info = items[bookNumber];
-
   return (
     <Popup {...popupProps} title={translate(prefix + 'readingInfo')}>
-      <View style={{marginBottom: 20}}>
-        <SubHeading>{translate(prefix + 'readingPortion')}:</SubHeading>
-        <Link href={href} text={readingPortion} />
-
-        <SubHeading>{translate(prefix + 'whereWritten')}:</SubHeading>
-        <Body>{info.whereWritten}</Body>
-
-        <SubHeading>{translate(prefix + 'whenWritten')}:</SubHeading>
-        <Body>{info.whenWritten}</Body>
-
-        <SubHeading>{translate(prefix + 'timeCovered')}:</SubHeading>
-        <Body>{info.timeCovered}</Body>
-      </View>
+      {readingSections.map(section => {
+        <ReadingInfoSection
+          bookNumber={section.bookNumber}
+          chapter={section.chapter}
+          verse={section.verse}
+          readingPortion={section.readingPortion}
+        />;
+      })}
       <IconButton name="check" onPress={onConfirm} />
     </Popup>
   );

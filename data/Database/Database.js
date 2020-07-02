@@ -4,6 +4,9 @@ import bibleInfoDBUpgrade from './upgrades/bible-info-db-upgrade.json';
 import userInfoDBUpgrade from './upgrades/user-info-db-upgrade.json';
 import {upgradeDB} from './generalTransactions';
 
+SQLite.DEBUG(false);
+SQLite.enablePromise(true);
+
 export function errorCB(err) {
   console.log('SQL Error: ' + err.message);
 }
@@ -14,17 +17,20 @@ class Database {
     this.upgradeJSON = upgradeJSON;
   }
 
-  getConnection() {
-    let conn = SQLite.openDatabase(
-      {name: this.databaseName, createFromLocation: 1},
-      db => {
+  async getConnection() {
+    let DB;
+    await SQLite.openDatabase({
+      name: this.databaseName,
+      createFromLocation: 1,
+    })
+      .then(db => {
         console.log('Database', this.databaseName, 'OPENED');
+        DB = db;
         upgradeDB(db, this.upgradeJSON);
-      },
-      errorCB,
-    );
+      })
+      .catch(errorCB);
 
-    return conn;
+    return DB;
   }
 }
 

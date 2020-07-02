@@ -10,16 +10,13 @@ import Text from './text/Text';
 import styles, {colors} from '../styles/styles';
 import {store} from '../data/Store/store.js';
 
-import {openTable} from '../data/Database/generalTransactions';
-
 const items = [];
 
-function loadData(bibleDB, tableName = 'tblBibleBooks') {
-  openTable(bibleDB, tableName, function(txn, res) {
-    txn.executeSql(
-      'SELECT BibleBookID, BookName FROM ' + tableName,
-      [],
-      (txn, results) => {
+async function loadData(bibleDB) {
+  await bibleDB.transaction(txn => {
+    txn
+      .executeSql('SELECT BibleBookID, BookName FROM tblBibleBooks', [])
+      .then(([txn, results]) => {
         for (let i = 0; i < results.rows.length; ++i) {
           let item = results.rows.item(i);
           items.push({
@@ -27,8 +24,7 @@ function loadData(bibleDB, tableName = 'tblBibleBooks') {
             name: translate('bibleBooks.' + item.BibleBookID + '.name'),
           });
         }
-      },
-    );
+      });
   });
 }
 

@@ -11,10 +11,7 @@ import styles from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
 import {openTable} from '../data/Database/generalTransactions';
-import {
-  addSchedule,
-  createtblSchedules,
-} from '../data/Database/scheduleTransactions';
+import {addSchedule} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../localization/localization';
 
@@ -61,10 +58,6 @@ export default function Schedules(props) {
 
   function loadData() {
     openTable(userDB, 'tblSchedules', (txn, res) => {
-      if (!res.rows.length) {
-        txn.executeSql('DROP TABLE IF EXISTS tblSchedules', []);
-        createtblSchedules(txn);
-      }
       txn.executeSql('SELECT * FROM tblSchedules', [], (txn, results) => {
         var temp = [];
 
