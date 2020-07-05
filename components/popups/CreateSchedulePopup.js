@@ -152,9 +152,7 @@ export default function CreateSchedulePopup(props) {
         });
       }
     } else {
-      props.onError(
-        'Please fill in all of the required fields to make a schedule',
-      );
+      props.onError(translate(prefix + 'unfinished'));
     }
   }
 

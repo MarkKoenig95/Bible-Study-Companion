@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import Popup from './Popup';
@@ -23,6 +23,30 @@ export default function MessagePopup(props) {
       )}
     </Popup>
   );
+}
+
+export function useMessagePopup() {
+  const [messagePopup, setMessagePopup] = useState({
+    isDisplayed: false,
+    message: '',
+    title: '',
+  });
+
+  function closeMessagePopup() {
+    setMessagePopup(prevValue => {
+      return {...prevValue, isDisplayed: false};
+    });
+  }
+
+  function openMessagePopup(message, title) {
+    setMessagePopup({isDisplayed: true, message: message, title: title});
+  }
+
+  return {
+    openMessagePopup: openMessagePopup,
+    closeMessagePopup: closeMessagePopup,
+    messagePopup: messagePopup,
+  };
 }
 
 const style = StyleSheet.create({

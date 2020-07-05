@@ -6,8 +6,9 @@ import CustomButton from './CustomButton';
 import Text from '../text/Text';
 
 import styles, {colors} from '../../styles/styles';
+import {formatDate} from '../../data/Database/generalTransactions';
 
-export default function ScheduleDayButton(props) {
+const ScheduleDayButton = React.memo(props => {
   const [isFinished, setIsFinished] = useState(props.isFinished);
 
   const [isDatePassed, setIsDatePassed] = useState(false);
@@ -15,7 +16,7 @@ export default function ScheduleDayButton(props) {
   useEffect(() => {
     let date = Date.parse(completionDate);
     let today = new Date();
-    today = Date.parse(today);
+    today = Date.parse(formatDate(today));
     setIsDatePassed(date < today);
   }, [completionDate]);
 
@@ -68,7 +69,9 @@ export default function ScheduleDayButton(props) {
       </Text>
     </CustomButton>
   );
-}
+});
+
+export default ScheduleDayButton;
 
 const style = StyleSheet.create({
   checkBox: {

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 import {View} from 'react-native';
 
@@ -13,9 +13,9 @@ import {
   dateFormulator,
 } from '../../localization/localization';
 
-import {openTable} from '../../data/Database/generalTransactions';
+import {errorCB, timeKeeper} from '../../data/Database/generalTransactions';
+import {findMaxChapter} from '../../data/Database/scheduleTransactions';
 import {store} from '../../data/Store/store.js';
-import {log} from 'react-native-reanimated';
 
 const blankInfo = {
   id: 0,
@@ -29,16 +29,16 @@ const items = [blankInfo];
 
 const prefix = 'readingInfoPopup.';
 
-function loadData(bibleDB, tableName = 'tblBibleBooks') {
-  openTable(bibleDB, tableName, function(txn, res) {
-    txn.executeSql('SELECT * FROM ' + tableName, [], (txn, results) => {
+async function loadData(bibleDB, tableName = 'tblBibleBooks') {
+  await bibleDB.transaction(txn => {
+    txn.executeSql('SELECT * FROM ' + tableName, []).then(([t, results]) => {
       for (let i = 0; i < results.rows.length; ++i) {
         let item = results.rows.item(i);
-        let prefix = 'bibleBooks.' + item.BibleBookID;
+        let bibleBooksPrefix = 'bibleBooks.' + item.BibleBookID;
         items.push({
           id: item.BibleBookID,
-          name: translate(prefix + '.name'),
-          whereWritten: translate(prefix + '.whereWritten'),
+          name: translate(bibleBooksPrefix + '.name'),
+          whereWritten: translate(bibleBooksPrefix + '.whereWritten'),
           whenWritten: formatDate(
             item.WhenWritten,
             item.WhenWrittenApproxDesc,
@@ -59,30 +59,24 @@ function loadData(bibleDB, tableName = 'tblBibleBooks') {
 }
 
 async function queryMaxInfo(bibleDB, bookNumber) {
-  let maxChapter;
+  //Set maxChapter
+  let maxChapter = await findMaxChapter(bibleDB, bookNumber);
+
   let maxVerse;
 
+  //Use maxChapter to find maxVerse
   await bibleDB
     .transaction(txn => {
       txn
-        .executeSql('SELECT MaxChapter FROM qryMaxChapters WHERE BibleBook=?', [
-          bookNumber,
-        ])
-        .then((txn, res) => {
-          maxChapter = res.rows.item(0).MaxChapter;
-          txn
-            .executeSql(
-              'SELECT MaxChapter FROM qryMaxChapters WHERE BibleBook=? AND Chapter=?',
-              [bookNumber, maxChapter],
-            )
-            .then((txn, res) => {
-              maxVerse = res.rows.item(0).MaxVerse;
-            });
+        .executeSql(
+          'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?',
+          [bookNumber, maxChapter],
+        )
+        .then(([t, res]) => {
+          maxVerse = res.rows.item(0).MaxVerse;
         });
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(errorCB);
 
   return {maxChapter: maxChapter, maxVerse: maxVerse};
 }
@@ -151,8 +145,14 @@ function makeJWORGLink(chapter, verse, bookNumber) {
   return result;
 }
 
-function makeWOLLink(chapter, verse, bookNumber) {
-  const hash = `#study=discover&v=${bookNumber}:${chapter}:${verse}`;
+function makeWOLLink(
+  bookNumber,
+  startChapter,
+  startVerse,
+  endChapter,
+  endVerse,
+) {
+  const hash = `#study=discover&v=${bookNumber}:${startChapter}:${startVerse}-${bookNumber}:${endChapter}:${endVerse}`;
 
   const href = linkFormulator(
     'wol',
@@ -162,7 +162,7 @@ function makeWOLLink(chapter, verse, bookNumber) {
     'lp-e',
     'nwtsty',
     bookNumber,
-    chapter,
+    startChapter,
   );
 
   const result = href + hash;
@@ -184,14 +184,27 @@ function InfoSegment(props) {
 }
 
 function ReadingInfoSection(props) {
-  const {chapter, verse, bookNumber, readingPortion} = props;
+  const {
+    bookNumber,
+    startChapter,
+    startVerse,
+    endChapter,
+    endVerse,
+    readingPortion,
+  } = props;
 
-  const href = makeWOLLink(chapter, verse, bookNumber);
+  const href = makeWOLLink(
+    bookNumber,
+    startChapter,
+    startVerse,
+    endChapter,
+    endVerse,
+  );
 
   const info = items[bookNumber];
 
   return (
-    <View style={{marginBottom: 20}}>
+    <View style={{alignSelf: 'flex-start', margin: 15}}>
       <SubHeading>{translate(prefix + 'readingPortion')}:</SubHeading>
       <Link href={href} text={readingPortion} />
 
@@ -204,43 +217,44 @@ function ReadingInfoSection(props) {
   );
 }
 
-export default function ReadingInfoPopup(props) {
-  const {
-    startBookNumber,
-    startChapter,
-    startVerse,
-    endBookNumber,
-    endChapter,
-    endVerse,
-    readingPortion,
-    onConfirm,
-    popupProps,
-  } = props;
-
-  const globalState = useContext(store);
-  const {bibleDB} = globalState.state;
-
+async function createReadingSections(
+  bibleDB,
+  startBookNumber,
+  startChapter,
+  startVerse,
+  endBookNumber,
+  endChapter,
+  endVerse,
+) {
   const bibleBookSpan = endBookNumber - startBookNumber + 1;
-
   const readingSections = [];
 
-  let tempStartChapter = startChapter;
-  let tempStartVerse = startVerse;
-  let tempEndChapter = endChapter;
-  let tempEndVerse = endVerse;
+  let tempStartChapter;
+  let tempStartVerse;
+  let tempEndChapter;
+  let tempEndVerse;
 
   for (let i = 0; i < bibleBookSpan; i++) {
     let bookNumber = startBookNumber + i;
     let readingPortion;
 
-    if (endBookNumber !== bookNumber) {
-      let {maxChapter, maxVerse} = queryMaxInfo(bibleDB, bookNumber);
-      tempEndChapter = maxChapter;
-      tempEndVerse = maxVerse;
+    if (startBookNumber === bookNumber) {
+      tempStartChapter = startChapter;
+      tempStartVerse = startVerse;
     } else {
+      tempStartChapter = 1;
+      tempStartVerse = 1;
+    }
+
+    if (endBookNumber === bookNumber) {
       tempEndChapter = endChapter;
       tempEndVerse = endVerse;
+    } else {
+      let {maxChapter, maxVerse} = await queryMaxInfo(bibleDB, bookNumber);
+      tempEndChapter = maxChapter;
+      tempEndVerse = maxVerse;
     }
+
     readingPortion =
       translate('bibleBooks.' + bookNumber + '.name') +
       ' ' +
@@ -253,13 +267,41 @@ export default function ReadingInfoPopup(props) {
       tempEndVerse;
 
     let section = {
+      key: i.toString(),
       bookNumber: bookNumber,
-      startChapter: tempEndChapter,
+      startChapter: tempStartChapter,
       startVerse: tempStartVerse,
+      endChapter: tempEndChapter,
+      endVerse: tempEndVerse,
       readingPortion: readingPortion,
     };
     readingSections.push(section);
   }
+
+  return readingSections;
+}
+
+export default function ReadingInfoPopup(props) {
+  const {onConfirm, popupProps} = props;
+
+  const globalState = useContext(store);
+  const {bibleDB} = globalState.state;
+
+  const [readingSections, setReadingSections] = useState([]);
+
+  useEffect(() => {
+    createReadingSections(
+      bibleDB,
+      props.startBookNumber,
+      props.startChapter,
+      props.startVerse,
+      props.endBookNumber,
+      props.endChapter,
+      props.endVerse,
+    ).then(res => {
+      setReadingSections(res);
+    });
+  }, [bibleDB, props]);
 
   useEffect(() => {
     loadData(bibleDB);
@@ -268,14 +310,70 @@ export default function ReadingInfoPopup(props) {
   return (
     <Popup {...popupProps} title={translate(prefix + 'readingInfo')}>
       {readingSections.map(section => {
-        <ReadingInfoSection
-          bookNumber={section.bookNumber}
-          chapter={section.chapter}
-          verse={section.verse}
-          readingPortion={section.readingPortion}
-        />;
+        return (
+          <ReadingInfoSection
+            key={section.key}
+            bookNumber={section.bookNumber}
+            startChapter={section.startChapter}
+            startVerse={section.startVerse}
+            endChapter={section.endChapter}
+            endVerse={section.endVerse}
+            readingPortion={section.readingPortion}
+          />
+        );
       })}
       <IconButton name="check" onPress={onConfirm} />
     </Popup>
   );
+}
+
+export function useReadingInfoPopup() {
+  const [readingPopup, setReadingPopup] = useState({
+    isDisplayed: false,
+    bookNumber: 0,
+    chapter: 0,
+    verse: 0,
+    readingPortion: '',
+  });
+
+  function closeReadingPopup() {
+    setReadingPopup(prevValue => {
+      return {...prevValue, isDisplayed: false};
+    });
+  }
+
+  function openReadingPopup(
+    startBookNumber,
+    startChapter,
+    startVerse,
+    endBookNumber,
+    endChapter,
+    endVerse,
+    readingPortion,
+    isFinished,
+    readingDayID,
+    cb,
+    tableName,
+  ) {
+    setReadingPopup({
+      isDisplayed: true,
+      startBookNumber: startBookNumber,
+      startChapter: startChapter,
+      startVerse: startVerse,
+      endBookNumber: endBookNumber,
+      endChapter: endChapter,
+      endVerse: endVerse,
+      readingPortion: readingPortion,
+      isFinished: isFinished,
+      readingDayID: readingDayID,
+      cb: cb,
+      tableName: tableName,
+    });
+  }
+
+  return {
+    openReadingPopup: openReadingPopup,
+    closeReadingPopup: closeReadingPopup,
+    readingPopup: readingPopup,
+  };
 }

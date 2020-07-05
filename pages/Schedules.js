@@ -5,15 +5,16 @@ import TextButton from '../components/buttons/TextButton';
 
 import IconButton from '../components/buttons/IconButton';
 import CreateSchedulePopup from '../components/popups/CreateSchedulePopup';
-import MessagePopup from '../components/popups/MessagePopup';
+import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 import styles from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
-import {openTable} from '../data/Database/generalTransactions';
+import {loadData} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../localization/localization';
+import LoadingPopup, {useLoadingPopup} from '../components/popups/LoadingPopup';
 
 export default function Schedules(props) {
   const navigation = props.navigation;
@@ -22,18 +23,20 @@ export default function Schedules(props) {
   const {dispatch} = globalState;
   const {bibleDB, userDB, qryMaxVerses, tblVerseIndex} = globalState.state;
 
+  const isCreatingSchedule = props.route.params
+    ? props.route.params.isCreatingSchedule
+    : false;
+
   const [flatListItems, setFlatListItems] = useState([]);
 
   const [
     isCreateSchedulePopupDisplayed,
     setIsCreateSchedulePopupDisplayed,
-  ] = useState(false);
+  ] = useState(isCreatingSchedule);
 
-  const [messagePopup, setMessagePopup] = useState({
-    isDisplayed: false,
-    message: '',
-    title: '',
-  });
+  const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
+
+  const {isLoading, setLoadingPopup} = useLoadingPopup();
 
   //Set delete button in nav bar with appropriate onPress attribute
   props.navigation.setOptions({
@@ -51,25 +54,13 @@ export default function Schedules(props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadData();
+      loadData(userDB, setFlatListItems, 'tblSchedules');
     }, 200);
     return () => clearInterval(interval);
-  });
-
-  function loadData() {
-    openTable(userDB, 'tblSchedules', (txn, res) => {
-      txn.executeSql('SELECT * FROM tblSchedules', [], (txn, results) => {
-        var temp = [];
-
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-        setFlatListItems(temp);
-      });
-    });
-  }
+  }, [userDB]);
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
+    setLoadingPopup(true);
     addSchedule(
       userDB,
       bibleDB,
@@ -78,30 +69,17 @@ export default function Schedules(props) {
       bookId,
       chapter,
       verse,
-      tblVerseIndex,
-      qryMaxVerses,
       () => {
+        setLoadingPopup(false);
         setIsCreateSchedulePopupDisplayed(false);
       },
       openMessagePopup,
     );
   }
 
-  function openMessagePopup(thisMessage, thisTitle) {
-    let message = thisMessage.message || thisMessage;
-    let title = thisTitle || translate('warning');
-
-    setMessagePopup({isDisplayed: true, message: message, title: title});
-  }
-
-  function closeMessagePopup() {
-    setMessagePopup(prevValue => {
-      return {...prevValue, isDisplayed: false};
-    });
-  }
-
   return (
     <SafeAreaView style={styles.container}>
+      <LoadingPopup displayPopup={isLoading} />
       <MessagePopup
         displayPopup={messagePopup.isDisplayed}
         title={messagePopup.title}

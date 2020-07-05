@@ -271,8 +271,10 @@
     "scheduleName": "Schedule Name",
     "scheduleDuration": "Schedule Duration",
     "scheduleDurPhld": "How many years?",
-    "startingVerse": "Starting Verse"
+    "startingVerse": "Starting Verse",
+    "unfinished": "Please fill in all of the required fields to make a schedule"
   },
+  "dailyText": "Daily Text",
   "date": {
     "approxDesc": {
       "approxDate": "{{about}}{{after}}{{before}} {{date}}",
@@ -295,6 +297,9 @@
     }
   },
   "home": "Home",
+  "homePage": {
+    "emptyList": "You have no more readings for the day"
+  },
   "links": {
     "languageTag": "en",
     "www": {
@@ -351,6 +356,7 @@
     "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds.",
     "scheduleNameTakenPrompt": "Please select a schedule name you haven't used"
   },
+  "today": "Today",
   "versePicker": {
     "chapterAbrev": "ch",
     "verseAbrev": "v"

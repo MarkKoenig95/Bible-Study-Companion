@@ -1,6 +1,5 @@
-import 'react-native-gesture-handler';
 import React from 'react';
-import {Platform, ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
@@ -10,7 +9,6 @@ import styles, {colors} from '../../styles/styles';
 export default function Popup(props) {
   return (
     <View
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.background, {display: !props.displayPopup ? 'none' : ''}]}>
       <View
         style={{

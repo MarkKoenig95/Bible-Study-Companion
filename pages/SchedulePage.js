@@ -4,16 +4,18 @@ import {StackActions} from '@react-navigation/native';
 import {translate} from '../localization/localization';
 
 import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
-import MessagePopup from '../components/popups/MessagePopup';
+import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import ReadingRemindersPopup from '../components/popups/ReadingRemindersPopup';
-import ReadingInfoPopup from '../components/popups/ReadingInfoPopup';
+import ReadingInfoPopup, {
+  useReadingInfoPopup,
+} from '../components/popups/ReadingInfoPopup';
 import IconButton from '../components/buttons/IconButton';
 import {CheckBox} from 'react-native-elements';
 
 import styles, {colors} from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
-import {openTable} from '../data/Database/generalTransactions';
+import {loadData} from '../data/Database/generalTransactions';
 import {
   deleteSchedule,
   updateReadStatus,
@@ -25,20 +27,6 @@ import TextButton from '../components/buttons/TextButton';
 
 const prefix = 'schedulePage.';
 
-function loadData(userDB, setState, tableName) {
-  openTable(userDB, tableName, function(txn, res) {
-    txn.executeSql('SELECT * FROM ' + tableName, [], (txn, results) => {
-      var temp = [];
-
-      for (let i = 0; i < results.rows.length; ++i) {
-        temp.push(results.rows.item(i));
-      }
-
-      setState(temp);
-    });
-  });
-}
-
 function SchedulePage(props) {
   const globalState = useContext(store);
   const {userDB} = globalState.state;
@@ -47,19 +35,13 @@ function SchedulePage(props) {
 
   const [completedHidden, setCompletedHidden] = useState(false);
 
-  const [messagePopup, setMessagePopup] = useState({
-    isDisplayed: false,
-    message: '',
-    title: '',
-  });
+  const {
+    readingPopup,
+    openReadingPopup,
+    closeReadingPopup,
+  } = useReadingInfoPopup();
 
-  const [readingPopup, setReadingPopup] = useState({
-    isDisplayed: false,
-    bookNumber: 0,
-    chapter: 0,
-    verse: 0,
-    readingPortion: '',
-  });
+  const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
     false,
@@ -93,7 +75,7 @@ function SchedulePage(props) {
       loadData(userDB, setFlatListItems, tableName);
     }, 200);
     return () => clearInterval(interval);
-  }, [userDB, tableName, scheduleName]);
+  }, [userDB, tableName]);
 
   useEffect(() => {
     getHideCompleted(userDB, scheduleName, setCompletedHidden);
@@ -102,49 +84,6 @@ function SchedulePage(props) {
   function onDeleteSchedule() {
     props.navigation.dispatch(StackActions.pop(1));
     deleteSchedule(userDB, tableName, scheduleName);
-  }
-
-  function closeMessagePopup() {
-    setMessagePopup(prevValue => {
-      return {...prevValue, isDisplayed: false};
-    });
-  }
-
-  function closeReadingPopup() {
-    setReadingPopup(prevValue => {
-      return {...prevValue, isDisplayed: false};
-    });
-  }
-
-  function openReadingPopup(
-    startBookNumber,
-    startChapter,
-    startVerse,
-    endBookNumber,
-    endChapter,
-    endVerse,
-    readingPortion,
-    isFinished,
-    readingDayID,
-    cb,
-  ) {
-    setReadingPopup({
-      isDisplayed: true,
-      startBookNumber: startBookNumber,
-      startChapter: startChapter,
-      startVerse: startVerse,
-      endBookNumber: endBookNumber,
-      endChapter: endChapter,
-      endVerse: endVerse,
-      readingPortion: readingPortion,
-      isFinished: isFinished,
-      readingDayID: readingDayID,
-      cb: cb,
-    });
-  }
-
-  function openMessagePopup(message, title) {
-    setMessagePopup({isDisplayed: true, message: message, title: title});
   }
 
   function onUpdateReadStatus(cb, status, readingDayID) {
