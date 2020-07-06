@@ -296,6 +296,8 @@ async function findVerseIndex(bibleDB, bookId, chapter, verse, isFirstTime) {
     })
     .catch(errorCB);
 
+  log('isFirstTime', isFirstTime);
+
   //If there is no such verse, then we have to adjust
   //(Make sure the recurssive call only runs once too)
   if (!found && isFirstTime) {
@@ -303,7 +305,9 @@ async function findVerseIndex(bibleDB, bookId, chapter, verse, isFirstTime) {
     let maxChapter = await findMaxChapter(bibleDB, bookId);
 
     if (chapter > maxChapter) {
-      chapter = maxChapter;
+      chapter = 1;
+      bookId++;
+      verse = 1;
     }
 
     //Find the verse which most closely matches the one which was requested
@@ -312,7 +316,7 @@ async function findVerseIndex(bibleDB, bookId, chapter, verse, isFirstTime) {
     log('Nearest verse:', ...nearestVerse);
 
     //With a new adjusted verse let's search again to see what the index for this verse is
-    index = await findVerseIndex(bibleDB, qryMaxVerses, ...nearestVerse);
+    index = await findVerseIndex(bibleDB, ...nearestVerse);
   }
 
   return index;
