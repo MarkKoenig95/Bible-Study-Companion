@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {SafeAreaView, View, FlatList, Linking} from 'react-native';
 
 import TextButton from '../components/buttons/TextButton';
@@ -14,7 +14,7 @@ import styles from '../styles/styles';
 import {translate, linkFormulator} from '../localization/localization';
 
 import {store} from '../data/Store/store.js';
-import {setFirstRender} from '../data/Store/actions';
+import {setFirstRender, setUpdatePages} from '../data/Store/actions';
 
 import {
   openTable,
@@ -25,7 +25,6 @@ import {
   getQuery,
 } from '../data/Database/generalTransactions';
 import {
-  runQueries,
   formatScheduleTableName,
   updateReadStatus,
   updateDailyText,
@@ -35,7 +34,12 @@ import IconButton from '../components/buttons/IconButton';
 
 const prefix = 'homePage.';
 
-async function populateHomeList(userDB, setState, openReadingPopup) {
+async function populateHomeList(
+  userDB,
+  setState,
+  openReadingPopup,
+  afterUpdate,
+) {
   let wasSuccessful;
   let result;
   let temp = [];
@@ -65,7 +69,7 @@ async function populateHomeList(userDB, setState, openReadingPopup) {
             let completionDate = todayFormatted;
             let isFinished = false;
             let onLongPress = cb => {
-              updateDailyText(userDB, todayFormatted);
+              updateDailyText(userDB, todayFormatted, afterUpdate);
               cb(true);
             };
             let onPress = () => {
@@ -142,6 +146,7 @@ async function populateHomeList(userDB, setState, openReadingPopup) {
           item.IsFinished,
           item.ReadingDayID,
           tableName,
+          afterUpdate,
         );
       };
       let onPress;
@@ -181,8 +186,15 @@ async function populateHomeList(userDB, setState, openReadingPopup) {
   return wasSuccessful;
 }
 
-function onUpdateReadStatus(userDB, cb, status, readingDayID, tableName) {
-  updateReadStatus(userDB, tableName, readingDayID, !status);
+function onUpdateReadStatus(
+  userDB,
+  cb,
+  status,
+  readingDayID,
+  tableName,
+  afterUpdate,
+) {
+  updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
   cb(!status);
 }
 
@@ -191,7 +203,7 @@ export default function Home(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {userDB, bibleDB, isFirstRender} = globalState.state;
+  const {userDB, updatePages} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -202,25 +214,35 @@ export default function Home(props) {
   } = useReadingInfoPopup();
 
   useEffect(() => {
-    if (isFirstRender) {
-      dispatch(setFirstRender(false));
-      populateHomeList(userDB, setFlatListItems, openReadingPopup).then(
-        wasSuccessful => {
-          if (!wasSuccessful) {
-            populateHomeList(userDB, setFlatListItems, openReadingPopup);
-          }
-        },
-      );
-      runQueries(bibleDB);
-    }
+    console.log('updatePages', updatePages);
+
+    populateHomeList(
+      userDB,
+      setFlatListItems,
+      openReadingPopup,
+      afterUpdate,
+    ).then(wasSuccessful => {
+      if (!wasSuccessful) {
+        populateHomeList(
+          userDB,
+          setFlatListItems,
+          openReadingPopup,
+          afterUpdate,
+        );
+      }
+    });
   }, [
     userDB,
-    bibleDB,
-    dispatch,
-    isFirstRender,
     setFlatListItems,
     openReadingPopup,
+    dispatch,
+    updatePages,
+    afterUpdate,
   ]);
+
+  const afterUpdate = useCallback(() => {
+    dispatch(setUpdatePages(updatePages));
+  }, [dispatch, updatePages]);
 
   let isFlatListEmpty = flatListItems.length === 0 ? true : false;
 
@@ -240,6 +262,7 @@ export default function Home(props) {
             readingPopup.readingDayID,
             readingPopup.isFinished,
             readingPopup.tableName,
+            afterUpdate,
           );
           closeReadingPopup();
         }}

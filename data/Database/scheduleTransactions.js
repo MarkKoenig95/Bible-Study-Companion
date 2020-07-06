@@ -15,7 +15,7 @@ let qryMaxChapters;
 let qryMaxVerses;
 let tblVerseIndex;
 
-export function deleteSchedule(db, tableName, scheduleName) {
+export async function deleteSchedule(db, tableName, scheduleName) {
   db.transaction(txn => {
     txn.executeSql(
       `DELETE FROM tblSchedules WHERE ScheduleName='${scheduleName}'`,
@@ -41,22 +41,22 @@ export function clearSchedules(txn) {
   txn.executeSql('DELETE FROM tblSchedules', []);
 }
 
-export function updateReadStatus(db, tableName, id, status) {
+export function updateReadStatus(db, tableName, id, status, afterUpdate) {
   db.transaction(txn => {
     let sql = `UPDATE ${tableName}
     SET IsFinished = ${status}
     WHERE ReadingDayID=${id};`;
-    txn.executeSql(sql, []);
+    txn.executeSql(sql, []).then(afterUpdate());
   }).catch(errorCB);
 }
 
-export function updateDailyText(userDB, date) {
+export function updateDailyText(userDB, date, afterUpdate) {
   userDB
     .transaction(txn => {
       let sql = `UPDATE tblDates
                   SET Date = ?
                   WHERE Name="DailyText";`;
-      txn.executeSql(sql, [date]);
+      txn.executeSql(sql, [date]).then(afterUpdate());
     })
     .catch(errorCB);
 }
@@ -637,7 +637,7 @@ async function generateSequentialSchedule(
 
   userDB
     .transaction(txn => {
-      txn.executeSql(sql, readingPortions, (tx, results) => {
+      txn.executeSql(sql, readingPortions).then(([tx, results]) => {
         if (results.rowsAffected > 0) {
           console.log('Insert success');
           if (adjustedVerseMessage) {

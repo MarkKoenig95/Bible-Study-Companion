@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import Popup from './Popup';
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
+
+import {translate} from '../../localization/localization';
 
 import styles from '../../styles/styles';
 
@@ -32,15 +34,18 @@ export function useMessagePopup() {
     title: '',
   });
 
-  function closeMessagePopup() {
+  const closeMessagePopup = useCallback(() => {
     setMessagePopup(prevValue => {
       return {...prevValue, isDisplayed: false};
     });
-  }
+  }, []);
 
-  function openMessagePopup(message, title) {
+  const openMessagePopup = useCallback((message, title) => {
+    if (!title) {
+      title = translate('warning');
+    }
     setMessagePopup({isDisplayed: true, message: message, title: title});
-  }
+  }, []);
 
   return {
     openMessagePopup: openMessagePopup,

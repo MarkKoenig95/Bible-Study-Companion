@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 
 import {View} from 'react-native';
 
@@ -336,40 +336,43 @@ export function useReadingInfoPopup() {
     readingPortion: '',
   });
 
-  function closeReadingPopup() {
+  const closeReadingPopup = useCallback(() => {
     setReadingPopup(prevValue => {
       return {...prevValue, isDisplayed: false};
     });
-  }
+  }, []);
 
-  function openReadingPopup(
-    startBookNumber,
-    startChapter,
-    startVerse,
-    endBookNumber,
-    endChapter,
-    endVerse,
-    readingPortion,
-    isFinished,
-    readingDayID,
-    cb,
-    tableName,
-  ) {
-    setReadingPopup({
-      isDisplayed: true,
-      startBookNumber: startBookNumber,
-      startChapter: startChapter,
-      startVerse: startVerse,
-      endBookNumber: endBookNumber,
-      endChapter: endChapter,
-      endVerse: endVerse,
-      readingPortion: readingPortion,
-      isFinished: isFinished,
-      readingDayID: readingDayID,
-      cb: cb,
-      tableName: tableName,
-    });
-  }
+  const openReadingPopup = useCallback(
+    (
+      startBookNumber,
+      startChapter,
+      startVerse,
+      endBookNumber,
+      endChapter,
+      endVerse,
+      readingPortion,
+      isFinished,
+      readingDayID,
+      cb,
+      tableName,
+    ) => {
+      setReadingPopup({
+        isDisplayed: true,
+        startBookNumber: startBookNumber,
+        startChapter: startChapter,
+        startVerse: startVerse,
+        endBookNumber: endBookNumber,
+        endChapter: endChapter,
+        endVerse: endVerse,
+        readingPortion: readingPortion,
+        isFinished: isFinished,
+        readingDayID: readingDayID,
+        cb: cb,
+        tableName: tableName,
+      });
+    },
+    [],
+  );
 
   return {
     openReadingPopup: openReadingPopup,

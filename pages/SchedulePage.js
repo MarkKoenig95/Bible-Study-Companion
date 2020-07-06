@@ -15,6 +15,7 @@ import {CheckBox} from 'react-native-elements';
 import styles, {colors} from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
+import {setUpdatePages} from '../data/Store/actions';
 import {loadData} from '../data/Database/generalTransactions';
 import {
   deleteSchedule,
@@ -29,7 +30,8 @@ const prefix = 'schedulePage.';
 
 function SchedulePage(props) {
   const globalState = useContext(store);
-  const {userDB} = globalState.state;
+  const {dispatch} = globalState;
+  const {userDB, updatePages} = globalState.state;
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -70,12 +72,14 @@ function SchedulePage(props) {
     ),
   });
 
+  const afterUpdate = () => {
+    dispatch(setUpdatePages(updatePages));
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      loadData(userDB, setFlatListItems, tableName);
-    }, 200);
-    return () => clearInterval(interval);
-  }, [userDB, tableName]);
+    console.log('updatePages', updatePages);
+    loadData(userDB, setFlatListItems, tableName);
+  }, [userDB, tableName, setFlatListItems, updatePages]);
 
   useEffect(() => {
     getHideCompleted(userDB, scheduleName, setCompletedHidden);
@@ -83,13 +87,15 @@ function SchedulePage(props) {
 
   function onDeleteSchedule() {
     props.navigation.dispatch(StackActions.pop(1));
-    deleteSchedule(userDB, tableName, scheduleName);
+    deleteSchedule(userDB, tableName, scheduleName).then(() => {
+      afterUpdate();
+    });
   }
 
   function onUpdateReadStatus(cb, status, readingDayID) {
     readingDayID = readingDayID || readingPopup.readingDayID;
 
-    updateReadStatus(userDB, tableName, readingDayID, !status);
+    updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
     cb(!status);
   }
 

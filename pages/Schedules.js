@@ -9,7 +9,8 @@ import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 import styles from '../styles/styles';
 
-import {store} from '../data/Store/store.js';
+import {store} from '../data/Store/store';
+import {setUpdatePages} from '../data/Store/actions';
 import {loadData} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
@@ -21,7 +22,7 @@ export default function Schedules(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {bibleDB, userDB, qryMaxVerses, tblVerseIndex} = globalState.state;
+  const {bibleDB, userDB, updatePages} = globalState.state;
 
   const isCreatingSchedule = props.route.params
     ? props.route.params.isCreatingSchedule
@@ -53,11 +54,14 @@ export default function Schedules(props) {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      loadData(userDB, setFlatListItems, 'tblSchedules');
-    }, 200);
-    return () => clearInterval(interval);
-  }, [userDB]);
+    console.log('updatePages', updatePages);
+
+    loadData(userDB, setFlatListItems, 'tblSchedules');
+  }, [userDB, setFlatListItems, updatePages]);
+
+  const afterUpdate = () => {
+    dispatch(setUpdatePages(updatePages));
+  };
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
     setLoadingPopup(true);
@@ -70,10 +74,14 @@ export default function Schedules(props) {
       chapter,
       verse,
       () => {
-        setLoadingPopup(false);
+        afterUpdate();
         setIsCreateSchedulePopupDisplayed(false);
+        setLoadingPopup(false);
       },
-      openMessagePopup,
+      message => {
+        setLoadingPopup(false);
+        openMessagePopup(message);
+      },
     );
   }
 
