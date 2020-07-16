@@ -77,7 +77,6 @@ function SchedulePage(props) {
   };
 
   useEffect(() => {
-    console.log('updatePages', updatePages);
     loadData(userDB, setFlatListItems, tableName);
   }, [userDB, tableName, setFlatListItems, updatePages]);
 

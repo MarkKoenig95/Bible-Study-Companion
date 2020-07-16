@@ -8,6 +8,14 @@ export function setUpdatePages(prevValue) {
   return updateValue('updatePages', prevValue + 1);
 }
 
+export function setUserDB(userDB) {
+  return updateValue('userDB', userDB);
+}
+
+export function setBibleDB(bibleDB) {
+  return updateValue('bibleDB', bibleDB);
+}
+
 function updateValue(key, value) {
   return {type: UPDATE_VALUE, key: key, value: value};
 }

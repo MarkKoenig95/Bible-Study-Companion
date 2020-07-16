@@ -1,31 +1,17 @@
 import React, {createContext, useReducer} from 'react';
-import {BibleInfoDB, UserInfoDB} from '../Database/Database';
 import {UPDATE_VALUE} from './actions';
 
-async function initializeData() {
-  const bibleDB = await BibleInfoDB.getConnection();
-  const userDB = await UserInfoDB.getConnection();
-
-  const initialState = {
-    bibleDB: bibleDB,
-    userDB: userDB,
-    isFirstRender: true,
-  };
-
-  return initialState;
-}
-
-let initialState;
-initializeData().then(res => {
-  initialState = res;
-});
+let initialState = {
+  bibleDB: null,
+  userDB: null,
+  isFirstRender: true,
+  updatePages: 0,
+};
 
 const store = createContext(initialState);
 const {Provider} = store;
 
-const StateProvider = ({children}) => {
-  let initState = initialState;
-
+function StateProvider({children}) {
   const [state, dispatch] = useReducer((state, action) => {
     const {type, key, value} = action;
     switch (type) {
@@ -34,9 +20,9 @@ const StateProvider = ({children}) => {
       default:
         throw new Error();
     }
-  }, initState);
+  }, initialState);
 
   return <Provider value={{state, dispatch}}>{children}</Provider>;
-};
+}
 
 export {store, StateProvider};

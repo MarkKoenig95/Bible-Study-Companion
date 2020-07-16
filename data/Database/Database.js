@@ -23,10 +23,11 @@ class Database {
       name: this.databaseName,
       createFromLocation: 1,
     })
-      .then(db => {
-        console.log('Database', this.databaseName, 'OPENED');
-        DB = db;
-        upgradeDB(db, this.upgradeJSON);
+      .then(async db => {
+        await upgradeDB(db, this.upgradeJSON).then(res => {
+          console.log('Database', this.databaseName, 'OPENED');
+          DB = res;
+        });
       })
       .catch(errorCB);
 

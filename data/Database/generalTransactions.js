@@ -1,4 +1,8 @@
 const shouldLog = false;
+import SQLite from 'react-native-sqlite-storage';
+import RNFS from 'react-native-fs';
+
+SQLite.enablePromise(true);
 
 export function log() {
   if (shouldLog) {
@@ -47,22 +51,24 @@ export function formatDate(date) {
 }
 
 export async function loadData(db, setState, tableName) {
-  let results;
-  await db
-    .transaction(txn => {
-      txn.executeSql('SELECT * FROM ' + tableName, []).then(([t, res]) => {
-        results = res;
-      });
-    })
-    .catch(errorCB);
+  if (db) {
+    let results;
+    await db
+      .transaction(txn => {
+        txn.executeSql('SELECT * FROM ' + tableName, []).then(([t, res]) => {
+          results = res;
+        });
+      })
+      .catch(errorCB);
 
-  var temp = [];
+    var temp = [];
 
-  for (let i = 0; i < results.rows.length; ++i) {
-    temp.push(results.rows.item(i));
+    for (let i = 0; i < results.rows.length; ++i) {
+      temp.push(results.rows.item(i));
+    }
+
+    setState(temp);
   }
-
-  setState(temp);
 }
 
 export async function getVersion(db) {
@@ -92,7 +98,37 @@ export async function getQuery(bibleDB, sql) {
   return result;
 }
 
+async function replaceDB(db) {
+  let dbName = db.dbname;
+  let DB;
+
+  // create a path you want to delete
+  var path = RNFS.LibraryDirectoryPath + '/LocalDatabase/' + dbName;
+
+  await RNFS.unlink(path)
+    .then(() => {
+      console.log('FILE DELETED');
+    })
+    // `unlink` will throw an error, if the item to unlink does not exist
+    .catch(err => {
+      console.log(err.message);
+    });
+
+  await SQLite.openDatabase({
+    name: dbName,
+    createFromLocation: 1,
+  })
+    .then(newDB => {
+      log('Replaced old database with', newDB);
+      DB = newDB;
+    })
+    .catch(errorCB);
+
+  return DB;
+}
+
 export async function upgradeDB(db, upgradeJSON) {
+  let DB;
   let res = await getVersion(db);
 
   var json = JSON.parse(
@@ -104,7 +140,7 @@ export async function upgradeDB(db, upgradeJSON) {
     }),
   );
 
-  let upgradeVersion = json.version;
+  let upgradeVersion = upgradeJSON.version;
   let userVersion = res.rows.item(0).user_version;
 
   log('upgradeVersion', upgradeVersion, 'userVersion', userVersion);
@@ -112,7 +148,16 @@ export async function upgradeDB(db, upgradeJSON) {
   if (userVersion < upgradeVersion) {
     let statements = [];
     let version = upgradeVersion - (upgradeVersion - userVersion) + 1;
-    let length = Object.keys(upgradeJSON.upgrades).length;
+
+    if (!upgradeJSON.upgrades) {
+      log('Replacing DB:', db.dbname, '.....');
+      await replaceDB(db, upgradeJSON.name).then(res => {
+        DB = res;
+      });
+      return DB;
+    }
+
+    let length = Object.keys(json.upgrades).length;
 
     log('version', version, 'length', length);
 
@@ -137,7 +182,7 @@ export async function upgradeDB(db, upgradeJSON) {
 
     log(statements);
 
-    return db
+    await db
       .sqlBatch(statements)
       .then(() => {
         console.log('Populated database OK');
@@ -146,6 +191,8 @@ export async function upgradeDB(db, upgradeJSON) {
         console.log('SQL batch ERROR: ' + error.message);
       });
   }
+
+  return db;
 }
 
 export function listAllTables(db, cb) {

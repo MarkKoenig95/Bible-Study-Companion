@@ -290,21 +290,25 @@ export default function ReadingInfoPopup(props) {
   const [readingSections, setReadingSections] = useState([]);
 
   useEffect(() => {
-    createReadingSections(
-      bibleDB,
-      props.startBookNumber,
-      props.startChapter,
-      props.startVerse,
-      props.endBookNumber,
-      props.endChapter,
-      props.endVerse,
-    ).then(res => {
-      setReadingSections(res);
-    });
+    if (bibleDB) {
+      createReadingSections(
+        bibleDB,
+        props.startBookNumber,
+        props.startChapter,
+        props.startVerse,
+        props.endBookNumber,
+        props.endChapter,
+        props.endVerse,
+      ).then(res => {
+        setReadingSections(res);
+      });
+    }
   }, [bibleDB, props]);
 
   useEffect(() => {
-    loadData(bibleDB);
+    if (bibleDB) {
+      loadData(bibleDB);
+    }
   }, [bibleDB]);
 
   return (

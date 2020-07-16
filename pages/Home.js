@@ -40,7 +40,6 @@ async function populateHomeList(
   openReadingPopup,
   afterUpdate,
 ) {
-  let wasSuccessful;
   let result;
   let temp = [];
   let date = new Date();
@@ -52,17 +51,7 @@ async function populateHomeList(
       txn
         .executeSql('SELECT * FROM tblDates WHERE Name="DailyText"')
         .then(([t, res]) => {
-          wasSuccessful = true;
           let storedDate = Date.parse(res.rows.item(0).Date);
-
-          console.log(
-            res.rows.item(0).Date,
-            storedDate,
-            new Date(),
-            today,
-            formatDate(new Date()),
-            todayFormatted,
-          );
 
           if (storedDate < today) {
             let readingPortion = translate('dailyText');
@@ -88,7 +77,6 @@ async function populateHomeList(
         });
     })
     .catch(err => {
-      wasSuccessful = false;
       errorCB(err);
     });
 
@@ -97,14 +85,10 @@ async function populateHomeList(
     .transaction(txn => {
       let sql = 'SELECT * FROM tblSchedules';
       txn.executeSql(sql, []).then(([t, res]) => {
-        if (wasSuccessful) {
-          wasSuccessful = true;
-        }
         result = res;
       });
     })
     .catch(err => {
-      wasSuccessful = false;
       errorCB(err);
     });
 
@@ -123,14 +107,10 @@ async function populateHomeList(
                   ORDER BY ReadingDayID ASC
                   LIMIT 1`;
         txn.executeSql(sql, []).then(([txn, res]) => {
-          if (wasSuccessful) {
-            wasSuccessful = true;
-          }
           item = res.rows.item(0);
         });
       })
       .catch(err => {
-        wasSuccessful = false;
         errorCB(err);
       });
 
@@ -182,8 +162,8 @@ async function populateHomeList(
       });
     }
   }
+
   setState(temp);
-  return wasSuccessful;
 }
 
 function onUpdateReadStatus(
@@ -214,23 +194,9 @@ export default function Home(props) {
   } = useReadingInfoPopup();
 
   useEffect(() => {
-    console.log('updatePages', updatePages);
-
-    populateHomeList(
-      userDB,
-      setFlatListItems,
-      openReadingPopup,
-      afterUpdate,
-    ).then(wasSuccessful => {
-      if (!wasSuccessful) {
-        populateHomeList(
-          userDB,
-          setFlatListItems,
-          openReadingPopup,
-          afterUpdate,
-        );
-      }
-    });
+    if (userDB) {
+      populateHomeList(userDB, setFlatListItems, openReadingPopup, afterUpdate);
+    }
   }, [
     userDB,
     setFlatListItems,

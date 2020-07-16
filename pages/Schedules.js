@@ -54,8 +54,6 @@ export default function Schedules(props) {
   });
 
   useEffect(() => {
-    console.log('updatePages', updatePages);
-
     loadData(userDB, setFlatListItems, 'tblSchedules');
   }, [userDB, setFlatListItems, updatePages]);
 

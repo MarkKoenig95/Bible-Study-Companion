@@ -7,8 +7,14 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {store} from './data/Store/store';
-import {setFirstRender, setUpdatePages} from './data/Store/actions';
+import {
+  setFirstRender,
+  setUpdatePages,
+  setUserDB,
+  setBibleDB,
+} from './data/Store/actions';
 import {runQueries} from './data/Database/scheduleTransactions';
+import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
 
 import {useLocalization, translate} from './localization/localization';
 
@@ -58,11 +64,31 @@ function SchedulesStack() {
   );
 }
 
+async function initializeData() {
+  const bibleDB = await BibleInfoDB.getConnection();
+  const userDB = await UserInfoDB.getConnection();
+
+  const data = {
+    bibleDB: bibleDB,
+    userDB: userDB,
+  };
+
+  return data;
+}
+
 export default function AppContainer() {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {bibleDB, isFirstRender, updatePages} = globalState.state;
+  const {isFirstRender, updatePages} = globalState.state;
+
+  useEffect(() => {
+    initializeData().then(data => {
+      dispatch(setUserDB(data.userDB));
+      dispatch(setBibleDB(data.bibleDB));
+      runQueries(data.bibleDB);
+    });
+  }, [dispatch]);
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -79,9 +105,8 @@ export default function AppContainer() {
     if (isFirstRender) {
       dispatch(setFirstRender(false));
       dispatch(setUpdatePages(0));
-      runQueries(bibleDB);
     }
-  }, [bibleDB, dispatch, isFirstRender]);
+  }, [dispatch, isFirstRender]);
 
   const _handleAppStateChange = nextAppState => {
     if (
