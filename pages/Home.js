@@ -225,8 +225,8 @@ export default function Home(props) {
           onUpdateReadStatus(
             userDB,
             readingPopup.cb,
-            readingPopup.readingDayID,
             readingPopup.isFinished,
+            readingPopup.readingDayID,
             readingPopup.tableName,
             afterUpdate,
           );
@@ -255,6 +255,7 @@ export default function Home(props) {
                 completionDate={item.completionDate}
                 completedHidden={true}
                 isFinished={item.isFinished ? true : false}
+                update={updatePages}
                 onLongPress={item.onLongPress}
                 onPress={item.onPress}
               />

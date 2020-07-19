@@ -168,6 +168,7 @@ function SchedulePage(props) {
               completionDate={item.CompletionDate}
               completedHidden={completedHidden}
               isFinished={item.IsFinished ? true : false}
+              update={updatePages}
               onLongPress={cb => {
                 onUpdateReadStatus(cb, item.IsFinished, item.ReadingDayID);
               }}
