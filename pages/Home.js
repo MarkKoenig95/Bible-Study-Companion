@@ -225,8 +225,8 @@ export default function Home(props) {
           onUpdateReadStatus(
             userDB,
             readingPopup.cb,
-            readingPopup.readingDayID,
             readingPopup.isFinished,
+            readingPopup.readingDayID,
             readingPopup.tableName,
             afterUpdate,
           );

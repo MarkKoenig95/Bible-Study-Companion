@@ -93,20 +93,33 @@ export default function AppContainer() {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
+  const [refresh, setRefresh] = useState(updatePages);
+
   useEffect(() => {
     AppState.addEventListener('change', _handleAppStateChange);
 
     return () => {
       AppState.removeEventListener('change', _handleAppStateChange);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //Fixes bug with app state change update
   useEffect(() => {
+    if (updatePages !== refresh) {
+      dispatch(setUpdatePages(refresh));
+    }
+  }, [dispatch, updatePages, refresh]);
+
+  useEffect(() => {
+    setRefresh(prev => {
+      return prev + 1;
+    });
     if (isFirstRender) {
       dispatch(setFirstRender(false));
       dispatch(setUpdatePages(0));
     }
-  }, [dispatch, isFirstRender]);
+  }, [dispatch, isFirstRender, setRefresh, updatePages]);
 
   const _handleAppStateChange = nextAppState => {
     if (

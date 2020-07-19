@@ -10,8 +10,14 @@ import {formatDate} from '../../data/Database/generalTransactions';
 
 const ScheduleDayButton = React.memo(props => {
   const [isFinished, setIsFinished] = useState(props.isFinished);
-
   const [isDatePassed, setIsDatePassed] = useState(false);
+
+  useEffect(() => {
+    if (props.isFinished !== isFinished) {
+      setIsFinished(props.isFinished);
+    }
+  }, [props, isFinished]);
+
   let {completionDate} = props;
   useEffect(() => {
     let date = Date.parse(completionDate);
