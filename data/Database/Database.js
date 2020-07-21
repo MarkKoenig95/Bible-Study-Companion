@@ -12,20 +12,17 @@ export function errorCB(err) {
 }
 
 class Database {
-  constructor(databaseName, upgradeJSON) {
-    this.databaseName = databaseName;
+  constructor(openArgs, upgradeJSON) {
+    this.openArgs = openArgs;
     this.upgradeJSON = upgradeJSON;
   }
 
   async getConnection() {
     let DB;
-    await SQLite.openDatabase({
-      name: this.databaseName,
-      createFromLocation: 1,
-    })
+    await SQLite.openDatabase(this.openArgs)
       .then(async db => {
         await upgradeDB(db, this.upgradeJSON).then(res => {
-          console.log('Database', this.databaseName, 'OPENED');
+          console.log('Database', this.openArgs.name, 'OPENED');
           DB = res;
         });
       })
@@ -36,7 +33,16 @@ class Database {
 }
 
 export const BibleInfoDB = new Database(
-  'BibleStudyCompanion.db',
+  {
+    name: 'BibleStudyCompanion.db',
+    createFromLocation: 1,
+  },
   bibleInfoDBUpgrade,
 );
-export const UserInfoDB = new Database('UserInfo.db', userInfoDBUpgrade);
+export const UserInfoDB = new Database(
+  {
+    name: 'UserInfo.db',
+    location: 'default',
+  },
+  userInfoDBUpgrade,
+);

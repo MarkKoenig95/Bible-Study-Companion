@@ -1,6 +1,7 @@
 const shouldLog = false;
 import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
+import {LocalDBPath, PrePopulatedDBPath} from '../fileSystem';
 
 SQLite.enablePromise(true);
 
@@ -20,6 +21,7 @@ function createSqlString() {
 }
 
 export function createPlaceholdersFromArray(array) {
+  let values = [];
   const thisFunc = innerArray => {
     let innerString = innerArray.map(() => '?').join(',');
 
@@ -31,11 +33,15 @@ export function createPlaceholdersFromArray(array) {
 
   if (Array.isArray(array[0])) {
     placeholders = array.map(thisFunc).join(',');
+    array.map(innerArray => {
+      innerArray.map(value => values.push(value));
+    });
   } else {
     thisFunc(array);
+    values = [...array];
   }
 
-  return placeholders;
+  return {placeholders, values};
 }
 
 export function timeKeeper(message) {
@@ -102,14 +108,12 @@ async function replaceDB(db) {
   let dbName = db.dbname;
   let DB;
 
-  // create a path you want to delete
-  var path = RNFS.LibraryDirectoryPath + '/LocalDatabase/' + dbName;
+  var path = LocalDBPath + '/' + dbName;
 
   await RNFS.unlink(path)
     .then(() => {
       console.log('FILE DELETED');
     })
-    // `unlink` will throw an error, if the item to unlink does not exist
     .catch(err => {
       console.log(err.message);
     });
@@ -130,6 +134,8 @@ async function replaceDB(db) {
 export async function upgradeDB(db, upgradeJSON) {
   let DB;
   let res = await getVersion(db);
+
+  log('Upgrading', db.dbname);
 
   var json = JSON.parse(
     JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
@@ -236,6 +242,18 @@ export function searchQuery(
   var startPointer = 0;
   var endPointer = query.rows.length;
 
+  log(
+    'Search query:',
+    'safetyCheck=',
+    safetyCheck,
+    'startPointer=',
+    startPointer,
+    'endPointer=',
+    endPointer,
+    'found=',
+    found,
+  );
+
   while (!found && safetyCheck < safetyBoundary) {
     let isHigh;
     prevIndex = index;
@@ -284,24 +302,22 @@ export function searchQuery(
     }
     safetyCheck++;
 
-    log(
-      'Search query:',
-      'safetyCheck=',
-      safetyCheck,
-      'startPointer=',
-      startPointer,
-      'endPointer=',
-      endPointer,
-      'found=',
-      found,
-      'isHigh=',
-      isHigh,
-    );
-
     if (safetyCheck >= safetyBoundary) {
       console.log('Exited with safety check');
     }
   }
+
+  log(
+    'Search query:',
+    'safetyCheck=',
+    safetyCheck,
+    'startPointer=',
+    startPointer,
+    'endPointer=',
+    endPointer,
+    'found=',
+    found,
+  );
 
   return index;
 }

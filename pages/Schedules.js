@@ -15,7 +15,7 @@ import {loadData} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../localization/localization';
-import LoadingPopup, {useLoadingPopup} from '../components/popups/LoadingPopup';
+import LoadingPopup from '../components/popups/LoadingPopup';
 
 export default function Schedules(props) {
   const navigation = props.navigation;
@@ -37,7 +37,7 @@ export default function Schedules(props) {
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
-  const {isLoading, setLoadingPopup} = useLoadingPopup();
+  const [isLoading, setLoadingPopup] = useState(false);
 
   //Set delete button in nav bar with appropriate onPress attribute
   props.navigation.setOptions({
@@ -62,6 +62,7 @@ export default function Schedules(props) {
   };
 
   function onAddSchedule(scheduleName, duration, bookId, chapter, verse) {
+    setIsCreateSchedulePopupDisplayed(false);
     setLoadingPopup(true);
     addSchedule(
       userDB,
@@ -73,12 +74,16 @@ export default function Schedules(props) {
       verse,
       () => {
         afterUpdate();
-        setIsCreateSchedulePopupDisplayed(false);
-        setLoadingPopup(false);
+        //If there is no timeout the initial setLoading popup can race with this setLoadingPopup and it will never close
+        setTimeout(() => {
+          setLoadingPopup(false);
+        }, 500);
       },
       message => {
-        setLoadingPopup(false);
         openMessagePopup(message);
+        setTimeout(() => {
+          setLoadingPopup(false);
+        }, 500);
       },
     );
   }

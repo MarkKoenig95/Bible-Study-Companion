@@ -42,9 +42,10 @@ export function clearSchedules(txn) {
 }
 
 export function updateReadStatus(db, tableName, id, status, afterUpdate) {
+  let bool = status ? 1 : 0;
   db.transaction(txn => {
     let sql = `UPDATE ${tableName}
-    SET IsFinished = ${status}
+    SET IsFinished=${bool}
     WHERE ReadingDayID=${id};`;
     txn.executeSql(sql, []).then(afterUpdate());
   }).catch(errorCB);
@@ -623,33 +624,79 @@ async function generateSequentialSchedule(
 
   timeKeeper('Ended at.....');
 
-  let placeholders = createPlaceholdersFromArray(readingPortions);
+  await insertReadingPortions(userDB, readingPortions, tableName).then(
+    wasSucessful => {
+      if (wasSucessful) {
+        console.log('Every insert was successful');
+        if (adjustedVerseMessage) {
+          messageCB(adjustedVerseMessage);
+        }
+        successCB();
+      } else {
+        console.log('Insert failed');
+      }
+    },
+  );
+}
 
+async function insertReadingPortions(
+  userDB,
+  readingPortions,
+  tableName,
+  startIndex = 0,
+) {
+  let length = readingPortions.length;
   let temp = [];
+  let endIndex;
+  let isEnd;
+  let wasSuccessful = true;
 
-  readingPortions.map(innerArray => {
-    innerArray.map(value => temp.push(value));
-  });
+  if (length > 50) {
+    if (length - startIndex > 50) {
+      endIndex = startIndex + 50;
+      isEnd = false;
+    } else {
+      endIndex = length - 1;
+      isEnd = true;
+    }
+    temp = readingPortions.slice(startIndex, endIndex);
+    startIndex = endIndex;
+  } else {
+    temp = [...readingPortions];
+    isEnd = true;
+  }
 
-  readingPortions = temp;
+  let {placeholders, values} = createPlaceholdersFromArray(temp);
 
   let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders}`;
 
-  userDB
+  await userDB
     .transaction(txn => {
-      txn.executeSql(sql, readingPortions).then(([tx, results]) => {
+      txn.executeSql(sql, values).then(([tx, results]) => {
         if (results.rowsAffected > 0) {
           console.log('Insert success');
-          if (adjustedVerseMessage) {
-            messageCB(adjustedVerseMessage);
-          }
-          successCB();
         } else {
+          wasSuccessful = false;
           console.log('Insert failed');
         }
       });
     })
     .catch(errorCB);
+
+  if (!isEnd) {
+    await insertReadingPortions(
+      userDB,
+      readingPortions,
+      tableName,
+      startIndex,
+    ).then(result => {
+      if (wasSuccessful) {
+        wasSuccessful = result;
+      }
+    });
+  }
+
+  return wasSuccessful;
 }
 
 function generateScheduleList(userDB) {

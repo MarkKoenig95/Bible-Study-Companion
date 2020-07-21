@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-import {Keyboard} from 'react-native';
+import React, {useState} from 'react';
 import {translate} from '../../localization/localization';
 
 import IconButton from '../buttons/IconButton';
@@ -12,24 +11,6 @@ const debug = false;
 const prefix = 'createSchedulePopup.';
 
 export default function CreateSchedulePopup(props) {
-  useEffect(() => {
-    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
-    Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
-
-    return () => {
-      Keyboard.removeListener('keyboardWillShow', _keyboardWillShow);
-      Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
-    };
-  }, []);
-
-  const _keyboardWillShow = () => {
-    setMarginTop(10);
-  };
-
-  const _keyboardWillHide = () => {
-    setMarginTop(100);
-  };
-
   //State and defaults for schedule info inputs
   const defaults = {
     scheduleName: '',
@@ -49,8 +30,6 @@ export default function CreateSchedulePopup(props) {
     verse: defaults.verse,
     selectedItems: defaults.selectedItems,
   });
-
-  const [marginTop, setMarginTop] = useState(null);
 
   function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
     let result = '';
@@ -78,32 +57,6 @@ export default function CreateSchedulePopup(props) {
     return result;
   }
 
-  function sanitizeLetter(prevValue, newValue) {
-    let result = '';
-    newValue = newValue || '';
-    prevValue = prevValue || '';
-
-    let change = newValue.length - prevValue.length;
-
-    if (change < 1) {
-      result = newValue;
-    } else {
-      let newChar = newValue.slice(newValue.length - 1);
-
-      if (
-        (newChar >= 'a' && newChar <= 'z') ||
-        (newChar >= 'A' && newChar <= 'Z') ||
-        newChar === ' '
-      ) {
-        result = newValue;
-      } else {
-        result = prevValue;
-      }
-    }
-
-    return result;
-  }
-
   function onVersePickerChange(key, value) {
     if (key !== 'selectedItems') {
       value = sanitizeNumber(versePicker[key], value, 1, 200);
@@ -115,7 +68,6 @@ export default function CreateSchedulePopup(props) {
   }
 
   function onScheduleNameChange(text) {
-    let sanitizedState = sanitizeLetter(scheduleName, text);
     setScheduleName(text);
   }
 
@@ -125,7 +77,6 @@ export default function CreateSchedulePopup(props) {
   }
 
   function onAddPress() {
-    //TODO: Check input values to validate
     if (
       versePicker.selectedItems &&
       scheduleName &&
@@ -158,8 +109,6 @@ export default function CreateSchedulePopup(props) {
 
   return (
     <Popup
-      flatView
-      style={marginTop && {marginTop: marginTop}}
       displayPopup={props.displayPopup}
       title={translate(prefix + 'createSchedule')}
       onClosePress={props.onClosePress}>

@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     backgroundColor: lightGray + '60',
     height: '100%',
     width: '100%',
-    zIndex: 2,
   },
   button: {
     alignItems: 'center',
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightGray,
     borderRadius: 10,
     marginTop: 100,
-    maxHeight: '75%',
+    maxHeight: '80%',
     minHeight: 300,
     overflow: 'hidden',
     width: '85%',

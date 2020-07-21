@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {AppState} from 'react-native';
+import {AppState, Platform} from 'react-native';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -82,6 +82,9 @@ export default function AppContainer() {
   const {dispatch} = globalState;
   const {isFirstRender, updatePages} = globalState.state;
 
+  const labelMarginTop = Platform.OS === 'ios' ? 0 : -20;
+  const tabPaddingBottom = Platform.OS === 'ios' ? 0 : 20;
+
   useEffect(() => {
     initializeData().then(data => {
       dispatch(setUserDB(data.userDB));
@@ -141,7 +144,11 @@ export default function AppContainer() {
         tabBarOptions={{
           activeTintColor: colors.darkBlue,
           inactiveTintColor: colors.smoke,
-          labelStyle: {fontSize: 13},
+          labelStyle: {fontSize: 13, marginTop: labelMarginTop},
+          keyboardHidesTabBar: true,
+          tabStyle: {
+            paddingBottom: tabPaddingBottom,
+          },
           style: {backgroundColor: colors.lightGray, height: 100},
         }}>
         <Tabs.Screen
@@ -151,7 +158,7 @@ export default function AppContainer() {
             tabBarLabel: translate('home'),
             tabBarIcon: ({color, size}) => (
               <Icon
-                style={{marginTop: 10}}
+                style={{marginTop: 5}}
                 color={color}
                 name="home"
                 size={size * 1.3}
@@ -166,7 +173,7 @@ export default function AppContainer() {
             tabBarLabel: translate('schedules'),
             tabBarIcon: ({color, size}) => (
               <Icon
-                style={{marginTop: 10}}
+                style={{marginTop: 5}}
                 color={color}
                 name="list"
                 size={size * 1.5}

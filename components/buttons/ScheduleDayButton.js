@@ -9,22 +9,21 @@ import styles, {colors} from '../../styles/styles';
 import {formatDate} from '../../data/Database/generalTransactions';
 
 const ScheduleDayButton = React.memo(props => {
+  let {completionDate, update} = props;
+
   const [isFinished, setIsFinished] = useState(props.isFinished);
   const [isDatePassed, setIsDatePassed] = useState(false);
 
-  useEffect(() => {
-    if (props.isFinished !== isFinished) {
-      setIsFinished(props.isFinished);
-    }
-  }, [props, isFinished]);
+  const display = isFinished && props.completedHidden ? 'none' : 'flex';
+  const color = !isDatePassed || isFinished ? colors.lightGray : '#f00';
 
-  let {completionDate} = props;
   useEffect(() => {
     let date = Date.parse(completionDate);
     let today = new Date();
     today = Date.parse(formatDate(today));
     setIsDatePassed(date < today);
-  }, [completionDate]);
+    setIsFinished(props.isFinished);
+  }, [completionDate, props.isFinished, update]);
 
   function onPress(press) {
     press(status => setIsFinished(status));
@@ -32,13 +31,7 @@ const ScheduleDayButton = React.memo(props => {
 
   return (
     <CustomButton
-      style={[
-        style.columnContainer,
-        props.style,
-        {
-          display: isFinished && props.completedHidden ? 'none' : '',
-        },
-      ]}
+      style={[style.columnContainer, props.style, {display: display}]}
       onPress={() => onPress(props.onPress)}
       onLongPress={() => onPress(props.onLongPress)}>
       <View style={{...style.rowContainer}}>
@@ -55,7 +48,7 @@ const ScheduleDayButton = React.memo(props => {
             styles.buttonText,
             props.textStyle,
             {
-              color: !isDatePassed || isFinished ? colors.lightGray : '#f00',
+              color: color,
             },
           ]}>
           {props.completionDate}

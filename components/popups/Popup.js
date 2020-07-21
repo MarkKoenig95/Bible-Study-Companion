@@ -1,5 +1,12 @@
-import React from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {
+  Animated,
+  Keyboard,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
@@ -7,31 +14,66 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 
 export default function Popup(props) {
+  const yTransform = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+    };
+  }, []);
+
+  const _keyboardDidShow = () => {
+    Animated.timing(yTransform, {
+      toValue: -60,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const _keyboardDidHide = () => {
+    Animated.timing(yTransform, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
   return (
-    <View
-      style={[styles.background, {display: !props.displayPopup ? 'none' : ''}]}>
-      <View
-        style={{
-          ...styles.popup,
-          ...props.style,
-        }}>
-        <View style={style.title}>
-          <Text style={style.text}>{props.title}</Text>
-          <IconButton name="close" invertColor onPress={props.onClosePress} />
-        </View>
-        {!props.flatView ? (
-          <ScrollView
-            style={style.content}
-            contentContainerStyle={style.contentContainer}>
-            {props.children}
-          </ScrollView>
-        ) : (
-          <View style={[style.content, style.contentContainer]}>
-            {props.children}
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={props.displayPopup}>
+      <View style={styles.background}>
+        <Animated.View
+          style={{
+            transform: [{translateY: yTransform}],
+          }}>
+          <View
+            style={{
+              ...styles.popup,
+              ...props.style,
+            }}>
+            <View style={style.title}>
+              <Text style={style.text}>{props.title}</Text>
+              <IconButton
+                name="close"
+                invertColor
+                onPress={props.onClosePress}
+              />
+            </View>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              style={style.content}
+              contentContainerStyle={style.contentContainer}>
+              {props.children}
+            </ScrollView>
           </View>
-        )}
+        </Animated.View>
       </View>
-    </View>
+    </Modal>
   );
 }
 const style = StyleSheet.create({
@@ -66,7 +108,9 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     height: 60,
     justifyContent: 'space-around',
-    padding: 10,
+    padding: 5,
+    paddingLeft: 20,
+    paddingRight: 20,
     position: 'absolute',
     top: 0,
     width: '100%',
