@@ -42,35 +42,26 @@ export default function Popup(props) {
     }).start();
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={props.displayPopup}>
+    <Modal transparent={true} visible={props.displayPopup}>
       <View style={styles.background}>
         <Animated.View
-          style={{
-            transform: [{translateY: yTransform}],
-          }}>
-          <View
-            style={{
-              ...styles.popup,
-              ...props.style,
-            }}>
-            <View style={style.title}>
-              <Text style={style.text}>{props.title}</Text>
-              <IconButton
-                name="close"
-                invertColor
-                onPress={props.onClosePress}
-              />
-            </View>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              style={style.content}
-              contentContainerStyle={style.contentContainer}>
-              {props.children}
-            </ScrollView>
+          style={[
+            styles.popup,
+            props.style,
+            {
+              transform: [{translateY: yTransform}],
+            },
+          ]}>
+          <View style={style.title}>
+            <Text style={style.text}>{props.title}</Text>
+            <IconButton name="close" invertColor onPress={props.onClosePress} />
           </View>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            style={style.content}
+            contentContainerStyle={style.contentContainer}>
+            {props.children}
+          </ScrollView>
         </Animated.View>
       </View>
     </Modal>

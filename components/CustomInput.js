@@ -8,7 +8,7 @@ import styles, {colors} from '../styles/styles';
 
 export default function CustomInput(props) {
   return (
-    <View style={{...style.container, ...props.containerStyle}}>
+    <View style={{...styles.inputContainer, ...props.containerStyle}}>
       {props.title && (
         <Text style={{...styles.lightText, ...props.titleStyle}}>
           {props.title}
@@ -32,11 +32,3 @@ export default function CustomInput(props) {
     </View>
   );
 }
-
-const style = StyleSheet.create({
-  container: {
-    width: '90%',
-    padding: 10,
-    paddingBottom: 5,
-  },
-});

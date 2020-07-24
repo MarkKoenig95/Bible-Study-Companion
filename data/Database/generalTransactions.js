@@ -67,13 +67,29 @@ export async function loadData(db, setState, tableName) {
       })
       .catch(errorCB);
 
-    var temp = [];
+    var listItems = [];
+
+    var innerItems = [];
+    var previousDate;
 
     for (let i = 0; i < results.rows.length; ++i) {
-      temp.push(results.rows.item(i));
+      const item = results.rows.item(i);
+      if (item.ReadingDayID) {
+        if (item.CompletionDate === previousDate) {
+          innerItems.push(item);
+        } else {
+          if (innerItems.length > 0) {
+            listItems.push(innerItems);
+          }
+          innerItems = [item];
+          previousDate = item.CompletionDate;
+        }
+      } else {
+        listItems.push(item);
+      }
     }
 
-    setState(temp);
+    setState(listItems);
   }
 }
 

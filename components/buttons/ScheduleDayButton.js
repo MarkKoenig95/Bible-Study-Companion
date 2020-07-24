@@ -9,24 +9,32 @@ import styles, {colors} from '../../styles/styles';
 import {formatDate} from '../../data/Database/generalTransactions';
 
 const ScheduleDayButton = React.memo(props => {
-  let {completionDate, update} = props;
+  let {completionDate, update, isFinished} = props;
 
-  const [isFinished, setIsFinished] = useState(props.isFinished);
+  const [isFinishedState, setIsFinishedState] = useState(isFinished);
   const [isDatePassed, setIsDatePassed] = useState(false);
 
-  const display = isFinished && props.completedHidden ? 'none' : 'flex';
-  const color = !isDatePassed || isFinished ? colors.lightGray : '#f00';
+  const display = isFinishedState && props.completedHidden ? 'none' : 'flex';
+  const color = !isDatePassed || isFinishedState ? colors.lightGray : '#f00';
+  const hasTitle = props.title ? true : false;
 
   useEffect(() => {
     let date = Date.parse(completionDate);
     let today = new Date();
     today = Date.parse(formatDate(today));
     setIsDatePassed(date < today);
-    setIsFinished(props.isFinished);
-  }, [completionDate, props.isFinished, update]);
+    if (isFinishedState !== isFinished) {
+      setIsFinishedState(isFinished);
+    }
+    //In order to achieve the desired result we do not want to run this when
+    //the isFinishedState is changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completionDate, isFinished, update]);
 
   function onPress(press) {
-    press(status => setIsFinished(status));
+    press(status => {
+      setIsFinishedState(status);
+    });
   }
 
   return (
@@ -37,12 +45,25 @@ const ScheduleDayButton = React.memo(props => {
       <View style={{...style.rowContainer}}>
         <CheckBox
           containerStyle={style.checkBox}
-          checked={isFinished}
+          checked={isFinishedState}
           left
           onPress={() => onPress(props.onLongPress)}
           checkedColor={colors.lightGray}
           uncheckedColor={colors.lightGray}
         />
+        {hasTitle && (
+          <Text
+            style={[
+              styles.buttonText,
+              props.textStyle,
+              {
+                color: colors.lightGray,
+                fontWeight: 'bold',
+              },
+            ]}>
+            {props.title}
+          </Text>
+        )}
         <Text
           style={[
             styles.buttonText,
@@ -60,8 +81,8 @@ const ScheduleDayButton = React.memo(props => {
           style.readingPortion,
           props.textStyle,
           {
-            color: !isFinished ? colors.darkGray : colors.lightGray,
-            textDecorationLine: !isFinished ? 'none' : 'line-through',
+            color: !isFinishedState ? colors.darkGray : colors.lightGray,
+            textDecorationLine: !isFinishedState ? 'none' : 'line-through',
           },
         ]}>
         {props.readingPortion}

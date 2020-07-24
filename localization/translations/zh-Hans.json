@@ -266,11 +266,27 @@
       "whereWritten": "拔摩岛"
     }
   },
+  "buttonsPopup": {"title": "阅读部分"},
   "createSchedulePopup": {
     "createSchedule": "造成度进表",
+    "numberOfPortions": "多少{{portionDesc}}",
+    "numberOfPortionsPhld": "出版物包括多少{{portionDesc}}",
+    "readingPortionDesc": {
+      "title": "描述朗读部分",
+      "article": "文章",
+      "chapter": "章",
+      "page": "页",
+      "paragraph": "段"
+    },
+    "readingPortionDescPhld": "描述每一朗读部分：例如页，章，等等",
+
+    "portionsPerDay": "每天读多少{{portionDesc}}",
+    "portionsPerDayPhld": "你每天想读多少{{portionDesc}}",
     "scheduleName": "度进表题目",
     "scheduleDuration": "度进表时常",
     "scheduleDurPhld": "几年了？",
+    "startingPortion": "开始部分",
+    "startingPortionPhld": "你想从哪一部分开始",
     "startingVerse": "开始经文",
     "unfinished": "请填写所有必填字段以安排时间表"
   },
@@ -312,7 +328,9 @@
     },
     "wol": {"lp-e": "lp-chs", "r1": "r23", "nwtsty": "nwt"}
   },
+  "missingTranslation": "还没翻译好",
   "readingRemindersPopup": {
+    "readingReminders": "阅读前提醒",
     "heading0": "创造良好的环境",
     "body0-1": "找个安静的地方，也要排除干扰。",
     "body0-2": "（也许把手机跳到静音模式）",
@@ -351,12 +369,22 @@
   "schedules": "进度表",
   "schedulePage": {
     "deleteScheduleMessage": "请确认你想删除叫 “{{scheduleName}}” 的进度表?",
-    "hideCompleted": "隐藏完成的",
-    "readingReminders": "阅读前提醒"
+    "hideCompleted": "隐藏完成的"
   },
   "scheduleTransactions": {
     "adjustedVersePrompt": "开头经文因为你请求的经文超过界限了从你请求的经文 “{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}” 被改到最进的经文 “{{startBibleBook}} {{startChapter}}:{{startVerse}}”",
     "scheduleNameTakenPrompt": "这个进度表题目已经运用了请选择还没用的题目"
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "进度表类型",
+    "sequential": "顺次",
+    "sequentialDescription": "读整本圣经从创世纪开始到启示录",
+    "chronological": "顺叙",
+    "chronologicalDescription": "按照事件发生的顺序阅读圣经。  （实验：如果您发现不一致之处，请与我联系）",
+    "thematic": "专题性",
+    "thematicDescription": "每天，每周一次从圣经的不同部分中进行阅读：第1天 —— 法律，2 —— 历史，3 —— 诗篇，4 —— 诗歌，5 —— 预言，6 —— 福音，7 —— 字母",
+    "custom": "自定义",
+    "customDescription": "创建一本出版物的自定义进度表"
   },
   "today": "今天",
   "versePicker": {

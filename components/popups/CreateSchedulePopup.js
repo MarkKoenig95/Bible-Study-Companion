@@ -1,10 +1,15 @@
 import React, {useState} from 'react';
 import {translate} from '../../localization/localization';
+import {sanitizeNumber} from '../../logic/logic';
 
 import IconButton from '../buttons/IconButton';
 import CustomInput from '../CustomInput';
 import VersePicker from '../VersePicker';
 import Popup from './Popup';
+import {getScheduleTypes} from './ScheduleTypeSelectionPopup';
+import CustomDropdown from '../CustomDropdown';
+import {View, Text} from 'react-native';
+import styles from '../../styles/styles';
 
 const debug = false;
 
@@ -20,42 +25,25 @@ export default function CreateSchedulePopup(props) {
     selectedItems: [],
   };
 
+  const [readingPortionDesc, setReadingPortionDesc] = useState();
+  const [portionsPerDay, setPortionsPerDay] = useState();
+  const [startingPortion, setStartingPortion] = useState('1');
+  const [maxPortion, setMaxPortion] = useState();
   const [scheduleName, setScheduleName] = useState(defaults.scheduleName);
   const [scheduleDuration, setScheduleDuration] = useState(
     defaults.scheduleDuration,
   );
+
+  const [
+    readingPortionSelectedItems,
+    setReadingPortionSelectedItems,
+  ] = useState([]);
 
   const [versePicker, setVersePicker] = useState({
     chapter: defaults.chapter,
     verse: defaults.verse,
     selectedItems: defaults.selectedItems,
   });
-
-  function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
-    let result = '';
-
-    newValue = newValue || '';
-    prevValue = prevValue || '';
-
-    let change = newValue.length - prevValue.length;
-
-    if (change < 1) {
-      result = newValue;
-    } else {
-      if (newValue[newValue.length - 1] === '.') {
-        result = newValue;
-      } else {
-        let number = parseFloat(newValue, 10);
-        if (!isNaN(number) && (number >= lowerLimit && number <= upperLimit)) {
-          result = number.toString();
-        } else {
-          result = prevValue;
-        }
-      }
-    }
-
-    return result;
-  }
 
   function onVersePickerChange(key, value) {
     if (key !== 'selectedItems') {
@@ -67,24 +55,35 @@ export default function CreateSchedulePopup(props) {
     });
   }
 
-  function onScheduleNameChange(text) {
-    setScheduleName(text);
-  }
-
   function onScheduleDurationChange(text) {
     let sanitizedState = sanitizeNumber(scheduleDuration, text, 0, 20);
     setScheduleDuration(sanitizedState);
   }
 
   function onAddPress() {
-    if (
-      versePicker.selectedItems &&
-      scheduleName &&
-      scheduleDuration &&
-      versePicker.chapter &&
-      versePicker.verse
-    ) {
-      let bookId = versePicker.selectedItems[0].id;
+    let areAllRequiredFilledIn;
+    if (!isCustom) {
+      areAllRequiredFilledIn =
+        versePicker.selectedItems.length > 0 &&
+        scheduleName &&
+        scheduleDuration &&
+        versePicker.chapter &&
+        versePicker.verse;
+    } else {
+      areAllRequiredFilledIn =
+        scheduleName &&
+        readingPortionDesc &&
+        portionsPerDay &&
+        startingPortion &&
+        maxPortion;
+    }
+
+    if (areAllRequiredFilledIn) {
+      let bookId = 1;
+
+      if (versePicker.selectedItems.length > 0) {
+        bookId = versePicker.selectedItems[0].id;
+      }
 
       props.onAdd(
         scheduleName,
@@ -92,20 +91,31 @@ export default function CreateSchedulePopup(props) {
         bookId,
         versePicker.chapter,
         versePicker.verse,
+        startingPortion,
+        maxPortion,
+        readingPortionDesc,
+        portionsPerDay,
       );
-      if (!debug) {
-        setScheduleName(defaults.scheduleName);
-        setScheduleDuration(defaults.scheduleDuration);
-        setVersePicker({
-          chapter: defaults.chapter,
-          verse: defaults.verse,
-          selectedItems: versePicker.selectedItems,
-        });
-      }
+      setScheduleName(defaults.scheduleName);
+      setScheduleDuration(defaults.scheduleDuration);
+      setVersePicker({
+        chapter: defaults.chapter,
+        verse: defaults.verse,
+        selectedItems: versePicker.selectedItems,
+      });
+      setReadingPortionDesc();
+      setPortionsPerDay();
+      setStartingPortion('1');
+      setMaxPortion();
+
+      setReadingPortionSelectedItems([]);
     } else {
       props.onError(translate(prefix + 'unfinished'));
     }
   }
+
+  const isCustom = props.type === getScheduleTypes().custom ? true : false;
+  const hasReadingPortionDesc = readingPortionDesc ? true : false;
 
   return (
     <Popup
@@ -114,24 +124,105 @@ export default function CreateSchedulePopup(props) {
       onClosePress={props.onClosePress}>
       <CustomInput
         title={translate(prefix + 'scheduleName')}
-        onChangeText={text => onScheduleNameChange(text)}
+        onChangeText={setScheduleName}
         value={scheduleName}
         placeholder={translate(prefix + 'scheduleName')}
       />
-      <CustomInput
-        title={translate(prefix + 'scheduleDuration')}
-        onChangeText={text => onScheduleDurationChange(text)}
-        value={scheduleDuration}
-        placeholder={translate(prefix + 'scheduleDurPhld')}
-        keyboardType={'decimal-pad'}
-      />
-      <VersePicker
-        title={translate(prefix + 'startingVerse')}
-        onChange={onVersePickerChange}
-        selectedItems={versePicker.selectedItems}
-        chapterValue={versePicker.chapter}
-        verseValue={versePicker.verse}
-      />
+
+      {!isCustom && (
+        <CustomInput
+          title={translate(prefix + 'scheduleDuration')}
+          onChangeText={onScheduleDurationChange}
+          value={scheduleDuration}
+          placeholder={translate(prefix + 'scheduleDurPhld')}
+          keyboardType={'decimal-pad'}
+        />
+      )}
+      {!isCustom && (
+        <VersePicker
+          title={translate(prefix + 'startingVerse')}
+          onChange={onVersePickerChange}
+          selectedItems={versePicker.selectedItems}
+          chapterValue={versePicker.chapter}
+          verseValue={versePicker.verse}
+        />
+      )}
+      {isCustom && (
+        <View style={styles.inputContainer}>
+          <Text style={{...styles.lightText, ...props.titleStyle}}>
+            {translate(prefix + 'readingPortionDesc.title')}
+          </Text>
+          <CustomDropdown
+            items={[
+              {name: translate(prefix + 'readingPortionDesc.article')},
+              {name: translate(prefix + 'readingPortionDesc.chapter')},
+              {name: translate(prefix + 'readingPortionDesc.page')},
+              {name: translate(prefix + 'readingPortionDesc.paragraph')},
+            ]}
+            placeholder={translate(prefix + 'readingPortionDescPhld')}
+            selectedItems={readingPortionSelectedItems}
+            setSelectedItems={items => {
+              setReadingPortionSelectedItems(items);
+              setReadingPortionDesc(items[0].name);
+            }}
+            text={readingPortionDesc}
+            onTextChange={setReadingPortionDesc}
+            width={'100%'}
+          />
+        </View>
+      )}
+      {isCustom && hasReadingPortionDesc && (
+        <CustomInput
+          title={translate(prefix + 'portionsPerDay', {
+            portionDesc: readingPortionDesc,
+          })}
+          value={portionsPerDay}
+          onChangeText={text => {
+            setPortionsPerDay(
+              sanitizeNumber(portionsPerDay, text, 0, 1000000000000000000),
+            );
+          }}
+          placeholder={translate(prefix + 'portionsPerDayPhld', {
+            portionDesc: readingPortionDesc,
+          })}
+          keyboardType={'decimal-pad'}
+        />
+      )}
+      {isCustom && hasReadingPortionDesc && (
+        <CustomInput
+          title={translate(prefix + 'startingPortion', {
+            portionDesc: readingPortionDesc,
+          })}
+          value={startingPortion}
+          onChangeText={text => {
+            setStartingPortion(
+              sanitizeNumber(startingPortion, text, 0, 1000000000000000000),
+            );
+          }}
+          placeholder={translate(prefix + 'startingPortionPhld', {
+            portionDesc: readingPortionDesc,
+          })}
+          defaultValue={'0'}
+          keyboardType={'decimal-pad'}
+        />
+      )}
+      {isCustom && hasReadingPortionDesc && (
+        <CustomInput
+          title={translate(prefix + 'numberOfPortions', {
+            portionDesc: readingPortionDesc,
+          })}
+          value={maxPortion}
+          onChangeText={text => {
+            setMaxPortion(
+              sanitizeNumber(maxPortion, text, 0, 1000000000000000000),
+            );
+          }}
+          placeholder={translate(prefix + 'numberOfPortionsPhld', {
+            portionDesc: readingPortionDesc,
+          })}
+          keyboardType={'decimal-pad'}
+        />
+      )}
       <IconButton name="add" onPress={onAddPress} />
     </Popup>
   );

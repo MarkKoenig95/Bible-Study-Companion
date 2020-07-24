@@ -1,6 +1,7 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {SafeAreaView, View, FlatList, Linking} from 'react-native';
 
+import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
 import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
 import Text, {Heading, SubHeading} from '../components/text/Text';
@@ -8,6 +9,10 @@ import MessagePopup from '../components/popups/MessagePopup';
 import ReadingInfoPopup, {
   useReadingInfoPopup,
 } from '../components/popups/ReadingInfoPopup';
+import ButtonsPopup, {
+  useButtonsPopup,
+} from '../components/popups/SelectedDayButtonsPopup';
+import ReadingRemindersPopup from '../components/popups/ReadingRemindersPopup';
 
 import styles from '../styles/styles';
 
@@ -29,8 +34,7 @@ import {
   updateReadStatus,
   updateDailyText,
 } from '../data/Database/scheduleTransactions';
-import {colors} from 'react-native-elements';
-import IconButton from '../components/buttons/IconButton';
+import {useOpenPopupFunction, arraysMatch} from '../logic/logic';
 
 const prefix = 'homePage.';
 
@@ -41,11 +45,12 @@ async function populateHomeList(
   afterUpdate,
 ) {
   let result;
-  let temp = [];
+  let homeListItems = [];
   let date = new Date();
   let todayFormatted = formatDate(date);
   let today = Date.parse(todayFormatted);
 
+  //Populate Daily text
   await userDB
     .transaction(txn => {
       txn
@@ -65,14 +70,17 @@ async function populateHomeList(
               Linking.openURL(linkFormulator('wol'));
             };
 
-            temp.push({
-              readingDayID: 0,
-              readingPortion: readingPortion,
-              completionDate: completionDate,
-              isFinished: isFinished,
-              onLongPress: onLongPress,
-              onPress: onPress,
-            });
+            homeListItems.push([
+              {
+                completionDate: completionDate,
+                isFinished: isFinished,
+                onLongPress: onLongPress,
+                onPress: onPress,
+                readingDayID: 0,
+                readingPortion: readingPortion,
+                title: null,
+              },
+            ]);
           }
         });
     })
@@ -98,72 +106,99 @@ async function populateHomeList(
     const scheduleName = result.rows.item(i).ScheduleName;
     const tableName = formatScheduleTableName(id);
 
-    let item;
+    let items;
+    let completionDate;
 
+    //Populate reading portions from all schedules for today
     await userDB
       .transaction(txn => {
-        let sql = `SELECT * FROM ${tableName}
+        const sql = `SELECT * FROM ${tableName}
                   WHERE IsFinished=0
                   ORDER BY ReadingDayID ASC
                   LIMIT 1`;
         txn.executeSql(sql, []).then(([txn, res]) => {
-          item = res.rows.item(0);
+          completionDate = res.rows.item(0).CompletionDate;
         });
       })
       .catch(err => {
         errorCB(err);
       });
 
-    if (Date.parse(item.CompletionDate) <= today) {
-      let readingDayID = item.ReadingDayID;
-      let readingPortion = item.ReadingPortion;
-      let completionDate = item.CompletionDate;
-      let isFinished = item.IsFinished;
-      let onLongPress = cb => {
-        onUpdateReadStatus(
-          userDB,
-          cb,
-          item.IsFinished,
-          item.ReadingDayID,
-          tableName,
-          afterUpdate,
-        );
-      };
-      let onPress;
+    await userDB
+      .transaction(txn => {
+        const sql = `SELECT * FROM ${tableName}
+                  WHERE CompletionDate=?
+                  ORDER BY ReadingDayID ASC`;
+        txn.executeSql(sql, [completionDate]).then(([txn, res]) => {
+          items = res.rows;
+        });
+      })
+      .catch(err => {
+        errorCB(err);
+      });
 
-      if (item.StartBookNumber) {
-        onPress = cb => {
-          openReadingPopup(
-            item.StartBookNumber,
-            item.StartChapter,
-            item.StartVerse,
-            item.EndBookNumber,
-            item.EndChapter,
-            item.EndVerse,
-            item.ReadingPortion,
+    let innerHomeListItems = [];
+
+    for (let j = 0; j < items.length; j++) {
+      const item = items.item(j);
+
+      if (Date.parse(item.CompletionDate) <= today) {
+        const readingDayID = item.ReadingDayID;
+        const readingPortion = item.ReadingPortion;
+        const completionDate = item.CompletionDate;
+        const isFinished = item.IsFinished;
+        const onLongPress = cb => {
+          onUpdateReadStatus(
+            userDB,
+            cb,
             item.IsFinished,
             item.ReadingDayID,
-            cb,
             tableName,
+            afterUpdate,
           );
         };
-      } else {
-        onPress = onLongPress;
-      }
 
-      //Add reading portion info to the list
-      temp.push({
-        readingDayID: readingDayID,
-        readingPortion: readingPortion,
-        completionDate: completionDate,
-        isFinished: isFinished,
-        onLongPress: onLongPress,
-        onPress: onPress,
-      });
+        let onPress = null;
+
+        if (item.StartBookNumber) {
+          onPress = cb => {
+            openReadingPopup(
+              item.StartBookNumber,
+              item.StartChapter,
+              item.StartVerse,
+              item.EndBookNumber,
+              item.EndChapter,
+              item.EndVerse,
+              item.ReadingPortion,
+              item.IsFinished,
+              item.ReadingDayID,
+              cb,
+              tableName,
+            );
+          };
+        } else {
+          onPress = onLongPress;
+        }
+
+        //Add reading portion info to the list
+        innerHomeListItems.push({
+          completionDate: completionDate,
+          isFinished: isFinished,
+          onLongPress: onLongPress,
+          onPress: onPress,
+          readingDayID: readingDayID,
+          readingPortion: readingPortion,
+          title: scheduleName,
+          tableName: tableName,
+        });
+      }
+    }
+    if (innerHomeListItems.length > 0) {
+      homeListItems.push(innerHomeListItems);
     }
   }
 
-  setState(temp);
+  setState(homeListItems);
 }
 
 function onUpdateReadStatus(
@@ -178,7 +213,26 @@ function onUpdateReadStatus(
   cb(!status);
 }
 
+function ScheduleButton(props) {
+  const {item, completedHidden, update} = props;
+
+  return (
+    <ScheduleDayButton
+      key={item.readingDayID}
+      isFinished={item.isFinished ? true : false}
+      completionDate={item.completionDate}
+      completedHidden={completedHidden}
+      onLongPress={item.onLongPress}
+      onPress={item.onPress}
+      readingPortion={item.readingPortion}
+      title={item.title}
+      update={update}
+    />
+  );
+}
+
 export default function Home(props) {
+  console.log('loaded home page');
   const navigation = props.navigation;
   const globalState = useContext(store);
 
@@ -189,28 +243,146 @@ export default function Home(props) {
 
   const {
     readingPopup,
-    openReadingPopup,
+    openReadingInfoPopup,
     closeReadingPopup,
   } = useReadingInfoPopup();
+
+  const {
+    buttonsPopup,
+    openButtonsPopupBase,
+    closeButtonsPopup,
+  } = useButtonsPopup();
+
+  const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
+    false,
+  );
+
+  const closePopupFunctions = [
+    closeReadingPopup,
+    setIsRemindersPopupDisplayed,
+    closeButtonsPopup,
+  ];
+
+  const openReadingPopup = useOpenPopupFunction(
+    openReadingInfoPopup,
+    closePopupFunctions,
+  );
+
+  const openButtonsPopup = useOpenPopupFunction(
+    openButtonsPopupBase,
+    closePopupFunctions,
+  );
+
+  const openRemindersPopup = useOpenPopupFunction(
+    setIsRemindersPopupDisplayed,
+    closePopupFunctions,
+  );
 
   useEffect(() => {
     if (userDB) {
       populateHomeList(userDB, setFlatListItems, openReadingPopup, afterUpdate);
     }
-  }, [
-    userDB,
-    setFlatListItems,
-    openReadingPopup,
-    dispatch,
-    updatePages,
-    afterUpdate,
-  ]);
+  }, [userDB, openReadingPopup, dispatch, updatePages, afterUpdate]);
 
   const afterUpdate = useCallback(() => {
     dispatch(setUpdatePages(updatePages));
   }, [dispatch, updatePages]);
 
   let isFlatListEmpty = flatListItems.length === 0 ? true : false;
+
+  const setScheduleButtons = useCallback(
+    (items, index) => {
+      let result;
+      let completedHidden = true;
+      if (items.length === 1) {
+        result = (
+          <ScheduleButton
+            item={items[0]}
+            completedHidden={completedHidden}
+            update={updatePages}
+          />
+        );
+      } else {
+        let buttons = [];
+        let areButtonsFinished = [];
+        let readingDayIDs = [];
+        let readingPortions;
+        let completionDate;
+        let isFinished;
+        let tableName;
+        let title;
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          let tempIsFinished = item.IsFinished ? true : false;
+          if (readingPortions) {
+            readingPortions += '\r\n' + item.readingPortion;
+          } else {
+            readingPortions = item.readingPortion;
+            completionDate = item.completionDate;
+            isFinished = tempIsFinished;
+            tableName = item.tableName;
+            title = item.title;
+          }
+          readingDayIDs.push(item.readingDayID);
+
+          isFinished = tempIsFinished && isFinished;
+
+          areButtonsFinished.push(tempIsFinished);
+          buttons.push(
+            <ScheduleButton
+              key={Math.random() * 10000 + 'w'}
+              item={item}
+              completedHidden={completedHidden}
+              update={updatePages}
+            />,
+          );
+        }
+
+        if (
+          buttonsPopup.id === index &&
+          buttonsPopup.isDisplayed &&
+          !arraysMatch(areButtonsFinished, buttonsPopup.areButtonsFinished)
+        ) {
+          openButtonsPopupBase(index, buttons, areButtonsFinished);
+        }
+
+        result = (
+          <ScheduleDayButton
+            readingPortion={readingPortions}
+            completionDate={completionDate}
+            completedHidden={completedHidden}
+            isFinished={isFinished}
+            title={title}
+            update={updatePages}
+            onLongPress={cb => {
+              for (let i = 0; i < readingDayIDs.length; i++) {
+                onUpdateReadStatus(
+                  userDB,
+                  cb,
+                  isFinished,
+                  readingDayIDs[i],
+                  tableName,
+                  afterUpdate,
+                );
+              }
+            }}
+            onPress={() => {
+              openButtonsPopup(index, buttons, areButtonsFinished);
+            }}
+          />
+        );
+      }
+      return result;
+    },
+    [
+      userDB,
+      afterUpdate,
+      updatePages,
+      buttonsPopup,
+      openButtonsPopup,
+      openButtonsPopupBase,
+    ],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -240,26 +412,37 @@ export default function Home(props) {
         endVerse={readingPopup.endVerse}
         readingPortion={readingPopup.readingPortion}
       />
-      <Heading style={{...styles.buttonText, alignSelf: 'center'}}>
-        {translate('today')}
-      </Heading>
+      <ButtonsPopup
+        displayPopup={buttonsPopup.isDisplayed}
+        buttons={buttonsPopup.buttons}
+        onClosePress={closeButtonsPopup}
+      />
+      <ReadingRemindersPopup
+        displayPopup={isRemindersPopupDisplayed}
+        onClosePress={() => {
+          setIsRemindersPopupDisplayed(false);
+        }}
+      />
+      <View style={styles.header}>
+        <TextButton
+          buttonStyle={{width: '90%'}}
+          text={translate('readingRemindersPopup.readingReminders')}
+          onPress={() => {
+            openRemindersPopup(true);
+          }}
+        />
+      </View>
       <View style={styles.content}>
+        <Heading style={{...styles.buttonText, alignSelf: 'center'}}>
+          {translate('today')}
+        </Heading>
         {!isFlatListEmpty ? (
           <FlatList
             data={flatListItems}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
-              <ScheduleDayButton
-                key={item.readingDayID}
-                readingPortion={item.readingPortion}
-                completionDate={item.completionDate}
-                completedHidden={true}
-                isFinished={item.isFinished ? true : false}
-                update={updatePages}
-                onLongPress={item.onLongPress}
-                onPress={item.onPress}
-              />
-            )}
+            renderItem={({item, index}) => {
+              return setScheduleButtons(item, index);
+            }}
           />
         ) : (
           <View>

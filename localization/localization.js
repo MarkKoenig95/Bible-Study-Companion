@@ -10,10 +10,14 @@ const translationGetters = {
   'zh-Hans': () => require('./translations/zh-Hans.json'),
 };
 
-export const translate = memoize(
+const translator = memoize(
   (key, config) => i18n.t(key, config),
   (key, config) => (config ? key + JSON.stringify(config) : key),
 );
+
+export function translate() {
+  return doesTranslationExist(translator(...arguments));
+}
 
 const setI18nConfig = () => {
   // fallback if no available language fits
@@ -24,7 +28,7 @@ const setI18nConfig = () => {
     fallback;
 
   // clear translation cache
-  translate.cache.clear();
+  translator.cache.clear();
   // update layout direction
   I18nManager.forceRTL(isRTL);
   // set i18n-js config
@@ -117,4 +121,12 @@ export function dateFormulator(year, approxDesc) {
   let dateString = translate(approxPrefix + 'approxDate', approxDateValues);
 
   return dateString;
+}
+
+export function doesTranslationExist(translation) {
+  if (translation.slice(0, 10) === '[missing "') {
+    return translate('missingTranslation');
+  } else {
+    return translation;
+  }
 }

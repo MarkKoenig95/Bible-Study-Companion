@@ -79,6 +79,11 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
   },
+  inputContainer: {
+    width: '90%',
+    padding: 10,
+    paddingBottom: 5,
+  },
   lightText: {
     color: smoke,
   },
@@ -87,11 +92,10 @@ const styles = StyleSheet.create({
     backgroundColor: lightGray,
     borderRadius: 10,
     marginTop: 100,
-    maxHeight: '80%',
+    maxHeight: '90%',
     minHeight: 300,
     overflow: 'hidden',
     width: '85%',
-    zIndex: 2,
   },
   versePicker: {
     margin: 10,

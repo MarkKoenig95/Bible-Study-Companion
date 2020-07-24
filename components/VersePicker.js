@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect, useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
-import SearchableDropdown from 'react-native-searchable-dropdown';
 import {translate} from '../localization/localization';
 
 import CustomInput from './CustomInput';
@@ -9,6 +8,7 @@ import Text from './text/Text';
 
 import styles, {colors} from '../styles/styles';
 import {store} from '../data/Store/store.js';
+import CustomDropdown from './CustomDropdown';
 
 const items = [];
 
@@ -44,34 +44,14 @@ export default function VersePicker(props) {
       <Text style={style.title}>{props.title}</Text>
 
       <View style={style.container}>
-        <SearchableDropdown
-          onItemSelect={item => {
-            const items = selectedItems;
-            items.pop();
-            items.push(item);
-            setSelectedItems(items);
-          }}
-          containerStyle={style.dropdownContainer}
-          onRemoveItem={(item, index) => {
-            const items = selectedItems.filter(sitem => sitem.id !== item.id);
-            setSelectedItems(items);
-          }}
-          itemStyle={style.item}
-          itemTextStyle={styles.buttonText}
-          itemsContainerStyle={style.itemContainer}
+        <CustomDropdown
           items={items}
-          defaultIndex={0}
-          resetValue={false}
-          textInputProps={{
-            placeholder: translate('bibleBook'),
-            placeholderTextColor: colors.gray,
-            underlineColorAndroid: 'transparent',
-            style: {...styles.input, marginLeft: 0},
-            onChangeText: text => setBookName,
-          }}
-          listProps={{
-            nestedScrollEnabled: true,
-          }}
+          placeholder={translate('bibleBook')}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          text={bookName}
+          onTextChange={text => setBookName}
+          width={145}
         />
 
         <CustomInput
@@ -106,21 +86,6 @@ const style = StyleSheet.create({
   container: {
     flexDirection: 'row',
     width: '100%',
-  },
-  dropdownContainer: {
-    padding: 5,
-    paddingLeft: 0,
-    width: 145,
-  },
-  item: {
-    ...styles.button,
-    padding: 10,
-    margin: 2,
-  },
-  itemContainer: {
-    backgroundColor: colors.lightBlue,
-    borderRadius: 10,
-    maxHeight: 120,
   },
   input: {
     ...styles.input,

@@ -8,12 +8,22 @@ import {
   getQuery,
 } from './generalTransactions';
 import {translate} from '../../localization/localization';
+import {getScheduleTypes} from '../../components/popups/ScheduleTypeSelectionPopup';
 
 const prefix = 'scheduleTransactions.';
+const scheduleTypes = getScheduleTypes();
 
-let qryMaxChapters;
-let qryMaxVerses;
-let tblVerseIndex;
+var qryMaxChapters;
+var qryMaxVerses;
+var tblVerseIndex;
+var qryChronologicalOrder;
+var qryChronologicalIndex;
+var qryThematicOrder;
+var qryThematicIndex;
+var qryThematicCount;
+let qryThematicLeastIndices;
+
+//Updating schedule info
 
 export async function deleteSchedule(db, tableName, scheduleName) {
   db.transaction(txn => {
@@ -75,7 +85,7 @@ export function getHideCompleted(db, scheduleName, cb) {
         `SELECT HideCompleted FROM tblSchedules WHERE ScheduleName = "${scheduleName}"`,
         [],
       )
-      .then(([txn, res]) => {
+      .then(([t, res]) => {
         if (res.rows.length > 0) {
           let item = res.rows.item(0).HideCompleted;
           let value;
@@ -105,9 +115,22 @@ export function setHideCompleted(db, scheduleName, value, successCallBack) {
   }).catch(errorCB);
 }
 
+//Seting up needed info
+
+function createQryOrderIndex(query) {
+  const item = i => {
+    const index = query.rows.item(i).VerseID - 1;
+    const result = tblVerseIndex.rows.item(index);
+
+    return result;
+  };
+  const length = tblVerseIndex.rows.length;
+  return {rows: {length: length, item: item}};
+}
+
 export async function runQueries(bibleDB) {
   if (!tblVerseIndex) {
-    let sql = `SELECT BookName, Verse, Chapter, BibleBook
+    let sql = `SELECT VerseID, BookName, Verse, Chapter, BibleBook
       FROM tblVerseIndex
       INNER JOIN tblBibleBooks on tblBibleBooks.BibleBookID = tblVerseIndex.BibleBook;`;
 
@@ -121,16 +144,51 @@ export async function runQueries(bibleDB) {
       qryMaxVerses = res;
     });
   }
+
+  if (!qryChronologicalOrder) {
+    await getQuery(bibleDB, 'SELECT * FROM qryChronologicalOrder').then(res => {
+      qryChronologicalOrder = res;
+      qryChronologicalIndex = createQryOrderIndex(res);
+    });
+  }
+
+  if (!qryThematicOrder) {
+    await getQuery(bibleDB, 'SELECT * FROM qryThematicOrder').then(res => {
+      qryThematicOrder = res;
+      qryThematicIndex = createQryOrderIndex(res);
+    });
+  }
+
+  if (!qryThematicCount) {
+    await getQuery(bibleDB, 'SELECT * FROM qryThematicCount').then(res => {
+      qryThematicCount = res;
+    });
+  }
+
+  if (!qryThematicLeastIndices) {
+    await getQuery(bibleDB, 'SELECT * FROM qryThematicLeastIndices').then(
+      res => {
+        qryThematicLeastIndices = res;
+      },
+    );
+  }
 }
+
+//Creating schedules
 
 export async function addSchedule(
   userDB,
   bibleDB,
+  scheduleType,
   scheduleName,
   duration,
   bookId,
   chapter,
   verse,
+  startingPortion,
+  maxPortion,
+  readingPortionDesc,
+  portionsPerDay,
   successCallBack,
   errorCallBack,
 ) {
@@ -138,8 +196,13 @@ export async function addSchedule(
     `______________________ New Schedule named ${scheduleName} ______________________`,
   );
   timeKeeper('Started at...');
-
-  if (!qryMaxVerses || !tblVerseIndex) {
+  if (
+    !qryMaxVerses ||
+    !tblVerseIndex ||
+    !qryChronologicalOrder ||
+    !qryThematicOrder ||
+    !qryThematicCount
+  ) {
     await runQueries(bibleDB);
   }
 
@@ -168,8 +231,8 @@ export async function addSchedule(
       .transaction(txn => {
         txn
           .executeSql(
-            'INSERT INTO tblSchedules (ScheduleName, HideCompleted) VALUES (?, 0)',
-            [scheduleName],
+            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType) VALUES (?, 0, ?)',
+            [scheduleName, scheduleType],
           )
           .then(() => {
             log(scheduleName, 'inserted successfully');
@@ -195,47 +258,86 @@ export async function addSchedule(
       })
       .catch(errorCB);
 
+    let SQL;
+
+    if (scheduleType !== scheduleTypes.custom) {
+      SQL = `CREATE TABLE IF NOT EXISTS ${tableName}
+              (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+              StartBookName VARCHAR(20), 
+              StartBookNumber INTEGER, 
+              StartChapter INTEGER, 
+              StartVerse INTEGER,
+              EndBookName VARCHAR(20), 
+              EndBookNumber INTEGER, 
+              EndChapter INTEGER, 
+              EndVerse INTEGER,
+              CompletionDate DATE,
+              ReadingPortion VARCHAR(20), 
+              IsFinished BOOLEAN DEFAULT 0);`;
+    } else {
+      SQL = `CREATE TABLE IF NOT EXISTS ${tableName}
+              (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+              CompletionDate DATE,
+              ReadingPortion VARCHAR(20), 
+              IsFinished BOOLEAN DEFAULT 0)`;
+    }
+
     await userDB
       .transaction(txn => {
         //Create a table for this new schedule based on the formated name
-        txn
-          .executeSql(
-            `CREATE TABLE IF NOT EXISTS ${tableName}
-                (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
-                StartBookName VARCHAR(20), 
-                StartBookNumber INTEGER, 
-                StartChapter INTEGER, 
-                StartVerse INTEGER,
-                EndBookName VARCHAR(20), 
-                EndBookNumber INTEGER, 
-                EndChapter INTEGER, 
-                EndVerse INTEGER,
-                CompletionDate DATE,
-                ReadingPortion VARCHAR(20), 
-                IsFinished BOOLEAN DEFAULT 0)`,
-            [],
-          )
-          .then(() => {
-            log('Table', tableName, 'created successfully');
-
-            //Populate the table with reading information
-            generateSequentialSchedule(
-              userDB,
-              bibleDB,
-              duration,
-              bookId,
-              chapter,
-              verse,
-              tableName,
-              successCallBack,
-              errorCallBack,
-            );
-          });
+        txn.executeSql(SQL, []).then(() => {
+          log('Table', tableName, 'created successfully');
+        });
       })
       .catch(errorCB);
+
+    //Populate the table with reading information
+    if (scheduleType !== scheduleTypes.custom) {
+      generateBibleSchedule(
+        userDB,
+        bibleDB,
+        scheduleType,
+        duration,
+        bookId,
+        chapter,
+        verse,
+        tableName,
+        successCallBack,
+        errorCallBack,
+      );
+    } else {
+      generateCustomSchedule(
+        userDB,
+        tableName,
+        startingPortion,
+        maxPortion,
+        readingPortionDesc,
+        portionsPerDay,
+        successCallBack,
+      );
+    }
   } else {
     errorCallBack(translate(prefix + 'scheduleNameTakenPrompt'));
   }
+}
+
+//Searching for indexes based on values
+export async function findMaxChapter(bibleDB, bookId) {
+  if (!qryMaxChapters) {
+    //Obtain max chapters info
+    await bibleDB
+      .transaction(txn => {
+        txn
+          .executeSql('SELECT BibleBook, MaxChapter FROM qryMaxChapters', [])
+          .then(([txn, res]) => {
+            qryMaxChapters = res;
+          });
+      })
+      .catch(errorCB);
+  }
+  let index = searchQuery(qryMaxChapters, 'BibleBook', bookId);
+
+  return qryMaxChapters.rows.item(index).MaxChapter;
 }
 
 function findNearestVerse(bookId, chapter, verse) {
@@ -258,25 +360,14 @@ function findNearestVerse(bookId, chapter, verse) {
   return [bookId, chapter, verse];
 }
 
-export async function findMaxChapter(bibleDB, bookId) {
-  if (!qryMaxChapters) {
-    //Obtain max chapters info
-    await bibleDB
-      .transaction(txn => {
-        txn
-          .executeSql('SELECT BibleBook, MaxChapter FROM qryMaxChapters', [])
-          .then(([txn, res]) => {
-            qryMaxChapters = res;
-          });
-      })
-      .catch(errorCB);
-  }
-  let index = searchQuery(qryMaxChapters, 'BibleBook', bookId);
-
-  return qryMaxChapters.rows.item(index).MaxChapter;
-}
-
-async function findVerseIndex(bibleDB, bookId, chapter, verse, isFirstTime) {
+async function findVerseIndex(
+  bibleDB,
+  bookId,
+  chapter,
+  verse,
+  scheduleType,
+  isFirstTime,
+) {
   let index = 0;
   let found;
 
@@ -291,7 +382,7 @@ async function findVerseIndex(bibleDB, bookId, chapter, verse, isFirstTime) {
         if (res.rows.length > 0) {
           //The verse searched for exists
           found = true;
-          index = res.rows.item(0).VerseID - 1;
+          index = res.rows.item(0).VerseID;
         }
       });
     })
@@ -317,13 +408,231 @@ async function findVerseIndex(bibleDB, bookId, chapter, verse, isFirstTime) {
     log('Nearest verse:', ...nearestVerse);
 
     //With a new adjusted verse let's search again to see what the index for this verse is
-    index = await findVerseIndex(bibleDB, ...nearestVerse);
+    index = await findVerseIndex(bibleDB, ...nearestVerse, scheduleType);
+  }
+
+  if (isFirstTime) {
+    let queryOrView = '';
+    let indexKey = '';
+    switch (scheduleType) {
+      case scheduleTypes.sequential:
+        queryOrView = 'tblVerseIndex';
+        indexKey = 'VerseID';
+        break;
+      case scheduleTypes.chronological:
+        queryOrView = 'qryChronologicalOrder';
+        indexKey = 'RowNum';
+        break;
+      case scheduleTypes.thematic:
+        queryOrView = 'qryThematicOrder';
+        indexKey = 'RowNum';
+        break;
+      default:
+        console.log('Schedule Type was not defined');
+        break;
+    }
+    await bibleDB.transaction(txn => {
+      txn
+        .executeSql(`SELECT * FROM ${queryOrView} WHERE VerseID=?`, [index])
+        .then(([t, res]) => {
+          index = res.rows.item(0)[indexKey] - 1;
+        })
+        .catch(errorCB);
+    });
   }
 
   return index;
 }
 
-function checkVerseBuffer(endPortion, buffer) {
+//Setting up values for schedule creation
+
+function setQryVerseIndex(scheduleType) {
+  let tempQuery;
+  switch (scheduleType) {
+    case scheduleTypes.sequential:
+      tempQuery = tblVerseIndex;
+      break;
+    case scheduleTypes.chronological:
+      tempQuery = qryChronologicalIndex;
+      break;
+    case scheduleTypes.thematic:
+      tempQuery = qryThematicIndex;
+      break;
+    default:
+      console.log('Schedule Type was not defined');
+      break;
+  }
+  return tempQuery;
+}
+
+function setScheduleParameters(dur, qryVerseIndex, scheduleType) {
+  dur = parseFloat(dur, 10);
+
+  //Transform the duration into an amount of days based on the years given by user
+  const duration = dur * 365 + dur * 7;
+  /*
+    Apparently, (I assume because of truncating of decimal places) the schedules get farther
+    and farther off target the more years they run, thus the "+ duration * 7" adjustment.
+    It matches the target numbers well even all the way up to a 7 year schedule.
+  */
+
+  let leastIndex = {};
+  let maxIndex = {};
+  let versesPerDay = {};
+  let buffer = {};
+  let keys = [];
+
+  if (scheduleType !== scheduleTypes.thematic) {
+    let totalVerses = qryVerseIndex.rows.length;
+    let value = totalVerses / duration;
+    keys[0] = '1';
+    leastIndex[keys[0]] = 0;
+    maxIndex[keys[0]] = totalVerses - 1;
+    versesPerDay[keys[0]] = value;
+    buffer[keys[0]] = Math.round(versesPerDay[keys[0]] / 4);
+  } else {
+    let tempDur = duration / 7 - dur * 0.5;
+
+    for (let k = 0; k < qryThematicCount.rows.length; k++) {
+      const element = qryThematicCount.rows.item(k);
+      let totalVerses = element.Count;
+      keys[k] = element.ThematicOrder;
+      leastIndex[keys[k]] = qryThematicLeastIndices.rows.item(k).LeastIndex - 1;
+      maxIndex[keys[k]] = leastIndex[keys[k]] + totalVerses - 1;
+      versesPerDay[keys[k]] = Math.floor(totalVerses / tempDur);
+      buffer[keys[k]] = Math.round(versesPerDay[keys[k]] / 4);
+    }
+  }
+
+  return {
+    keys: keys,
+    duration: duration,
+    leastIndex: leastIndex,
+    maxIndex: maxIndex,
+    versesPerDay: versesPerDay,
+    buffer: buffer,
+  };
+}
+
+async function setTrackers(
+  bibleDB,
+  qryVerseIndex,
+  requestedIndex,
+  keys,
+  leastIndex,
+  maxIndex,
+) {
+  let pointer = {};
+  let endIndex = {};
+  let hasLooped = {};
+  let isEnd = {};
+  let verseOverflow = {};
+  let keyIndex;
+
+  if (keys.length === 1) {
+    keyIndex = 0;
+    let key = keys[keyIndex];
+    pointer[key] = requestedIndex;
+    endIndex[key] = requestedIndex - 1;
+    hasLooped[key] = false;
+    isEnd[key] = false;
+    verseOverflow[key] = 0;
+  } else {
+    //We have a schedule with multiple types of days
+    let startKey;
+    await bibleDB.transaction(txn => {
+      txn
+        .executeSql('SELECT * FROM qryThematicOrder WHERE VerseID=?', [
+          requestedIndex + 1,
+        ])
+        .then(([t, res]) => {
+          startKey = res.rows.item(0).ThematicOrder - 1;
+        })
+        .catch(errorCB);
+    });
+    let key = keys[startKey];
+    //Set accurate start index for theme corresponding to selected start verse
+    pointer[key] = requestedIndex;
+    endIndex[key] = requestedIndex - 1;
+    hasLooped[key] = false;
+    isEnd[key] = false;
+    verseOverflow[key] = 0;
+
+    //Find a correlative start position for each other theme of the schedule
+    let currentPosition = requestedIndex - leastIndex[key];
+    let maxPosition = maxIndex[key] - leastIndex[key];
+    let ratioToStart = currentPosition / maxPosition;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (i !== startKey) {
+        let indexStart = leastIndex[key];
+        let indexEnd = maxIndex[key];
+        let approxPosition = Math.round((indexEnd - indexStart) * ratioToStart);
+        pointer[key] = indexStart + approxPosition;
+        endIndex[key] = pointer[key] - 1;
+        hasLooped[key] = false;
+        isEnd[key] = false;
+        verseOverflow[key] = 0;
+      } else {
+        keyIndex = i;
+      }
+    }
+  }
+
+  return {
+    pointer: pointer,
+    keyIndex: keyIndex,
+    endIndex: endIndex,
+    hasLooped: hasLooped,
+    isEnd: isEnd,
+    verseOverflow: verseOverflow,
+  };
+}
+
+function setAdjustedMessage(
+  bibleBookPrefix,
+  bibleBookSuffix,
+  bookId,
+  chapter,
+  verse,
+  qryVerseIndex,
+  pointer,
+) {
+  let adjustedVerseMessage;
+
+  let initialBibleBook = translate(bibleBookPrefix + bookId + bibleBookSuffix);
+  let initialChapter = chapter;
+  let initialVerse = verse;
+
+  let startBookNumber = qryVerseIndex.rows.item(pointer).BibleBook;
+  let startBibleBook = translate(
+    bibleBookPrefix + startBookNumber + bibleBookSuffix,
+  );
+  let startChapter = qryVerseIndex.rows.item(pointer).Chapter;
+  let startVerse = qryVerseIndex.rows.item(pointer).Verse;
+
+  if (
+    startBibleBook != initialBibleBook ||
+    startChapter != initialChapter ||
+    startVerse != initialVerse
+  ) {
+    adjustedVerseMessage = translate(prefix + 'adjustedVersePrompt', {
+      initialBibleBook: initialBibleBook,
+      initialChapter: initialChapter,
+      initialVerse: initialVerse,
+      startBibleBook: startBibleBook,
+      startChapter: startChapter,
+      startVerse: startVerse,
+    });
+  }
+
+  return adjustedVerseMessage;
+}
+
+//For use in creating schedules
+
+function checkOrderedVerseBuffer(qryVerseIndex, checkIndex, buffer) {
+  let endPortion = qryVerseIndex.rows.item(checkIndex);
   let endChapter = endPortion.Chapter;
   let endVerse = endPortion.Verse;
 
@@ -347,9 +656,185 @@ function checkVerseBuffer(endPortion, buffer) {
   return 0;
 }
 
+function checkAnyVerseBuffer(
+  qryVerseIndex,
+  checkIndex,
+  buffer,
+  maxIndex,
+  leatIndex,
+) {
+  let checkPortion = qryVerseIndex.rows.item(checkIndex);
+  let checkBook = checkPortion.BibleBook;
+  let checkChapter = checkPortion.Chapter;
+
+  let checker = endValue => {
+    let isSame;
+    let tracker;
+    let adj = 0;
+
+    if (endValue > 0) {
+      tracker = 1;
+    } else {
+      tracker = -1;
+    }
+
+    let comparison = (i, endValue) => {
+      if (endValue < 0) {
+        return i > endValue;
+      } else {
+        return i < endValue;
+      }
+    };
+
+    for (let i = tracker; comparison(i, endValue); i += tracker) {
+      let currentIndex = checkIndex + i;
+      if (currentIndex > maxIndex) {
+        i = maxIndex - checkIndex;
+        endValue = i - 1;
+      }
+      if (currentIndex < leatIndex) {
+        break;
+      }
+      let currentPortion = qryVerseIndex.rows.item(checkIndex + i);
+      let currentBook = currentPortion.BibleBook;
+      let currentChapter = currentPortion.Chapter;
+      isSame = currentBook === checkBook && currentChapter === checkChapter;
+
+      if (isSame) {
+        adj = i;
+      } else {
+        if (adj !== 0) {
+          break;
+        }
+      }
+    }
+    return adj;
+  };
+
+  //Check the upper bound
+  let maxAdj = checker(buffer + 1);
+  //Check the lower bound
+  let minAdj = checker(0 - buffer) - 1;
+
+  let adjustment = maxAdj < Math.abs(minAdj) ? maxAdj : minAdj;
+
+  return adjustment;
+}
+
+function checkEnd(
+  qryVerseIndex,
+  dayEndIndex,
+  maxIndex,
+  leastIndex,
+  endIndex,
+  verseOverflow,
+  hasLooped,
+  buffer,
+  isEnd,
+  scheduleType,
+) {
+  let checker = (
+    hasLooped,
+    dayEndIndex,
+    maxIndex,
+    leastIndex,
+    endIndex,
+    buffer,
+  ) => {
+    let isEnd = false;
+
+    if (!hasLooped) {
+      if (dayEndIndex >= maxIndex) {
+        dayEndIndex = dayEndIndex - maxIndex + leastIndex;
+        hasLooped = true;
+        if (dayEndIndex >= endIndex - buffer) {
+          dayEndIndex = endIndex;
+          isEnd = true;
+        }
+      }
+    } else {
+      if (dayEndIndex >= endIndex - buffer) {
+        dayEndIndex = endIndex;
+        isEnd = true;
+      }
+    }
+
+    let index = dayEndIndex;
+    let endFlag = isEnd;
+    let loopFlag = hasLooped;
+
+    return {index, endFlag, loopFlag};
+  };
+
+  let checkResult = checker(
+    hasLooped,
+    dayEndIndex,
+    maxIndex,
+    leastIndex,
+    endIndex,
+    buffer,
+  );
+  dayEndIndex = checkResult.index;
+  isEnd = checkResult.endFlag;
+  hasLooped = checkResult.loopFlag;
+
+  if (!isEnd) {
+    let checkVerseBuffer;
+    switch (scheduleType) {
+      case scheduleTypes.sequential:
+        checkVerseBuffer = checkOrderedVerseBuffer;
+        break;
+      case scheduleTypes.chronological:
+        checkVerseBuffer = checkAnyVerseBuffer;
+        break;
+      case scheduleTypes.thematic:
+        checkVerseBuffer = checkAnyVerseBuffer;
+        break;
+      default:
+        console.log('Schedule Type was not defined');
+        break;
+    }
+
+    let verseBuffer = checkVerseBuffer(
+      qryVerseIndex,
+      dayEndIndex,
+      buffer,
+      maxIndex,
+      leastIndex,
+    );
+
+    verseOverflow -= verseBuffer;
+
+    dayEndIndex += Math.round(verseBuffer);
+  }
+
+  checkResult = checker(
+    hasLooped,
+    dayEndIndex,
+    maxIndex,
+    leastIndex,
+    endIndex,
+    buffer,
+  );
+  dayEndIndex = checkResult.index;
+  isEnd = isEnd || checkResult.endFlag;
+  hasLooped = hasLooped || checkResult.loopFlag;
+
+  if (dayEndIndex < leastIndex || dayEndIndex > maxIndex) {
+    dayEndIndex = maxIndex;
+  }
+
+  return {
+    dayEndIndex: dayEndIndex,
+    isEnd: isEnd,
+    hasLooped: hasLooped,
+    verseOverflow: verseOverflow,
+  };
+}
+
 // Declaring values to be input into schedule table here for easier understanding of structure.
-// Values to be used later in schedule Generator
-const valuesArray = [
+// Values to be used later in schedule generator
+const bibleScheduleValuesArray = [
   'StartBookName',
   'StartBookNumber',
   'StartChapter',
@@ -409,240 +894,205 @@ function createReadingPortionArray(
   return result;
 }
 
-async function generateSequentialSchedule(
-  userDB,
-  bibleDB,
-  duration,
-  bookId,
-  chapter,
-  verse,
-  tableName,
-  successCB,
-  messageCB,
-) {
-  //Get all required table and query references to be used in populating the table
-  log('tblVerseIndex:', tblVerseIndex, 'qryMaxVerses:', qryMaxVerses);
+// Declaring values to be input into schedule table here for easier understanding of structure.
+// Values to be used later in schedule generator
+const customScheduleValuesArray = ['CompletionDate', 'ReadingPortion'];
 
-  //Transform the duration into an amount of days based on the years given by user
-  /*
-  Apparently, though (I assume because of truncating of decimal places) the schedules get farther
-  and farther off target the more years they run, thus the "+ duration * 7" adjustment.
-  It matches the target numbers well even all the way up to a 7 year schedule.
-  */
-  duration = parseFloat(duration, 10);
-  duration *= 365 + duration * 7;
+function createCustomReadingPortionArray(date, description) {
+  let result = [];
 
-  const totalVerses = tblVerseIndex.rows.length;
-  const maxIndex = tblVerseIndex.rows.length - 1;
-  const versesPerDay = totalVerses / duration;
-  const bibleBookPrefix = 'bibleBooks.';
-  const bibleBookSuffix = '.name';
+  //CompletionDate
+  result.push(formatDate(date));
 
-  let tempBuffer = versesPerDay / 4;
+  //ReadingPortion
+  result.push(description);
 
-  const buffer = Math.round(tempBuffer);
+  return result;
+}
 
-  let readingPortions = [];
-
+function createReadingPortion(qryVerseIndex, dayStartIndex, dayEndIndex, date) {
   let startBookNumber;
-  let startBibleBook;
+  let startBookName;
   let startChapter;
   let startVerse;
   let endBookNumber;
-  let endBibleBook;
+  let endBookName;
   let endChapter;
   let endVerse;
+  let portions = [];
+  let tempString = '';
+  const bibleBookPrefix = 'bibleBooks.';
+  const bibleBookSuffix = '.name';
 
-  let tempPointer = searchQuery(qryMaxVerses, 'BibleBook', bookId);
-
-  let initialBookNumber = qryMaxVerses.rows.item(tempPointer).BibleBook;
-  let initialBibleBook = translate(
-    bibleBookPrefix + initialBookNumber + bibleBookSuffix,
-  );
-  let initialChapter = chapter;
-  let initialVerse = verse;
-
-  let adjustedVerseMessage;
-
-  log('Starting schedule generation');
-
-  let pointer = await findVerseIndex(bibleDB, bookId, chapter, verse, true);
-
-  const startIndex = pointer;
-  var endIndex = startIndex - 1;
-  let hasLooped = false;
-
-  log('pointer', pointer);
-  startBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
-  startBibleBook = translate(
+  startBookNumber = qryVerseIndex.rows.item(dayStartIndex).BibleBook;
+  startBookName = translate(
     bibleBookPrefix + startBookNumber + bibleBookSuffix,
   );
-  startChapter = tblVerseIndex.rows.item(pointer).Chapter;
-  startVerse = tblVerseIndex.rows.item(pointer).Verse;
+  startChapter = qryVerseIndex.rows.item(dayStartIndex).Chapter;
+  startVerse = qryVerseIndex.rows.item(dayStartIndex).Verse;
 
-  let date = new Date();
+  endBookNumber = qryVerseIndex.rows.item(dayEndIndex).BibleBook;
+  endBookName = translate(bibleBookPrefix + endBookNumber + bibleBookSuffix);
+  endChapter = qryVerseIndex.rows.item(dayEndIndex).Chapter;
+  endVerse = qryVerseIndex.rows.item(dayEndIndex).Verse;
 
-  if (
-    startBibleBook != initialBibleBook ||
-    startChapter != initialChapter ||
-    startVerse != initialVerse
-  ) {
-    adjustedVerseMessage = translate(prefix + 'adjustedVersePrompt', {
-      initialBibleBook: initialBibleBook,
-      initialChapter: initialChapter,
-      initialVerse: initialVerse,
-      startBibleBook: startBibleBook,
-      startChapter: startChapter,
-      startVerse: startVerse,
-    });
+  tempString = `${startBookName} ${startChapter}:${startVerse} - ${endBookName} ${endChapter}:${endVerse}`;
+
+  log(tempString);
+
+  let portion = createReadingPortionArray(
+    startBookName,
+    startBookNumber,
+    startChapter,
+    startVerse,
+    endBookName,
+    endBookNumber,
+    endChapter,
+    endVerse,
+    date,
+    tempString,
+  );
+
+  return portion;
+}
+
+function createReadingPortions(
+  qryVerseIndex,
+  dayStartIndex,
+  dayEndIndex,
+  date,
+  scheduleType,
+  leastIndex,
+  maxIndex,
+) {
+  let portions = [];
+  let portionsToSort = [];
+
+  let addPortionsToSort = (qryVerseIndex, startIndex, endIndex) => {
+    let prevVerseID = qryVerseIndex.rows.item(startIndex).VerseID - 1;
+    let startVerseID = qryVerseIndex.rows.item(startIndex).VerseID;
+    let nextStartIndex = startIndex;
+    let portionsToSort = [];
+
+    for (let index = startIndex; index <= endIndex; index++) {
+      let currentVerseID = qryVerseIndex.rows.item(index).VerseID;
+
+      if (currentVerseID !== prevVerseID + 1 || index === endIndex) {
+        let tempIndex = index === endIndex ? index : index - 1;
+        let portionToSort = {
+          startIndex: nextStartIndex,
+          endIndex: tempIndex,
+          startVerseID: startVerseID,
+          endVerseID: prevVerseID,
+        };
+        portionsToSort.push(portionToSort);
+
+        startVerseID = currentVerseID;
+        nextStartIndex = tempIndex + 1;
+      }
+
+      prevVerseID = qryVerseIndex.rows.item(index).VerseID;
+    }
+    return portionsToSort;
+  };
+
+  //If this is not a chronological schedule we can rest assured that everything is in order of VerseID
+  //and automatically return the reading portion array
+  if (scheduleType === scheduleTypes.sequential) {
+    let temp = createReadingPortion(
+      qryVerseIndex,
+      dayStartIndex,
+      dayEndIndex,
+      date,
+    );
+    portions.push(temp);
+    return portions;
   }
 
-  let verseOverflow = 0;
-  let versesToday = 0;
-
-  for (let i = 0; i < duration * 2; i++) {
-    let tempString = '';
-    let isEnd = false;
-
-    startBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
-    startBibleBook = translate(
-      bibleBookPrefix + startBookNumber + bibleBookSuffix,
-    );
-    startChapter = tblVerseIndex.rows.item(pointer).Chapter;
-    startVerse = tblVerseIndex.rows.item(pointer).Verse;
-
-    log(
-      'Generating Sequential schedule starting at: ',
-      startBibleBook,
-      startChapter,
-      ':',
-      startVerse,
+  //Otherwise we need to run through the whole day's reading, find when the reading changes position
+  //relative to the order in the bible, and then sort and condense the resulting arrays to clean up
+  if (dayStartIndex < dayEndIndex) {
+    portionsToSort = addPortionsToSort(
+      qryVerseIndex,
+      dayStartIndex,
+      dayEndIndex,
     );
 
-    versesToday = versesPerDay + verseOverflow;
-
-    verseOverflow = versesToday - Math.floor(versesToday);
-
-    pointer += Math.round(versesToday);
-
-    if (!hasLooped) {
-      if (pointer >= maxIndex) {
-        pointer -= maxIndex;
-        hasLooped = true;
-        if (pointer >= endIndex - buffer) {
-          pointer = endIndex;
-          isEnd = true;
-        }
-      }
-    } else {
-      if (pointer >= endIndex - buffer) {
-        pointer = endIndex;
-        isEnd = true;
-      }
-    }
-
-    if (!isEnd) {
-      let verseBuffer = checkVerseBuffer(
-        tblVerseIndex.rows.item(pointer),
-        buffer,
-      );
-
-      verseOverflow -= verseBuffer;
-
-      pointer += Math.round(verseBuffer);
-    }
-
-    if (!hasLooped) {
-      if (pointer >= maxIndex) {
-        pointer -= maxIndex;
-        hasLooped = true;
-        if (pointer >= endIndex - buffer) {
-          pointer = endIndex;
-          isEnd = true;
-        }
-      }
-    } else {
-      if (pointer >= endIndex - buffer) {
-        pointer = endIndex;
-        isEnd = true;
-      }
-    }
-
-    if (pointer < 0 || pointer > maxIndex) {
-      pointer = maxIndex;
-    }
-
-    endBookNumber = tblVerseIndex.rows.item(pointer).BibleBook;
-    endBibleBook = translate(bibleBookPrefix + endBookNumber + bibleBookSuffix);
-    endChapter = tblVerseIndex.rows.item(pointer).Chapter;
-    endVerse = tblVerseIndex.rows.item(pointer).Verse;
-
-    log('And ending at: ', endBibleBook, endChapter, ':', endVerse);
-
-    tempString = `${startBibleBook} ${startChapter}:${startVerse} - ${endBibleBook} ${endChapter}:${endVerse}`;
-
-    log(tempString);
-
-    let temp = createReadingPortionArray(
-      startBibleBook,
-      startBookNumber,
-      startChapter,
-      startVerse,
-      endBibleBook,
-      endBookNumber,
-      endChapter,
-      endVerse,
-      date,
-      tempString,
-    );
-    date.setDate(date.getDate() + 1);
-
-    readingPortions.push(temp);
-
-    pointer += 1;
-
-    log(
-      'pointer',
-      pointer,
-      'isEnd',
-      isEnd,
-      'hasLooped',
-      hasLooped,
-      'maxIndex',
+    portionsToSort.sort(function(a, b) {
+      return a.endVerseID - b.startVerseID;
+    });
+  } else {
+    let portionsToSort1 = addPortionsToSort(
+      qryVerseIndex,
+      dayStartIndex,
       maxIndex,
     );
 
-    if (pointer > maxIndex) {
-      pointer = 0;
-    }
+    let portionsToSort2 = addPortionsToSort(
+      qryVerseIndex,
+      leastIndex,
+      dayEndIndex,
+    );
 
-    if (isEnd) {
-      console.log('Schedule created lasts', i, 'days');
-      break;
-    }
+    portionsToSort1.sort(function(a, b) {
+      return a.endVerseID - b.startVerseID;
+    });
+    portionsToSort2.sort(function(a, b) {
+      return a.endVerseID - b.startVerseID;
+    });
+
+    portionsToSort = [...portionsToSort1, ...portionsToSort2];
+  }
+  //Check if the loop made only one array, if so our job is easy and we just return that array
+  if (portionsToSort.length === 1) {
+    let portion = createReadingPortion(
+      qryVerseIndex,
+      portionsToSort[0].startIndex,
+      portionsToSort[0].endIndex,
+      date,
+    );
+    portions.push(portion);
+  } else {
+    //And condense the portions if the last VerseID of one equals the first VerseID of another
+    let arrayToCompare;
+    let tempPortions = [];
+
+    portionsToSort.map(sortedPortion => {
+      if (arrayToCompare) {
+        if (arrayToCompare.endVerseID === sortedPortion.startVerseID - 1) {
+          arrayToCompare.endVerseID = sortedPortion.endVerseID;
+          arrayToCompare.endIndex = sortedPortion.endIndex;
+        } else {
+          tempPortions.push({...arrayToCompare});
+          arrayToCompare = {...sortedPortion};
+        }
+      } else {
+        arrayToCompare = {...sortedPortion};
+      }
+    });
+
+    tempPortions.push(arrayToCompare);
+
+    //Use condensed array of portions to create final reading portions for input
+    tempPortions.map(condensedPortion => {
+      let portion = createReadingPortion(
+        qryVerseIndex,
+        condensedPortion.startIndex,
+        condensedPortion.endIndex,
+        date,
+      );
+      portions.push(portion);
+    });
   }
 
-  timeKeeper('Ended at.....');
-
-  await insertReadingPortions(userDB, readingPortions, tableName).then(
-    wasSucessful => {
-      if (wasSucessful) {
-        console.log('Every insert was successful');
-        if (adjustedVerseMessage) {
-          messageCB(adjustedVerseMessage);
-        }
-        successCB();
-      } else {
-        console.log('Insert failed');
-      }
-    },
-  );
+  return portions;
 }
 
 async function insertReadingPortions(
   userDB,
   readingPortions,
   tableName,
+  valuesArray,
   startIndex = 0,
 ) {
   let length = readingPortions.length;
@@ -656,7 +1106,7 @@ async function insertReadingPortions(
       endIndex = startIndex + 50;
       isEnd = false;
     } else {
-      endIndex = length - 1;
+      endIndex = length;
       isEnd = true;
     }
     temp = readingPortions.slice(startIndex, endIndex);
@@ -669,6 +1119,8 @@ async function insertReadingPortions(
   let {placeholders, values} = createPlaceholdersFromArray(temp);
 
   let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders}`;
+
+  log('insert sql', sql, 'values', values);
 
   await userDB
     .transaction(txn => {
@@ -688,6 +1140,7 @@ async function insertReadingPortions(
       userDB,
       readingPortions,
       tableName,
+      valuesArray,
       startIndex,
     ).then(result => {
       if (wasSuccessful) {
@@ -699,24 +1152,273 @@ async function insertReadingPortions(
   return wasSuccessful;
 }
 
-function generateScheduleList(userDB) {
-  /**
-   * have a general function to create user prefs table. this way whenever I need to make
-   * an adjustment I only have to look to one place to fix it
-   *
-   * day's text is not really a schedule thing. just a value stored in the userPrefs table
-   * which says the last date when the day's text was read. If it is not today,
-   * then we display the day's text reading portion button
-   *
-   * Loop through all schedules and make a schedule day button instance
-   * for each if it matched today and has not been read
-   *
-   * How should magazine readings be handled? we could have a monthly reading section and just
-   * check it off when you finish (alternatively, we could have it open a popup which can allow
-   * you to set what page you have read up to? or split it into 32 or 16 buttons, one for each
-   * page (need to take care of combining first and second, and second to last and last into
-   * their own days)), or you could have a daily reading which tells you how many pages to read
-   * for the day, start with public awake / wt, then once that is finished read the current study
-   * edition. This will definitely have to have settings
-   */
+//Schedule creation generator algorithms
+
+async function generateBibleSchedule(
+  userDB,
+  bibleDB,
+  scheduleType,
+  dur,
+  bookId,
+  chapter,
+  verse,
+  tableName,
+  successCB,
+  messageCB,
+) {
+  //Get all required table and query references to be used in populating the table
+  log('qryVerseIndex:', qryVerseIndex, 'qryMaxVerses:', qryMaxVerses);
+
+  const qryVerseIndex = setQryVerseIndex(scheduleType);
+  const bibleBookPrefix = 'bibleBooks.';
+  const bibleBookSuffix = '.name';
+
+  const {
+    keys,
+    duration,
+    leastIndex,
+    maxIndex,
+    versesPerDay,
+    buffer,
+  } = setScheduleParameters(dur, qryVerseIndex, scheduleType);
+
+  log('Starting schedule generation');
+
+  //Find an index closest to the one requested
+  let requestedIndex = await findVerseIndex(
+    bibleDB,
+    bookId,
+    chapter,
+    verse,
+    scheduleType,
+    true,
+  );
+
+  var pointer, keyIndex, endIndex, hasLooped, isEnd, verseOverflow;
+  //Set variables which will keep track of certain values used for schedule creation
+  await setTrackers(
+    bibleDB,
+    qryVerseIndex,
+    requestedIndex,
+    keys,
+    leastIndex,
+    maxIndex,
+  ).then(res => {
+    pointer = res.pointer;
+    keyIndex = res.keyIndex;
+    endIndex = res.endIndex;
+    hasLooped = res.hasLooped;
+    isEnd = res.isEnd;
+    verseOverflow = res.verseOverflow;
+  });
+
+  //Check to see if we adjusted the requested verse because it was out of bounds
+  let adjustedVerseMessage = setAdjustedMessage(
+    bibleBookPrefix,
+    bibleBookSuffix,
+    bookId,
+    chapter,
+    verse,
+    qryVerseIndex,
+    pointer[keys[keyIndex]],
+  );
+
+  let readingPortions = [];
+  let date = new Date();
+  let versesToday = 0;
+  let endCounter = 0;
+
+  for (let i = 0; i < duration * 2; i++) {
+    for (let k = 0; k < keys.length; k++) {
+      if (i === 0) {
+        k = keyIndex;
+      }
+      const key = keys[k];
+
+      if (isEnd[key]) {
+        console.log('Skipped day', key);
+        continue;
+      }
+
+      let dayStartIndex = pointer[key];
+
+      versesToday = versesPerDay[key] + verseOverflow[key];
+      let dayEndIndex = pointer[key] + Math.round(versesToday);
+
+      verseOverflow[key] = versesToday - Math.floor(versesToday);
+
+      let endCheck = checkEnd(
+        qryVerseIndex,
+        dayEndIndex,
+        maxIndex[key],
+        leastIndex[key],
+        endIndex[key],
+        verseOverflow[key],
+        hasLooped[key],
+        buffer[key],
+        isEnd[key],
+        scheduleType,
+      );
+
+      dayEndIndex = endCheck.dayEndIndex;
+      isEnd[key] = endCheck.isEnd;
+      hasLooped[key] = endCheck.hasLooped;
+      verseOverflow[key] += endCheck.verseOverflow;
+
+      let portions = createReadingPortions(
+        qryVerseIndex,
+        dayStartIndex,
+        dayEndIndex,
+        date,
+        scheduleType,
+        leastIndex[key],
+        maxIndex[key],
+      );
+
+      for (let j = 0; j < portions.length; j++) {
+        const el = portions[j];
+        readingPortions.push(el);
+      }
+
+      pointer[key] = dayEndIndex + 1;
+      date.setDate(date.getDate() + 1);
+
+      log(
+        'day',
+        key,
+        'isEnd',
+        isEnd[key],
+        'hasLooped',
+        hasLooped[key],
+        'leastIndex',
+        leastIndex[key],
+        'pointer',
+        pointer[key],
+        'maxIndex',
+        maxIndex[key],
+        'versesPerDay',
+        versesPerDay[key],
+        'verseOverflow',
+        verseOverflow[key],
+      );
+      log(
+        '___________________________________________________________________',
+      );
+
+      if (pointer[key] > maxIndex[key]) {
+        pointer[key] = leastIndex[key];
+      }
+
+      if (isEnd[key]) {
+        console.log('day', key, 'ended at', i, 'days');
+        endCounter++;
+      }
+
+      //Adjust the i index to represent a new schedule day if we have several types of days
+      if (keys.length > 1 && k !== keys.length - 1) {
+        i++;
+      }
+    }
+    if (endCounter >= keys.length) {
+      console.log('Schedule created lasts', i, 'days');
+      break;
+    }
+  }
+
+  await insertReadingPortions(
+    userDB,
+    readingPortions,
+    tableName,
+    bibleScheduleValuesArray,
+  )
+    .then(wasSucessful => {
+      if (wasSucessful) {
+        console.log('Every insert was successful');
+        if (adjustedVerseMessage) {
+          messageCB(adjustedVerseMessage);
+        }
+        successCB();
+      } else {
+        console.log('Insert failed');
+      }
+      timeKeeper('Ended at.....');
+    })
+    .catch(err => {
+      errorCB(err);
+      timeKeeper('Ended at.....');
+    });
+}
+
+function generateCustomSchedule(
+  userDB,
+  tableName,
+  startingPortion,
+  maxPortion,
+  readingPortionDesc,
+  portionsPerDay,
+  successCB,
+) {
+  log('started creating schedule');
+  let date = new Date();
+  let pointer = parseFloat(startingPortion, 10);
+  let readingPortion = '';
+  let readingPortions = [];
+  let adjustment = portionsPerDay < 1 ? 0 : 1;
+
+  portionsPerDay = parseFloat(portionsPerDay, 10);
+  maxPortion = parseFloat(maxPortion, 10);
+
+  log(
+    'pointer',
+    pointer,
+    'readingPortion',
+    readingPortion,
+    'readingPortions',
+    readingPortions,
+    'adjustment',
+    adjustment,
+    'portionsPerDay',
+    portionsPerDay,
+    'maxPortion',
+    maxPortion,
+  );
+
+  while (pointer <= maxPortion) {
+    log('pointer', pointer, 'readingPortion', readingPortion);
+
+    readingPortion = readingPortionDesc + ' ' + pointer;
+
+    if (portionsPerDay !== 1) {
+      if (pointer !== maxPortion) {
+        pointer += portionsPerDay - adjustment;
+        if (pointer > maxPortion) {
+          pointer = maxPortion;
+        }
+        readingPortion += '-' + pointer;
+      } else {
+        adjustment = 1;
+      }
+    }
+
+    pointer += adjustment;
+
+    let temp = createCustomReadingPortionArray(date, readingPortion);
+    readingPortions.push(temp);
+    //Move date ahead
+    date.setDate(date.getDate() + 1);
+  }
+
+  insertReadingPortions(
+    userDB,
+    readingPortions,
+    tableName,
+    customScheduleValuesArray,
+  ).then(wasSucessful => {
+    if (wasSucessful) {
+      console.log('Every insert was successful');
+      successCB();
+    } else {
+      console.log('Insert failed');
+    }
+  });
 }

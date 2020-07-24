@@ -266,11 +266,26 @@
       "whereWritten": "Patamos"
     }
   },
+  "buttonsPopup": {"title": "Reading Portions"},
   "createSchedulePopup": {
     "createSchedule": "Create Schedule",
+    "numberOfPortions": "Number of {{portionDesc}}s",
+    "numberOfPortionsPhld": "Maximum number of {{portionDesc}}s in publication",
+    "readingPortionDesc": {
+      "title": "Reading Portion Description",
+      "article": "Article",
+      "chapter": "Chapter",
+      "page": "Page",
+      "paragraph": "Paragraph"
+    },
+    "readingPortionDescPhld": "Description of reading portion",
+    "portionsPerDay": "{{portionDesc}}s Per Day",
+    "portionsPerDayPhld": "How many {{portionDesc}}s to read each day",
     "scheduleName": "Schedule Name",
     "scheduleDuration": "Schedule Duration",
     "scheduleDurPhld": "How many years?",
+    "startingPortion": "Starting Portion",
+    "startingPortionPhld": "Portion you would like to start from",
     "startingVerse": "Starting Verse",
     "unfinished": "Please fill in all of the required fields to make a schedule"
   },
@@ -312,7 +327,9 @@
     },
     "wol": {"lp-e": "lp-e", "r1": "r1", "nwtsty": "nwtsty"}
   },
+  "missingTranslation": "Translation doesn't exist",
   "readingRemindersPopup": {
+    "readingReminders": "Reading Reminders",
     "heading0": "Create the right surroundings",
     "body0-1": "Find a location that is quiet and free from distractions",
     "body0-2": "(Perhaps put your phone into silent mode)",
@@ -335,7 +352,7 @@
     "body3-1": "If we see the practical value of an activity, we benefit more from it.",
     "body3-2": "We need to take action to apply what we learned in our life and understand how we can use what we learned to help others.",
     "subheading3-1": "Reminders derived from:",
-    "body3-3": "Please go to those links do get a deeper understanding of the thoughts expressed"
+    "body3-3": "Please go to those links to get a deeper understanding of the thoughts expressed"
   },
   "readingInfoPopup": {
     "readingInfo": "Reading Info",
@@ -349,12 +366,22 @@
   "schedules": "Schedules",
   "schedulePage": {
     "deleteScheduleMessage": "Are you sure you want to delete \"{{scheduleName}}\" schedule?",
-    "hideCompleted": "Hide Completed",
-    "readingReminders": "Reading Reminders"
+    "hideCompleted": "Hide Completed"
   },
   "scheduleTransactions": {
     "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds.",
     "scheduleNameTakenPrompt": "Please select a schedule name you haven't used"
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "Schedule Type",
+    "sequential": "Sequential",
+    "sequentialDescription": "Read the bible from Genesis to Revelation",
+    "chronological": "Chronological",
+    "chronologicalDescription": "Read the bible in the order in which events occurred. (EXPERIMENTAL: If you find a discrepency please contact me)",
+    "thematic": "Thematic",
+    "thematicDescription": "Each day, read from a different section of the Bible in a weekly cycle: Day 1 - The Law, 2 - History, 3 - Psalms, 4 - Poetry, 5 - Prophecy, 6 - Gospels, 7 - Letters",
+    "custom": "Custom",
+    "customDescription": "Create a custom schedule for a publication"
   },
   "today": "Today",
   "versePicker": {

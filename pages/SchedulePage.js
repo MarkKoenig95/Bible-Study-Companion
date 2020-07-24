@@ -1,10 +1,13 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {StyleSheet, SafeAreaView, View, FlatList} from 'react-native';
 import {StackActions} from '@react-navigation/native';
 import {translate} from '../localization/localization';
 
 import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
+import ButtonsPopup, {
+  useButtonsPopup,
+} from '../components/popups/SelectedDayButtonsPopup';
 import ReadingRemindersPopup from '../components/popups/ReadingRemindersPopup';
 import ReadingInfoPopup, {
   useReadingInfoPopup,
@@ -25,13 +28,57 @@ import {
   getHideCompleted,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
+import {useOpenPopupFunction, arraysMatch} from '../logic/logic';
 
 const prefix = 'schedulePage.';
 
+function ScheduleButton(props) {
+  const {
+    item,
+    completedHidden,
+    update,
+    onUpdateReadStatus,
+    openReadingPopup,
+  } = props;
+
+  return (
+    <ScheduleDayButton
+      readingPortion={item.ReadingPortion}
+      completionDate={item.CompletionDate}
+      completedHidden={completedHidden}
+      isFinished={item.IsFinished ? true : false}
+      update={update}
+      onLongPress={cb => {
+        onUpdateReadStatus(cb, item.IsFinished, item.ReadingDayID);
+      }}
+      onPress={cb => {
+        openReadingPopup(
+          item.StartBookNumber,
+          item.StartChapter,
+          item.StartVerse,
+          item.EndBookNumber,
+          item.EndChapter,
+          item.EndVerse,
+          item.ReadingPortion,
+          item.IsFinished,
+          item.ReadingDayID,
+          cb,
+        );
+      }}
+    />
+  );
+}
+
 function SchedulePage(props) {
+  console.log('loaded schedule page');
   const globalState = useContext(store);
   const {dispatch} = globalState;
   const {userDB, updatePages} = globalState.state;
+
+  const scheduleName = props.route.params.name;
+  const scheduleID = props.route.params.id;
+
+  const tableName = formatScheduleTableName(scheduleID);
 
   const [flatListItems, setFlatListItems] = useState([]);
 
@@ -39,20 +86,52 @@ function SchedulePage(props) {
 
   const {
     readingPopup,
-    openReadingPopup,
+    openReadingInfoPopup,
     closeReadingPopup,
   } = useReadingInfoPopup();
 
-  const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
+  const {
+    messagePopup,
+    openMessagePopupBase,
+    closeMessagePopup,
+  } = useMessagePopup();
+
+  const {
+    buttonsPopup,
+    openButtonsPopupBase,
+    closeButtonsPopup,
+  } = useButtonsPopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
     false,
   );
 
-  const scheduleName = props.route.params.name;
-  const scheduleID = props.route.params.id;
+  const closePopupFunctions = [
+    setIsRemindersPopupDisplayed,
+    closeMessagePopup,
+    closeReadingPopup,
+    closeButtonsPopup,
+  ];
 
-  const tableName = formatScheduleTableName(scheduleID);
+  const openReadingPopup = useOpenPopupFunction(
+    openReadingInfoPopup,
+    closePopupFunctions,
+  );
+
+  const openMessagePopup = useOpenPopupFunction(
+    openMessagePopupBase,
+    closePopupFunctions,
+  );
+
+  const openButtonsPopup = useOpenPopupFunction(
+    openButtonsPopupBase,
+    closePopupFunctions,
+  );
+
+  const openRemindersPopup = useOpenPopupFunction(
+    setIsRemindersPopupDisplayed,
+    closePopupFunctions,
+  );
 
   //Set delete button in nav bar with appropriate onPress attribute
   props.navigation.setOptions({
@@ -72,9 +151,9 @@ function SchedulePage(props) {
     ),
   });
 
-  const afterUpdate = () => {
+  const afterUpdate = useCallback(() => {
     dispatch(setUpdatePages(updatePages));
-  };
+  }, [dispatch, updatePages]);
 
   useEffect(() => {
     loadData(userDB, setFlatListItems, tableName);
@@ -91,12 +170,101 @@ function SchedulePage(props) {
     });
   }
 
-  function onUpdateReadStatus(cb, status, readingDayID) {
-    readingDayID = readingDayID || readingPopup.readingDayID;
+  const onUpdateReadStatus = useCallback(
+    (cb, status, readingDayID) => {
+      readingDayID = readingDayID || readingPopup.readingDayID;
 
-    updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
-    cb(!status);
-  }
+      updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
+      cb(!status);
+    },
+    [readingPopup, userDB, afterUpdate, tableName],
+  );
+
+  const setScheduleButtons = useCallback(
+    (items, index) => {
+      let result;
+      if (items.length === 1) {
+        result = (
+          <ScheduleButton
+            item={items[0]}
+            completedHidden={completedHidden}
+            update={updatePages}
+            onUpdateReadStatus={onUpdateReadStatus}
+            openReadingPopup={openReadingPopup}
+          />
+        );
+      } else {
+        let buttons = [];
+        let areButtonsFinished = [];
+        let readingDayIDs = [];
+        let readingPortions;
+        let completionDate;
+        let isFinished;
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          let tempIsFinished = item.IsFinished ? true : false;
+          if (readingPortions) {
+            readingPortions += '\r\n' + item.ReadingPortion;
+          } else {
+            readingPortions = item.ReadingPortion;
+            completionDate = item.CompletionDate;
+            isFinished = tempIsFinished;
+          }
+          readingDayIDs.push(item.ReadingDayID);
+
+          isFinished = tempIsFinished && isFinished;
+
+          areButtonsFinished.push(tempIsFinished);
+          buttons.push(
+            <ScheduleButton
+              key={Math.random() * 10000 + 'w'}
+              item={item}
+              completedHidden={completedHidden}
+              update={updatePages}
+              onUpdateReadStatus={onUpdateReadStatus}
+              openReadingPopup={openReadingPopup}
+            />,
+          );
+        }
+
+        if (
+          buttonsPopup.id === index &&
+          buttonsPopup.isDisplayed &&
+          !arraysMatch(areButtonsFinished, buttonsPopup.areButtonsFinished)
+        ) {
+          openButtonsPopupBase(index, buttons, areButtonsFinished);
+        }
+
+        result = (
+          <ScheduleDayButton
+            readingPortion={readingPortions}
+            completionDate={completionDate}
+            completedHidden={completedHidden}
+            isFinished={isFinished}
+            update={updatePages}
+            onLongPress={cb => {
+              for (let i = 0; i < readingDayIDs.length; i++) {
+                onUpdateReadStatus(cb, isFinished, readingDayIDs[i]);
+              }
+            }}
+            onPress={() => {
+              openButtonsPopup(index, buttons, areButtonsFinished);
+            }}
+          />
+        );
+      }
+      return result;
+    },
+    [
+      completedHidden,
+      updatePages,
+      buttonsPopup,
+      onUpdateReadStatus,
+      openReadingPopup,
+      openButtonsPopup,
+      openButtonsPopupBase,
+    ],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -106,6 +274,11 @@ function SchedulePage(props) {
         message={messagePopup.message}
         onClosePress={closeMessagePopup}
         onConfirm={onDeleteSchedule}
+      />
+      <ButtonsPopup
+        displayPopup={buttonsPopup.isDisplayed}
+        buttons={buttonsPopup.buttons}
+        onClosePress={closeButtonsPopup}
       />
       <ReadingRemindersPopup
         displayPopup={isRemindersPopupDisplayed}
@@ -151,9 +324,9 @@ function SchedulePage(props) {
           }}
         />
         <TextButton
-          text={translate(prefix + 'readingReminders')}
+          text={translate('readingRemindersPopup.readingReminders')}
           onPress={() => {
-            setIsRemindersPopupDisplayed(true);
+            openRemindersPopup(true);
           }}
         />
       </View>
@@ -161,33 +334,9 @@ function SchedulePage(props) {
         <FlatList
           data={flatListItems}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
-            <ScheduleDayButton
-              key={item.ReadingDayID}
-              readingPortion={item.ReadingPortion}
-              completionDate={item.CompletionDate}
-              completedHidden={completedHidden}
-              isFinished={item.IsFinished ? true : false}
-              update={updatePages}
-              onLongPress={cb => {
-                onUpdateReadStatus(cb, item.IsFinished, item.ReadingDayID);
-              }}
-              onPress={cb => {
-                openReadingPopup(
-                  item.StartBookNumber,
-                  item.StartChapter,
-                  item.StartVerse,
-                  item.EndBookNumber,
-                  item.EndChapter,
-                  item.EndVerse,
-                  item.ReadingPortion,
-                  item.IsFinished,
-                  item.ReadingDayID,
-                  cb,
-                );
-              }}
-            />
-          )}
+          renderItem={({item, index}) => {
+            return setScheduleButtons(item, index);
+          }}
         />
       </View>
     </SafeAreaView>

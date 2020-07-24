@@ -40,7 +40,7 @@ export function useMessagePopup() {
     });
   }, []);
 
-  const openMessagePopup = useCallback((message, title) => {
+  const openMessagePopupBase = useCallback((message, title) => {
     if (!title) {
       title = translate('warning');
     }
@@ -48,7 +48,7 @@ export function useMessagePopup() {
   }, []);
 
   return {
-    openMessagePopup: openMessagePopup,
+    openMessagePopupBase: openMessagePopupBase,
     closeMessagePopup: closeMessagePopup,
     messagePopup: messagePopup,
   };
