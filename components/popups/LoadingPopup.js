@@ -5,10 +5,15 @@ import styles, {colors} from '../../styles/styles';
 
 export default function LoadingPopup(props) {
   return (
-    <Modal visible={props.displayPopup}>
-      <View style={[styles.background, {justifyContent: 'center'}]}>
-        <ActivityIndicator size="large" color={colors.darkGray} />
-      </View>
-    </Modal>
+    <View
+      style={[
+        styles.background,
+        {
+          display: !props.displayPopup ? 'none' : 'flex',
+          justifyContent: 'center',
+        },
+      ]}>
+      <ActivityIndicator size="large" color={colors.darkGray} />
+    </View>
   );
 }

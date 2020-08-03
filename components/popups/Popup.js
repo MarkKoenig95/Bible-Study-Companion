@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Keyboard,
@@ -14,8 +14,6 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 
 export default function Popup(props) {
-  const yTransform = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -24,47 +22,41 @@ export default function Popup(props) {
       Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
       Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [justifyContent, setJustifyContent] = useState('center');
+  const display = !props.displayPopup ? 'none' : 'flex';
+
   const _keyboardDidShow = () => {
-    Animated.timing(yTransform, {
-      toValue: -60,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
+    setJustifyContent('flex-start');
   };
 
   const _keyboardDidHide = () => {
-    Animated.timing(yTransform, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
+    setJustifyContent('center');
   };
   return (
-    <Modal transparent={true} visible={props.displayPopup}>
-      <View style={styles.background}>
-        <Animated.View
-          style={[
-            styles.popup,
-            props.style,
-            {
-              transform: [{translateY: yTransform}],
-            },
-          ]}>
-          <View style={style.title}>
-            <Text style={style.text}>{props.title}</Text>
-            <IconButton name="close" invertColor onPress={props.onClosePress} />
-          </View>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            style={style.content}
-            contentContainerStyle={style.contentContainer}>
-            {props.children}
-          </ScrollView>
-        </Animated.View>
+    <View
+      style={[
+        styles.background,
+        {
+          display: display,
+          justifyContent: justifyContent,
+        },
+      ]}>
+      <View style={[styles.popup, props.style]}>
+        <View style={style.title}>
+          <Text style={style.text}>{props.title}</Text>
+          <IconButton name="close" invertColor onPress={props.onClosePress} />
+        </View>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          style={style.content}
+          contentContainerStyle={style.contentContainer}>
+          {props.children}
+        </ScrollView>
       </View>
-    </Modal>
+    </View>
   );
 }
 const style = StyleSheet.create({

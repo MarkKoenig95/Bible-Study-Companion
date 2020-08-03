@@ -16,7 +16,7 @@ import {addSchedule} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../localization/localization';
 import LoadingPopup from '../components/popups/LoadingPopup';
-import {useOpenPopupFunction} from '../logic/logic';
+import {useUpdate} from '../logic/logic';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
 
 let scheduleType;
@@ -45,40 +45,9 @@ export default function Schedules(props) {
     setIsScheduleTypePopupDisplayed,
   ] = useState(isCreatingSchedule);
 
-  const {
-    messagePopup,
-    openMessagePopupBase,
-    closeMessagePopup,
-  } = useMessagePopup();
+  const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
   const [isLoading, setLoadingPopup] = useState(false);
-
-  const closePopupFunctions = [
-    setLoadingPopup,
-    closeMessagePopup,
-    setIsCreateSchedulePopupDisplayed,
-    setIsScheduleTypePopupDisplayed,
-  ];
-
-  const openCreateSchedulePopup = useOpenPopupFunction(
-    setIsCreateSchedulePopupDisplayed,
-    closePopupFunctions,
-  );
-
-  const openScheduleTypePopup = useOpenPopupFunction(
-    setIsScheduleTypePopupDisplayed,
-    closePopupFunctions,
-  );
-
-  const openMessagePopup = useOpenPopupFunction(
-    openMessagePopupBase,
-    closePopupFunctions,
-  );
-
-  const openLoadingPopup = useOpenPopupFunction(
-    setLoadingPopup,
-    closePopupFunctions,
-  );
 
   //Set delete button in nav bar with appropriate onPress attribute
   props.navigation.setOptions({
@@ -87,7 +56,7 @@ export default function Schedules(props) {
         iconOnly
         invertColor
         onPress={() => {
-          openScheduleTypePopup(!isScheduleTypePopupDisplayed);
+          setIsScheduleTypePopupDisplayed(!isScheduleTypePopupDisplayed);
         }}
         name="add"
       />
@@ -98,9 +67,7 @@ export default function Schedules(props) {
     loadData(userDB, setFlatListItems, 'tblSchedules');
   }, [userDB, setFlatListItems, updatePages]);
 
-  const afterUpdate = () => {
-    dispatch(setUpdatePages(updatePages));
-  };
+  const afterUpdate = useUpdate(updatePages, dispatch);
 
   function onAddSchedule(
     scheduleName,
@@ -114,7 +81,8 @@ export default function Schedules(props) {
     portionsPerDay,
   ) {
     setIsCreateSchedulePopupDisplayed(false);
-    openLoadingPopup(true);
+    setIsScheduleTypePopupDisplayed(false);
+    setLoadingPopup(true);
     addSchedule(
       userDB,
       bibleDB,
@@ -130,17 +98,11 @@ export default function Schedules(props) {
       portionsPerDay,
       () => {
         afterUpdate();
-        //If there is no timeout the initial setLoading popup can race with this setLoadingPopup and it might never close
-        setTimeout(() => {
-          setLoadingPopup(false);
-        }, 500);
+        setLoadingPopup(false);
       },
       message => {
-        //We have to make sure that one modal is closed before we show another one
-        setTimeout(() => {
-          setLoadingPopup(false);
-          openMessagePopup(message);
-        }, 500);
+        setLoadingPopup(false);
+        openMessagePopup(message);
       },
     );
   }
@@ -154,16 +116,6 @@ export default function Schedules(props) {
         message={messagePopup.message}
         onClosePress={closeMessagePopup}
       />
-      <ScheduleTypeSelectionPopup
-        displayPopup={isScheduleTypePopupDisplayed}
-        onConfirm={type => {
-          scheduleType = type;
-          openCreateSchedulePopup(true);
-        }}
-        onClosePress={() => {
-          setIsScheduleTypePopupDisplayed(false);
-        }}
-      />
       <CreateSchedulePopup
         displayPopup={isCreateSchedulePopupDisplayed}
         onAdd={onAddSchedule}
@@ -172,6 +124,17 @@ export default function Schedules(props) {
         }}
         onError={(message, title) => openMessagePopup(message, title)}
         type={scheduleType}
+      />
+      <ScheduleTypeSelectionPopup
+        displayPopup={isScheduleTypePopupDisplayed}
+        onConfirm={type => {
+          scheduleType = type;
+          setIsCreateSchedulePopupDisplayed(true);
+          setIsScheduleTypePopupDisplayed(false);
+        }}
+        onClosePress={() => {
+          setIsScheduleTypePopupDisplayed(false);
+        }}
       />
       <View style={styles.content}>
         <FlatList
@@ -196,7 +159,7 @@ export default function Schedules(props) {
         <IconButton
           buttonStyle={{alignSelf: 'center'}}
           onPress={() => {
-            openScheduleTypePopup(!isScheduleTypePopupDisplayed);
+            setIsScheduleTypePopupDisplayed(!isScheduleTypePopupDisplayed);
           }}
           name="add"
         />

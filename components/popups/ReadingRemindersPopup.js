@@ -30,10 +30,7 @@ export default function ReadingRemindersPopup(props) {
   const w16 = pubLinkBase + '/2016364#h=14:0-25:930';
 
   return (
-    <Popup
-      {...props}
-      style={{height: '75%'}}
-      title={translate(prefix + 'readingReminders')}>
+    <Popup {...props} title={translate(prefix + 'readingReminders')}>
       <View>
         <Heading>{translate(prefix + 'heading0')}</Heading>
         <Body>{translate(prefix + 'body0-1')}</Body>

@@ -761,7 +761,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.HumanAppMaker.BibleStudyCompanion;
-				PRODUCT_NAME = BibleStudyCompanion;
+				PRODUCT_NAME = "Bible Study Companion";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -787,7 +787,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.HumanAppMaker.BibleStudyCompanion;
-				PRODUCT_NAME = BibleStudyCompanion;
+				PRODUCT_NAME = "Bible Study Companion";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

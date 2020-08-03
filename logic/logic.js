@@ -1,21 +1,5 @@
 import React, {useCallback} from 'react';
-
-export function useOpenPopupFunction(popupOpenFunction, closePopupFunctions) {
-  const openPopup = useCallback((...args) => {
-    //Close all popups
-    closePopupFunctions.map(func => {
-      func(false);
-    });
-    //Wait a little while
-    setTimeout(() => {
-      //Open the popup requested
-      popupOpenFunction(...args);
-    }, 100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return openPopup;
-}
+import {setUpdatePages} from '../data/Store/actions';
 
 export function arraysMatch(arr1, arr2) {
   // Check if the arrays are the same length
@@ -32,7 +16,6 @@ export function arraysMatch(arr1, arr2) {
       return false;
     }
   }
-  console.log('returning true');
 
   // Otherwise, return true
   return true;
@@ -62,4 +45,10 @@ export function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
   }
 
   return result;
+}
+
+export function useUpdate(updatePages, dispatch) {
+  return useCallback(() => {
+    dispatch(setUpdatePages(updatePages));
+  }, [updatePages, dispatch]);
 }

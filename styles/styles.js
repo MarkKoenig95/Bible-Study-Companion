@@ -20,8 +20,10 @@ const styles = StyleSheet.create({
   background: {
     alignItems: 'center',
     backgroundColor: lightGray + '60',
+    justifyContent: 'center',
     height: '100%',
     width: '100%',
+    zIndex: 2,
   },
   button: {
     alignItems: 'center',
@@ -41,10 +43,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   content: {
-    marginBottom: 83,
+    marginBottom: 55,
     padding: 10,
     position: 'relative',
-    top: 80,
+    top: 65,
     width: '100%',
   },
   footer: {
@@ -67,6 +69,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
+    zIndex: -1,
   },
   input: {
     backgroundColor: colors.smoke,
@@ -91,11 +94,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: lightGray,
     borderRadius: 10,
-    marginTop: 100,
-    maxHeight: '90%',
+    maxHeight: '95%',
     minHeight: 300,
     overflow: 'hidden',
     width: '85%',
+    zIndex: 2,
   },
   versePicker: {
     margin: 10,

@@ -346,37 +346,40 @@ export function useReadingInfoPopup() {
     });
   }, []);
 
-  const openReadingInfoPopup = (
-    startBookNumber,
-    startChapter,
-    startVerse,
-    endBookNumber,
-    endChapter,
-    endVerse,
-    readingPortion,
-    isFinished,
-    readingDayID,
-    cb,
-    tableName,
-  ) => {
-    setReadingPopup({
-      isDisplayed: true,
-      startBookNumber: startBookNumber,
-      startChapter: startChapter,
-      startVerse: startVerse,
-      endBookNumber: endBookNumber,
-      endChapter: endChapter,
-      endVerse: endVerse,
-      readingPortion: readingPortion,
-      isFinished: isFinished,
-      readingDayID: readingDayID,
-      cb: cb,
-      tableName: tableName,
-    });
-  };
+  const openReadingPopup = useCallback(
+    (
+      startBookNumber,
+      startChapter,
+      startVerse,
+      endBookNumber,
+      endChapter,
+      endVerse,
+      readingPortion,
+      isFinished,
+      readingDayID,
+      cb,
+      tableName,
+    ) => {
+      setReadingPopup({
+        isDisplayed: true,
+        startBookNumber: startBookNumber,
+        startChapter: startChapter,
+        startVerse: startVerse,
+        endBookNumber: endBookNumber,
+        endChapter: endChapter,
+        endVerse: endVerse,
+        readingPortion: readingPortion,
+        isFinished: isFinished,
+        readingDayID: readingDayID,
+        cb: cb,
+        tableName: tableName,
+      });
+    },
+    [],
+  );
 
   return {
-    openReadingInfoPopup: openReadingInfoPopup,
+    openReadingPopup: openReadingPopup,
     closeReadingPopup: closeReadingPopup,
     readingPopup: readingPopup,
   };

@@ -25,20 +25,17 @@ export function useButtonsPopup() {
     });
   }, []);
 
-  const openButtonsPopupBase = useCallback(
-    (id, buttons, areButtonsFinished) => {
-      setButtonsPopup({
-        id: id,
-        isDisplayed: true,
-        buttons: buttons,
-        areButtonsFinished: areButtonsFinished,
-      });
-    },
-    [],
-  );
+  const openButtonsPopup = useCallback((id, buttons, areButtonsFinished) => {
+    setButtonsPopup({
+      id: id,
+      isDisplayed: true,
+      buttons: buttons,
+      areButtonsFinished: areButtonsFinished,
+    });
+  }, []);
 
   return {
-    openButtonsPopupBase: openButtonsPopupBase,
+    openButtonsPopup: openButtonsPopup,
     closeButtonsPopup: closeButtonsPopup,
     buttonsPopup: buttonsPopup,
   };
