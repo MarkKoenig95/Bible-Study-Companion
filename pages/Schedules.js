@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View, FlatList} from 'react-native';
+import {SafeAreaView, View, FlatList, SectionList} from 'react-native';
 
 import TextButton from '../components/buttons/TextButton';
 
@@ -18,6 +18,7 @@ import {translate} from '../localization/localization';
 import LoadingPopup from '../components/popups/LoadingPopup';
 import {useUpdate} from '../logic/logic';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
+import {Heading} from '../components/text/Text';
 
 let scheduleType;
 
@@ -33,7 +34,7 @@ export default function Schedules(props) {
     ? props.route.params.isCreatingSchedule
     : false;
 
-  const [flatListItems, setFlatListItems] = useState([]);
+  const [listItems, setListItems] = useState([]);
 
   const [
     isCreateSchedulePopupDisplayed,
@@ -64,8 +65,10 @@ export default function Schedules(props) {
   });
 
   useEffect(() => {
-    loadData(userDB, setFlatListItems, 'tblSchedules');
-  }, [userDB, setFlatListItems, updatePages]);
+    loadData(userDB, 'tblSchedules').then(res => {
+      setListItems(res);
+    });
+  }, [userDB, setListItems, updatePages]);
 
   const afterUpdate = useUpdate(updatePages, dispatch);
 
@@ -137,9 +140,14 @@ export default function Schedules(props) {
         }}
       />
       <View style={styles.content}>
-        <FlatList
-          data={flatListItems}
+        <SectionList
+          sections={listItems}
           keyExtractor={(item, index) => index.toString()}
+          renderSectionHeader={({section: {title}}) => {
+            if (title) {
+              <Heading style={styles.header}>{title}</Heading>;
+            }
+          }}
           renderItem={({item}) => {
             return (
               <TextButton

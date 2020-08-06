@@ -56,7 +56,7 @@ export function formatDate(date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-export async function loadData(db, setState, tableName) {
+export async function loadData(db, tableName) {
   if (db) {
     let results;
     await db
@@ -84,12 +84,21 @@ export async function loadData(db, setState, tableName) {
           innerItems = [item];
           previousDate = item.CompletionDate;
         }
+
+        if (i >= results.rows.length - 1) {
+          listItems.push(innerItems);
+        }
       } else {
         listItems.push(item);
       }
     }
 
-    setState(listItems);
+    return [
+      {
+        title: '',
+        data: listItems,
+      },
+    ];
   }
 }
 
@@ -147,20 +156,34 @@ async function replaceDB(db) {
   return DB;
 }
 
+function setDatabaseParameters(upgradeJSON) {
+  return JSON.parse(
+    JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
+      if (group === 'baseDate') {
+        let date = formatDate(new Date(0));
+        return date;
+      }
+      if (group === 'weeklyReadingStartDate') {
+        //This year we will start at August 3rd. This refers to the 30th day in the schedule
+        //This way I don't have to fuss with the memorial reading and stuff
+        //See below (NOTE: the middle number for month starts at 0. so august is 7)
+        let date = new Date(2020, 7, 3);
+        return date;
+      }
+      if (group === 'weeklyReadingStartOrder') {
+        return 30;
+      }
+    }),
+  );
+}
+
 export async function upgradeDB(db, upgradeJSON) {
   let DB;
   let res = await getVersion(db);
 
   log('Upgrading', db.dbname);
 
-  var json = JSON.parse(
-    JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
-      if (group === 'baseDate') {
-        let date = formatDate(new Date(0));
-        return date;
-      }
-    }),
-  );
+  var json = setDatabaseParameters(upgradeJSON);
 
   let upgradeVersion = upgradeJSON.version;
   let userVersion = res.rows.item(0).user_version;

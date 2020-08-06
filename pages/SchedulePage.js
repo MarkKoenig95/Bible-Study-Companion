@@ -16,6 +16,7 @@ import {
   formatScheduleTableName,
   setHideCompleted,
   getHideCompleted,
+  WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
 import {useUpdate} from '../logic/logic';
@@ -32,9 +33,12 @@ function SchedulePage(props) {
   const scheduleName = props.route.params.name;
   const scheduleID = props.route.params.id;
 
-  const tableName = formatScheduleTableName(scheduleID);
+  const tableName =
+    scheduleName !== translate('weeklyReading')
+      ? formatScheduleTableName(scheduleID)
+      : WEEKLY_READING_TABLE_NAME;
 
-  const [flatListItems, setFlatListItems] = useState([]);
+  const [listItems, setListItems] = useState([]);
 
   const [completedHidden, setCompletedHidden] = useState(false);
 
@@ -50,7 +54,7 @@ function SchedulePage(props) {
     userDB,
     afterUpdate,
     completedHidden,
-    flatListItems,
+    listItems,
     updatePages,
     tableName,
     scheduleName,
@@ -58,25 +62,35 @@ function SchedulePage(props) {
 
   //Set delete button in nav bar with appropriate onPress attribute
   props.navigation.setOptions({
-    headerRight: () => (
-      <IconButton
-        iconOnly
-        invertColor
-        onPress={() => {
-          let title = translate('warning');
-          let message = translate('schedulePage.deleteScheduleMessage', {
-            scheduleName: scheduleName,
-          });
-          openMessagePopup(message, title);
-        }}
-        name="delete"
-      />
-    ),
+    headerRight: () => {
+      if (tableName !== WEEKLY_READING_TABLE_NAME) {
+        return (
+          <IconButton
+            iconOnly
+            invertColor
+            onPress={() => {
+              let title = translate('warning');
+              let message = translate('schedulePage.deleteScheduleMessage', {
+                scheduleName: scheduleName,
+              });
+              let onConfirm = onDeleteSchedule;
+
+              openMessagePopup(message, title, onConfirm);
+            }}
+            name="delete"
+          />
+        );
+      }
+    },
   });
 
   useEffect(() => {
-    loadData(userDB, setFlatListItems, tableName);
-  }, [userDB, tableName, setFlatListItems, updatePages]);
+    loadData(userDB, tableName).then(res => {
+      if (res) {
+        setListItems(res);
+      }
+    });
+  }, [userDB, tableName, setListItems, updatePages]);
 
   useEffect(() => {
     getHideCompleted(userDB, scheduleName, setCompletedHidden);
@@ -96,7 +110,7 @@ function SchedulePage(props) {
         title={messagePopup.title}
         message={messagePopup.message}
         onClosePress={closeMessagePopup}
-        onConfirm={onDeleteSchedule}
+        onConfirm={messagePopup.onConfirm}
       />
       <ScheduleListPopups />
       <View style={styles.header}>

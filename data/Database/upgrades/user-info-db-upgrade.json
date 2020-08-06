@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "upgrades": {
     "to_v1": [
       [
@@ -16,6 +16,11 @@
       ],
       [
         "INSERT INTO tblDates(Name, Description, Date) VALUES (\"DailyText\", \"Last read date of the daily text\", \"@{baseDate}\"), (\"FamilyWorship\", \"Date of next Family Worship\", \"@{baseDate}\");"
+      ]
+    ],
+    "to_v2": [
+      [
+        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"WeeklyReadingStart\", \"@{weeklyReadingStartOrder}\", \"@{weeklyReadingStartDate}\"), (\"WeeklyReadingCurrent\", \"Last date of mid-week reading schedule read\", \"0\");"
       ]
     ]
   }

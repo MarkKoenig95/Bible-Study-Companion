@@ -1,12 +1,72 @@
 import React, {useState, useCallback} from 'react';
-import {View, FlatList} from 'react-native';
+import {View, SectionList} from 'react-native';
 
 import ScheduleDayButton from './buttons/ScheduleDayButton';
 import ButtonsPopup, {useButtonsPopup} from './popups/SelectedDayButtonsPopup';
 import ReadingRemindersPopup from './popups/ReadingRemindersPopup';
 import ReadingInfoPopup, {useReadingInfoPopup} from './popups/ReadingInfoPopup';
-import {updateReadStatus} from '../data/Database/scheduleTransactions';
+import {
+  updateReadStatus,
+  VERSE_POSITION,
+  checkReadingPortion,
+  checkStartVerse,
+  WEEKLY_READING_TABLE_NAME,
+} from '../data/Database/scheduleTransactions';
 import {arraysMatch} from '../logic/logic';
+import SectionListHeader from './SectionListHeader';
+
+function condenseReadingPortion(item, prevBookNum) {
+  let startBook = item.StartBookName;
+  let startChapter = item.StartChapter;
+  let startVerse = item.StartVerse;
+  let endBook = item.EndBookName;
+  let endChapter = item.EndChapter;
+  let endVerse = item.EndVerse;
+  let portionPrefix;
+
+  if (
+    item.StartBookNumber === prevBookNum &&
+    item.EndBookNumber === prevBookNum
+  ) {
+    portionPrefix = '; ';
+    startBook = '';
+    endBook = '';
+  } else {
+    portionPrefix = '\r\n';
+    startBook = item.StartBookName;
+    endBook = item.EndBookName;
+  }
+
+  let isStart = false;
+  let isEnd = false;
+  if (item.VersePosition !== VERSE_POSITION.MIDDLE) {
+    if (
+      item.VersePosition === VERSE_POSITION.START ||
+      item.VersePosition === VERSE_POSITION.START_AND_END
+    ) {
+      isStart = true;
+    }
+    if (
+      item.VersePosition === VERSE_POSITION.END ||
+      item.VersePosition === VERSE_POSITION.START_AND_END
+    ) {
+      isEnd = true;
+    }
+  }
+
+  let {description} = checkReadingPortion(
+    startBook,
+    startChapter,
+    startVerse,
+    isStart,
+    endBook,
+    endChapter,
+    endVerse,
+    isEnd,
+  );
+
+  return portionPrefix + description;
+}
 
 function ScheduleButton(props) {
   const {
@@ -60,12 +120,6 @@ function ScheduleButton(props) {
 }
 
 function useScheduleListPopups(onUpdateReadStatus) {
-  const {
-    readingPopup,
-    openReadingPopup,
-    closeReadingPopup,
-  } = useReadingInfoPopup();
-
   const {buttonsPopup, openButtonsPopup, closeButtonsPopup} = useButtonsPopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
@@ -74,6 +128,17 @@ function useScheduleListPopups(onUpdateReadStatus) {
 
   const openRemindersPopup = () => {
     setIsRemindersPopupDisplayed(true);
+  };
+
+  const {
+    readingPopup,
+    openReadingPopup,
+    closeReadingPopup,
+  } = useReadingInfoPopup();
+
+  const openReadingInfoPopup = (...args) => {
+    closeButtonsPopup();
+    openReadingPopup(...args);
   };
 
   const ScheduleListPopups = props => {
@@ -123,7 +188,7 @@ function useScheduleListPopups(onUpdateReadStatus) {
     buttonsPopup: buttonsPopup,
     openButtonsPopup: openButtonsPopup,
     readingPopup: readingPopup,
-    openReadingPopup: openReadingPopup,
+    openReadingPopup: openReadingInfoPopup,
     openRemindersPopup: openRemindersPopup,
   };
 }
@@ -132,7 +197,7 @@ export default function useScheduleButtonsList(
   userDB,
   afterUpdate,
   completedHidden,
-  flatListItems,
+  listItems,
   updatePages,
   tableName,
   scheduleName,
@@ -164,19 +229,35 @@ export default function useScheduleButtonsList(
       let thisTableName;
       let title;
       if (items.length === 1) {
-        thisTableName = tableName || items[0].tableName;
-        title = scheduleName || items[0].title;
-        result = (
-          <ScheduleButton
-            item={items[0]}
-            tableName={thisTableName}
-            title={title}
-            completedHidden={completedHidden}
-            update={updatePages}
-            onUpdateReadStatus={onUpdateReadStatus}
-            openReadingPopup={openReadingPopup}
-          />
-        );
+        let item = items[0];
+        if (!item.onPress) {
+          thisTableName = tableName || item.tableName;
+          title = scheduleName || item.title;
+          result = (
+            <ScheduleButton
+              item={item}
+              tableName={thisTableName}
+              title={title}
+              completedHidden={completedHidden}
+              update={updatePages}
+              onUpdateReadStatus={onUpdateReadStatus}
+              openReadingPopup={openReadingPopup}
+            />
+          );
+        } else {
+          result = (
+            <ScheduleDayButton
+              isFinished={item.isFinished}
+              completionDate={item.completionDate}
+              completedHidden={item.completedHidden}
+              onLongPress={item.onLongPress}
+              onPress={item.onPress}
+              readingPortion={item.readingPortion}
+              title={item.title}
+              update={item.update}
+            />
+          );
+        }
       } else {
         let buttons = [];
         let areButtonsFinished = [];
@@ -184,17 +265,57 @@ export default function useScheduleButtonsList(
         let readingPortions;
         let completionDate;
         let isFinished;
+        let prevBookNum = 0;
+        let startBook;
+        let startChapter;
+        let startVerse;
+        let isStart;
+        let endBook;
+        let endChapter;
+        let endVerse;
+        // When we go through with chronological like schedules we can determine if 2 sections have the same
+        //   book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
           let tempIsFinished = item.IsFinished ? true : false;
-          if (readingPortions) {
-            readingPortions += '\r\n' + item.ReadingPortion;
+          if (i !== 0) {
+            readingPortions += condenseReadingPortion(item, prevBookNum);
           } else {
             thisTableName = tableName || item.tableName;
             title = scheduleName || item.title;
             readingPortions = item.ReadingPortion;
             completionDate = item.CompletionDate;
             isFinished = tempIsFinished;
+          }
+          prevBookNum =
+            item.StartBookNumber === item.EndBookNumber
+              ? item.EndBookNumber
+              : 0;
+
+          if (item.tableName === WEEKLY_READING_TABLE_NAME) {
+            if (i === 0) {
+              startBook = item.StartBookName;
+              startChapter = item.StartChapter;
+              startVerse = item.StartVerse;
+              isStart = checkStartVerse(startBook, startChapter, startVerse);
+            }
+            if (i === items.length - 1) {
+              endBook = item.EndBookName;
+              endChapter = item.EndChapter;
+              endVerse = item.EndVerse;
+
+              let {description} = checkReadingPortion(
+                startBook,
+                startChapter,
+                startVerse,
+                isStart,
+                endBook,
+                endChapter,
+                endVerse,
+                true,
+              );
+              readingPortions = description;
+            }
           }
           readingDayIDs.push(item.ReadingDayID);
 
@@ -263,15 +384,14 @@ export default function useScheduleButtonsList(
   );
 
   const ScheduleButtonsList = props => {
-    const {ListHeaderComponent} = props;
     return (
-      <FlatList
-        data={flatListItems}
+      <SectionList
+        sections={listItems}
         keyExtractor={(item, index) => index.toString()}
-        ListHeaderComponent={ListHeaderComponent}
         renderItem={({item, index}) => {
           return setScheduleButtons(item, index);
         }}
+        renderSectionHeader={SectionListHeader}
       />
     );
   };

@@ -31,6 +31,7 @@ export function useMessagePopup() {
   const [messagePopup, setMessagePopup] = useState({
     isDisplayed: false,
     message: '',
+    onConfirm: null,
     title: '',
   });
 
@@ -40,11 +41,16 @@ export function useMessagePopup() {
     });
   }, []);
 
-  const openMessagePopup = useCallback((message, title) => {
+  const openMessagePopup = useCallback((message, title, onConfirm) => {
     if (!title) {
       title = translate('warning');
     }
-    setMessagePopup({isDisplayed: true, message: message, title: title});
+    setMessagePopup({
+      isDisplayed: true,
+      message: message,
+      onConfirm: onConfirm,
+      title: title,
+    });
   }, []);
 
   return {

@@ -270,7 +270,7 @@
   "createSchedulePopup": {
     "createSchedule": "造成度进表",
     "numberOfPortions": "多少{{portionDesc}}",
-    "numberOfPortionsPhld": "出版物包括多少{{portionDesc}}",
+    "numberOfPortionsPhld": "出版物一共包括多少{{portionDesc}}",
     "readingPortionDesc": {
       "title": "描述朗读部分",
       "article": "文章",
@@ -285,8 +285,8 @@
     "scheduleName": "度进表题目",
     "scheduleDuration": "度进表时常",
     "scheduleDurPhld": "几年了？",
-    "startingPortion": "开始部分",
-    "startingPortionPhld": "你想从哪一部分开始",
+    "startingPortion": "开始{{portionDesc}}",
+    "startingPortionPhld": "你想从哪一{{portionDesc}}开始",
     "startingVerse": "开始经文",
     "unfinished": "请填写所有必填字段以安排时间表"
   },
@@ -387,10 +387,12 @@
     "custom": "自定义",
     "customDescription": "创建一本出版物的自定义进度表"
   },
+  "thisWeek": "这周",
   "today": "今天",
   "versePicker": {
     "chapterAbrev": "章",
     "verseAbrev": "节"
   },
-  "warning": "请注意"
+  "warning": "请注意",
+  "weeklyReading": "这周的朗读经文"
 }

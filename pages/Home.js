@@ -3,8 +3,7 @@ import {SafeAreaView, View, Linking} from 'react-native';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
-import ScheduleDayButton from '../components/buttons/ScheduleDayButton';
-import {Heading, SubHeading} from '../components/text/Text';
+import {SubHeading} from '../components/text/Text';
 
 import styles from '../styles/styles';
 
@@ -15,14 +14,69 @@ import {store} from '../data/Store/store.js';
 import {formatDate, errorCB} from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
-  updateDailyText,
+  updateDates,
+  createWeeklyReadingSchedule,
+  WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
 import {useUpdate} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 
 const prefix = 'homePage.';
+let populatingHomeList = false;
 
-async function populateScheduleButtons(userDB, updatePages, setState) {
+async function populateDailyText(userDB, afterUpdate, update, setDailyText) {
+  let result;
+  let date = new Date();
+  let todayFormatted = formatDate(date);
+  let today = Date.parse(todayFormatted);
+  let storedDate;
+
+  //Populate Daily text
+  await userDB
+    .transaction(txn => {
+      txn
+        .executeSql('SELECT * FROM tblDates WHERE Name="DailyText"')
+        .then(([t, res]) => {
+          storedDate = Date.parse(res.rows.item(0).Date);
+        });
+    })
+    .catch(err => {
+      errorCB(err);
+    });
+
+  if (storedDate < today) {
+    let title = translate('examiningTheScripturesDaily');
+    let readingPortion = translate('dailyText');
+    let completionDate = todayFormatted;
+    let isFinished = false;
+    let onLongPress = cb => {
+      updateDates(userDB, todayFormatted, 'DailyText', afterUpdate);
+      cb(true);
+    };
+
+    let onPress = () => {
+      Linking.openURL(linkFormulator('wol'));
+    };
+
+    result = [
+      {
+        isFinished: isFinished ? true : false,
+        completionDate: completionDate,
+        completedHidden: true,
+        onLongPress: onLongPress,
+        onPress: onPress,
+        readingPortion: readingPortion,
+        title: title,
+        update: update,
+      },
+    ];
+  } else {
+    result = [];
+  }
+  return result;
+}
+
+async function populateScheduleButtons(userDB, updatePages) {
   let result;
   let homeListItems = [];
   let date = new Date();
@@ -45,7 +99,10 @@ async function populateScheduleButtons(userDB, updatePages, setState) {
   for (let i = 0; i < result.rows.length; i++) {
     const id = result.rows.item(i).ScheduleID;
     const scheduleName = result.rows.item(i).ScheduleName;
-    const tableName = formatScheduleTableName(id);
+    const tableName =
+      scheduleName !== translate('weeklyReading')
+        ? formatScheduleTableName(id)
+        : WEEKLY_READING_TABLE_NAME;
 
     let items;
     let completionDate;
@@ -86,16 +143,7 @@ async function populateScheduleButtons(userDB, updatePages, setState) {
       if (Date.parse(item.CompletionDate) <= today) {
         //Add reading portion info to the list
         innerHomeListItems.push({
-          StartBookNumber: item.StartBookNumber,
-          StartChapter: item.StartChapter,
-          StartVerse: item.StartVerse,
-          EndBookNumber: item.EndBookNumber,
-          EndChapter: item.EndChapter,
-          EndVerse: item.EndVerse,
-          CompletionDate: item.CompletionDate,
-          IsFinished: item.IsFinished,
-          ReadingDayID: item.ReadingDayID,
-          ReadingPortion: item.ReadingPortion,
+          ...item,
           title: scheduleName,
           tableName: tableName,
           update: updatePages,
@@ -107,58 +155,93 @@ async function populateScheduleButtons(userDB, updatePages, setState) {
     }
   }
 
-  setState(homeListItems);
+  return homeListItems;
 }
 
-async function populateDailyText(userDB, afterUpdate, update, setDailyText) {
-  let date = new Date();
-  let todayFormatted = formatDate(date);
-  let today = Date.parse(todayFormatted);
+async function populateWeeklyReading(userDB, bibleDB, update) {
+  let tableName = WEEKLY_READING_TABLE_NAME;
+  let title = translate('weeklyReading');
+  let items;
+  let listItems = [];
 
-  //Populate Daily text
+  await createWeeklyReadingSchedule(userDB, bibleDB);
+
   await userDB
     .transaction(txn => {
-      txn
-        .executeSql('SELECT * FROM tblDates WHERE Name="DailyText"')
-        .then(([t, res]) => {
-          let storedDate = Date.parse(res.rows.item(0).Date);
-
-          if (storedDate < today) {
-            let readingPortion = translate('dailyText');
-            let completionDate = todayFormatted;
-            let isFinished = false;
-            let onLongPress = cb => {
-              updateDailyText(userDB, todayFormatted, afterUpdate);
-              cb(true);
-            };
-
-            let onPress = () => {
-              Linking.openURL(linkFormulator('wol'));
-            };
-
-            let DailyTextButton = () => {
-              return (
-                <ScheduleDayButton
-                  isFinished={isFinished ? true : false}
-                  completionDate={completionDate}
-                  completedHidden={true}
-                  onLongPress={onLongPress}
-                  onPress={onPress}
-                  readingPortion={readingPortion}
-                  title={translate('examiningTheScripturesDaily')}
-                  update={update}
-                />
-              );
-            };
-            setDailyText(DailyTextButton);
-          } else {
-            setDailyText();
-          }
-        });
+      const sql = `SELECT * FROM ${tableName}
+            ORDER BY ReadingDayID ASC`;
+      txn.executeSql(sql, []).then(([t, res]) => {
+        items = res.rows;
+      });
     })
     .catch(err => {
       errorCB(err);
     });
+
+  let innerListItems = [];
+
+  for (let j = 0; j < items.length; j++) {
+    const item = items.item(j);
+
+    if (!item.IsFinished) {
+      //Add reading portion info to the list
+      innerListItems.push({
+        ...item,
+        title: title,
+        tableName: tableName,
+        update: update,
+      });
+    }
+  }
+  if (innerListItems.length > 0) {
+    listItems.push(innerListItems);
+  }
+
+  return listItems;
+}
+
+async function populateHomeList(userDB, bibleDB, afterUpdate, updatePages) {
+  let data = [];
+  let todayListItems = [];
+  let thisWeekListItems = [];
+  let todayTitle = translate('today');
+  let thisWeekTitle = translate('thisWeek');
+
+  await populateDailyText(userDB, afterUpdate, updatePages).then(res => {
+    if (res.length > 0) {
+      todayListItems.push(res);
+    }
+  });
+
+  await populateScheduleButtons(userDB, updatePages).then(results => {
+    results.map(res => {
+      if (res.length > 0) {
+        todayListItems.push(res);
+      }
+    });
+  });
+
+  if (todayListItems.length > 0) {
+    data.push({
+      title: todayTitle,
+      data: todayListItems,
+    });
+  }
+
+  await populateWeeklyReading(userDB, bibleDB, updatePages).then(results => {
+    results.map(res => {
+      thisWeekListItems.push(res);
+    });
+  });
+
+  if (thisWeekListItems.length > 0) {
+    data.push({
+      title: thisWeekTitle,
+      data: thisWeekListItems,
+    });
+  }
+
+  return data;
 }
 
 export default function Home(props) {
@@ -167,17 +250,23 @@ export default function Home(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {userDB, updatePages} = globalState.state;
-  const [DailyTextButton, setDailyTextButton] = useState();
-  const [flatListItems, setFlatListItems] = useState([]);
+  const {userDB, bibleDB, updatePages} = globalState.state;
+  const [scheduleListItems, setScheduleListItems] = useState([]);
   const completedHidden = true;
 
   useEffect(() => {
-    if (userDB) {
-      populateScheduleButtons(userDB, updatePages, setFlatListItems);
-      populateDailyText(userDB, afterUpdate, updatePages, setDailyTextButton);
+    if (userDB && bibleDB) {
+      if (!populatingHomeList) {
+        populatingHomeList = true;
+        populateHomeList(userDB, bibleDB, afterUpdate, updatePages).then(
+          res => {
+            setScheduleListItems(res);
+            populatingHomeList = false;
+          },
+        );
+      }
     }
-  }, [userDB, updatePages, afterUpdate]);
+  }, [userDB, bibleDB, updatePages, afterUpdate]);
 
   const afterUpdate = useUpdate(updatePages, dispatch);
 
@@ -189,11 +278,11 @@ export default function Home(props) {
     userDB,
     afterUpdate,
     completedHidden,
-    flatListItems,
+    scheduleListItems,
     updatePages,
   );
 
-  let isFlatListEmpty = flatListItems.length === 0 ? true : false;
+  let isScheduleListEmpty = scheduleListItems.length === 0 ? true : false;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -206,11 +295,8 @@ export default function Home(props) {
         />
       </View>
       <View style={styles.content}>
-        <Heading style={{...styles.buttonText, alignSelf: 'center'}}>
-          {translate('today')}
-        </Heading>
-        {!isFlatListEmpty || DailyTextButton ? (
-          <ScheduleButtonsList ListHeaderComponent={DailyTextButton} />
+        {!isScheduleListEmpty ? (
+          <ScheduleButtonsList />
         ) : (
           <View>
             <SubHeading style={{...styles.buttonText, alignSelf: 'center'}}>

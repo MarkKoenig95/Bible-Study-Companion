@@ -16,7 +16,7 @@ const translator = memoize(
 );
 
 export function translate() {
-  return doesTranslationExist(translator(...arguments));
+  return translator(...arguments);
 }
 
 const setI18nConfig = () => {
@@ -69,15 +69,11 @@ export function linkFormulator(type) {
   //Remove type argument and leave all others meant for link
   args.shift();
   args.map(item => {
-    let res;
     let trans = translate(linkPrefix + item);
 
-    if (trans[0] !== '[') {
-      res = trans;
-    } else {
-      res = item;
-    }
+    let res = translationExists(trans) ? trans : item;
 
+    //If we do not encode it as a URI this will cause issues later
     res = encodeURIComponent(res);
 
     temp.push(res);
@@ -123,10 +119,6 @@ export function dateFormulator(year, approxDesc) {
   return dateString;
 }
 
-export function doesTranslationExist(translation) {
-  if (translation.slice(0, 10) === '[missing "') {
-    return translate('missingTranslation');
-  } else {
-    return translation;
-  }
+export function translationExists(translation) {
+  return translation.slice(0, 10) !== '[missing "';
 }

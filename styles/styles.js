@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
     width: '100%',
+    elevation: 3,
     zIndex: 2,
   },
   button: {
@@ -69,6 +70,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
+    elevation: 0,
     zIndex: -1,
   },
   input: {
@@ -77,8 +79,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     color: colors.darkGray,
-    height: 40,
-    marginTop: 5,
     padding: 10,
     width: '100%',
   },

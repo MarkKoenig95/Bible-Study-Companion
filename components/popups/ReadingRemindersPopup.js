@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {translate, linkFormulator} from '../../localization/localization';
 
 import Popup from './Popup';
@@ -66,7 +66,7 @@ export default function ReadingRemindersPopup(props) {
         <Body>{translate(prefix + 'body3-2')}</Body>
       </View>
 
-      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+      <View style={style.linkSection}>
         <SubHeading>{translate(prefix + 'subheading3-1')}</SubHeading>
 
         <Link href={nwt36} text="nwt 36; " />
@@ -84,3 +84,11 @@ export default function ReadingRemindersPopup(props) {
     </Popup>
   );
 }
+
+const style = StyleSheet.create({
+  linkSection: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-end',
+  },
+});

@@ -47,6 +47,15 @@ export function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
   return result;
 }
 
+export function getWeeksBetween(date1, date2) {
+  let d1 = Date.parse(date1);
+  let d2 = Date.parse(date2);
+  let millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
+  let msDifference = d2 - d1;
+  let weeksBetween = Math.round(msDifference / millisecondsPerWeek);
+  return weeksBetween;
+}
+
 export function useUpdate(updatePages, dispatch) {
   return useCallback(() => {
     dispatch(setUpdatePages(updatePages));

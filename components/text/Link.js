@@ -25,5 +25,6 @@ const style = StyleSheet.create({
     color: colors.darkBlue,
     fontSize: 20,
     paddingLeft: 10,
+    paddingBottom: 10,
   },
 });

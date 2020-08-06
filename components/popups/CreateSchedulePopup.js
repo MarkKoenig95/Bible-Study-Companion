@@ -3,15 +3,14 @@ import {translate} from '../../localization/localization';
 import {sanitizeNumber} from '../../logic/logic';
 
 import IconButton from '../buttons/IconButton';
-import CustomInput from '../CustomInput';
-import VersePicker from '../VersePicker';
+import CustomInput from '../inputs/CustomInput';
+import VersePicker from '../inputs/VersePicker';
+import Text from '../text/Text';
 import Popup from './Popup';
-import {getScheduleTypes} from './ScheduleTypeSelectionPopup';
-import CustomDropdown from '../CustomDropdown';
-import {View, Text} from 'react-native';
+import {SCHEDULE_TYPES} from './ScheduleTypeSelectionPopup';
+import CustomDropdown from '../inputs/CustomDropdown';
+import {StyleSheet, View} from 'react-native';
 import styles from '../../styles/styles';
-
-const debug = false;
 
 const prefix = 'createSchedulePopup.';
 
@@ -114,7 +113,7 @@ export default function CreateSchedulePopup(props) {
     }
   }
 
-  const isCustom = props.type === getScheduleTypes().custom ? true : false;
+  const isCustom = props.type === SCHEDULE_TYPES.CUSTOM ? true : false;
   const hasReadingPortionDesc = readingPortionDesc ? true : false;
 
   return (
@@ -149,7 +148,7 @@ export default function CreateSchedulePopup(props) {
       )}
       {isCustom && (
         <View style={styles.inputContainer}>
-          <Text style={{...styles.lightText, ...props.titleStyle}}>
+          <Text style={styles.lightText}>
             {translate(prefix + 'readingPortionDesc.title')}
           </Text>
           <CustomDropdown
@@ -176,13 +175,14 @@ export default function CreateSchedulePopup(props) {
           title={translate(prefix + 'portionsPerDay', {
             portionDesc: readingPortionDesc,
           })}
+          inputStyle={style.smallInput}
           value={portionsPerDay}
           onChangeText={text => {
             setPortionsPerDay(
               sanitizeNumber(portionsPerDay, text, 0, 1000000000000000000),
             );
           }}
-          placeholder={translate(prefix + 'portionsPerDayPhld', {
+          description={translate(prefix + 'portionsPerDayPhld', {
             portionDesc: readingPortionDesc,
           })}
           keyboardType={'decimal-pad'}
@@ -193,13 +193,14 @@ export default function CreateSchedulePopup(props) {
           title={translate(prefix + 'startingPortion', {
             portionDesc: readingPortionDesc,
           })}
+          inputStyle={style.smallInput}
           value={startingPortion}
           onChangeText={text => {
             setStartingPortion(
               sanitizeNumber(startingPortion, text, 0, 1000000000000000000),
             );
           }}
-          placeholder={translate(prefix + 'startingPortionPhld', {
+          description={translate(prefix + 'startingPortionPhld', {
             portionDesc: readingPortionDesc,
           })}
           defaultValue={'0'}
@@ -211,13 +212,14 @@ export default function CreateSchedulePopup(props) {
           title={translate(prefix + 'numberOfPortions', {
             portionDesc: readingPortionDesc,
           })}
+          inputStyle={style.smallInput}
           value={maxPortion}
           onChangeText={text => {
             setMaxPortion(
               sanitizeNumber(maxPortion, text, 0, 1000000000000000000),
             );
           }}
-          placeholder={translate(prefix + 'numberOfPortionsPhld', {
+          description={translate(prefix + 'numberOfPortionsPhld', {
             portionDesc: readingPortionDesc,
           })}
           keyboardType={'decimal-pad'}
@@ -227,3 +229,7 @@ export default function CreateSchedulePopup(props) {
     </Popup>
   );
 }
+
+const style = StyleSheet.create({
+  smallInput: {width: '20%'},
+});

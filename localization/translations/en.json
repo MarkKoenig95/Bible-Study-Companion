@@ -270,7 +270,7 @@
   "createSchedulePopup": {
     "createSchedule": "Create Schedule",
     "numberOfPortions": "Number of {{portionDesc}}s",
-    "numberOfPortionsPhld": "Maximum number of {{portionDesc}}s in publication",
+    "numberOfPortionsPhld": "Total number of {{portionDesc}}s in publication",
     "readingPortionDesc": {
       "title": "Reading Portion Description",
       "article": "Article",
@@ -284,8 +284,8 @@
     "scheduleName": "Schedule Name",
     "scheduleDuration": "Schedule Duration",
     "scheduleDurPhld": "How many years?",
-    "startingPortion": "Starting Portion",
-    "startingPortionPhld": "Portion you would like to start from",
+    "startingPortion": "Starting {{portionDesc}}",
+    "startingPortionPhld": "{{portionDesc}} you would like to start from",
     "startingVerse": "Starting Verse",
     "unfinished": "Please fill in all of the required fields to make a schedule"
   },
@@ -384,10 +384,12 @@
     "custom": "Custom",
     "customDescription": "Create a custom schedule for a publication"
   },
+  "thisWeek": "This Week",
   "today": "Today",
   "versePicker": {
     "chapterAbrev": "ch",
     "verseAbrev": "v"
   },
-  "warning": "Warning"
+  "warning": "Warning",
+  "weeklyReading": "Weekly Reading"
 }
