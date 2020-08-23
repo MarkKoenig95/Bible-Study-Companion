@@ -2,6 +2,7 @@ const shouldLog = false;
 import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
 import {LocalDBPath, PrePopulatedDBPath} from '../fileSystem';
+import {translate} from '../../logic/localization/localization';
 
 SQLite.enablePromise(true);
 
@@ -13,11 +14,6 @@ export function log() {
 
 export function errorCB(err) {
   console.warn('SQL Error: ' + err.message);
-}
-
-function createSqlString() {
-  let args = [...arguments];
-  return args.join(' ');
 }
 
 export function createPlaceholdersFromArray(array) {
@@ -61,11 +57,15 @@ export async function loadData(db, tableName) {
     let results;
     await db
       .transaction(txn => {
-        txn.executeSql('SELECT * FROM ' + tableName, []).then(([t, res]) => {
+        txn.executeSql(`SELECT * FROM ${tableName};`, []).then(([t, res]) => {
           results = res;
         });
       })
       .catch(errorCB);
+
+    if (!results) {
+      return;
+    }
 
     var listItems = [];
 
@@ -159,19 +159,29 @@ async function replaceDB(db) {
 function setDatabaseParameters(upgradeJSON) {
   return JSON.parse(
     JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
-      if (group === 'baseDate') {
-        let date = formatDate(new Date(0));
-        return date;
-      }
-      if (group === 'weeklyReadingStartDate') {
-        //This year we will start at August 3rd. This refers to the 30th day in the schedule
-        //This way I don't have to fuss with the memorial reading and stuff
-        //See below (NOTE: the middle number for month starts at 0. so august is 7)
-        let date = new Date(2020, 7, 3);
-        return date;
-      }
-      if (group === 'weeklyReadingStartOrder') {
-        return 30;
+      switch (group) {
+        case 'baseDate':
+          let date = formatDate(new Date(0));
+          return date;
+        case 'baseTime':
+          let time = formatDate(new Date(2020, 0, 1, 8, 0, 0));
+          return time;
+        case 'weeklyReadingStartDate':
+          //This year we will start at August 3rd. This refers to the 30th day in the schedule
+          //This way I don't have to fuss with the memorial reading and stuff
+          //See below (NOTE: the middle number for month starts at 0. so august is 7)
+          let weekReadDate = new Date(2020, 7, 3);
+          return weekReadDate;
+        case 'weeklyReadingStartOrder':
+          return 30;
+        case 'dailyText':
+          return translate('reminders.dailyText');
+        case 'weeklyReading':
+          return translate('reminders.weeklyReading');
+        case 'midweekMeetingStudy':
+          return translate('reminders.midweekMeetingStudy');
+        case 'weekendMeetingStudy':
+          return translate('reminders.weekendMeetingStudy');
       }
     }),
   );
@@ -204,7 +214,7 @@ export async function upgradeDB(db, upgradeJSON) {
 
     let length = Object.keys(json.upgrades).length;
 
-    log('version', version, 'length', length);
+    log('version', version, 'json.upgrades.length', length);
 
     for (let i = 0; i < length; i += 1) {
       let upgrade = json.upgrades[`to_v${version}`];

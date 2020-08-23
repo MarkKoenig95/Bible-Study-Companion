@@ -2,7 +2,7 @@ import React, {useState, useCallback, useEffect} from 'react';
 
 import Popup from './Popup';
 
-import {translate} from '../../localization/localization';
+import {translate} from '../../logic/localization/localization';
 import {View} from 'react-native';
 
 export default function ButtonsPopup(props) {

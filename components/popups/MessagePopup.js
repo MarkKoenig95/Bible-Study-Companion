@@ -5,7 +5,7 @@ import Popup from './Popup';
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
 
-import {translate} from '../../localization/localization';
+import {translate} from '../../logic/localization/localization';
 
 import styles from '../../styles/styles';
 

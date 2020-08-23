@@ -12,6 +12,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		258143CD24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 258143CC24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m */; };
 		2585272B24EFB28B006C9573 /* BibleStudyCompanionIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2585272A24EFB28B006C9573 /* BibleStudyCompanionIcon.png */; };
 		25A488FA244047130029655C /* www in Resources */ = {isa = PBXBuildFile; fileRef = 25A488F9244047130029655C /* www */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -57,6 +58,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = BibleStudyCompanion/main.m; sourceTree = "<group>"; };
 		1B5D9843EADA57E7FD9ED111 /* Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-BibleStudyCompanionTests/Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		232EF5A6FDECEBBBD67D7D6C /* Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-tvOSTests/Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		258143CC24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RNBackgroundFetch+AppDelegate.m"; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/RNBackgroundFetch+AppDelegate.m"; sourceTree = "<group>"; };
 		2585272A24EFB28B006C9573 /* BibleStudyCompanionIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BibleStudyCompanionIcon.png; path = assets/BibleStudyCompanionIcon.png; sourceTree = "<group>"; };
 		2585272C24EFB500006C9573 /* Bible Study Companion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bible Study Companion.entitlements"; path = "BibleStudyCompanion/Bible Study Companion.entitlements"; sourceTree = "<group>"; };
 		25A488F9244047130029655C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../android/app/src/main/assets/www; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 		13B07FAE1A68108700A75B9A /* BibleStudyCompanion */ = {
 			isa = PBXGroup;
 			children = (
+				258143CC24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m */,
 				2585272C24EFB500006C9573 /* Bible Study Companion.entitlements */,
 				25A488F9244047130029655C /* www */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -647,6 +650,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				258143CD24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -763,7 +767,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanion;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanionTest;
 				PRODUCT_NAME = "Bible Study Companion";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -791,7 +795,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanion;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanionTest;
 				PRODUCT_NAME = "Bible Study Companion";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

@@ -289,7 +289,6 @@
     "startingVerse": "Starting Verse",
     "unfinished": "Please fill in all of the required fields to make a schedule"
   },
-  "dailyText": "Daily Text",
   "date": {
     "approxDesc": {
       "approxDate": "{{about}}{{after}}{{before}} {{date}}",
@@ -329,6 +328,18 @@
     "wol": {"lp-e": "lp-e", "r1": "r1", "nwtsty": "nwtsty"}
   },
   "missingTranslation": "Translation doesn't exist",
+  "morePage": {
+    "title": "More"
+  },
+  "notification": {
+    "baseTitle": "Daily Reading",
+    "bigText": "Let's see what you have left to do today",
+    "message": "Let's do it"
+  },
+  "prompts": {
+    "setNotification": "Set notification for: ",
+    "nameTaken": "Please select a name you haven't used"
+  },
   "readingRemindersPopup": {
     "readingReminders": "Reading Reminders",
     "heading0": "Create the right surroundings",
@@ -364,14 +375,24 @@
     "writers": "Writer(s)"
   },
   "readingSchedules": "Reading Schedules",
+  "reminders": {
+    "dailyText": "Daily Text",
+    "midweekMeetingStudy": "Midweek Meeting Study",
+    "weekendMeetingStudy": "Weekend Meeting Study",
+    "weeklyReading": "Weekly Reading"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notificationName": "Notification Name",
+    "notificationPopupTitle": "Create New Notification"
+  },
   "schedules": "Schedules",
   "schedulePage": {
     "deleteScheduleMessage": "Are you sure you want to delete \"{{scheduleName}}\" schedule?",
     "hideCompleted": "Hide Completed"
   },
   "scheduleTransactions": {
-    "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds.",
-    "scheduleNameTakenPrompt": "Please select a schedule name you haven't used"
+    "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds."
   },
   "scheduleTypePopup": {
     "scheduleType": "Schedule Type",
@@ -391,5 +412,13 @@
     "verseAbrev": "v"
   },
   "warning": "Warning",
-  "weeklyReading": "Weekly Reading"
+  "weekdays": {
+    "0": {"abrev": "Su", "name": "Sunday"},
+    "1": {"abrev": "Mo", "name": "Monday"},
+    "2": {"abrev": "Tu", "name": "Tuesday"},
+    "3": {"abrev": "We", "name": "Wednesday"},
+    "4": {"abrev": "Th", "name": "Thursday"},
+    "5": {"abrev": "Fr", "name": "Friday"},
+    "6": {"abrev": "Sa", "name": "Saturday"}
+  }
 }

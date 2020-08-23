@@ -290,7 +290,6 @@
     "startingVerse": "开始经文",
     "unfinished": "请填写所有必填字段以安排时间表"
   },
-  "dailyText": "每日经文",
   "date": {
     "approxDesc": {
       "approxDate": "{{about}}{{date}}{{after}}{{before}}",
@@ -330,6 +329,18 @@
     "wol": {"lp-e": "lp-chs", "r1": "r23", "nwtsty": "nwt"}
   },
   "missingTranslation": "还没翻译好",
+  "morePage": {
+    "title": "更多"
+  },
+  "notification": {
+    "baseTitle": "今天的阅读",
+    "bigText": "咱们看一看今天有什么要做的",
+    "message": "加油"
+  },
+  "prompts": {
+    "setNotification": "定提醒的时间：",
+    "nameTaken": "这个进度表题目已经运用了请选择还没用的题目"
+  },
   "readingRemindersPopup": {
     "readingReminders": "阅读前提醒",
     "heading0": "创造良好的环境",
@@ -367,14 +378,24 @@
     "writers": "执笔者"
   },
   "readingSchedules": "阅读进度表",
+  "reminders": {
+    "dailyText": "每日经文",
+    "midweekMeetingStudy": "周中聚会研究",
+    "weekendMeetingStudy": "周末聚会研究",
+    "weeklyReading": "这周的朗读经文"
+  },
+  "notificationsPage": {
+    "title": "提醒",
+    "notificationName": "提醒题目",
+    "notificationPopupTitle": "造成新的提醒"
+  },
   "schedules": "进度表",
   "schedulePage": {
     "deleteScheduleMessage": "请确认你想删除叫 “{{scheduleName}}” 的进度表?",
     "hideCompleted": "隐藏完成的"
   },
   "scheduleTransactions": {
-    "adjustedVersePrompt": "开头经文因为你请求的经文超过界限了从你请求的经文 “{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}” 被改到最进的经文 “{{startBibleBook}} {{startChapter}}:{{startVerse}}”",
-    "scheduleNameTakenPrompt": "这个进度表题目已经运用了请选择还没用的题目"
+    "adjustedVersePrompt": "开头经文因为你请求的经文超过界限了从你请求的经文 “{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}” 被改到最进的经文 “{{startBibleBook}} {{startChapter}}:{{startVerse}}”"
   },
   "scheduleTypePopup": {
     "scheduleType": "进度表类型",
@@ -394,5 +415,13 @@
     "verseAbrev": "节"
   },
   "warning": "请注意",
-  "weeklyReading": "这周的朗读经文"
+  "weekdays": {
+    "0": {"abrev": "天", "name": "周天"},
+    "1": {"abrev": "一", "name": "周一"},
+    "2": {"abrev": "二", "name": "周二"},
+    "3": {"abrev": "三", "name": "周三"},
+    "4": {"abrev": "四", "name": "周四"},
+    "5": {"abrev": "五", "name": "周五"},
+    "6": {"abrev": "六", "name": "周六"}
+  }
 }

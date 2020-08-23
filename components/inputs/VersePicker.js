@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, {useState, useEffect, useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {translate} from '../../localization/localization';
+import {translate} from '../../logic/localization/localization';
 
 import CustomInput from './CustomInput';
 import Text from '../text/Text';

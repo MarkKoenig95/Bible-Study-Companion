@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {StyleSheet, SafeAreaView, View} from 'react-native';
 import {StackActions} from '@react-navigation/native';
-import {translate} from '../localization/localization';
+import {translate} from '../logic/localization/localization';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import IconButton from '../components/buttons/IconButton';
@@ -34,7 +34,7 @@ function SchedulePage(props) {
   const scheduleID = props.route.params.id;
 
   const tableName =
-    scheduleName !== translate('weeklyReading')
+    scheduleName !== translate('reminders.weeklyReading')
       ? formatScheduleTableName(scheduleID)
       : WEEKLY_READING_TABLE_NAME;
 
@@ -116,7 +116,7 @@ function SchedulePage(props) {
       <View style={styles.header}>
         <CheckBox
           center
-          containerStyle={style.checkBox}
+          containerStyle={styles.checkBox}
           title={translate(prefix + 'hideCompleted')}
           checked={completedHidden}
           textStyle={styles.lightText}
@@ -142,13 +142,5 @@ function SchedulePage(props) {
     </SafeAreaView>
   );
 }
-
-const style = StyleSheet.create({
-  checkBox: {
-    ...styles.button,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-  },
-});
 
 export default SchedulePage;

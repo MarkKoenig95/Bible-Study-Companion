@@ -7,7 +7,7 @@ import {SubHeading} from '../components/text/Text';
 
 import styles from '../styles/styles';
 
-import {translate, linkFormulator} from '../localization/localization';
+import {translate, linkFormulator} from '../logic/localization/localization';
 
 import {store} from '../data/Store/store.js';
 
@@ -46,7 +46,7 @@ async function populateDailyText(userDB, afterUpdate, update, setDailyText) {
 
   if (storedDate < today) {
     let title = translate('examiningTheScripturesDaily');
-    let readingPortion = translate('dailyText');
+    let readingPortion = translate('reminders.dailyText');
     let completionDate = todayFormatted;
     let isFinished = false;
     let onLongPress = cb => {
@@ -100,7 +100,7 @@ async function populateScheduleButtons(userDB, updatePages) {
     const id = result.rows.item(i).ScheduleID;
     const scheduleName = result.rows.item(i).ScheduleName;
     const tableName =
-      scheduleName !== translate('weeklyReading')
+      scheduleName !== translate('reminders.weeklyReading')
         ? formatScheduleTableName(id)
         : WEEKLY_READING_TABLE_NAME;
 
@@ -160,7 +160,7 @@ async function populateScheduleButtons(userDB, updatePages) {
 
 async function populateWeeklyReading(userDB, bibleDB, update) {
   let tableName = WEEKLY_READING_TABLE_NAME;
-  let title = translate('weeklyReading');
+  let title = translate('reminders.weeklyReading');
   let items;
   let listItems = [];
 

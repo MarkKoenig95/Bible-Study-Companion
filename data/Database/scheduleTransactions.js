@@ -7,7 +7,7 @@ import {
   formatDate,
   getQuery,
 } from './generalTransactions';
-import {translate} from '../../localization/localization';
+import {translate} from '../../logic/localization/localization';
 import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
 import {getWeeksBetween} from '../../logic/logic';
 
@@ -323,7 +323,7 @@ export async function addSchedule(
       );
     }
   } else {
-    errorCallBack(translate(prefix + 'scheduleNameTakenPrompt'));
+    errorCallBack(translate('prompts.nameTaken'));
   }
 }
 
@@ -414,7 +414,7 @@ export async function createWeeklyReadingSchedule(userDB, bibleDB) {
         errorCB(err);
       });
 
-    let scheduleName = translate('weeklyReading');
+    let scheduleName = translate('reminders.weeklyReading');
 
     await userDB
       .transaction(txn => {

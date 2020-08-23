@@ -68,21 +68,25 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
   },
   content: {
+    alignContent: 'center',
+    flexDirection: 'column',
     marginTop: 60,
     marginBottom: 10,
     width: '100%',
   },
   contentContainer: {
+    alignContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'space-around',
     padding: 10,
+    maxWidth: '100%',
   },
   text: {
     ...styles.lightText,
     flex: 4,
     padding: 10,
-    fontSize: 25,
+    fontSize: 20,
     color: colors.darkGray,
   },
   title: {

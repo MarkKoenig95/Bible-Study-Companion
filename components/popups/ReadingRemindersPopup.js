@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {translate, linkFormulator} from '../../localization/localization';
+import {translate, linkFormulator} from '../../logic/localization/localization';
 
 import Popup from './Popup';
 import {Body, SubHeading, Heading} from '../text/Text';

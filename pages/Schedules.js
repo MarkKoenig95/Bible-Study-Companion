@@ -14,7 +14,7 @@ import {setUpdatePages} from '../data/Store/actions';
 import {loadData} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
-import {translate} from '../localization/localization';
+import {translate} from '../logic/localization/localization';
 import LoadingPopup from '../components/popups/LoadingPopup';
 import {useUpdate} from '../logic/logic';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
@@ -50,8 +50,8 @@ export default function Schedules(props) {
 
   const [isLoading, setLoadingPopup] = useState(false);
 
-  //Set delete button in nav bar with appropriate onPress attribute
-  props.navigation.setOptions({
+  //Set add button in nav bar with appropriate onPress attribute
+  navigation.setOptions({
     headerRight: () => (
       <IconButton
         iconOnly

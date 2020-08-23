@@ -11,7 +11,7 @@ import {
   translate,
   linkFormulator,
   dateFormulator,
-} from '../../localization/localization';
+} from '../../logic/localization/localization';
 
 import {errorCB, timeKeeper} from '../../data/Database/generalTransactions';
 import {findMaxChapter} from '../../data/Database/scheduleTransactions';

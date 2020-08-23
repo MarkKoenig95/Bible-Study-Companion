@@ -36,9 +36,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: darkGray,
   },
+  checkBox: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    flex: 1,
+    margin: 0,
+    padding: 0,
+    paddingLeft: 5,
+  },
   container: {
     alignItems: 'center',
     backgroundColor: lightBlue,
+    flex: 1,
     flexDirection: 'column',
     height: '100%',
     width: '100%',
@@ -48,6 +57,9 @@ const styles = StyleSheet.create({
     padding: 10,
     position: 'relative',
     top: 65,
+    width: '100%',
+  },
+  contentWithoutHeader: {
     width: '100%',
   },
   footer: {
@@ -79,13 +91,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     color: colors.darkGray,
+    flex: 1,
     padding: 10,
     width: '100%',
   },
   inputContainer: {
-    width: '90%',
+    flex: 1,
     padding: 10,
     paddingBottom: 5,
+    width: '90%',
   },
   lightText: {
     color: smoke,
@@ -101,9 +115,31 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   versePicker: {
+    flex: 1,
     margin: 10,
     padding: 10,
     width: '90%',
+  },
+  wrapper: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.smoke + 'af',
+    borderColor: colors.darkBlue,
+    borderRadius: 10,
+    borderWidth: 2,
+    flex: 1,
+    justifyContent: 'space-between',
+    margin: 10,
+    width: '95%',
+  },
+  wrapperContent: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 5,
+    width: '80%',
   },
 });
 

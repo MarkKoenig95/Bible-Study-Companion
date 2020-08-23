@@ -23,6 +23,12 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 20,
   },
+  largeButtonText: {
+    ...styles.lightGray,
+    fontSize: 20,
+    fontWeight: 'bold',
+    padding: 10,
+  },
 });
 
 export function createCustomTextComponent(thisStyle) {
@@ -44,3 +50,7 @@ export default Main;
 export const SubHeading = createCustomTextComponent({...style.subheading});
 
 export const Heading = createCustomTextComponent({...style.heading});
+
+export const LargeButtonText = createCustomTextComponent({
+  ...style.largeButtonText,
+});

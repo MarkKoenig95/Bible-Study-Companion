@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {translate} from '../../localization/localization';
+import {translate} from '../../logic/localization/localization';
 import {sanitizeNumber} from '../../logic/logic';
 
 import IconButton from '../buttons/IconButton';

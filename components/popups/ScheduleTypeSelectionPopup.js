@@ -3,7 +3,7 @@ import React from 'react';
 import Popup from './Popup';
 import Text, {Body} from '../text/Text';
 
-import {translate} from '../../localization/localization';
+import {translate} from '../../logic/localization/localization';
 
 import styles from '../../styles/styles';
 import CustomButton from '../buttons/CustomButton';

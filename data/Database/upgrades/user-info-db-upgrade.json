@@ -1,26 +1,52 @@
 {
-  "version": 2,
+  "version": 3,
   "upgrades": {
     "to_v1": [
       [
         "CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, ScheduleType VARCHAR(20), HideCompleted BOOLEAN);"
       ],
       [
-        "CREATE TABLE IF NOT EXISTS tblUserPrefs(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20) UNIQUE, Value BYTE, ShouldDisplay BOOLEAN);"
+        "CREATE TABLE IF NOT EXISTS tblUserPrefs(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20), Value TINYINT);"
       ],
       [
         "CREATE TABLE IF NOT EXISTS tblDates(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20) UNIQUE, Date DATE);"
       ],
       [
-        "INSERT INTO tblUserPrefs(Name, Description, Value, ShouldDisplay) VALUES (\"Name\", \"Description\", 1, 0);"
-      ],
-      [
-        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"DailyText\", \"Last read date of the daily text\", \"@{baseDate}\"), (\"FamilyWorship\", \"Date of next Family Worship\", \"@{baseDate}\");"
+        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"DailyText\", \"Last read date of the daily text\", \"@{baseDate}\");"
       ]
     ],
     "to_v2": [
       [
         "INSERT INTO tblDates(Name, Description, Date) VALUES (\"WeeklyReadingStart\", \"@{weeklyReadingStartOrder}\", \"@{weeklyReadingStartDate}\"), (\"WeeklyReadingCurrent\", \"Last date of mid-week reading schedule read\", \"0\");"
+      ]
+    ],
+    "to_v3": [
+      [
+        "CREATE TABLE IF NOT EXISTS tblNotifications(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, NextNotifDate DATE, IsNotificationActive BOOL, IsDay0Active BOOL, IsDay1Active BOOL, IsDay2Active BOOL, IsDay3Active BOOL, IsDay4Active BOOL, IsDay5Active BOOL, IsDay6Active BOOL, Day0Time DATE, Day1Time DATE, Day2Time DATE, Day3Time DATE, Day4Time DATE, Day5Time DATE, Day6Time DATE);"
+      ],
+      [
+        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"MidweekMeeting\", \"Last completed date of Midweek meeting study\", \"@{baseDate}\");"
+      ],
+      [
+        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"WeekendMeeting\", \"Last completed date of Weekend meeting study\", \"@{baseDate}\");"
+      ],
+      [
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES (\"@{dailyText}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+      ],
+      [
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weeklyReading}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+      ],
+      [
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{midweekMeetingStudy}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+      ],
+      [
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weekendMeetingStudy}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+      ],
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"DayOfMidweek\", \"The day that the user has their midweek meeting. Determines when to reset midweek reading and study reminders. (0-6)\", 4);"
+      ],
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"DayOfWeekend\", \"The day that the user has their weekend meeting. Determines when to reset weekend study reminder. (0-6)\", 4);"
       ]
     ]
   }
