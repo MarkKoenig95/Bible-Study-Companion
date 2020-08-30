@@ -49,29 +49,27 @@ const WeekdayWrapper = React.memo(props => {
   }
 
   return (
-    <TouchableOpacity onPress={props.onPress}>
-      <View style={style.wrapper}>
-        <View style={styles.wrapperContent}>
-          <View>
-            <LargeButtonText style={{color: color}}>
-              {props.weekday}
-            </LargeButtonText>
-            <TimePickerButton
-              invert
-              textStyle={{color: color}}
-              time={time}
-              onChange={onTimeChange}
-            />
-          </View>
-          <Switch
-            onValueChange={toggleIsActive}
-            trackColor={{true: colors.lightBlue}}
-            thumbColor={color}
-            value={isActive}
+    <View style={style.wrapper}>
+      <View style={styles.wrapperContent}>
+        <View>
+          <LargeButtonText style={{color: color}}>
+            {props.weekday}
+          </LargeButtonText>
+          <TimePickerButton
+            invert
+            textStyle={{color: color}}
+            time={time}
+            onChange={onTimeChange}
           />
         </View>
+        <Switch
+          onValueChange={toggleIsActive}
+          trackColor={{true: colors.lightBlue}}
+          thumbColor={color}
+          value={isActive}
+        />
       </View>
-    </TouchableOpacity>
+    </View>
   );
 });
 

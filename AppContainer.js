@@ -147,6 +147,11 @@ async function updateNotifications(userDB, notification) {
     if (nextNotif < now.getTime()) {
       const {days, times} = getValueArraysFromItem(item);
       const {nextDate} = initValues(days, times);
+
+      if (!nextDate) {
+        return;
+      }
+
       notification.scheduleNotif({
         id: item.ID,
         date: nextDate,

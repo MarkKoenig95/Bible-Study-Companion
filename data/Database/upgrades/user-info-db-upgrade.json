@@ -37,10 +37,10 @@
         "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weeklyReading}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
       ],
       [
-        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{midweekMeetingStudy}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{midweekMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
       ],
       [
-        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weekendMeetingStudy}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weekendMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
       ],
       [
         "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"DayOfMidweek\", \"The day that the user has their midweek meeting. Determines when to reset midweek reading and study reminders. (0-6)\", 4);"

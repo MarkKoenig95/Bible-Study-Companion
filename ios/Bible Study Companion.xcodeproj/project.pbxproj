@@ -767,7 +767,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanionTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanion;
 				PRODUCT_NAME = "Bible Study Companion";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -795,7 +795,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanionTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.HumanAppMaker.BibleStudyCompanion;
 				PRODUCT_NAME = "Bible Study Companion";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

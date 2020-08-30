@@ -30,14 +30,18 @@ export function initValues(days, times) {
   for (let i = 0; i < 7; i++) {
     let distanceFromToday = (i - nextDate.getDay() + 7) % 7;
 
-    if (!closest.distance || distanceFromToday < closest.distance) {
+    if (closest.distance === null || distanceFromToday < closest.distance) {
       if (distanceFromToday !== 0) {
         if (days[i]) {
           closest.distance = distanceFromToday;
           closest.day = i;
         }
       } else {
-        if (nextDate.getTime() < times[i].getTime()) {
+        if (
+          nextDate.getHours() < times[i].getHours() ||
+          (nextDate.getHours() === times[i].getHours() &&
+            nextDate.getMinutes() < times[i].getMinutes())
+        ) {
           if (days[i]) {
             closest.distance = distanceFromToday;
             closest.day = i;
@@ -45,14 +49,19 @@ export function initValues(days, times) {
         }
       }
     }
+
     activeDays.push(days[i] ? 1 : 0);
     activeTimes.push(times[i].toString());
   }
 
-  nextDate.setDate(nextDate.getDate() + closest.distance);
-  nextDate.setHours(times[closest.day].getHours());
-  nextDate.setMinutes(times[closest.day].getMinutes());
-  nextDate.setSeconds(0);
+  if (closest.day !== null) {
+    nextDate.setDate(nextDate.getDate() + closest.distance);
+    nextDate.setHours(times[closest.day].getHours());
+    nextDate.setMinutes(times[closest.day].getMinutes());
+    nextDate.setSeconds(0);
+  } else {
+    nextDate = null;
+  }
 
   return {activeDays, activeTimes, nextDate: nextDate};
 }
@@ -107,6 +116,10 @@ export async function addNotification(
   //If not, then process creating the notification with the given variables
 
   const {activeDays, activeTimes, nextDate} = initValues(days, times);
+
+  if (!nextDate) {
+    return;
+  }
 
   log('set next date to', nextDate);
 
