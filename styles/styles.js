@@ -14,6 +14,8 @@ const colors = {
   darkBlue: darkBlue,
   lightBlue: lightBlue,
   smoke: smoke,
+  lightText: smoke,
+  darkText: darkGray,
 };
 
 const styles = StyleSheet.create({
@@ -30,6 +32,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: smoke,
     borderRadius: 10,
+    elevation: 5,
     padding: 10,
     margin: 10,
     shadowColor: colors.darkBlue,
@@ -40,14 +43,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: darkGray,
   },
-  checkBox: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
-    flex: 1,
-    margin: 0,
-    padding: 0,
-    paddingLeft: 5,
-  },
   container: {
     alignItems: 'center',
     backgroundColor: lightBlue,
@@ -57,6 +52,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   content: {
+    flex: 1,
     marginBottom: 55,
     padding: 10,
     position: 'relative',
@@ -64,6 +60,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   contentWithoutHeader: {
+    flex: 1,
     width: '100%',
   },
   footer: {
@@ -131,7 +128,6 @@ const styles = StyleSheet.create({
     borderColor: colors.darkBlue,
     borderRadius: 10,
     borderWidth: 2,
-    flex: 1,
     justifyContent: 'space-between',
     margin: 10,
     width: '95%',
@@ -139,11 +135,11 @@ const styles = StyleSheet.create({
   wrapperContent: {
     alignSelf: 'center',
     alignItems: 'center',
-    flex: 1,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     margin: 5,
-    width: '80%',
+    width: '90%',
   },
 });
 

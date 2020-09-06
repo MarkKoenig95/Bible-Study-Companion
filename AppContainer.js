@@ -4,7 +4,6 @@ import {AppState, Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-
 import BackgroundFetch from 'react-native-background-fetch';
 
 import {store} from './data/Store/store';
@@ -14,29 +13,35 @@ import {
   setUserDB,
   setBibleDB,
   setNotification,
+  setShowDaily,
+  setMidweekMeeting,
+  setWeekendMeeting,
 } from './data/Store/actions';
-import {runQueries} from './data/Database/scheduleTransactions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
-
-import {useLocalization, translate} from './logic/localization/localization';
+import {
+  errorCB,
+  log,
+  updateValue,
+  getSettings,
+} from './data/Database/generalTransactions';
+import {runQueries} from './data/Database/scheduleTransactions';
+import {updateNotifications} from './data/Database/notificationTransactions';
+import {updateReminderDates} from './data/Database/reminderTransactions';
 
 import Home from './pages/Home';
 import Schedules from './pages/Schedules';
 import SchedulePage from './pages/SchedulePage';
 import More from './pages/More';
+import Notifications from './pages/Notifications';
+import Notification from './pages/Notification';
+import Reminders from './pages/Reminders';
+import Settings from './pages/Settings';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import styles, {colors} from './styles/styles';
-import Notifications from './pages/Notifications';
 import {useNotifications} from './logic/notifications/NotifService';
-import Notification from './pages/Notification';
-import PushNotification from 'react-native-push-notification';
-import {errorCB, log} from './data/Database/generalTransactions';
-import {
-  initValues,
-  getValueArraysFromItem,
-  updateNotification,
-} from './data/Database/notificationTransactions';
+
+import {useLocalization, translate} from './logic/localization/localization';
 
 const Stack = createStackNavigator();
 const navigationOptions = {
@@ -97,6 +102,17 @@ function MoreStack() {
           title: route.params.name,
         })}
       />
+
+      <Stack.Screen
+        name="Reminders"
+        component={Reminders}
+        options={{title: translate('remindersPage.title')}}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={Settings}
+        options={{title: translate('settingsPage.title')}}
+      />
     </Stack.Navigator>
   );
 }
@@ -112,63 +128,6 @@ async function initializeData() {
   };
 
   return data;
-}
-
-async function updateNotifications(userDB, notification) {
-  log('updating notifications');
-  const results = [];
-  const now = new Date();
-  await userDB
-    .transaction(txn => {
-      txn
-        .executeSql(
-          'SELECT * FROM tblNotifications WHERE IsNotificationActive=1',
-          [],
-        )
-        .then(([t, res]) => {
-          for (let i = 0; i < res.rows.length; i++) {
-            let item = res.rows.item(i);
-            results.push(item);
-          }
-        });
-    })
-    .catch(err => {
-      errorCB(err);
-    });
-
-  /*
-    With the notifications from the table which are active check when the next notification
-    will come up and set a scheduled notification for it, then update the date in the
-    database accordingly for future reference
-  */
-  results.map(item => {
-    let nextNotif = Date.parse(item.NextNotifDate);
-    log(item);
-    if (nextNotif < now.getTime()) {
-      const {days, times} = getValueArraysFromItem(item);
-      const {nextDate} = initValues(days, times);
-
-      if (!nextDate) {
-        return;
-      }
-
-      notification.scheduleNotif({
-        id: item.ID,
-        date: nextDate,
-        title: item.Name,
-      });
-      updateNotification(
-        userDB,
-        item.ID,
-        'NextNotifDate',
-        nextDate.toString(),
-        () => {
-          console.log('Updated notification', item.Name, 'to', nextDate);
-        },
-      );
-    }
-  });
-  log('updating notifications finished');
 }
 
 function backgroundRefreh(userDB, notification) {
@@ -251,6 +210,14 @@ export default function AppContainer() {
     }
     if (userDB) {
       updateNotifications(userDB, notification);
+      updateReminderDates(userDB);
+      getSettings(userDB).then(settings => {
+        let {showDaily, midweekMeeting, weekendMeeting} = settings;
+
+        dispatch(setShowDaily(showDaily));
+        dispatch(setMidweekMeeting(midweekMeeting));
+        dispatch(setWeekendMeeting(weekendMeeting));
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isFirstRender, setRefresh, updatePages, userDB]);

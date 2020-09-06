@@ -9,7 +9,7 @@ import {
 } from './generalTransactions';
 import {translate} from '../../logic/localization/localization';
 import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {getWeeksBetween} from '../../logic/logic';
+import {getWeeksBetween, getWeekdaysBeforeToday} from '../../logic/logic';
 
 const prefix = 'scheduleTransactions.';
 export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
@@ -118,7 +118,6 @@ export function setHideCompleted(db, scheduleName, value, successCallBack) {
 }
 
 //Seting up needed info
-
 function createQryOrderIndex(query) {
   const item = i => {
     const index = query.rows.item(i).VerseID - 1;
@@ -327,19 +326,19 @@ export async function addSchedule(
   }
 }
 
-export async function createWeeklyReadingSchedule(userDB, bibleDB) {
-  // Choose which day to reset on 0 = Sunday, 2 = Tuesday, 3 = Wed, 4 = Thurs
-  //Later this will be a UserPref
-  let resetDayOfWeek = 4;
-
+export async function createWeeklyReadingSchedule(
+  userDB,
+  bibleDB,
+  resetDayOfWeek,
+) {
   let date = new Date();
   console.log('date', date);
   /*
   This returns 0 - 6 based on the day the user wishes to reset, for instance, if it resets
   on Thursday, then Wednesday will be index 6 of the week and Thursday will be index 0 of
-  the week (Thanks to Number Theory)
+  the week (Thanks Number Theory!)
   */
-  let adjustedWeekIndex = (7 + (date.getDay() - resetDayOfWeek)) % 7;
+  let adjustedWeekIndex = getWeekdaysBeforeToday(resetDayOfWeek);
   let adjustedDate = date.getDate() - adjustedWeekIndex;
   date.setDate(adjustedDate);
   let weeklyReadingCurrent;
@@ -347,7 +346,7 @@ export async function createWeeklyReadingSchedule(userDB, bibleDB) {
   let weeklyReadingInfo;
   let tableName = WEEKLY_READING_TABLE_NAME;
 
-  timeKeeper('Started at.....');
+  timeKeeper('Started at creating weekly reading schedule at.....');
 
   await userDB
     .transaction(txn => {
@@ -382,6 +381,7 @@ export async function createWeeklyReadingSchedule(userDB, bibleDB) {
     getWeeksBetween(weeklyReadingStart.Date, weeklyReadingCurrent) + startIndex;
 
   log(
+    'creating weekly reading schedule',
     'date',
     date,
     'adjustedWeekIndex',
@@ -414,7 +414,7 @@ export async function createWeeklyReadingSchedule(userDB, bibleDB) {
         errorCB(err);
       });
 
-    let scheduleName = translate('reminders.weeklyReading');
+    let scheduleName = translate('reminders.weeklyReading.title');
 
     await userDB
       .transaction(txn => {
@@ -470,6 +470,7 @@ export async function createWeeklyReadingSchedule(userDB, bibleDB) {
       portions.push(temp);
 
       date.setDate(date.getDate() + 1);
+      pointer++;
     }
 
     await insertReadingPortions(

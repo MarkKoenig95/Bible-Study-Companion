@@ -3,6 +3,7 @@ import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
 import {LocalDBPath, PrePopulatedDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
+import {FREQS} from './reminderTransactions';
 
 SQLite.enablePromise(true);
 
@@ -14,6 +15,24 @@ export function log() {
 
 export function errorCB(err) {
   console.warn('SQL Error: ' + err.message);
+}
+
+export async function updateValue(
+  db,
+  tableName,
+  id,
+  column,
+  value,
+  afterUpdate = () => {},
+) {
+  await db
+    .transaction(txn => {
+      let sql = `UPDATE ${tableName}
+                    SET ${column}=?
+                    WHERE ID=?;`;
+      txn.executeSql(sql, [value, id]).then(afterUpdate());
+    })
+    .catch(errorCB);
 }
 
 export function createPlaceholdersFromArray(array) {
@@ -129,6 +148,40 @@ export async function getQuery(bibleDB, sql) {
   return result;
 }
 
+export async function getSettings(userDB) {
+  let showDaily;
+  let midweekMeeting;
+  let weekendMeeting;
+
+  await userDB.transaction(txn => {
+    txn.executeSql('SELECT * FROM tblUserPrefs', []).then(([t, res]) => {
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          const pref = res.rows.item(i);
+          switch (pref.Name) {
+            case 'ShowWeeklyReadingDailyPortion':
+              showDaily = {id: pref.ID, value: pref.Value ? true : false};
+              break;
+            case 'DayOfMidweek':
+              midweekMeeting = {id: pref.ID, value: pref.Value};
+              break;
+            case 'DayOfWeekend':
+              weekendMeeting = {id: pref.ID, value: pref.Value};
+              break;
+            default:
+              console.log(
+                'Name of tblUserPrefs item is not included in switch statement',
+              );
+              break;
+          }
+        }
+      }
+    });
+  });
+
+  return {showDaily, midweekMeeting, weekendMeeting};
+}
+
 async function replaceDB(db) {
   let dbName = db.dbname;
   let DB;
@@ -177,11 +230,17 @@ function setDatabaseParameters(upgradeJSON) {
         case 'dailyText':
           return translate('reminders.dailyText');
         case 'weeklyReading':
-          return translate('reminders.weeklyReading');
+          return translate('reminders.weeklyReading.title');
         case 'midweekMeetingStudy':
           return translate('reminders.midweekMeetingStudy');
         case 'weekendMeetingStudy':
           return translate('reminders.weekendMeetingStudy');
+        case 'daily':
+          return FREQS.DAILY;
+        case 'weekly':
+          return FREQS.WEEKLY;
+        case 'monthly':
+          return FREQS.MONTHLY;
       }
     }),
   );
@@ -193,6 +252,7 @@ export async function upgradeDB(db, upgradeJSON) {
 
   log('Upgrading', db.dbname);
 
+  //Replace @{foo} strings with appropriate values
   var json = setDatabaseParameters(upgradeJSON);
 
   let upgradeVersion = upgradeJSON.version;

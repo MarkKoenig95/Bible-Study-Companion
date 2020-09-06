@@ -5,7 +5,7 @@ import {translate} from '../logic/localization/localization';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import IconButton from '../components/buttons/IconButton';
-import {CheckBox} from 'react-native-elements';
+import CheckBox from '../components/buttons/CheckBox';
 
 import styles, {colors} from '../styles/styles';
 
@@ -34,7 +34,7 @@ function SchedulePage(props) {
   const scheduleID = props.route.params.id;
 
   const tableName =
-    scheduleName !== translate('reminders.weeklyReading')
+    scheduleName !== translate('reminders.weeklyReading.title')
       ? formatScheduleTableName(scheduleID)
       : WEEKLY_READING_TABLE_NAME;
 
@@ -115,11 +115,8 @@ function SchedulePage(props) {
       <ScheduleListPopups />
       <View style={styles.header}>
         <CheckBox
-          center
-          containerStyle={styles.checkBox}
           title={translate(prefix + 'hideCompleted')}
           checked={completedHidden}
-          textStyle={styles.lightText}
           uncheckedColor={styles.lightText.color}
           checkedColor={colors.darkBlue}
           onPress={() => {

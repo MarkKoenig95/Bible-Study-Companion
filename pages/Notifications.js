@@ -8,8 +8,9 @@ import {
   SectionList,
 } from 'react-native';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconButton from '../components/buttons/IconButton';
-import Text, {LargeButtonText, Heading} from '../components/text/Text';
+import Text, {LargeText, Heading} from '../components/text/Text';
 
 import styles, {colors} from '../styles/styles';
 
@@ -17,15 +18,19 @@ import {translate} from '../logic/localization/localization';
 
 import {store} from '../data/Store/store.js';
 
-import {errorCB, loadData, log} from '../data/Database/generalTransactions';
-
 import {
-  addNotification,
-  updateNotification,
-} from '../data/Database/notificationTransactions';
+  errorCB,
+  loadData,
+  log,
+  updateValue,
+} from '../data/Database/generalTransactions';
 
-import {useUpdate} from '../logic/logic';
-import CreateNotificationPopup from '../components/popups/CreateNotificationPopup';
+import {addNotification} from '../data/Database/notificationTransactions';
+
+import {useUpdate, ERROR} from '../logic/logic';
+import CreateNotificationPopup, {
+  useCreateNotificationPopup,
+} from '../components/popups/CreateNotificationPopup';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 const prefix = 'notificationsPage.';
@@ -33,49 +38,55 @@ const prefix = 'notificationsPage.';
 const days = [];
 
 const NotificationsWrapper = React.memo(props => {
+  const {days, itemID, onPress, onUpdateIsActive, text} = props;
   const isActiveProp = props.isActive;
 
   const [isActive, setIsActive] = useState(isActiveProp);
 
-  const color = isActive ? colors.darkBlue : colors.gray;
+  const activeColor = colors.darkBlue;
 
-  const style = {
-    wrapper: {
-      ...styles.wrapper,
-      borderColor: color,
-    },
-  };
+  const color = isActive ? activeColor : colors.gray;
 
   function updateIsNotificationActive() {
-    props.onUpdateIsActive(props.itemID, !isActive);
+    onUpdateIsActive(itemID, !isActive);
     setIsActive(!isActive);
   }
 
+  const style = StyleSheet.create({
+    icon: {
+      color: colors.darkBlue,
+      fontSize: 40,
+    },
+  });
+
   return (
-    <TouchableOpacity onPress={props.onPress}>
-      <View style={style.wrapper}>
-        <View style={styles.wrapperContent}>
-          <LargeButtonText style={{color: color}}>{props.text}</LargeButtonText>
-          <Switch
-            onValueChange={updateIsNotificationActive}
-            trackColor={{true: colors.lightBlue}}
-            thumbColor={color}
-            value={isActive}
-          />
+    <TouchableOpacity onPress={onPress}>
+      <View style={{...styles.wrapper, flexDirection: 'row'}}>
+        <View style={{width: '90%'}}>
+          <View style={styles.wrapperContent}>
+            <LargeText style={{color: activeColor}}>{text}</LargeText>
+            <Switch
+              onValueChange={updateIsNotificationActive}
+              trackColor={{true: colors.lightBlue}}
+              thumbColor={color}
+              value={isActive}
+            />
+          </View>
+          <View style={styles.wrapperContent}>
+            {days.map(day => {
+              return (
+                <DayMarker
+                  key={Math.random() * 1000000000}
+                  color={color}
+                  day={day}
+                  isNotificationActive={isActive}
+                />
+              );
+            })}
+          </View>
         </View>
-        <View style={styles.wrapperContent}>
-          {props.days.map(day => {
-            return (
-              <DayMarker
-                key={Math.random() * 1000000000}
-                color={color}
-                day={day}
-                isNotificationActive={isActive}
-              />
-            );
-          })}
-        </View>
-        {props.children}
+
+        <Icon style={style.icon} name={'chevron-right'} />
       </View>
     </TouchableOpacity>
   );
@@ -117,28 +128,9 @@ export default function Notifications(props) {
 
   const [listItems, setListItems] = useState([]);
 
-  const openNotificationPopup = () => {
-    setNotificationPopup({
-      ...notificationPopup,
-      isDisplayed: true,
-    });
-  };
-
-  const closeNotificationPopup = () => {
-    setNotificationPopup({
-      ...notificationPopup,
-      isDisplayed: false,
-    });
-  };
-
-  const [notificationPopup, setNotificationPopup] = useState({
-    isDisplayed: false,
-    title: translate(prefix + 'notificationPopupTitle'),
-    open: openNotificationPopup,
-    close: closeNotificationPopup,
-  });
-
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
+
+  const {notificationPopup} = useCreateNotificationPopup();
 
   //Set add button in nav bar with appropriate onPress attribute
   navigation.setOptions({
@@ -159,6 +151,15 @@ export default function Notifications(props) {
   }, [userDB, setListItems, updatePages]);
 
   async function onAddNotification(notificationName, days, time) {
+    log(
+      'adding notification',
+      'notificationName',
+      notificationName,
+      'days',
+      days,
+      'time',
+      time,
+    );
     let notificationID;
 
     let times = days.map(day => time);
@@ -174,7 +175,7 @@ export default function Notifications(props) {
     ).catch(err => {
       hasError = err;
       console.log('Error adding notification:', err);
-      if (err === 'NAME_TAKEN') {
+      if (err === ERROR.NAME_TAKEN) {
         let message = translate('prompts.nameTaken');
         let title = translate('warning');
         openMessagePopup(message, title);
@@ -184,6 +185,8 @@ export default function Notifications(props) {
     if (hasError) {
       return;
     }
+
+    log('successfully added notification to table');
 
     await userDB
       .transaction(txn => {
@@ -199,6 +202,8 @@ export default function Notifications(props) {
       .catch(err => {
         errorCB(err);
       });
+
+    notificationPopup.close();
 
     afterUpdate();
 
@@ -218,16 +223,18 @@ export default function Notifications(props) {
     let baseDate = new Date(0);
 
     notification.cancelNotif(id);
-    await updateNotification(
+    await updateValue(
       userDB,
+      'tblNotifications',
       id,
       'NextNotifDate',
       baseDate.toString(),
       () => {},
     );
 
-    await updateNotification(
+    await updateValue(
       userDB,
+      'tblNotifications',
       id,
       'IsNotificationActive',
       bool,

@@ -1,4 +1,6 @@
-const {errorCB, log} = require('./generalTransactions');
+import {ERROR} from '../../logic/logic';
+
+const {errorCB, log, updateValue} = require('./generalTransactions');
 
 const tblNotificationsColumns = {
   ID: 'ID',
@@ -86,6 +88,7 @@ export async function addNotification(
   times,
   isActive = true,
 ) {
+  log('adding notification');
   let nameExists;
   isActive = isActive ? 1 : 0;
 
@@ -110,11 +113,12 @@ export async function addNotification(
 
   if (nameExists) {
     console.warn('Notification name taken');
-    throw 'NAME_TAKEN';
+    throw ERROR.NAME_TAKEN;
   }
 
   //If not, then process creating the notification with the given variables
 
+  log('initializing notification values');
   const {activeDays, activeTimes, nextDate} = initValues(days, times);
 
   if (!nextDate) {
@@ -127,7 +131,7 @@ export async function addNotification(
     date: nextDate,
   });
 
-  `
+  const SQL = `
     INSERT INTO tblNotifications(
       Name,
       NextNotifDate,
@@ -152,36 +156,89 @@ export async function addNotification(
         ?, ?, ?, ?, ?, ?, ?);
     `;
 
-  await userDB.transaction(txn => {
-    txn
-      .executeSql(SQL, [
-        notificationName,
-        nextDate.toString(),
-        isActive,
-        ...activeDays,
-        ...activeTimes,
-      ])
-      .then(() => {
-        log(notificationName, 'created successfully');
-      });
-  });
-}
-
-export async function updateNotification(
-  userDB,
-  notificationID,
-  column,
-  value,
-  afterUpdate,
-) {
   await userDB
     .transaction(txn => {
-      let sql = `UPDATE tblNotifications
-                    SET ${column}=?
-                    WHERE ID=?;`;
-      txn.executeSql(sql, [value, notificationID]).then(afterUpdate());
+      txn
+        .executeSql(SQL, [
+          notificationName,
+          nextDate.toString(),
+          isActive,
+          ...activeDays,
+          ...activeTimes,
+        ])
+        .then(() => {
+          log(notificationName, 'notification created successfully');
+        });
     })
     .catch(errorCB);
+}
+
+export async function updateNotifications(userDB, notification) {
+  log('updating notifications');
+  const results = [];
+  const now = new Date();
+  await userDB
+    .transaction(txn => {
+      txn
+        .executeSql(
+          'SELECT * FROM tblNotifications WHERE IsNotificationActive=1',
+          [],
+        )
+        .then(([t, res]) => {
+          for (let i = 0; i < res.rows.length; i++) {
+            let item = res.rows.item(i);
+            results.push(item);
+          }
+        });
+    })
+    .catch(err => {
+      errorCB(err);
+    });
+
+  /*
+    With the notifications from the table which are active check when the next notification
+    will come up and set a scheduled notification for it, then update the date in the
+    database accordingly for future reference
+  */
+  results.map(item => {
+    let nextNotif = Date.parse(item.NextNotifDate);
+    log(item);
+    if (nextNotif < now.getTime()) {
+      const {days, times} = getValueArraysFromItem(item);
+      const {nextDate} = initValues(days, times);
+
+      if (!nextDate) {
+        return;
+      }
+
+      notification.scheduleNotif({
+        id: item.ID,
+        date: nextDate,
+        title: item.Name,
+      });
+      updateValue(
+        userDB,
+        'tblNotifications',
+        item.ID,
+        'NextNotifDate',
+        nextDate.toString(),
+        () => {
+          console.log('Updated notification', item.Name, 'to', nextDate);
+        },
+      );
+    }
+  });
+  log('updating notifications finished');
+}
+
+export async function deleteNotification(db, id, notification) {
+  db.transaction(txn => {
+    txn
+      .executeSql(`DELETE FROM tblNotifications WHERE ID='${id}'`, [])
+      .then(() => {
+        notification.cancelNotif(id);
+      });
+  }).catch(errorCB);
 }
 
 async function checkNextNotificationDate(userDB, notificationID) {

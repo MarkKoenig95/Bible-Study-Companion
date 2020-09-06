@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "cancel": "Cancel",
+    "done": "Done"
+  },
   "bibleBook": "Bible Book",
   "bibleBooks": {
     "1": {
@@ -311,6 +315,11 @@
     }
   },
   "examiningTheScripturesDaily": "Examining the Scriptures Daily",
+  "frequencies": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly"
+  },
   "home": "Home",
   "homePage": {
     "emptyList": "You have no more readings for the day"
@@ -335,6 +344,14 @@
     "baseTitle": "Daily Reading",
     "bigText": "Let's see what you have left to do today",
     "message": "Let's do it"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notificationName": "Notification Name",
+    "notificationPopupTitle": "Create New Notification"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": "Are you sure you want to delete \"{{notificationName}}\" notification?"
   },
   "prompts": {
     "setNotification": "Set notification for: ",
@@ -378,13 +395,20 @@
   "reminders": {
     "dailyText": "Daily Text",
     "midweekMeetingStudy": "Midweek Meeting Study",
+    "reminder": "Reminder",
     "weekendMeetingStudy": "Weekend Meeting Study",
-    "weeklyReading": "Weekly Reading"
+    "weeklyReading": {
+      "title": "Weekly Reading",
+      "showDaily": "Show daily portion of weekly reading"
+    }
   },
-  "notificationsPage": {
-    "title": "Notifications",
-    "notificationName": "Notification Name",
-    "notificationPopupTitle": "Create New Notification"
+  "remindersPage": {
+    "completed": "Completed {{desc}}",
+    "every": "Every: ",
+    "name": "Name: ",
+    "reminderPopupTitle": "Create New Reminder",
+    "repeats": "Repeats: ",
+    "title": "Reminders"
   },
   "schedules": "Schedules",
   "schedulePage": {
@@ -405,6 +429,13 @@
     "custom": "Custom",
     "customDescription": "Create a custom schedule for a publication"
   },
+  "settingsPage": {
+    "dayOfMidweek": "Day of Midweek Meeting",
+    "dayOfWeekend": "Day of Weekend Meeting",
+    "meetingDays": "Meeting Days",
+    "title": "Settings"
+  },
+  "thisMonth": "This Month",
   "thisWeek": "This Week",
   "today": "Today",
   "versePicker": {

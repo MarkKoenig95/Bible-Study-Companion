@@ -7,7 +7,7 @@ import CustomInput from '../inputs/CustomInput';
 import {translate} from '../../logic/localization/localization';
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
-import {CheckBox} from 'react-native-elements';
+import CheckBox from '../buttons/CheckBox';
 import TimePickerButton from '../buttons/TimePickerButton';
 
 function WeekdayCheckbox(props) {
@@ -22,8 +22,6 @@ function WeekdayCheckbox(props) {
         {abrev}
       </Text>
       <CheckBox
-        center
-        containerStyle={styles.checkBox}
         checked={checked}
         uncheckedColor={styles.lightText.color}
         checkedColor={colors.darkBlue}
@@ -99,6 +97,31 @@ export default function CreateNotificationPopup(props) {
       />
     </Popup>
   );
+}
+
+export function useCreateNotificationPopup() {
+  const openNotificationPopup = () => {
+    setNotificationPopup({
+      ...notificationPopup,
+      isDisplayed: true,
+    });
+  };
+
+  const closeNotificationPopup = () => {
+    setNotificationPopup({
+      ...notificationPopup,
+      isDisplayed: false,
+    });
+  };
+
+  const [notificationPopup, setNotificationPopup] = useState({
+    isDisplayed: false,
+    title: translate('notificationsPage.notificationPopupTitle'),
+    open: openNotificationPopup,
+    close: closeNotificationPopup,
+  });
+
+  return {notificationPopup};
 }
 
 const style = StyleSheet.create({

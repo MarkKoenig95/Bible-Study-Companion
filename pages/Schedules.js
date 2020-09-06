@@ -164,13 +164,6 @@ export default function Schedules(props) {
             );
           }}
         />
-        <IconButton
-          buttonStyle={{alignSelf: 'center'}}
-          onPress={() => {
-            setIsScheduleTypePopupDisplayed(!isScheduleTypePopupDisplayed);
-          }}
-          name="add"
-        />
       </View>
     </SafeAreaView>
   );

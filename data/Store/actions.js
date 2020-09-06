@@ -17,8 +17,19 @@ export function setBibleDB(bibleDB) {
 }
 
 export function setNotification(notification) {
-  console.log(notification);
   return updateValue('notification', notification);
+}
+
+export function setShowDaily(showDaily) {
+  return updateValue('showDaily', showDaily);
+}
+
+export function setMidweekMeeting(midweekMeeting) {
+  return updateValue('midweekMeeting', midweekMeeting);
+}
+
+export function setWeekendMeeting(weekendMeeting) {
+  return updateValue('weekendMeeting', weekendMeeting);
 }
 
 function updateValue(key, value) {

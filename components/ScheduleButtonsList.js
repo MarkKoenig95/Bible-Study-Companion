@@ -303,6 +303,7 @@ export default function useScheduleButtonsList(
               endBook = item.EndBookName;
               endChapter = item.EndChapter;
               endVerse = item.EndVerse;
+              completionDate = item.CompletionDate;
 
               let {description} = checkReadingPortion(
                 startBook,

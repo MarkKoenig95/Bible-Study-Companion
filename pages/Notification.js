@@ -1,13 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  Switch,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import {FlatList, SafeAreaView, Switch, View} from 'react-native';
+import {StackActions} from '@react-navigation/native';
 
-import {LargeButtonText} from '../components/text/Text';
+import {LargeText} from '../components/text/Text';
 
 import styles, {colors} from '../styles/styles';
 
@@ -15,10 +10,12 @@ import {translate} from '../logic/localization/localization';
 
 import {store} from '../data/Store/store.js';
 
-import {errorCB} from '../data/Database/generalTransactions';
+import {errorCB, updateValue} from '../data/Database/generalTransactions';
 import {useUpdate} from '../logic/logic';
 import TimePickerButton from '../components/buttons/TimePickerButton';
-import {updateNotification} from '../data/Database/notificationTransactions';
+import {deleteNotification} from '../data/Database/notificationTransactions';
+import IconButton from '../components/buttons/IconButton';
+import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 const prefix = 'notificationPage.';
 
@@ -29,14 +26,10 @@ const WeekdayWrapper = React.memo(props => {
   const [isActive, setIsActive] = useState(isActiveProp && isNotifActive);
   const [time, setTime] = useState(props.time);
 
-  const color = isActive ? colors.darkBlue : colors.gray;
+  const activeColor = colors.darkBlue;
 
-  const style = {
-    wrapper: {
-      ...styles.wrapper,
-      borderColor: color,
-    },
-  };
+  const color = isActive ? activeColor : colors.gray;
+
   function toggleIsActive() {
     onUpdate(itemID, isNotifActive, day, !isActive, time);
     setIsActive(!isActive);
@@ -49,12 +42,10 @@ const WeekdayWrapper = React.memo(props => {
   }
 
   return (
-    <View style={style.wrapper}>
+    <View style={styles.wrapper}>
       <View style={styles.wrapperContent}>
         <View>
-          <LargeButtonText style={{color: color}}>
-            {props.weekday}
-          </LargeButtonText>
+          <LargeText style={{color: activeColor}}>{props.weekday}</LargeText>
           <TimePickerButton
             invert
             textStyle={{color: color}}
@@ -79,9 +70,12 @@ export default function Notification(props) {
   const {dispatch} = globalState;
   const {userDB, updatePages, notification} = globalState.state;
 
+  const notificationName = props.route.params.name;
   const notificationID = props.route.params.id;
 
   const [listItems, setListItems] = useState([]);
+
+  const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
   const afterUpdate = useUpdate(updatePages, dispatch);
 
@@ -91,8 +85,9 @@ export default function Notification(props) {
     let baseDate = new Date(0);
 
     notification.cancelNotif(id);
-    await updateNotification(
+    await updateValue(
       userDB,
+      'tblNotifications',
       id,
       'NextNotifDate',
       baseDate.toString(),
@@ -100,8 +95,9 @@ export default function Notification(props) {
     );
 
     if (!isNotifActive) {
-      await updateNotification(
+      await updateValue(
         userDB,
+        'tblNotifications',
         id,
         'IsNotificationActive',
         isNotifActiveBool,
@@ -109,21 +105,50 @@ export default function Notification(props) {
       );
     }
 
-    await updateNotification(
+    await updateValue(
       userDB,
+      'tblNotifications',
       id,
       `Day${day}Time`,
       time.toString(),
       () => {},
     );
-    await updateNotification(
+    await updateValue(
       userDB,
+      'tblNotifications',
       id,
       `IsDay${day}Active`,
       isActiveBool,
       afterUpdate,
     );
   }
+
+  function onDeleteNotification() {
+    props.navigation.dispatch(StackActions.pop(1));
+    deleteNotification(userDB, notificationID, notification).then(() => {
+      afterUpdate();
+    });
+  }
+
+  //Set delete button in nav bar with appropriate onPress attribute
+  props.navigation.setOptions({
+    headerRight: () => (
+      <IconButton
+        iconOnly
+        invertColor
+        onPress={() => {
+          let title = translate('warning');
+          let message = translate(prefix + 'deleteNotificationMessage', {
+            notificationName: notificationName,
+          });
+          let onConfirm = onDeleteNotification;
+
+          openMessagePopup(message, title, onConfirm);
+        }}
+        name="delete"
+      />
+    ),
+  });
 
   const renderItem = ({item}) => (
     <WeekdayWrapper
@@ -165,6 +190,13 @@ export default function Notification(props) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <MessagePopup
+        displayPopup={messagePopup.isDisplayed}
+        title={messagePopup.title}
+        message={messagePopup.message}
+        onClosePress={closeMessagePopup}
+        onConfirm={messagePopup.onConfirm}
+      />
       <View style={styles.contentWithoutHeader}>
         <FlatList
           data={listItems}

@@ -7,32 +7,41 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 
 export default function CustomInput(props) {
-  let hasDescription = props.description ? true : false;
+  const {
+    containerStyle,
+    defaultValue,
+    description,
+    inputStyle,
+    onChangeText,
+    title,
+    titleStyle,
+    value,
+  } = props;
+
+  let hasDescription = description ? true : false;
   return (
-    <View style={{...styles.inputContainer, ...props.containerStyle}}>
-      {props.title && (
-        <Text style={{...styles.lightText, ...props.titleStyle}}>
-          {props.title}
-        </Text>
+    <View style={{...styles.inputContainer, ...containerStyle}}>
+      {title && (
+        <Text style={{...styles.lightText, ...titleStyle}}>{title}</Text>
       )}
       <View style={style.inputContainer}>
         <TextInput
           placeholderTextColor={colors.gray}
-          style={[styles.input, props.inputStyle]}
+          style={[styles.input, inputStyle]}
           onBlur={() => {
-            if (!props.value) {
-              props.onChangeText(props.defaultValue);
+            if (!value) {
+              onChangeText(defaultValue);
             }
           }}
           onFocus={() => {
-            if (!props.value || props.value === props.defaultValue) {
-              props.onChangeText('');
+            if (!value || value === defaultValue) {
+              onChangeText('');
             }
           }}
           {...props}
         />
         {hasDescription && (
-          <Text style={style.placeholderText}>{props.description}</Text>
+          <Text style={style.placeholderText}>{description}</Text>
         )}
       </View>
     </View>

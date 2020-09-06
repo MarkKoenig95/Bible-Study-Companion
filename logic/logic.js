@@ -1,5 +1,8 @@
 import React, {useCallback} from 'react';
 import {setUpdatePages} from '../data/Store/actions';
+import {translate} from './localization/localization';
+
+export const ERROR = {NAME_TAKEN: 'NAME_TAKEN'};
 
 export function arraysMatch(arr1, arr2) {
   // Check if the arrays are the same length
@@ -60,4 +63,23 @@ export function useUpdate(updatePages, dispatch) {
   return useCallback(() => {
     dispatch(setUpdatePages(updatePages));
   }, [updatePages, dispatch]);
+}
+
+export function createPickerArray(...labels) {
+  const pickerValues = [];
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i];
+    pickerValues.push({value: i, label: label});
+  }
+  return pickerValues;
+}
+
+export function getWeekdaysAfterToday(resetDayOfWeek) {
+  let date = new Date();
+  return (7 - (date.getDay() - resetDayOfWeek)) % 7;
+}
+
+export function getWeekdaysBeforeToday(resetDayOfWeek) {
+  let date = new Date();
+  return (7 + (date.getDay() - resetDayOfWeek)) % 7;
 }

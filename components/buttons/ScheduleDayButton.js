@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {CheckBox} from 'react-native-elements';
 
+import CheckBox from './CheckBox';
 import CustomButton from './CustomButton';
 import Text from '../text/Text';
 
@@ -44,9 +44,7 @@ const ScheduleDayButton = React.memo(props => {
       onLongPress={() => onPress(props.onLongPress)}>
       <View style={{...style.rowContainer}}>
         <CheckBox
-          containerStyle={style.checkBox}
           checked={isFinishedState}
-          left
           onPress={() => onPress(props.onLongPress)}
           checkedColor={colors.lightGray}
           uncheckedColor={colors.lightGray}
@@ -94,10 +92,6 @@ const ScheduleDayButton = React.memo(props => {
 export default ScheduleDayButton;
 
 const style = StyleSheet.create({
-  checkBox: {
-    margin: 0,
-    padding: 0,
-  },
   columnContainer: {
     alignItems: 'stretch',
     flexDirection: 'column',

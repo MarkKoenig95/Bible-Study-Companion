@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "cancel": "取消",
+    "done": "完成"
+  },
   "bibleBook": "书卷",
   "bibleBooks": {
     "1": {
@@ -312,6 +316,11 @@
     }
   },
   "examiningTheScripturesDaily": "天天考查圣经",
+  "frequencies": {
+    "daily": "每天",
+    "weekly": "每周",
+    "monthly": "每个月"
+  },
   "home": "首页",
   "homePage": {
     "emptyList": "今天的阅读部分都完成了"
@@ -336,6 +345,14 @@
     "baseTitle": "今天的阅读",
     "bigText": "咱们看一看今天有什么要做的",
     "message": "加油"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": "请确认你想删除“{{notificationName}}”提醒?"
+  },
+  "notificationsPage": {
+    "title": "提醒",
+    "notificationName": "提醒题目",
+    "notificationPopupTitle": "造成新的提醒"
   },
   "prompts": {
     "setNotification": "定提醒的时间：",
@@ -381,13 +398,20 @@
   "reminders": {
     "dailyText": "每日经文",
     "midweekMeetingStudy": "周中聚会研究",
+    "reminder": "提醒",
     "weekendMeetingStudy": "周末聚会研究",
-    "weeklyReading": "这周的朗读经文"
+    "weeklyReading": {
+      "title": "这周的朗读经文",
+      "showDaily": "露出这周朗读经文当天部分"
+    }
   },
-  "notificationsPage": {
-    "title": "提醒",
-    "notificationName": "提醒题目",
-    "notificationPopupTitle": "造成新的提醒"
+  "remindersPage": {
+    "completed": "{{desc}}完成",
+    "every": "每一个：",
+    "name": "题目：",
+    "reminderPopupTitle": "造成新的提醒",
+    "repeats": "重复",
+    "title": "提醒"
   },
   "schedules": "进度表",
   "schedulePage": {
@@ -408,6 +432,13 @@
     "custom": "自定义",
     "customDescription": "创建一本出版物的自定义进度表"
   },
+  "settingsPage": {
+    "dayOfMidweek": "周中聚会的日子",
+    "dayOfWeekend": "周末聚会的日子",
+    "meetingDays": "聚会日子",
+    "title": "设定"
+  },
+  "thisMonth": "这个月",
   "thisWeek": "这周",
   "today": "今天",
   "versePicker": {

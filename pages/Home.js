@@ -11,72 +11,82 @@ import {translate, linkFormulator} from '../logic/localization/localization';
 
 import {store} from '../data/Store/store.js';
 
-import {formatDate, errorCB} from '../data/Database/generalTransactions';
+import {
+  formatDate,
+  errorCB,
+  updateValue,
+  log,
+} from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
-  updateDates,
   createWeeklyReadingSchedule,
   WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
 import {useUpdate} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
+import {FREQS} from '../data/Database/reminderTransactions';
 
 const prefix = 'homePage.';
 let populatingHomeList = false;
 
-async function populateDailyText(userDB, afterUpdate, update, setDailyText) {
-  let result;
-  let date = new Date();
-  let todayFormatted = formatDate(date);
-  let today = Date.parse(todayFormatted);
-  let storedDate;
+async function populateReminders(userDB, frequency, afterUpdate, update) {
+  let result = [];
+  let reminders;
 
-  //Populate Daily text
   await userDB
     .transaction(txn => {
       txn
-        .executeSql('SELECT * FROM tblDates WHERE Name="DailyText"')
+        .executeSql(
+          'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0',
+          [frequency],
+        )
         .then(([t, res]) => {
-          storedDate = Date.parse(res.rows.item(0).Date);
+          reminders = res.rows;
         });
     })
     .catch(err => {
       errorCB(err);
     });
 
-  if (storedDate < today) {
-    let title = translate('examiningTheScripturesDaily');
-    let readingPortion = translate('reminders.dailyText');
-    let completionDate = todayFormatted;
-    let isFinished = false;
-    let onLongPress = cb => {
-      updateDates(userDB, todayFormatted, 'DailyText', afterUpdate);
-      cb(true);
-    };
+  if (reminders.length > 0) {
+    for (let i = 0; i < reminders.length; i++) {
+      log('currently checking reminder', reminders.item(i));
+      const reminder = reminders.item(i);
+      let completionDate = new Date(reminder.CompletionDate);
 
-    let onPress = () => {
-      Linking.openURL(linkFormulator('wol'));
-    };
+      let title = translate('reminders.reminder');
+      let readingPortion = reminder.Name;
+      let isFinished = reminder.IsFinished ? true : false;
+      let onLongPress = cb => {
+        updateValue(
+          userDB,
+          'tblReminders',
+          reminder.ID,
+          'IsFinished',
+          reminder.IsFinished ? 0 : 1,
+          afterUpdate,
+        );
+        cb(true);
+      };
 
-    result = [
-      {
-        isFinished: isFinished ? true : false,
-        completionDate: completionDate,
+      let onPress = onLongPress;
+
+      result.push({
+        isFinished: isFinished,
+        completionDate: formatDate(completionDate),
         completedHidden: true,
         onLongPress: onLongPress,
         onPress: onPress,
         readingPortion: readingPortion,
         title: title,
         update: update,
-      },
-    ];
-  } else {
-    result = [];
+      });
+    }
   }
   return result;
 }
 
-async function populateScheduleButtons(userDB, updatePages) {
+async function populateScheduleButtons(userDB, shouldShowDaily, updatePages) {
   let result;
   let homeListItems = [];
   let date = new Date();
@@ -99,10 +109,16 @@ async function populateScheduleButtons(userDB, updatePages) {
   for (let i = 0; i < result.rows.length; i++) {
     const id = result.rows.item(i).ScheduleID;
     const scheduleName = result.rows.item(i).ScheduleName;
-    const tableName =
-      scheduleName !== translate('reminders.weeklyReading')
-        ? formatScheduleTableName(id)
-        : WEEKLY_READING_TABLE_NAME;
+    let tableName;
+    if (scheduleName !== translate('reminders.weeklyReading.title')) {
+      tableName = formatScheduleTableName(id);
+    } else {
+      if (!shouldShowDaily) {
+        continue;
+      } else {
+        tableName = WEEKLY_READING_TABLE_NAME;
+      }
+    }
 
     let items;
     let completionDate;
@@ -115,7 +131,9 @@ async function populateScheduleButtons(userDB, updatePages) {
                 ORDER BY ReadingDayID ASC
                 LIMIT 1`;
         txn.executeSql(sql, []).then(([t, res]) => {
-          completionDate = res.rows.item(0).CompletionDate;
+          if (res.rows.length > 0) {
+            completionDate = res.rows.item(0).CompletionDate;
+          }
         });
       })
       .catch(err => {
@@ -158,13 +176,18 @@ async function populateScheduleButtons(userDB, updatePages) {
   return homeListItems;
 }
 
-async function populateWeeklyReading(userDB, bibleDB, update) {
+async function populateWeeklyReading(
+  userDB,
+  bibleDB,
+  midweekMeetingDay,
+  update,
+) {
   let tableName = WEEKLY_READING_TABLE_NAME;
-  let title = translate('reminders.weeklyReading');
+  let title = translate('reminders.weeklyReading.title');
   let items;
   let listItems = [];
 
-  await createWeeklyReadingSchedule(userDB, bibleDB);
+  await createWeeklyReadingSchedule(userDB, bibleDB, midweekMeetingDay + 1);
 
   await userDB
     .transaction(txn => {
@@ -179,47 +202,66 @@ async function populateWeeklyReading(userDB, bibleDB, update) {
     });
 
   let innerListItems = [];
+  if (items.length > 0) {
+    for (let j = 0; j < items.length; j++) {
+      const item = items.item(j);
 
-  for (let j = 0; j < items.length; j++) {
-    const item = items.item(j);
-
-    if (!item.IsFinished) {
-      //Add reading portion info to the list
-      innerListItems.push({
-        ...item,
-        title: title,
-        tableName: tableName,
-        update: update,
-      });
+      if (!item.IsFinished) {
+        //Add reading portion info to the list
+        innerListItems.push({
+          ...item,
+          title: title,
+          tableName: tableName,
+          update: update,
+        });
+      }
     }
-  }
-  if (innerListItems.length > 0) {
-    listItems.push(innerListItems);
+    if (innerListItems.length > 0) {
+      listItems.push(innerListItems);
+    }
   }
 
   return listItems;
 }
 
-async function populateHomeList(userDB, bibleDB, afterUpdate, updatePages) {
+async function populateHomeList(
+  userDB,
+  bibleDB,
+  midweekMeetingDay,
+  shouldShowDaily,
+  afterUpdate,
+  updatePages,
+) {
   let data = [];
   let todayListItems = [];
   let thisWeekListItems = [];
+  let thisMonthListItems = [];
   let todayTitle = translate('today');
   let thisWeekTitle = translate('thisWeek');
+  let thisMonthTitle = translate('thisMonth');
 
-  await populateDailyText(userDB, afterUpdate, updatePages).then(res => {
-    if (res.length > 0) {
-      todayListItems.push(res);
-    }
-  });
-
-  await populateScheduleButtons(userDB, updatePages).then(results => {
-    results.map(res => {
+  //Populate daily reminders
+  await populateReminders(userDB, FREQS.DAILY, afterUpdate, updatePages).then(
+    res => {
       if (res.length > 0) {
-        todayListItems.push(res);
+        for (let i = 0; i < res.length; i++) {
+          log('daily reminder', i, 'is', res[i]);
+          todayListItems.push([res[i]]);
+        }
       }
-    });
-  });
+    },
+  );
+
+  await populateScheduleButtons(userDB, shouldShowDaily, updatePages).then(
+    results => {
+      results.map(res => {
+        if (res.length > 0) {
+          log('schedule buttons are', res);
+          todayListItems.push(res);
+        }
+      });
+    },
+  );
 
   if (todayListItems.length > 0) {
     data.push({
@@ -228,8 +270,26 @@ async function populateHomeList(userDB, bibleDB, afterUpdate, updatePages) {
     });
   }
 
-  await populateWeeklyReading(userDB, bibleDB, updatePages).then(results => {
+  //Populate weekly reminders
+  await populateReminders(userDB, FREQS.WEEKLY, afterUpdate, updatePages).then(
+    res => {
+      if (res.length > 0) {
+        for (let i = 0; i < res.length; i++) {
+          log('weekly reminder', i, 'is', res[i]);
+          thisWeekListItems.push([res[i]]);
+        }
+      }
+    },
+  );
+
+  await populateWeeklyReading(
+    userDB,
+    bibleDB,
+    midweekMeetingDay,
+    updatePages,
+  ).then(results => {
     results.map(res => {
+      log('weekly reading is', res);
       thisWeekListItems.push(res);
     });
   });
@@ -238,6 +298,25 @@ async function populateHomeList(userDB, bibleDB, afterUpdate, updatePages) {
     data.push({
       title: thisWeekTitle,
       data: thisWeekListItems,
+    });
+  }
+
+  //Populate monthly reminders
+  await populateReminders(userDB, FREQS.MONTHLY, afterUpdate, updatePages).then(
+    res => {
+      if (res.length > 0) {
+        for (let i = 0; i < res.length; i++) {
+          log('monthly reminder', i, 'is', res[i]);
+          thisMonthListItems.push([res[i]]);
+        }
+      }
+    },
+  );
+
+  if (thisMonthListItems.length > 0) {
+    data.push({
+      title: thisMonthTitle,
+      data: thisMonthListItems,
     });
   }
 
@@ -250,23 +329,87 @@ export default function Home(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {userDB, bibleDB, updatePages} = globalState.state;
+  const {
+    userDB,
+    bibleDB,
+    updatePages,
+    midweekMeeting,
+    showDaily,
+  } = globalState.state;
   const [scheduleListItems, setScheduleListItems] = useState([]);
+  const [midweekMeetingDay, setMidweekMeetingDay] = useState();
+  const [shouldShowDaily, setShouldShowDaily] = useState();
   const completedHidden = true;
 
+  //Set add and settings button in nav bar with appropriate onPress attribute
+  navigation.setOptions({
+    headerRight: () => (
+      <View style={{flexDirection: 'row'}}>
+        <IconButton
+          iconOnly
+          invertColor
+          onPress={() => {
+            navigation.navigate('SchedulesStack', {
+              screen: 'Schedules',
+              params: {
+                isCreatingSchedule: true,
+              },
+            });
+          }}
+          name="add"
+        />
+        <IconButton
+          iconOnly
+          invertColor
+          onPress={() => {
+            navigation.navigate('MoreStack', {screen: 'Settings'});
+          }}
+          name="settings"
+        />
+      </View>
+    ),
+  });
+
   useEffect(() => {
-    if (userDB && bibleDB) {
+    if (midweekMeeting !== undefined) {
+      setMidweekMeetingDay(midweekMeeting.value);
+    }
+
+    if (showDaily !== undefined) {
+      setShouldShowDaily(showDaily.value);
+    }
+  }, [midweekMeetingDay, shouldShowDaily, midweekMeeting, showDaily]);
+
+  useEffect(() => {
+    if (
+      userDB &&
+      bibleDB &&
+      midweekMeetingDay !== undefined &&
+      shouldShowDaily !== undefined
+    ) {
       if (!populatingHomeList) {
         populatingHomeList = true;
-        populateHomeList(userDB, bibleDB, afterUpdate, updatePages).then(
-          res => {
-            setScheduleListItems(res);
-            populatingHomeList = false;
-          },
-        );
+        populateHomeList(
+          userDB,
+          bibleDB,
+          midweekMeetingDay,
+          shouldShowDaily,
+          afterUpdate,
+          updatePages,
+        ).then(res => {
+          setScheduleListItems(res);
+          populatingHomeList = false;
+        });
       }
     }
-  }, [userDB, bibleDB, updatePages, afterUpdate]);
+  }, [
+    userDB,
+    bibleDB,
+    updatePages,
+    midweekMeetingDay,
+    shouldShowDaily,
+    afterUpdate,
+  ]);
 
   const afterUpdate = useUpdate(updatePages, dispatch);
 
