@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View, StyleSheet, SectionList} from 'react-native';
+import {SafeAreaView, View, StyleSheet, FlatList} from 'react-native';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
 import Picker from '../components/inputs/CustomPicker';
-import {Heading, Body} from '../components/text/Text';
+import {Body} from '../components/text/Text';
 import CheckBox from '../components/buttons/CheckBox';
 import CustomInput from '../components/inputs/CustomInput';
 import WeekdayPicker from '../components/inputs/WeekdayPicker';
@@ -343,16 +343,18 @@ export default function Reminders(props) {
   }, [userDB, setListItems, updatePages]);
 
   //Set add button in nav bar with appropriate onPress attribute
-  navigation.setOptions({
-    headerRight: () => (
-      <IconButton
-        iconOnly
-        invertColor
-        onPress={reminderPopup.open}
-        name="add"
-      />
-    ),
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          iconOnly
+          invertColor
+          onPress={reminderPopup.open}
+          name="add"
+        />
+      ),
+    });
+  }, [navigation, reminderPopup.open]);
 
   async function onAddReminder(name, frequency, resetValue, completionDate) {
     let hasError;
@@ -436,14 +438,9 @@ export default function Reminders(props) {
         prefix={prefix}
       />
       <View style={styles.contentWithoutHeader}>
-        <SectionList
-          sections={listItems}
+        <FlatList
+          data={listItems}
           keyExtractor={(item, index) => index + JSON.stringify(item)}
-          renderSectionHeader={({section: {title}}) => {
-            if (title) {
-              <Heading style={styles.header}>{title}</Heading>;
-            }
-          }}
           renderItem={({item}) => {
             return (
               <ReminderWrapper

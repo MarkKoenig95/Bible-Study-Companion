@@ -80,41 +80,39 @@ export function formatScheduleTableName(id) {
   return tableName;
 }
 
-export function getHideCompleted(db, scheduleName, cb) {
-  db.transaction(txn => {
-    txn
-      .executeSql(
-        `SELECT HideCompleted FROM tblSchedules WHERE ScheduleName = "${scheduleName}"`,
-        [],
-      )
-      .then(([t, res]) => {
-        if (res.rows.length > 0) {
-          let item = res.rows.item(0).HideCompleted;
-          let value;
+export async function getScheduleSettings(db, scheduleName) {
+  let hideCompleted;
+  let doesTrack;
 
-          if (item === 0) {
-            value = false;
-          } else if (item === 1) {
-            value = true;
+  await db
+    .transaction(txn => {
+      txn
+        .executeSql('SELECT * FROM tblSchedules WHERE ScheduleName=?', [
+          scheduleName,
+        ])
+        .then(([t, res]) => {
+          if (res.rows.length > 0) {
+            hideCompleted = res.rows.item(0).HideCompleted ? true : false;
+            doesTrack = res.rows.item(0).DoesTrack ? true : false;
           }
+        });
+    })
+    .catch(errorCB);
 
-          cb(value);
-        }
-      });
-  }).catch(errorCB);
+  return {doesTrack, hideCompleted};
 }
 
-export function setHideCompleted(db, scheduleName, value, successCallBack) {
+export async function setHideCompleted(db, scheduleName, value) {
   let hideCompleted = value ? 1 : 0;
 
-  successCallBack(value);
-
-  db.transaction(txn => {
-    txn.executeSql(
-      `UPDATE tblSchedules SET HideCompleted = ${hideCompleted} WHERE ScheduleName = "${scheduleName}";`,
-      [],
-    );
-  }).catch(errorCB);
+  await db
+    .transaction(txn => {
+      txn.executeSql(
+        'UPDATE tblSchedules SET HideCompleted=? WHERE ScheduleName=?;',
+        [hideCompleted, scheduleName],
+      );
+    })
+    .catch(errorCB);
 }
 
 //Seting up needed info
@@ -217,6 +215,8 @@ export async function addSchedule(
   bibleDB,
   scheduleType,
   scheduleName,
+  doesTrack,
+  activeDays,
   duration,
   bookId,
   chapter,
@@ -244,13 +244,14 @@ export async function addSchedule(
 
   let scheduleNameExists;
   let tableName;
+  let creationInfo;
 
   await userDB
     .transaction(txn => {
       //Check if a schedule with that name already exists
       txn
         .executeSql(
-          `SELECT 1 FROM tblSchedules WHERE ScheduleName = "${scheduleName}"`,
+          `SELECT 1 FROM tblSchedules WHERE ScheduleName="${scheduleName}"`,
           [],
         )
         .then(([txn, res]) => {
@@ -258,6 +259,22 @@ export async function addSchedule(
         });
     })
     .catch(errorCB);
+
+  if (scheduleType !== SCHEDULE_TYPES.CUSTOM) {
+    creationInfo = {
+      duration: duration,
+      bookId: bookId,
+      chapter: chapter,
+      verse: verse,
+    };
+  } else {
+    creationInfo = {
+      startingPortion: startingPortion,
+      maxPortion: maxPortion,
+      readingPortionDesc: readingPortionDesc,
+      portionsPerDay: portionsPerDay,
+    };
+  }
 
   if (!scheduleNameExists) {
     log('Creating schehdule table');
@@ -267,8 +284,29 @@ export async function addSchedule(
       .transaction(txn => {
         txn
           .executeSql(
-            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType) VALUES (?, 0, ?)',
-            [scheduleName, scheduleType],
+            `INSERT INTO 
+              tblSchedules (
+                ScheduleName, 
+                HideCompleted, 
+                DoesTrack, 
+                ScheduleType, 
+                CreationInfo,
+                IsDay0Active,
+                IsDay1Active,
+                IsDay2Active,
+                IsDay3Active,
+                IsDay4Active,
+                IsDay5Active,
+                IsDay6Active) 
+                VALUES (?, 0, ?, ?, ?,
+                  ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              scheduleName,
+              doesTrack,
+              scheduleType,
+              JSON.stringify(creationInfo),
+              ...activeDays,
+            ],
           )
           .then(() => {
             log(scheduleName, 'inserted successfully');

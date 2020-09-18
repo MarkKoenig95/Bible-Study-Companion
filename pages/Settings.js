@@ -24,8 +24,7 @@ export default function Settings(props) {
     userDB,
     updatePages,
     showDaily,
-    midweekMeeting,
-    weekendMeeting,
+    weeklyReadingResetDay,
   } = globalState.state;
 
   const afterUpdate = useUpdate(updatePages, dispatch);
@@ -41,22 +40,11 @@ export default function Settings(props) {
     );
   }
 
-  function updateWeekend(value) {
+  function updateWeeklyReadingResetDay(value) {
     updateValue(
       userDB,
       'tblUserPrefs',
-      weekendMeeting.id,
-      'Value',
-      value.toString(),
-      afterUpdate,
-    );
-  }
-
-  function updateMidweek(value) {
-    updateValue(
-      userDB,
-      'tblUserPrefs',
-      midweekMeeting.id,
+      weeklyReadingResetDay.id,
       'Value',
       value.toString(),
       afterUpdate,
@@ -68,13 +56,9 @@ export default function Settings(props) {
       <View style={styles.contentWithoutHeader}>
         <WeeklyReadingSettings
           isShown={showDaily.value}
+          readingResetDay={weeklyReadingResetDay.value}
+          setReadingResetDay={updateWeeklyReadingResetDay}
           toggleIsShown={toggleIsShown}
-        />
-        <MeetingSettings
-          midweekDay={midweekMeeting.value}
-          setMidweekDay={updateMidweek}
-          weekendDay={weekendMeeting.value}
-          setWeekendDay={updateWeekend}
         />
         <SettingsWrapper
           iconName="alarm"
@@ -92,7 +76,7 @@ export default function Settings(props) {
 }
 
 function WeeklyReadingSettings(props) {
-  const {isShown, toggleIsShown} = props;
+  const {isShown, toggleIsShown, readingResetDay, setReadingResetDay} = props;
 
   const activeColor = colors.darkBlue;
 
@@ -102,47 +86,26 @@ function WeeklyReadingSettings(props) {
     <SettingsWrapper noArrow text={translate('reminders.weeklyReading.title')}>
       <BreakLine />
       <View style={styles.wrapperContent}>
-        <Body dark style={{color: colors.darkBlue}}>
+        <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
           {translate('reminders.weeklyReading.showDaily')}
         </Body>
         <Switch
+          style={{alignSelf: 'flex-end'}}
           onValueChange={toggleIsShown}
           trackColor={{true: colors.lightBlue}}
           thumbColor={color}
           value={isShown}
         />
       </View>
-    </SettingsWrapper>
-  );
-}
-
-function MeetingSettings(props) {
-  const {midweekDay, setMidweekDay, weekendDay, setWeekendDay} = props;
-
-  return (
-    <SettingsWrapper noArrow text={translate(prefix + 'meetingDays')}>
       <BreakLine />
       <View style={{width: '90%'}}>
         <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
-          {translate(prefix + 'dayOfMidweek')}
+          {translate(prefix + 'weeklyReadingResetDay')}
         </Body>
         <WeekdayPicker
           containerStyle={{alignSelf: 'flex-end'}}
-          onChange={setMidweekDay}
-          currentValue={midweekDay}
-        />
-      </View>
-
-      <BreakLine />
-
-      <View style={{width: '90%'}}>
-        <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
-          {translate(prefix + 'dayOfWeekend')}
-        </Body>
-        <WeekdayPicker
-          containerStyle={{alignSelf: 'flex-end'}}
-          onChange={setWeekendDay}
-          currentValue={weekendDay}
+          onChange={setReadingResetDay}
+          currentValue={readingResetDay}
         />
       </View>
     </SettingsWrapper>

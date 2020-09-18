@@ -14,8 +14,7 @@ import {
   setBibleDB,
   setNotification,
   setShowDaily,
-  setMidweekMeeting,
-  setWeekendMeeting,
+  setWeeklyReadingResetDay,
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
 import {
@@ -82,13 +81,13 @@ function SchedulesStack() {
   );
 }
 
-function MoreStack() {
+function SettingsStack() {
   return (
     <Stack.Navigator screenOptions={navigationOptions}>
       <Stack.Screen
-        name="More"
-        component={More}
-        options={{title: translate('morePage.title')}}
+        name="Settings"
+        component={Settings}
+        options={{title: translate('settingsPage.title')}}
       />
       <Stack.Screen
         name="Notifications"
@@ -107,11 +106,6 @@ function MoreStack() {
         name="Reminders"
         component={Reminders}
         options={{title: translate('remindersPage.title')}}
-      />
-      <Stack.Screen
-        name="Settings"
-        component={Settings}
-        options={{title: translate('settingsPage.title')}}
       />
     </Stack.Navigator>
   );
@@ -212,11 +206,10 @@ export default function AppContainer() {
       updateNotifications(userDB, notification);
       updateReminderDates(userDB);
       getSettings(userDB).then(settings => {
-        let {showDaily, midweekMeeting, weekendMeeting} = settings;
+        let {showDaily, weeklyReadingResetDay} = settings;
 
         dispatch(setShowDaily(showDaily));
-        dispatch(setMidweekMeeting(midweekMeeting));
-        dispatch(setWeekendMeeting(weekendMeeting));
+        dispatch(setWeeklyReadingResetDay(weeklyReadingResetDay));
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -280,16 +273,16 @@ export default function AppContainer() {
           }}
         />
         <Tabs.Screen
-          name="MoreStack"
-          component={MoreStack}
+          name="SettingsStack"
+          component={SettingsStack}
           options={{
-            tabBarLabel: translate('morePage.title'),
+            tabBarLabel: translate('settingsPage.title'),
             tabBarIcon: ({color, size}) => (
               <Icon
                 style={{marginTop: 5}}
                 color={color}
-                name="more-horiz"
-                size={size * 1.5}
+                name="settings"
+                size={size * 1.3}
               />
             ),
           }}

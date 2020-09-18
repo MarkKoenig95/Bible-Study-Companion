@@ -24,14 +24,9 @@ export function setShowDaily(showDaily) {
   return updateValue('showDaily', showDaily);
 }
 
-export function setMidweekMeeting(midweekMeeting) {
-  return updateValue('midweekMeeting', midweekMeeting);
+export function setWeeklyReadingResetDay(weeklyReadingResetDay) {
+  return updateValue('weeklyReadingResetDay', weeklyReadingResetDay);
 }
-
-export function setWeekendMeeting(weekendMeeting) {
-  return updateValue('weekendMeeting', weekendMeeting);
-}
-
 function updateValue(key, value) {
   return {type: UPDATE_VALUE, key: key, value: value};
 }

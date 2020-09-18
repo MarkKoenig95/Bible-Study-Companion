@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View} from 'react-native';
+import {SafeAreaView, SectionList, View} from 'react-native';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
@@ -26,6 +26,7 @@ import {
 import {useUpdate} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 import {FREQS} from '../data/Database/reminderTransactions';
+import SectionListHeader from '../components/SectionListHeader';
 
 const prefix = 'homePage.';
 let populatingHomeList = false;
@@ -58,7 +59,7 @@ async function populateReminders(userDB, frequency, afterUpdate, update) {
       let title = translate('reminders.reminder');
       let readingPortion = reminder.Name;
       let isFinished = reminder.IsFinished ? true : false;
-      let onLongPress = cb => {
+      let onLongPress = () => {
         updateValue(
           userDB,
           'tblReminders',
@@ -67,7 +68,6 @@ async function populateReminders(userDB, frequency, afterUpdate, update) {
           reminder.IsFinished ? 0 : 1,
           afterUpdate,
         );
-        cb(true);
       };
 
       let onPress = onLongPress;
@@ -87,7 +87,12 @@ async function populateReminders(userDB, frequency, afterUpdate, update) {
   return result;
 }
 
-async function populateScheduleButtons(userDB, shouldShowDaily, updatePages) {
+async function populateScheduleButtons(
+  userDB,
+  shouldShowDaily,
+  doesTrack,
+  updatePages,
+) {
   let result;
   let homeListItems = [];
   let date = new Date();
@@ -97,8 +102,8 @@ async function populateScheduleButtons(userDB, shouldShowDaily, updatePages) {
   //Get the user's list of reading schedules
   await userDB
     .transaction(txn => {
-      let sql = 'SELECT * FROM tblSchedules';
-      txn.executeSql(sql, []).then(([t, res]) => {
+      let sql = 'SELECT * FROM tblSchedules WHERE DoesTrack=?';
+      txn.executeSql(sql, [doesTrack ? 1 : 0]).then(([t, res]) => {
         result = res;
       });
     })
@@ -164,6 +169,7 @@ async function populateScheduleButtons(userDB, shouldShowDaily, updatePages) {
         innerHomeListItems.push({
           ...item,
           title: scheduleName,
+          doesTrack: doesTrack,
           tableName: tableName,
           update: updatePages,
         });
@@ -180,7 +186,7 @@ async function populateScheduleButtons(userDB, shouldShowDaily, updatePages) {
 async function populateWeeklyReading(
   userDB,
   bibleDB,
-  midweekMeetingDay,
+  weeklyReadingReset,
   update,
 ) {
   let tableName = WEEKLY_READING_TABLE_NAME;
@@ -188,7 +194,7 @@ async function populateWeeklyReading(
   let items;
   let listItems = [];
 
-  await createWeeklyReadingSchedule(userDB, bibleDB, midweekMeetingDay + 1);
+  await createWeeklyReadingSchedule(userDB, bibleDB, weeklyReadingReset + 1);
 
   await userDB
     .transaction(txn => {
@@ -228,7 +234,7 @@ async function populateWeeklyReading(
 async function populateHomeList(
   userDB,
   bibleDB,
-  midweekMeetingDay,
+  weeklyReadingReset,
   shouldShowDaily,
   afterUpdate,
   updatePages,
@@ -237,9 +243,11 @@ async function populateHomeList(
   let todayListItems = [];
   let thisWeekListItems = [];
   let thisMonthListItems = [];
+  let otherListItems = [];
   let todayTitle = translate('today');
   let thisWeekTitle = translate('thisWeek');
   let thisMonthTitle = translate('thisMonth');
+  let otherTitle = translate('other');
 
   //Populate daily reminders
   await populateReminders(userDB, FREQS.DAILY, afterUpdate, updatePages).then(
@@ -253,16 +261,19 @@ async function populateHomeList(
     },
   );
 
-  await populateScheduleButtons(userDB, shouldShowDaily, updatePages).then(
-    results => {
-      results.map(res => {
-        if (res.length > 0) {
-          log('schedule buttons are', res);
-          todayListItems.push(res);
-        }
-      });
-    },
-  );
+  await populateScheduleButtons(
+    userDB,
+    shouldShowDaily,
+    true,
+    updatePages,
+  ).then(results => {
+    results.map(res => {
+      if (res.length > 0) {
+        log('schedule buttons are', res);
+        todayListItems.push(res);
+      }
+    });
+  });
 
   if (todayListItems.length > 0) {
     data.push({
@@ -286,7 +297,7 @@ async function populateHomeList(
   await populateWeeklyReading(
     userDB,
     bibleDB,
-    midweekMeetingDay,
+    weeklyReadingReset,
     updatePages,
   ).then(results => {
     results.map(res => {
@@ -321,6 +332,27 @@ async function populateHomeList(
     });
   }
 
+  await populateScheduleButtons(
+    userDB,
+    shouldShowDaily,
+    false,
+    updatePages,
+  ).then(results => {
+    results.map(res => {
+      if (res.length > 0) {
+        log('schedule buttons are', res);
+        otherListItems.push(res);
+      }
+    });
+  });
+
+  if (otherListItems.length > 0) {
+    data.push({
+      title: otherTitle,
+      data: otherListItems,
+    });
+  }
+
   return data;
 }
 
@@ -334,61 +366,54 @@ export default function Home(props) {
     userDB,
     bibleDB,
     updatePages,
-    midweekMeeting,
+    weeklyReadingResetDay,
     showDaily,
   } = globalState.state;
   const [scheduleListItems, setScheduleListItems] = useState([]);
-  const [midweekMeetingDay, setMidweekMeetingDay] = useState();
+  const [weeklyReadingReset, setweeklyReadingReset] = useState();
   const [shouldShowDaily, setShouldShowDaily] = useState();
   const completedHidden = true;
 
   //Set add and settings button in nav bar with appropriate onPress attribute
-  navigation.setOptions({
-    headerRight: () => (
-      <View style={styles.navHeaderContainer}>
-        <JWLibButton />
-        <IconButton
-          buttonStyle={styles.navHeaderButton}
-          iconOnly
-          invertColor
-          onPress={() => {
-            navigation.navigate('SchedulesStack', {
-              screen: 'Schedules',
-              params: {
-                isCreatingSchedule: true,
-              },
-            });
-          }}
-          name="add"
-        />
-        <IconButton
-          buttonStyle={styles.navHeaderButton}
-          iconOnly
-          invertColor
-          onPress={() => {
-            navigation.navigate('MoreStack', {screen: 'Settings'});
-          }}
-          name="settings"
-        />
-      </View>
-    ),
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={styles.navHeaderContainer}>
+          <JWLibButton />
+          <IconButton
+            buttonStyle={styles.navHeaderButton}
+            iconOnly
+            invertColor
+            onPress={() => {
+              navigation.navigate('SchedulesStack', {
+                screen: 'Schedules',
+                params: {
+                  isCreatingSchedule: true,
+                },
+              });
+            }}
+            name="add"
+          />
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
-    if (midweekMeeting !== undefined) {
-      setMidweekMeetingDay(midweekMeeting.value);
+    if (weeklyReadingResetDay !== undefined) {
+      setweeklyReadingReset(weeklyReadingResetDay.value);
     }
 
     if (showDaily !== undefined) {
       setShouldShowDaily(showDaily.value);
     }
-  }, [midweekMeetingDay, shouldShowDaily, midweekMeeting, showDaily]);
+  }, [weeklyReadingReset, shouldShowDaily, weeklyReadingResetDay, showDaily]);
 
   useEffect(() => {
     if (
       userDB &&
       bibleDB &&
-      midweekMeetingDay !== undefined &&
+      weeklyReadingReset !== undefined &&
       shouldShowDaily !== undefined
     ) {
       if (!populatingHomeList) {
@@ -396,7 +421,7 @@ export default function Home(props) {
         populateHomeList(
           userDB,
           bibleDB,
-          midweekMeetingDay,
+          weeklyReadingReset,
           shouldShowDaily,
           afterUpdate,
           updatePages,
@@ -410,7 +435,7 @@ export default function Home(props) {
     userDB,
     bibleDB,
     updatePages,
-    midweekMeetingDay,
+    weeklyReadingReset,
     shouldShowDaily,
     afterUpdate,
   ]);
@@ -418,16 +443,10 @@ export default function Home(props) {
   const afterUpdate = useUpdate(updatePages, dispatch);
 
   const {
-    ScheduleButtonsList,
     ScheduleListPopups,
+    setScheduleButtons,
     openRemindersPopup,
-  } = useScheduleButtonsList(
-    userDB,
-    afterUpdate,
-    completedHidden,
-    scheduleListItems,
-    updatePages,
-  );
+  } = useScheduleButtonsList(userDB, afterUpdate, completedHidden, updatePages);
 
   let isScheduleListEmpty = scheduleListItems.length === 0 ? true : false;
 
@@ -443,7 +462,14 @@ export default function Home(props) {
       </View>
       <View style={styles.content}>
         {!isScheduleListEmpty ? (
-          <ScheduleButtonsList />
+          <SectionList
+            sections={scheduleListItems}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item, index}) => {
+              return setScheduleButtons(item, index);
+            }}
+            renderSectionHeader={SectionListHeader}
+          />
         ) : (
           <View>
             <SubHeading style={{...styles.buttonText, alignSelf: 'center'}}>

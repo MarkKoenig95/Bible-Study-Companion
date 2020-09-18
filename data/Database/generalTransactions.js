@@ -71,7 +71,7 @@ export function formatDate(date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-export async function loadData(db, tableName) {
+export async function loadData(db, tableName, doesTrack) {
   if (db) {
     let results;
     await db
@@ -92,7 +92,7 @@ export async function loadData(db, tableName) {
     var previousDate;
 
     for (let i = 0; i < results.rows.length; ++i) {
-      const item = results.rows.item(i);
+      const item = {...results.rows.item(i), doesTrack: doesTrack};
       if (item.ReadingDayID) {
         if (item.CompletionDate === previousDate) {
           innerItems.push(item);
@@ -112,12 +112,7 @@ export async function loadData(db, tableName) {
       }
     }
 
-    return [
-      {
-        title: '',
-        data: listItems,
-      },
-    ];
+    return listItems;
   }
 }
 
@@ -150,8 +145,7 @@ export async function getQuery(bibleDB, sql) {
 
 export async function getSettings(userDB) {
   let showDaily;
-  let midweekMeeting;
-  let weekendMeeting;
+  let weeklyReadingResetDay;
 
   await userDB.transaction(txn => {
     txn.executeSql('SELECT * FROM tblUserPrefs', []).then(([t, res]) => {
@@ -162,11 +156,8 @@ export async function getSettings(userDB) {
             case 'ShowWeeklyReadingDailyPortion':
               showDaily = {id: pref.ID, value: pref.Value ? true : false};
               break;
-            case 'DayOfMidweek':
-              midweekMeeting = {id: pref.ID, value: pref.Value};
-              break;
-            case 'DayOfWeekend':
-              weekendMeeting = {id: pref.ID, value: pref.Value};
+            case 'WeeklyReadingResetDay':
+              weeklyReadingResetDay = {id: pref.ID, value: pref.Value};
               break;
             default:
               console.log(
@@ -179,7 +170,7 @@ export async function getSettings(userDB) {
     });
   });
 
-  return {showDaily, midweekMeeting, weekendMeeting};
+  return {showDaily, weeklyReadingResetDay};
 }
 
 async function replaceDB(db) {

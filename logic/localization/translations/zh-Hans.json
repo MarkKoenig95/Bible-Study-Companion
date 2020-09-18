@@ -289,6 +289,7 @@
     "scheduleName": "度进表题目",
     "scheduleDuration": "度进表时常",
     "scheduleDurPhld": "几年了？",
+    "shouldTrack": "跟踪阅读顺序",
     "startingPortion": "开始{{portionDesc}}",
     "startingPortionPhld": "你想从哪一{{portionDesc}}开始",
     "startingVerse": "开始经文",
@@ -355,6 +356,7 @@
     "notificationPopupTitle": "造成新的提醒"
   },
   "openJWLibrary": "打开 JW Library APP",
+  "other": "其他",
   "prompts": {
     "setNotification": "定提醒的时间：",
     "nameTaken": "这个进度表题目已经运用了请选择还没用的题目"
@@ -434,8 +436,7 @@
     "customDescription": "创建一本出版物的自定义进度表"
   },
   "settingsPage": {
-    "dayOfMidweek": "周中聚会的日子",
-    "dayOfWeekend": "周末聚会的日子",
+    "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文",
     "meetingDays": "聚会日子",
     "title": "设定"
   },

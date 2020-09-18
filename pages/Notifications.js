@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  SectionList,
+  FlatList,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -133,16 +133,18 @@ export default function Notifications(props) {
   const {notificationPopup} = useCreateNotificationPopup();
 
   //Set add button in nav bar with appropriate onPress attribute
-  navigation.setOptions({
-    headerRight: () => (
-      <IconButton
-        iconOnly
-        invertColor
-        onPress={notificationPopup.open}
-        name="add"
-      />
-    ),
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          iconOnly
+          invertColor
+          onPress={notificationPopup.open}
+          name="add"
+        />
+      ),
+    });
+  }, [navigation, notificationPopup.open]);
 
   useEffect(() => {
     loadData(userDB, 'tblNotifications').then(res => {
@@ -258,14 +260,9 @@ export default function Notifications(props) {
         onClosePress={notificationPopup.close}
       />
       <View style={styles.contentWithoutHeader}>
-        <SectionList
-          sections={listItems}
+        <FlatList
+          data={listItems}
           keyExtractor={(item, index) => index + JSON.stringify(item)}
-          renderSectionHeader={({section: {title}}) => {
-            if (title) {
-              <Heading style={styles.header}>{title}</Heading>;
-            }
-          }}
           renderItem={({item}) => {
             for (let i = 0; i < 7; i++) {
               const value = item[`IsDay${i}Active`] ? true : false;

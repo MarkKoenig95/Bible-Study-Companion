@@ -1,28 +1,24 @@
 {
-  "version": 4,
+  "version": 1,
   "upgrades": {
     "to_v1": [
       [
-        "CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, ScheduleType VARCHAR(20), HideCompleted BOOLEAN);"
+        "CREATE TABLE IF NOT EXISTS tblDates(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20) UNIQUE, Date DATE);"
+      ],
+      [
+        "CREATE TABLE IF NOT EXISTS tblNotifications(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, NextNotifDate DATE, IsNotificationActive BOOL, IsDay0Active BOOL, IsDay1Active BOOL, IsDay2Active BOOL, IsDay3Active BOOL, IsDay4Active BOOL, IsDay5Active BOOL, IsDay6Active BOOL, Day0Time DATE, Day1Time DATE, Day2Time DATE, Day3Time DATE, Day4Time DATE, Day5Time DATE, Day6Time DATE);"
+      ],
+      [
+        "CREATE TABLE IF NOT EXISTS tblSchedules(ScheduleID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ScheduleName VARCHAR(20) UNIQUE, ScheduleType VARCHAR(20), HideCompleted BOOLEAN DEFAULT 0, DoesTrack BOOLEAN DEFAULT 1, CreationInfo VARCHAR(100), IsDay0Active BOOL DEFAULT 1, IsDay1Active BOOL DEFAULT 1, IsDay2Active BOOL DEFAULT 1, IsDay3Active BOOL DEFAULT 1, IsDay4Active BOOL DEFAULT 1, IsDay5Active BOOL DEFAULT 1, IsDay6Active BOOL DEFAULT 1);"
+      ],
+      [
+        "CREATE TABLE IF NOT EXISTS tblReminders(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, IsFinished BOOL DEFAULT 0, Frequency TINYINT, ResetValue TINYINT, CompletionDate DATE);"
       ],
       [
         "CREATE TABLE IF NOT EXISTS tblUserPrefs(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20), Value TINYINT);"
       ],
       [
-        "CREATE TABLE IF NOT EXISTS tblDates(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, Description VARCHAR(20) UNIQUE, Date DATE);"
-      ],
-      [
-        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"DailyText\", \"Last read date of the daily text\", \"@{baseDate}\");"
-      ]
-    ],
-    "to_v2": [
-      [
         "INSERT INTO tblDates(Name, Description, Date) VALUES (\"WeeklyReadingStart\", \"@{weeklyReadingStartOrder}\", \"@{weeklyReadingStartDate}\"), (\"WeeklyReadingCurrent\", \"Last date of mid-week reading schedule read\", \"0\");"
-      ]
-    ],
-    "to_v3": [
-      [
-        "CREATE TABLE IF NOT EXISTS tblNotifications(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, NextNotifDate DATE, IsNotificationActive BOOL, IsDay0Active BOOL, IsDay1Active BOOL, IsDay2Active BOOL, IsDay3Active BOOL, IsDay4Active BOOL, IsDay5Active BOOL, IsDay6Active BOOL, Day0Time DATE, Day1Time DATE, Day2Time DATE, Day3Time DATE, Day4Time DATE, Day5Time DATE, Day6Time DATE);"
       ],
       [
         "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES (\"@{dailyText}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
@@ -37,17 +33,6 @@
         "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weekendMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
       ],
       [
-        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"DayOfMidweek\", \"The day that the user has their midweek meeting. Determines when to reset midweek reading and study reminders. (0-6)\", 4);"
-      ],
-      [
-        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"DayOfWeekend\", \"The day that the user has their weekend meeting. Determines when to reset weekend study reminder. (0-6)\", 0);"
-      ]
-    ],
-    "to_v4": [
-      [
-        "CREATE TABLE IF NOT EXISTS tblReminders(ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, Name VARCHAR(20) UNIQUE, IsFinished BOOL DEFAULT 0, Frequency TINYINT, ResetValue TINYINT, CompletionDate DATE);"
-      ],
-      [
         "INSERT INTO tblReminders(Name, IsFinished, Frequency, ResetValue, CompletionDate) VALUES (\"@{dailyText}\", 0, @{daily}, 0, \"@{baseDate}\");"
       ],
       [
@@ -58,6 +43,9 @@
       ],
       [
         "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"ShowWeeklyReadingDailyPortion\", \"Whether or not to show the daily portion of the weekly reading on the home screen. (0 or 1)\", 0);"
+      ],
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"WeeklyReadingResetDay\", \"The day that the user has their midweek meeting. Determines when to reset midweek reading and study reminders. (0-6)\", 4);"
       ]
     ]
   }

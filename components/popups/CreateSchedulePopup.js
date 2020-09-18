@@ -1,20 +1,24 @@
 import React, {useState} from 'react';
-import {translate} from '../../logic/localization/localization';
-import {sanitizeNumber} from '../../logic/logic';
+import {StyleSheet, View} from 'react-native';
 
+import CustomDropdown from '../inputs/CustomDropdown';
 import IconButton from '../buttons/IconButton';
+import CheckBox from '../buttons/CheckBox';
 import CustomInput from '../inputs/CustomInput';
 import VersePicker from '../inputs/VersePicker';
-import Text from '../text/Text';
+import Text, {Body} from '../text/Text';
 import Popup from './Popup';
+
+import {translate} from '../../logic/localization/localization';
+import {sanitizeNumber} from '../../logic/logic';
 import {SCHEDULE_TYPES} from './ScheduleTypeSelectionPopup';
-import CustomDropdown from '../inputs/CustomDropdown';
-import {StyleSheet, View} from 'react-native';
 import styles from '../../styles/styles';
 
 const prefix = 'createSchedulePopup.';
 
 export default function CreateSchedulePopup(props) {
+  const {displayPopup, onAdd, onClosePress, onError, type} = props;
+
   //State and defaults for schedule info inputs
   const defaults = {
     scheduleName: '',
@@ -32,6 +36,7 @@ export default function CreateSchedulePopup(props) {
   const [scheduleDuration, setScheduleDuration] = useState(
     defaults.scheduleDuration,
   );
+  const [doesTrack, setDoesTrack] = useState(true);
 
   const [
     readingPortionSelectedItems,
@@ -84,8 +89,9 @@ export default function CreateSchedulePopup(props) {
         bookId = versePicker.selectedItems[0].id;
       }
 
-      props.onAdd(
+      onAdd(
         scheduleName,
+        doesTrack,
         scheduleDuration,
         bookId,
         versePicker.chapter,
@@ -109,18 +115,18 @@ export default function CreateSchedulePopup(props) {
 
       setReadingPortionSelectedItems([]);
     } else {
-      props.onError(translate(prefix + 'unfinished'));
+      onError(translate(prefix + 'unfinished'));
     }
   }
 
-  const isCustom = props.type === SCHEDULE_TYPES.CUSTOM ? true : false;
+  const isCustom = type === SCHEDULE_TYPES.CUSTOM ? true : false;
   const hasReadingPortionDesc = readingPortionDesc ? true : false;
 
   return (
     <Popup
-      displayPopup={props.displayPopup}
+      displayPopup={displayPopup}
       title={translate(prefix + 'createSchedule')}
-      onClosePress={props.onClosePress}>
+      onClosePress={onClosePress}>
       <CustomInput
         title={translate(prefix + 'scheduleName')}
         onChangeText={setScheduleName}
@@ -225,6 +231,13 @@ export default function CreateSchedulePopup(props) {
           keyboardType={'decimal-pad'}
         />
       )}
+      <View style={[styles.wrapperContent, {justifyContent: 'space-around'}]}>
+        <Body>{translate(prefix + 'shouldTrack')}</Body>
+        <CheckBox
+          checked={doesTrack}
+          onPress={() => setDoesTrack(!doesTrack)}
+        />
+      </View>
       <IconButton name="add" onPress={onAddPress} />
     </Popup>
   );

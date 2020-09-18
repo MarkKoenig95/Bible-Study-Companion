@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import {View, SectionList} from 'react-native';
+import {View} from 'react-native';
 
 import ScheduleDayButton from './buttons/ScheduleDayButton';
 import ButtonsPopup, {useButtonsPopup} from './popups/SelectedDayButtonsPopup';
@@ -13,7 +13,6 @@ import {
   WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
 import {arraysMatch} from '../logic/logic';
-import SectionListHeader from './SectionListHeader';
 
 function condenseReadingPortion(item, prevBookNum) {
   let startBook = item.StartBookName;
@@ -79,14 +78,14 @@ function ScheduleButton(props) {
     title,
   } = props;
 
-  const onLongPress = cb => {
-    onUpdateReadStatus(cb, item.IsFinished, item.ReadingDayID, tableName);
+  const onLongPress = () => {
+    onUpdateReadStatus(item.IsFinished, item.ReadingDayID, tableName);
   };
 
   let onPress = null;
 
   if (item.StartBookNumber) {
-    onPress = cb => {
+    onPress = () => {
       openReadingPopup(
         item.StartBookNumber,
         item.StartChapter,
@@ -97,7 +96,6 @@ function ScheduleButton(props) {
         item.ReadingPortion,
         item.IsFinished,
         item.ReadingDayID,
-        cb,
         tableName,
       );
     };
@@ -108,7 +106,7 @@ function ScheduleButton(props) {
   return (
     <ScheduleDayButton
       readingPortion={item.ReadingPortion}
-      completionDate={item.CompletionDate}
+      completionDate={item.doesTrack && item.CompletionDate}
       completedHidden={completedHidden}
       isFinished={item.IsFinished ? true : false}
       title={title}
@@ -153,7 +151,6 @@ function useScheduleListPopups(onUpdateReadStatus) {
           }}
           onConfirm={() => {
             onUpdateReadStatus(
-              readingPopup.cb,
               readingPopup.isFinished,
               readingPopup.readingDayID,
               readingPopup.tableName,
@@ -197,7 +194,6 @@ export default function useScheduleButtonsList(
   userDB,
   afterUpdate,
   completedHidden,
-  listItems,
   updatePages,
   tableName,
   scheduleName,
@@ -205,11 +201,10 @@ export default function useScheduleButtonsList(
   console.log('loaded schedule page');
 
   const onUpdateReadStatus = useCallback(
-    (cb, status, readingDayID, tableName) => {
+    (status, readingDayID, tableName) => {
       readingDayID = readingDayID || readingPopup.readingDayID;
 
       updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
-      cb(!status);
     },
     [readingPopup, userDB, afterUpdate],
   );
@@ -284,7 +279,7 @@ export default function useScheduleButtonsList(
             thisTableName = tableName || item.tableName;
             title = scheduleName || item.title;
             readingPortions = item.ReadingPortion;
-            completionDate = item.CompletionDate;
+            completionDate = item.doesTrack && item.CompletionDate;
             isFinished = tempIsFinished;
           }
           prevBookNum =
@@ -356,12 +351,7 @@ export default function useScheduleButtonsList(
             update={updatePages}
             onLongPress={cb => {
               for (let i = 0; i < readingDayIDs.length; i++) {
-                onUpdateReadStatus(
-                  cb,
-                  isFinished,
-                  readingDayIDs[i],
-                  thisTableName,
-                );
+                onUpdateReadStatus(isFinished, readingDayIDs[i], thisTableName);
               }
             }}
             onPress={() => {
@@ -384,22 +374,9 @@ export default function useScheduleButtonsList(
     ],
   );
 
-  const ScheduleButtonsList = props => {
-    return (
-      <SectionList
-        sections={listItems}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item, index}) => {
-          return setScheduleButtons(item, index);
-        }}
-        renderSectionHeader={SectionListHeader}
-      />
-    );
-  };
-
   return {
-    ScheduleButtonsList: ScheduleButtonsList,
     ScheduleListPopups: ScheduleListPopups,
+    setScheduleButtons: setScheduleButtons,
     openRemindersPopup: openRemindersPopup,
   };
 }

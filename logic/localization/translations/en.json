@@ -288,6 +288,7 @@
     "scheduleName": "Schedule Name",
     "scheduleDuration": "Schedule Duration",
     "scheduleDurPhld": "How many years?",
+    "shouldTrack": "Track reading dates?",
     "startingPortion": "Starting {{portionDesc}}",
     "startingPortionPhld": "{{portionDesc}} you would like to start from",
     "startingVerse": "Starting Verse",
@@ -354,6 +355,7 @@
     "deleteNotificationMessage": "Are you sure you want to delete \"{{notificationName}}\" notification?"
   },
   "openJWLibrary": "Open JW Library",
+  "other": "Other",
   "prompts": {
     "setNotification": "Set notification for: ",
     "nameTaken": "Please select a name you haven't used"
@@ -431,9 +433,7 @@
     "customDescription": "Create a custom schedule for a publication"
   },
   "settingsPage": {
-    "dayOfMidweek": "Day of Midweek Meeting",
-    "dayOfWeekend": "Day of Weekend Meeting",
-    "meetingDays": "Meeting Days",
+    "weeklyReadingResetDay": "Day to reset weekly reading:",
     "title": "Settings"
   },
   "thisMonth": "This Month",

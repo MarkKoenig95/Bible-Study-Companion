@@ -10,8 +10,7 @@ import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import styles from '../styles/styles';
 
 import {store} from '../data/Store/store';
-import {setUpdatePages} from '../data/Store/actions';
-import {loadData} from '../data/Database/generalTransactions';
+import {loadData, log} from '../data/Database/generalTransactions';
 import {addSchedule} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../logic/localization/localization';
@@ -50,19 +49,21 @@ export default function Schedules(props) {
 
   const [isLoading, setLoadingPopup] = useState(false);
 
-  //Set add button in nav bar with appropriate onPress attribute
-  navigation.setOptions({
-    headerRight: () => (
-      <IconButton
-        iconOnly
-        invertColor
-        onPress={() => {
-          setIsScheduleTypePopupDisplayed(!isScheduleTypePopupDisplayed);
-        }}
-        name="add"
-      />
-    ),
-  });
+  useEffect(() => {
+    //Set add button in nav bar with appropriate onPress attribute
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          iconOnly
+          invertColor
+          onPress={() => {
+            setIsScheduleTypePopupDisplayed(!isScheduleTypePopupDisplayed);
+          }}
+          name="add"
+        />
+      ),
+    });
+  }, [isScheduleTypePopupDisplayed, navigation]);
 
   useEffect(() => {
     loadData(userDB, 'tblSchedules').then(res => {
@@ -74,6 +75,7 @@ export default function Schedules(props) {
 
   function onAddSchedule(
     scheduleName,
+    doesTrack,
     duration,
     bookId,
     chapter,
@@ -83,6 +85,7 @@ export default function Schedules(props) {
     readingPortionDesc,
     portionsPerDay,
   ) {
+    let activeDays = [1, 1, 1, 1, 1, 1, 1];
     setIsCreateSchedulePopupDisplayed(false);
     setIsScheduleTypePopupDisplayed(false);
     setLoadingPopup(true);
@@ -91,6 +94,8 @@ export default function Schedules(props) {
       bibleDB,
       scheduleType,
       scheduleName,
+      doesTrack,
+      activeDays,
       duration,
       bookId,
       chapter,
@@ -140,14 +145,9 @@ export default function Schedules(props) {
         }}
       />
       <View style={styles.content}>
-        <SectionList
-          sections={listItems}
+        <FlatList
+          data={listItems}
           keyExtractor={(item, index) => index.toString()}
-          renderSectionHeader={({section: {title}}) => {
-            if (title) {
-              <Heading style={styles.header}>{title}</Heading>;
-            }
-          }}
           renderItem={({item}) => {
             return (
               <TextButton
