@@ -353,6 +353,7 @@
   "notificationPage": {
     "deleteNotificationMessage": "Are you sure you want to delete \"{{notificationName}}\" notification?"
   },
+  "openJWLibrary": "Open JW Library",
   "prompts": {
     "setNotification": "Set notification for: ",
     "nameTaken": "Please select a name you haven't used"

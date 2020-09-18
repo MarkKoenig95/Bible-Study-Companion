@@ -18,7 +18,7 @@ export default function CustomPicker(props) {
   return (
     <View style={containerStyle}>
       <CustomButton
-        style={{width: 175}}
+        style={{alignItems: 'center', width: 175}}
         onPress={() => {
           setShowPicker(!showPicker);
         }}>
@@ -27,7 +27,7 @@ export default function CustomPicker(props) {
         ) : (
           <Picker
             selectedValue={value}
-            style={{height: 'auto', width: 175}}
+            style={{height: 20, width: 175}}
             onValueChange={(itemValue, itemIndex) => {
               setShowPicker(false);
               onChange(itemValue);

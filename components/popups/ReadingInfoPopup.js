@@ -6,6 +6,7 @@ import Popup from './Popup';
 import {Body, SubHeading} from '../text/Text';
 import Link from '../text/Link';
 import IconButton from '../buttons/IconButton';
+import TextButton from '../buttons/TextButton';
 
 import {
   translate,
@@ -13,9 +14,10 @@ import {
   dateFormulator,
 } from '../../logic/localization/localization';
 
-import {errorCB, timeKeeper} from '../../data/Database/generalTransactions';
+import {errorCB} from '../../data/Database/generalTransactions';
 import {findMaxChapter} from '../../data/Database/scheduleTransactions';
 import {store} from '../../data/Store/store.js';
+import {openJWLibrary} from '../../logic/logic';
 
 const blankInfo = {
   id: 0,
@@ -313,6 +315,12 @@ export default function ReadingInfoPopup(props) {
 
   return (
     <Popup {...popupProps} title={translate(prefix + 'readingInfo')}>
+      <TextButton
+        buttonStyle={{width: '90%'}}
+        onPress={openJWLibrary}
+        text={translate('openJWLibrary')}
+      />
+
       {readingSections.map(section => {
         return (
           <ReadingInfoSection

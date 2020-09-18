@@ -105,6 +105,13 @@ const styles = StyleSheet.create({
   lightText: {
     color: smoke,
   },
+  navHeaderButton: {height: 'auto', width: 'auto', margin: 5, padding: 5},
+  navHeaderContainer: {
+    alignContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   popup: {
     alignItems: 'center',
     backgroundColor: lightGray,

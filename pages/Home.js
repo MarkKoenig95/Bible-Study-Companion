@@ -1,13 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View, Linking} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
+import JWLibButton from '../components/buttons/JWLibButton';
 import {SubHeading} from '../components/text/Text';
 
 import styles from '../styles/styles';
 
-import {translate, linkFormulator} from '../logic/localization/localization';
+import {translate} from '../logic/localization/localization';
 
 import {store} from '../data/Store/store.js';
 
@@ -344,8 +345,10 @@ export default function Home(props) {
   //Set add and settings button in nav bar with appropriate onPress attribute
   navigation.setOptions({
     headerRight: () => (
-      <View style={{flexDirection: 'row'}}>
+      <View style={styles.navHeaderContainer}>
+        <JWLibButton />
         <IconButton
+          buttonStyle={styles.navHeaderButton}
           iconOnly
           invertColor
           onPress={() => {
@@ -359,6 +362,7 @@ export default function Home(props) {
           name="add"
         />
         <IconButton
+          buttonStyle={styles.navHeaderButton}
           iconOnly
           invertColor
           onPress={() => {

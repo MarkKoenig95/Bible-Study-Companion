@@ -354,6 +354,7 @@
     "notificationName": "提醒题目",
     "notificationPopupTitle": "造成新的提醒"
   },
+  "openJWLibrary": "打开 JW Library APP",
   "prompts": {
     "setNotification": "定提醒的时间：",
     "nameTaken": "这个进度表题目已经运用了请选择还没用的题目"

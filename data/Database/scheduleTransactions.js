@@ -755,7 +755,8 @@ async function setTrackers(
         let indexStart = leastIndex[key];
         let indexEnd = maxIndex[key];
         let approxPosition = Math.round((indexEnd - indexStart) * ratioToStart);
-        pointer[key] = indexStart + approxPosition;
+        let tempPointer = indexStart + approxPosition;
+        pointer[key] = tempPointer < indexEnd ? tempPointer : indexStart;
         endIndex[key] = pointer[key] - 1;
         hasLooped[key] = false;
         isEnd[key] = false;
@@ -848,8 +849,25 @@ function checkAnyVerseBuffer(
   let checkBook = checkPortion.BibleBook;
   let checkChapter = checkPortion.Chapter;
 
+  log(
+    'Checking',
+    checkBook,
+    'chapter',
+    checkChapter,
+    'verse',
+    checkPortion.Verse,
+  );
+
+  let comparison = (i, endValue) => {
+    if (endValue < 0) {
+      return i > endValue;
+    } else {
+      return i < endValue;
+    }
+  };
+
   let checker = endValue => {
-    let isSame;
+    let isSame = false;
     let tracker;
     let adj = 0;
 
@@ -858,14 +876,6 @@ function checkAnyVerseBuffer(
     } else {
       tracker = -1;
     }
-
-    let comparison = (i, endValue) => {
-      if (endValue < 0) {
-        return i > endValue;
-      } else {
-        return i < endValue;
-      }
-    };
 
     for (let i = tracker; comparison(i, endValue); i += tracker) {
       let currentIndex = checkIndex + i;
@@ -889,15 +899,42 @@ function checkAnyVerseBuffer(
         }
       }
     }
-    return adj;
+    return isSame ? 210 : adj;
   };
+
+  log('checking max adjustment');
 
   //Check the upper bound
   let maxAdj = checker(buffer + 1);
+
+  log('max adjustment = ', maxAdj);
+
+  log('checking min adjustment');
+
   //Check the lower bound
   let minAdj = checker(0 - buffer) - 1;
 
+  log('min adjustment = ', minAdj);
+
   let adjustment = maxAdj < Math.abs(minAdj) ? maxAdj : minAdj;
+
+  adjustment = adjustment < 200 ? adjustment : 0;
+
+  log('overal adjustment = ', adjustment);
+
+  let adjPortion = qryVerseIndex.rows.item(checkIndex + adjustment);
+  log(
+    'Adjusted from',
+    checkBook,
+    checkChapter,
+    ':',
+    checkPortion.Verse,
+    'to',
+    adjPortion.BibleBook,
+    adjPortion.Chapter,
+    ':',
+    adjPortion.Verse,
+  );
 
   return adjustment;
 }
@@ -1587,6 +1624,8 @@ async function generateBibleSchedule(
         continue;
       }
 
+      log('versesPerDay', versesPerDay[key], 'buffer', buffer[key]);
+
       let dayStartIndex = pointer[key];
 
       versesToday = versesPerDay[key] + verseOverflow[key];
@@ -1607,6 +1646,8 @@ async function generateBibleSchedule(
         scheduleType,
       );
 
+      log('Check end finished');
+
       dayEndIndex = endCheck.dayEndIndex;
       isEnd[key] = endCheck.isEnd;
       hasLooped[key] = endCheck.hasLooped;
@@ -1621,6 +1662,8 @@ async function generateBibleSchedule(
         leastIndex[key],
         maxIndex[key],
       );
+
+      log('Created reading portions');
 
       for (let j = 0; j < portions.length; j++) {
         const el = portions[j];

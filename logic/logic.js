@@ -1,8 +1,15 @@
 import React, {useCallback} from 'react';
+import {Linking, Platform} from 'react-native';
 import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
 
 export const ERROR = {NAME_TAKEN: 'NAME_TAKEN'};
+
+export function openJWLibrary() {
+  const appLink =
+    Platform.OS === 'ios' ? 'jwpub://' : 'http://jwlibrary.jw.org';
+  Linking.openURL(appLink);
+}
 
 export function arraysMatch(arr1, arr2) {
   // Check if the arrays are the same length
