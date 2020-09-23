@@ -283,16 +283,6 @@ async function populateHomeList(
   }
 
   //Populate weekly reminders
-  await populateReminders(userDB, FREQS.WEEKLY, afterUpdate, updatePages).then(
-    res => {
-      if (res.length > 0) {
-        for (let i = 0; i < res.length; i++) {
-          log('weekly reminder', i, 'is', res[i]);
-          thisWeekListItems.push([res[i]]);
-        }
-      }
-    },
-  );
 
   await populateWeeklyReading(
     userDB,
@@ -305,6 +295,17 @@ async function populateHomeList(
       thisWeekListItems.push(res);
     });
   });
+
+  await populateReminders(userDB, FREQS.WEEKLY, afterUpdate, updatePages).then(
+    res => {
+      if (res.length > 0) {
+        for (let i = 0; i < res.length; i++) {
+          log('weekly reminder', i, 'is', res[i]);
+          thisWeekListItems.push([res[i]]);
+        }
+      }
+    },
+  );
 
   if (thisWeekListItems.length > 0) {
     data.push({

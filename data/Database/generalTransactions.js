@@ -218,6 +218,8 @@ function setDatabaseParameters(upgradeJSON) {
           return weekReadDate;
         case 'weeklyReadingStartOrder':
           return 30;
+        case 'dailyReading':
+          return translate('reminders.dailyReading');
         case 'dailyText':
           return translate('reminders.dailyText');
         case 'weeklyReading':

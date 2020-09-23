@@ -399,6 +399,7 @@
   },
   "readingSchedules": "阅读进度表",
   "reminders": {
+    "dailyReading": "今天的阅读经文",
     "dailyText": "每日经文",
     "midweekMeetingStudy": "周中聚会研究",
     "reminder": "提醒",
