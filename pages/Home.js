@@ -54,7 +54,9 @@ async function populateReminders(userDB, frequency, afterUpdate, update) {
     for (let i = 0; i < reminders.length; i++) {
       log('currently checking reminder', reminders.item(i));
       const reminder = reminders.item(i);
-      let completionDate = new Date(reminder.CompletionDate);
+      let compDate =
+        frequency !== FREQS.NEVER ? reminder.CompletionDate : new Date();
+      let completionDate = new Date(compDate);
 
       let title = translate('reminders.reminder');
       let readingPortion = reminder.Name;
@@ -194,7 +196,7 @@ async function populateWeeklyReading(
   let items;
   let listItems = [];
 
-  await createWeeklyReadingSchedule(userDB, bibleDB, weeklyReadingReset + 1);
+  await createWeeklyReadingSchedule(userDB, bibleDB, weeklyReadingReset);
 
   await userDB
     .transaction(txn => {
@@ -333,6 +335,8 @@ async function populateHomeList(
     });
   }
 
+  //Populate untracked reminders
+
   await populateScheduleButtons(
     userDB,
     shouldShowDaily,
@@ -346,6 +350,17 @@ async function populateHomeList(
       }
     });
   });
+
+  await populateReminders(userDB, FREQS.NEVER, afterUpdate, updatePages).then(
+    res => {
+      if (res.length > 0) {
+        for (let i = 0; i < res.length; i++) {
+          log('other reminder', i, 'is', res[i]);
+          otherListItems.push([res[i]]);
+        }
+      }
+    },
+  );
 
   if (otherListItems.length > 0) {
     data.push({

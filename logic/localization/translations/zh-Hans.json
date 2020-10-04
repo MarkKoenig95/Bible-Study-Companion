@@ -272,7 +272,7 @@
   },
   "buttonsPopup": {"title": "阅读部分"},
   "createSchedulePopup": {
-    "createSchedule": "造成度进表",
+    "createSchedule": "创建度进表",
     "numberOfPortions": "多少{{portionDesc}}",
     "numberOfPortionsPhld": "出版物一共包括多少{{portionDesc}}",
     "readingPortionDesc": {
@@ -283,7 +283,6 @@
       "paragraph": "段"
     },
     "readingPortionDescPhld": "描述每一朗读部分：例如页，章，等等",
-
     "portionsPerDay": "每天读多少{{portionDesc}}",
     "portionsPerDayPhld": "你每天想读多少{{portionDesc}}",
     "scheduleName": "度进表题目",
@@ -293,7 +292,7 @@
     "startingPortion": "开始{{portionDesc}}",
     "startingPortionPhld": "你想从哪一{{portionDesc}}开始",
     "startingVerse": "开始经文",
-    "unfinished": "请填写所有必填字段以安排时间表"
+    "unfinished": "请正确得填写所有必填字段以安排时间表"
   },
   "date": {
     "approxDesc": {
@@ -320,7 +319,8 @@
   "frequencies": {
     "daily": "每天",
     "weekly": "每周",
-    "monthly": "每个月"
+    "monthly": "每个月",
+    "never": "没有"
   },
   "home": "首页",
   "homePage": {
@@ -357,6 +357,20 @@
   },
   "openJWLibrary": "打开 JW Library APP",
   "other": "其他",
+  "ordinal": {
+    "0": "第",
+    "1": "第",
+    "2": "第",
+    "3": "第",
+    "4": "第",
+    "5": "第",
+    "6": "第",
+    "7": "第",
+    "8": "第",
+    "9": "第",
+    "after": "false",
+    "special": {}
+  },
   "prompts": {
     "setNotification": "定提醒的时间：",
     "nameTaken": "这个进度表题目已经运用了请选择还没用的题目"

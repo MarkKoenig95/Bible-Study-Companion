@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Keyboard, StyleSheet, View} from 'react-native';
 
 import CustomDropdown from '../inputs/CustomDropdown';
 import IconButton from '../buttons/IconButton';
@@ -79,7 +79,8 @@ export default function CreateSchedulePopup(props) {
         readingPortionDesc &&
         portionsPerDay &&
         startingPortion &&
-        maxPortion;
+        maxPortion &&
+        parseFloat(portionsPerDay, 10) > 0;
     }
 
     if (areAllRequiredFilledIn) {
@@ -138,8 +139,9 @@ export default function CreateSchedulePopup(props) {
         <CustomInput
           title={translate(prefix + 'scheduleDuration')}
           onChangeText={onScheduleDurationChange}
+          inputStyle={style.smallInput}
           value={scheduleDuration}
-          placeholder={translate(prefix + 'scheduleDurPhld')}
+          description={translate(prefix + 'scheduleDurPhld')}
           keyboardType={'decimal-pad'}
         />
       )}

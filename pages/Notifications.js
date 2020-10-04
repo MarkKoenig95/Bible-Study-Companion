@@ -62,10 +62,14 @@ const NotificationsWrapper = React.memo(props => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={{...styles.wrapper, flexDirection: 'row'}}>
-        <View style={{width: '90%'}}>
+        <View style={{flex: 1, width: '90%'}}>
           <View style={styles.wrapperContent}>
-            <LargeText style={{color: activeColor}}>{text}</LargeText>
+            <LargeText
+              style={{alignSelf: 'flex-start', color: activeColor, flex: 10}}>
+              {text}
+            </LargeText>
             <Switch
+              style={{flex: 1}}
               onValueChange={updateIsNotificationActive}
               trackColor={{true: colors.lightBlue}}
               thumbColor={color}

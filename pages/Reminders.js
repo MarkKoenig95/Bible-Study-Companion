@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View, StyleSheet, FlatList} from 'react-native';
+import {SafeAreaView, View, StyleSheet, FlatList, Keyboard} from 'react-native';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
@@ -15,7 +15,7 @@ import styles, {colors} from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
 
-import {translate} from '../logic/localization/localization';
+import {translate, translationExists} from '../logic/localization/localization';
 import {
   useUpdate,
   sanitizeNumber,
@@ -58,18 +58,22 @@ const ReminderWrapper = props => {
   const [isDaily, setIsDaily] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isWeekly, setIsWeekly] = useState(false);
+  const [isMonthly, setIsMonthly] = useState(false);
+  const [isNever, setIsNever] = useState(false);
   const [completedDesc, setCompletedDesc] = useState('');
 
   const RECURS = {
     [FREQS.DAILY]: translate('frequencies.daily'),
     [FREQS.WEEKLY]: translate('frequencies.weekly'),
     [FREQS.MONTHLY]: translate('frequencies.monthly'),
+    [FREQS.NEVER]: translate('frequencies.never'),
   };
 
   const freqPickerValues = createPickerArray(
     RECURS[FREQS.DAILY],
     RECURS[FREQS.WEEKLY],
     RECURS[FREQS.MONTHLY],
+    RECURS[FREQS.NEVER],
   );
 
   const recursText = RECURS[freq];
@@ -79,26 +83,38 @@ const ReminderWrapper = props => {
       case FREQS.DAILY:
         setIsDaily(true);
         setIsWeekly(false);
+        setIsMonthly(false);
+        setIsNever(false);
         setCompletedDesc(translate('today'));
         break;
       case FREQS.WEEKLY:
         setIsDaily(false);
         setIsWeekly(true);
+        setIsMonthly(false);
+        setIsNever(false);
         setResetStr(translate(`weekdays.${resetVal}.name`));
         setCompletedDesc(translate('thisWeek'));
         break;
       case FREQS.MONTHLY:
         setIsDaily(false);
         setIsWeekly(false);
+        setIsMonthly(true);
+        setIsNever(false);
         setResetStr(resetVal.toString());
         setCompletedDesc(translate('thisMonth'));
+        break;
+      case FREQS.NEVER:
+        setIsDaily(false);
+        setIsWeekly(false);
+        setIsMonthly(false);
+        setIsNever(true);
+        setCompletedDesc('');
         break;
       default:
         console.log('Reminder frequency not defined');
         break;
     }
   }, [freq, resetVal]);
-
   function onEditCancel() {
     //Disable editing and revert all states back to the values they recieved from
     //props (the values from the table)
@@ -161,7 +177,7 @@ const ReminderWrapper = props => {
             setFreq={setFreq}
           />
 
-          {!isDaily && (
+          {(isWeekly || isMonthly) && (
             <RecursSection
               isEditing={isEditing}
               isWeekly={isWeekly}
@@ -242,6 +258,13 @@ const RecursSection = props => {
     setResetStr,
   } = props;
 
+  let ordinalSpecial = translate('ordinal.special.' + resetVal);
+  let ordinalPlain = translate('ordinal.' + (resetVal % 10));
+  let ordinal = translationExists(ordinalSpecial)
+    ? ordinalSpecial
+    : ordinalPlain;
+  let isOrdinalAfter = translate('ordinal.after') === 'true';
+
   //If it's not editing we display the text as is
   //If it is editing, then we either show a picker for a weekday or we show a numerical input
   return (
@@ -249,6 +272,11 @@ const RecursSection = props => {
       <Body dark style={{alignSelf: 'center'}}>
         {translate(prefix + 'every')}
       </Body>
+      {!isOrdinalAfter && !isWeekly && (
+        <Body dark style={{alignSelf: 'center'}}>
+          {ordinal}
+        </Body>
+      )}
       {!isEditing ? (
         <Body dark style={{color: colors.darkBlue}}>
           {resetStr}
@@ -269,6 +297,11 @@ const RecursSection = props => {
           keyboardType={'number-pad'}
           textAlign={'center'}
         />
+      )}
+      {isOrdinalAfter && !isWeekly && (
+        <Body dark style={{alignSelf: 'center'}}>
+          {ordinal}
+        </Body>
       )}
     </View>
   );
@@ -330,11 +363,32 @@ export default function Reminders(props) {
   const {dispatch} = globalState;
   const {userDB, updatePages} = globalState.state;
   const [listItems, setListItems] = useState([]);
+  const [spacing, setSpacing] = useState(0);
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
   const {reminderPopup} = useCreateReminderPopup();
 
   const afterUpdate = useUpdate(updatePages, dispatch);
+
+  //Set up keyboard listeners
+  const _keyboardDidShow = () => {
+    setSpacing(400);
+  };
+
+  const _keyboardDidHide = () => {
+    setSpacing(0);
+  };
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     loadData(userDB, 'tblReminders').then(res => {
@@ -460,6 +514,7 @@ export default function Reminders(props) {
               />
             );
           }}
+          ListFooterComponent={<View style={{height: spacing}} />}
         />
       </View>
     </SafeAreaView>

@@ -5,6 +5,7 @@ export const FREQS = {
   DAILY: 0,
   WEEKLY: 1,
   MONTHLY: 2,
+  NEVER: 3,
 };
 
 const tblRemindersRows = `

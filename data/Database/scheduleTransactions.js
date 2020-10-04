@@ -63,7 +63,7 @@ export function updateReadStatus(db, tableName, id, status, afterUpdate) {
   }).catch(errorCB);
 }
 
-export async function updateDates(userDB, date, name, afterUpdate) {
+export async function updateDates(userDB, date, name, afterUpdate = () => {}) {
   await userDB
     .transaction(txn => {
       let sql = `UPDATE tblDates
@@ -370,15 +370,18 @@ export async function createWeeklyReadingSchedule(
   resetDayOfWeek,
 ) {
   let date = new Date();
-  console.log('date', date);
   /*
   This returns 0 - 6 based on the day the user wishes to reset, for instance, if it resets
   on Thursday, then Wednesday will be index 6 of the week and Thursday will be index 0 of
   the week (Thanks Number Theory!)
   */
   let adjustedWeekIndex = getWeekdaysBeforeToday(resetDayOfWeek);
+  console.log('adjustedWeekIndex', adjustedWeekIndex);
   let adjustedDate = date.getDate() - adjustedWeekIndex;
   date.setDate(adjustedDate);
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
   let weeklyReadingCurrent;
   let weeklyReadingStart;
   let weeklyReadingInfo;
@@ -484,7 +487,7 @@ export async function createWeeklyReadingSchedule(
         errorCB(err);
       });
 
-    let versesPerDay = Math.round(weeklyReadingInfo.rows.length / 7);
+    let versesPerDay = Math.floor(weeklyReadingInfo.rows.length / 7);
     let pointer = 0;
     let portions = [];
     let dayStartPosition;
@@ -495,7 +498,13 @@ export async function createWeeklyReadingSchedule(
       dayEndPosition = i === 6 ? VERSE_POSITION.END : VERSE_POSITION.MIDDLE;
       let dayStartIndex = pointer;
       pointer += versesPerDay;
-      let dayEndIndex = i < 6 ? pointer : weeklyReadingInfo.rows.length - 1;
+      let dayEndIndex = pointer;
+
+      if (dayEndIndex > weeklyReadingInfo.rows.length - 1 || i >= 6) {
+        dayEndIndex = weeklyReadingInfo.rows.length - 1;
+      }
+
+      log('day', i, 'dayStartIndex', dayStartIndex, 'dayEndIndex', dayEndIndex);
 
       let temp = createReadingPortion(
         weeklyReadingInfo,
@@ -783,6 +792,8 @@ async function setTrackers(
     isEnd[key] = false;
     verseOverflow[key] = 0;
 
+    let isEvenStart = qryVerseIndex.rows.item(requestedIndex).Verse === 1;
+
     //Find a correlative start position for each other theme of the schedule
     let currentPosition = requestedIndex - leastIndex[key];
     let maxPosition = maxIndex[key] - leastIndex[key];
@@ -794,7 +805,14 @@ async function setTrackers(
         let indexEnd = maxIndex[key];
         let approxPosition = Math.round((indexEnd - indexStart) * ratioToStart);
         let tempPointer = indexStart + approxPosition;
-        pointer[key] = tempPointer < indexEnd ? tempPointer : indexStart;
+        if (tempPointer < indexEnd) {
+          tempPointer = isEvenStart
+            ? tempPointer - qryVerseIndex.rows.item(tempPointer).Verse + 1
+            : tempPointer;
+        } else {
+          tempPointer = indexStart;
+        }
+        pointer[key] = tempPointer;
         endIndex[key] = pointer[key] - 1;
         hasLooped[key] = false;
         isEnd[key] = false;
@@ -1819,6 +1837,7 @@ function generateCustomSchedule(
     if (portionsPerDay !== 1) {
       if (pointer !== maxPortion) {
         pointer += portionsPerDay - adjustment;
+        pointer = Math.round(pointer * 10) / 10;
         if (pointer > maxPortion) {
           pointer = maxPortion;
         }

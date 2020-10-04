@@ -258,6 +258,7 @@ export default function useScheduleButtonsList(
         let areButtonsFinished = [];
         let readingDayIDs = [];
         let readingPortions;
+        let hiddenPortions;
         let completionDate;
         let isFinished;
         let prevBookNum = 0;
@@ -274,13 +275,17 @@ export default function useScheduleButtonsList(
           const item = items[i];
           let tempIsFinished = item.IsFinished ? true : false;
           if (i !== 0) {
+            hiddenPortions += !tempIsFinished
+              ? condenseReadingPortion(item, prevBookNum)
+              : '';
             readingPortions += condenseReadingPortion(item, prevBookNum);
           } else {
             thisTableName = tableName || item.tableName;
+            isFinished = tempIsFinished;
             title = scheduleName || item.title;
             readingPortions = item.ReadingPortion;
+            hiddenPortions = !tempIsFinished ? item.ReadingPortion : '';
             completionDate = item.doesTrack && item.CompletionDate;
-            isFinished = tempIsFinished;
           }
           prevBookNum =
             item.StartBookNumber === item.EndBookNumber
@@ -311,6 +316,7 @@ export default function useScheduleButtonsList(
                 true,
               );
               readingPortions = description;
+              hiddenPortions = description;
             }
           }
           readingDayIDs.push(item.ReadingDayID);
@@ -340,6 +346,8 @@ export default function useScheduleButtonsList(
         ) {
           openButtonsPopup(index, buttons, areButtonsFinished);
         }
+
+        readingPortions = isFinished ? readingPortions : hiddenPortions;
 
         result = (
           <ScheduleDayButton

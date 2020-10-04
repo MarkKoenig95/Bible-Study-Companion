@@ -14,6 +14,8 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 
 export default function Popup(props) {
+  const [spacing, setSpacing] = useState(0);
+
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -30,10 +32,12 @@ export default function Popup(props) {
 
   const _keyboardDidShow = () => {
     setJustifyContent('flex-start');
+    setSpacing(300);
   };
 
   const _keyboardDidHide = () => {
     setJustifyContent('center');
+    setSpacing(0);
   };
   return (
     <View
@@ -54,6 +58,8 @@ export default function Popup(props) {
           style={style.content}
           contentContainerStyle={style.contentContainer}>
           {props.children}
+
+          <View style={{height: spacing}} />
         </ScrollView>
       </View>
     </View>
