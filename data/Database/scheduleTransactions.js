@@ -9,7 +9,7 @@ import {
 } from './generalTransactions';
 import {translate} from '../../logic/localization/localization';
 import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {getWeeksBetween, getWeekdaysBeforeToday} from '../../logic/logic';
+import {getWeeksBetween, getWeekdaysAfterToday} from '../../logic/logic';
 
 const prefix = 'scheduleTransactions.';
 export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
@@ -375,8 +375,8 @@ export async function createWeeklyReadingSchedule(
   on Thursday, then Wednesday will be index 6 of the week and Thursday will be index 0 of
   the week (Thanks Number Theory!)
   */
-  let adjustedWeekIndex = getWeekdaysBeforeToday(resetDayOfWeek);
-  console.log('adjustedWeekIndex', adjustedWeekIndex);
+  let adjustedWeekIndex = getWeekdaysAfterToday(resetDayOfWeek);
+  console.log('adjustedWeekIndex "After"', adjustedWeekIndex);
   let adjustedDate = date.getDate() - adjustedWeekIndex;
   date.setDate(adjustedDate);
   date.setHours(0);
@@ -416,10 +416,16 @@ export async function createWeeklyReadingSchedule(
   //The description of this date is the order in which it falls matching the Weekly Order in the bibleDB
   let startIndex = parseInt(weeklyReadingStart.Description, 10);
 
-  let currentWeek = getWeeksBetween(weeklyReadingStart.Date, date) + startIndex;
+  let weeklyReadingStartDate = new Date(weeklyReadingStart.Date);
+  //The start date is always a monday of a schedule that would end late for the user.
+  //We need to set the start date to compensate for this.
+  let weekStartAligner = resetDayOfWeek - 8;
+  weeklyReadingStartDate.setDate(weekStartAligner);
+
+  let currentWeek = getWeeksBetween(weeklyReadingStartDate, date) + startIndex;
 
   let lastWeekRead =
-    getWeeksBetween(weeklyReadingStart.Date, weeklyReadingCurrent) + startIndex;
+    getWeeksBetween(weeklyReadingStartDate, weeklyReadingCurrent) + startIndex;
 
   log(
     'creating weekly reading schedule',

@@ -152,13 +152,6 @@ export function setReminderCompDate(
         let adjDays = getWeekdaysAfterToday(resetValue);
         adjDays = adjDays === 0 ? 7 : adjDays;
         newCompDate.setDate(newCompDate.getDate() + adjDays);
-
-        console.log(
-          'resetValue',
-          resetValue,
-          'getWeekdaysAfterToday(resetValue)',
-          getWeekdaysAfterToday(resetValue),
-        );
         break;
       case FREQS.MONTHLY:
         if (resetValue <= newCompDate.getDate()) {

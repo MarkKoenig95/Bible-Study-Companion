@@ -307,7 +307,8 @@
     "dateSpan": "{{startDate}} - {{endDate}}",
     "specialCases": {
       "1": "\"In the begining\" to {{endYear}}",
-      "5": "1 Month in {{endYear}}",
+      "3": "1 Month in {{endYear}}",
+      "5": "2 Months in {{endYear}}",
       "8": "11 Years of Judges rule from about {{startYear}} to {{endYear}}",
       "13": "After 1 Chronicles 9:44: about {{startYear}} to {{endYear}}",
       "18": "Over 140 years between {{startYear}} and {{endYear}}",
@@ -315,16 +316,15 @@
       "43": "After prologue, {{startYear}} to {{endYear}}"
     }
   },
-  "examiningTheScripturesDaily": "Examining the Scriptures Daily",
   "frequencies": {
     "daily": "Daily",
     "weekly": "Weekly",
     "monthly": "Monthly",
     "never": "Never"
   },
-  "home": "Home",
   "homePage": {
-    "emptyList": "You have no more readings for the day"
+    "emptyList": "You have no more readings for the day",
+    "title": "Home"
   },
   "links": {
     "languageTag": "en",

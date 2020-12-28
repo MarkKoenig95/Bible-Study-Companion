@@ -307,7 +307,8 @@
     "dateSpan": "{{startDate}}-{{endDate}}",
     "specialCases": {
       "1": "从“最初”到{{endYear}}",
-      "5": "{{endYear}}的一个月",
+      "3": "{{endYear}}的一个月",
+      "5": "{{endYear}}的两个月",
       "8": "士师统治（{{startYear}}到{{endYear}}）期间的11年",
       "13": "历代志上9:44后：约{{startYear}}-{{endYear}}",
       "18": "{{startYear}}和{{endYear}}之间逾140年",
@@ -315,16 +316,15 @@
       "43": "序言后：{{startYear}}-{{endYear}}"
     }
   },
-  "examiningTheScripturesDaily": "天天考查圣经",
   "frequencies": {
     "daily": "每天",
     "weekly": "每周",
     "monthly": "每个月",
     "never": "没有"
   },
-  "home": "首页",
   "homePage": {
-    "emptyList": "今天的阅读部分都完成了"
+    "emptyList": "今天的阅读部分都完成了",
+    "title": "首页"
   },
   "links": {
     "languageTag": "cmn-hans",
@@ -347,16 +347,15 @@
     "bigText": "咱们看一看今天有什么要做的",
     "message": "加油"
   },
+  "notificationsPage": {
+    "title": "通知",
+    "notificationName": "通知题目",
+    "notificationPopupTitle": "造成新的通知"
+  },
   "notificationPage": {
     "deleteNotificationMessage": "请确认你想删除“{{notificationName}}”提醒?"
   },
-  "notificationsPage": {
-    "title": "提醒",
-    "notificationName": "提醒题目",
-    "notificationPopupTitle": "造成新的提醒"
-  },
   "openJWLibrary": "打开 JW Library APP",
-  "other": "其他",
   "ordinal": {
     "0": "第",
     "1": "第",
@@ -368,9 +367,10 @@
     "7": "第",
     "8": "第",
     "9": "第",
-    "after": "false",
-    "special": {}
+    "after": false,
+    "special": {"0": 0}
   },
+  "other": "其他",
   "prompts": {
     "setNotification": "定提醒的时间：",
     "nameTaken": "这个进度表题目已经运用了请选择还没用的题目"
@@ -452,7 +452,6 @@
   },
   "settingsPage": {
     "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文",
-    "meetingDays": "聚会日子",
     "title": "设定"
   },
   "thisMonth": "这个月",

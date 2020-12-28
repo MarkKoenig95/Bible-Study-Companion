@@ -81,12 +81,23 @@ export function createPickerArray(...labels) {
   return pickerValues;
 }
 
+export function getWeekdaysFromToday(resetDayOfWeek) {
+  let date = new Date();
+  const getWeekdaysBase = beforeOrAfter => {
+    let adjDayIndex = date.getDay() - resetDayOfWeek;
+    let newDayIndex = beforeOrAfter * adjDayIndex;
+    return (7 + newDayIndex) % 7;
+  };
+
+  return {before: getWeekdaysBase(-1), after: getWeekdaysBase(1)};
+}
+
 export function getWeekdaysAfterToday(resetDayOfWeek) {
   let date = new Date();
-  return (7 - (date.getDay() - resetDayOfWeek)) % 7;
+  return (7 + (date.getDay() - resetDayOfWeek)) % 7;
 }
 
 export function getWeekdaysBeforeToday(resetDayOfWeek) {
   let date = new Date();
-  return (7 + (date.getDay() - resetDayOfWeek)) % 7;
+  return (7 - (date.getDay() - resetDayOfWeek)) % 7;
 }

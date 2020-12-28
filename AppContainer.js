@@ -56,7 +56,7 @@ function HomeStack() {
       <Stack.Screen
         name="Home"
         component={Home}
-        options={{title: translate('home')}}
+        options={{title: translate('homePage.title')}}
       />
     </Stack.Navigator>
   );
@@ -246,7 +246,7 @@ export default function AppContainer() {
           name="HomeStack"
           component={HomeStack}
           options={{
-            tabBarLabel: translate('home'),
+            tabBarLabel: translate('homePage.title'),
             tabBarIcon: ({color, size}) => (
               <Icon
                 style={{marginTop: 5}}
