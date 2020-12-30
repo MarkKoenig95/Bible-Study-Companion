@@ -30,7 +30,7 @@ export async function updateValue(
       let sql = `UPDATE ${tableName}
                     SET ${column}=?
                     WHERE ID=?;`;
-      txn.executeSql(sql, [value, id]).then(afterUpdate());
+      txn.executeSql(sql, [value, id]).then(afterUpdate);
     })
     .catch(errorCB);
 }

@@ -11,6 +11,7 @@ import {useUpdate} from '../logic/logic';
 import {SettingsWrapper} from '../components/SettingsWrapper';
 import WeekdayPicker from '../components/inputs/WeekdayPicker';
 import {updateValue} from '../data/Database/generalTransactions';
+import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions';
 
 const prefix = 'settingsPage.';
 
@@ -21,6 +22,7 @@ export default function Settings(props) {
 
   const {dispatch} = globalState;
   const {
+    bibleDB,
     userDB,
     updatePages,
     showDaily,
@@ -41,14 +43,26 @@ export default function Settings(props) {
   }
 
   function updateWeeklyReadingResetDay(value) {
-    updateValue(
-      userDB,
-      'tblUserPrefs',
-      weeklyReadingResetDay.id,
-      'Value',
-      value.toString(),
-      afterUpdate,
-    );
+    let saniVal = parseInt(value, 10);
+    /*
+      At the begining of the process of updating the picker there is a synthedic event.
+      If that is passed straight into the query there will be massive bugs. this reduces
+      the value to update only if it truely is a number or can at least be parsed to one.
+    */
+    if (!isNaN(saniVal)) {
+      updateValue(
+        userDB,
+        'tblUserPrefs',
+        weeklyReadingResetDay.id,
+        'Value',
+        saniVal.toString(),
+        () => {
+          createWeeklyReadingSchedule(userDB, bibleDB, saniVal, true).then(
+            afterUpdate,
+          );
+        },
+      );
+    }
   }
 
   return (

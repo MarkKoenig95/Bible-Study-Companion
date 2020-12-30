@@ -368,6 +368,7 @@ export async function createWeeklyReadingSchedule(
   userDB,
   bibleDB,
   resetDayOfWeek,
+  shouldForceUpdate,
 ) {
   let date = new Date();
   /*
@@ -449,7 +450,7 @@ export async function createWeeklyReadingSchedule(
     resetDayOfWeek,
   );
 
-  if (lastWeekRead < currentWeek) {
+  if (lastWeekRead < currentWeek || shouldForceUpdate) {
     await updateDates(userDB, date, 'WeeklyReadingCurrent', () => {});
 
     //drop table from previous week
