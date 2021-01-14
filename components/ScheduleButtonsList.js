@@ -69,13 +69,14 @@ function condenseReadingPortion(item, prevBookNum) {
 
 function ScheduleButton(props) {
   const {
-    item,
+    closeReadingPopup,
     completedHidden,
-    update,
+    item,
     onUpdateReadStatus,
     openReadingPopup,
     tableName,
     title,
+    update,
   } = props;
 
   const onLongPress = () => {
@@ -96,6 +97,10 @@ function ScheduleButton(props) {
         item.ReadingPortion,
         item.IsFinished,
         item.ReadingDayID,
+        () => {
+          onLongPress();
+          closeReadingPopup();
+        },
         tableName,
       );
     };
@@ -181,12 +186,13 @@ function useScheduleListPopups(onUpdateReadStatus) {
   };
 
   return {
-    ScheduleListPopups: ScheduleListPopups,
-    buttonsPopup: buttonsPopup,
-    openButtonsPopup: openButtonsPopup,
-    readingPopup: readingPopup,
+    ScheduleListPopups,
+    buttonsPopup,
+    openButtonsPopup,
+    readingPopup,
     openReadingPopup: openReadingInfoPopup,
-    openRemindersPopup: openRemindersPopup,
+    openRemindersPopup,
+    closeReadingPopup,
   };
 }
 
@@ -215,6 +221,7 @@ export default function useScheduleButtonsList(
     openButtonsPopup,
     readingPopup,
     openReadingPopup,
+    closeReadingPopup,
     openRemindersPopup,
   } = useScheduleListPopups(onUpdateReadStatus);
 
@@ -237,6 +244,7 @@ export default function useScheduleButtonsList(
               update={updatePages}
               onUpdateReadStatus={onUpdateReadStatus}
               openReadingPopup={openReadingPopup}
+              closeReadingPopup={closeReadingPopup}
             />
           );
         } else {
@@ -371,20 +379,23 @@ export default function useScheduleButtonsList(
       return result;
     },
     [
-      buttonsPopup,
-      completedHidden,
-      onUpdateReadStatus,
-      openButtonsPopup,
-      openReadingPopup,
       tableName,
       scheduleName,
+      completedHidden,
       updatePages,
+      onUpdateReadStatus,
+      openReadingPopup,
+      closeReadingPopup,
+      buttonsPopup.id,
+      buttonsPopup.isDisplayed,
+      buttonsPopup.areButtonsFinished,
+      openButtonsPopup,
     ],
   );
 
   return {
-    ScheduleListPopups: ScheduleListPopups,
-    setScheduleButtons: setScheduleButtons,
-    openRemindersPopup: openRemindersPopup,
+    ScheduleListPopups,
+    setScheduleButtons,
+    openRemindersPopup,
   };
 }

@@ -476,6 +476,17 @@ export default function Reminders(props) {
     );
   }
 
+  function onDeleteReminder(id, name) {
+    let message = translate('remindersPage.deleteReminderMessage', {
+      reminderName: name,
+    });
+    openMessagePopup(message, '', () => {
+      deleteReminder(userDB, id).then(() => {
+        afterUpdate();
+      });
+    });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <MessagePopup
@@ -483,6 +494,7 @@ export default function Reminders(props) {
         title={messagePopup.title}
         message={messagePopup.message}
         onClosePress={closeMessagePopup}
+        onConfirm={messagePopup.onConfirm}
       />
       <CreateReminderPopup
         displayPopup={reminderPopup.isDisplayed}
@@ -507,9 +519,7 @@ export default function Reminders(props) {
                 onUpdateReminder={onUpdateReminder}
                 onUpdateIsFinished={onUpdateIsFinished}
                 onDeleteReminder={() => {
-                  deleteReminder(userDB, item.ID).then(() => {
-                    afterUpdate();
-                  });
+                  onDeleteReminder(item.ID, item.Name);
                 }}
               />
             );

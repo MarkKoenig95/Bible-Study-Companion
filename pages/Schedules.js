@@ -11,7 +11,11 @@ import styles from '../styles/styles';
 
 import {store} from '../data/Store/store';
 import {loadData, log} from '../data/Database/generalTransactions';
-import {addSchedule} from '../data/Database/scheduleTransactions';
+import {
+  addSchedule,
+  formatScheduleTableName,
+  WEEKLY_READING_TABLE_NAME,
+} from '../data/Database/scheduleTransactions';
 
 import {translate} from '../logic/localization/localization';
 import LoadingPopup from '../components/popups/LoadingPopup';
@@ -153,13 +157,18 @@ export default function Schedules(props) {
               <TextButton
                 key={item.ScheduleID}
                 text={item.ScheduleName}
-                onPress={() =>
+                onPress={() => {
+                  let table =
+                    item.CreationInfo === WEEKLY_READING_TABLE_NAME
+                      ? WEEKLY_READING_TABLE_NAME
+                      : formatScheduleTableName(item.ScheduleID);
                   navigation.navigate('SchedulePage', {
                     id: item.ScheduleID,
                     title: item.ScheduleName,
                     name: item.ScheduleName,
-                  })
-                }
+                    table: table,
+                  });
+                }}
               />
             );
           }}

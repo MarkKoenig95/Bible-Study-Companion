@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
+import {WEEKLY_READING_TABLE_NAME} from '../data/Database/scheduleTransactions';
 import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
 
@@ -81,23 +82,36 @@ export function createPickerArray(...labels) {
   return pickerValues;
 }
 
-export function getWeekdaysFromToday(resetDayOfWeek) {
-  let date = new Date();
-  const getWeekdaysBase = beforeOrAfter => {
-    let adjDayIndex = date.getDay() - resetDayOfWeek;
-    let newDayIndex = beforeOrAfter * adjDayIndex;
-    return (7 + newDayIndex) % 7;
-  };
-
-  return {before: getWeekdaysBase(-1), after: getWeekdaysBase(1)};
-}
-
 export function getWeekdaysAfterToday(resetDayOfWeek) {
   let date = new Date();
-  return (7 + (date.getDay() - resetDayOfWeek)) % 7;
+  return (7 + (resetDayOfWeek - date.getDay())) % 7;
 }
 
 export function getWeekdaysBeforeToday(resetDayOfWeek) {
   let date = new Date();
-  return (7 - (date.getDay() - resetDayOfWeek)) % 7;
+  return (7 + (date.getDay() - resetDayOfWeek)) % 7;
+}
+
+export function createDailyTextLink() {
+  const locale = translate('links.finderLocale');
+  const today = new Date();
+  const month = today.getMonth();
+  let par = today.getDate() * 3;
+  const pars = `${par - 1}-${par + 1}`;
+
+  let href = `https://www.jw.org/finder?srcid=BibleStudyCompanion&wtlocale=${locale}&prefer=lang&docid=11020214${month}&par=${pars}`;
+  return href;
+}
+
+export async function legacyBugFixForV062(userDB) {
+  const tableName = WEEKLY_READING_TABLE_NAME;
+  await userDB
+    .transaction(txn => {
+      txn.executeSql(
+        `UPDATE tblSchedules SET CreationInfo = "${tableName}" WHERE CreationInfo IS NULL;`,
+      );
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }

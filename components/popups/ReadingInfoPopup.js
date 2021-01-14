@@ -117,10 +117,11 @@ function formatDate(start, startApproxDesc, end, endApproxDesc, bibleBookID) {
   return date;
 }
 
-function adjustNumber(num) {
+function adjustNumber(num, decimalPlaces = 3) {
   let temp = '00' + num;
+  let decPlaces = 0 - decimalPlaces;
 
-  temp = temp.slice(-3, temp.length);
+  temp = temp.slice(decPlaces, temp.length);
 
   return temp;
 }
@@ -172,6 +173,26 @@ function makeWOLLink(
   return result;
 }
 
+function makeJWLibLink(
+  bookNumber,
+  startChapter,
+  startVerse,
+  endChapter,
+  endVerse,
+) {
+  const locale = translate('links.finderLocale');
+  const hasStudyBible = translate('links.hasStudyBible');
+  const pub = hasStudyBible ? 'nwtsty' : 'nwt';
+  const adjBookNumber = adjustNumber(bookNumber, 2);
+  const adjStartChapter = adjustNumber(startChapter);
+  const adjEndChapter = adjustNumber(endChapter);
+  const adjStartVerse = adjustNumber(startVerse);
+  const adjEndVerse = adjustNumber(endVerse);
+  const verseSpan = `${adjBookNumber}${adjStartChapter}${adjStartVerse}-${adjBookNumber}${adjEndChapter}${adjEndVerse}`;
+  const href = `https://www.jw.org/finder?wtlocale=${locale}&prefer=Lang&bible=${verseSpan}&pub=${pub}&srcid=BibleStudyCompanion`;
+  return href;
+}
+
 function InfoSegment(props) {
   const {info, segment} = props;
 
@@ -195,7 +216,7 @@ function ReadingInfoSection(props) {
     readingPortion,
   } = props;
 
-  const href = makeWOLLink(
+  const href = makeJWLibLink(
     bookNumber,
     startChapter,
     startVerse,
@@ -315,12 +336,6 @@ export default function ReadingInfoPopup(props) {
 
   return (
     <Popup {...popupProps} title={translate(prefix + 'readingInfo')}>
-      <TextButton
-        buttonStyle={{width: '90%'}}
-        onPress={openJWLibrary}
-        text={translate('openJWLibrary')}
-      />
-
       {readingSections.map(section => {
         return (
           <ReadingInfoSection
@@ -387,8 +402,8 @@ export function useReadingInfoPopup() {
   );
 
   return {
-    openReadingPopup: openReadingPopup,
-    closeReadingPopup: closeReadingPopup,
-    readingPopup: readingPopup,
+    openReadingPopup,
+    closeReadingPopup,
+    readingPopup,
   };
 }

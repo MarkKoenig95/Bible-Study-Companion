@@ -9,7 +9,7 @@ import {
 } from './generalTransactions';
 import {translate} from '../../logic/localization/localization';
 import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {getWeeksBetween, getWeekdaysAfterToday} from '../../logic/logic';
+import {getWeeksBetween, getWeekdaysBeforeToday} from '../../logic/logic';
 
 const prefix = 'scheduleTransactions.';
 export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
@@ -376,13 +376,11 @@ export async function createWeeklyReadingSchedule(
   on Thursday, then Wednesday will be index 6 of the week and Thursday will be index 0 of
   the week (Thanks Number Theory!)
   */
-  let adjustedWeekIndex = getWeekdaysAfterToday(resetDayOfWeek);
+  let adjustedWeekIndex = getWeekdaysBeforeToday(resetDayOfWeek);
   console.log('adjustedWeekIndex "After"', adjustedWeekIndex);
   let adjustedDate = date.getDate() - adjustedWeekIndex;
   date.setDate(adjustedDate);
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
+  date.setHours(0, 0, 0, 0);
   let weeklyReadingCurrent;
   let weeklyReadingStart;
   let weeklyReadingInfo;
@@ -457,6 +455,9 @@ export async function createWeeklyReadingSchedule(
     await userDB
       .transaction(txn => {
         txn.executeSql(`DROP TABLE IF EXISTS ${tableName};`, []);
+        txn.executeSql(
+          `DELETE FROM tblSchedules WHERE CreationInfo="${tableName}" OR CreationInfo IS NULL;`,
+        );
       })
       .catch(err => {
         errorCB(err);
@@ -468,8 +469,8 @@ export async function createWeeklyReadingSchedule(
       .transaction(txn => {
         txn
           .executeSql(
-            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType) VALUES (?, 0, ?)',
-            [scheduleName, SCHEDULE_TYPES.SEQUENTIAL],
+            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?)',
+            [scheduleName, SCHEDULE_TYPES.SEQUENTIAL, tableName],
           )
           .then(() => {
             log(scheduleName, 'inserted successfully');

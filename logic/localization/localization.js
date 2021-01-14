@@ -59,8 +59,10 @@ export const useLocalization = () => {
 export function linkFormulator(type) {
   const linkPrefix = `links.${type}.`;
   const langTag = translate('links.languageTag');
+  const hasStudyBible = translate('links.hasStudyBible');
   const base = 'https://' + type + '.jw.org/' + langTag;
 
+  let res;
   let temp = [];
   let args = [...arguments];
 
@@ -69,12 +71,16 @@ export function linkFormulator(type) {
   //Remove type argument and leave all others meant for link
   args.shift();
   args.map(item => {
-    let trans = translate(linkPrefix + item);
+    if (item !== 'nwtsty' && item !== 'study-bible') {
+      let trans = translate(linkPrefix + item);
 
-    let res = translationExists(trans) ? trans : item;
+      res = translationExists(trans) ? trans : item;
 
-    //If we do not encode it as a URI this will cause issues later
-    res = encodeURIComponent(res);
+      //If we do not encode it as a URI this will cause issues later
+      res = encodeURIComponent(res);
+    } else {
+      res = hasStudyBible ? item : 'nwt';
+    }
 
     temp.push(res);
   });

@@ -23,15 +23,22 @@ import {
   createWeeklyReadingSchedule,
   WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
-import {useUpdate} from '../logic/logic';
+import {legacyBugFixForV062, useUpdate} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 import {FREQS} from '../data/Database/reminderTransactions';
 import SectionListHeader from '../components/SectionListHeader';
+import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 const prefix = 'homePage.';
 let populatingHomeList = false;
 
-async function populateReminders(userDB, frequency, afterUpdate, update) {
+async function populateReminders(
+  userDB,
+  frequency,
+  openMessagePopup,
+  afterUpdate,
+  update,
+) {
   let result = [];
   let reminders;
 
@@ -72,7 +79,13 @@ async function populateReminders(userDB, frequency, afterUpdate, update) {
         );
       };
 
-      let onPress = onLongPress;
+      let message = translate('reminders.completeReminderMessage', {
+        reminderName: readingPortion,
+      });
+
+      let onPress = () => {
+        openMessagePopup(message, '', onLongPress);
+      };
 
       result.push({
         isFinished: isFinished,
@@ -117,10 +130,14 @@ async function populateScheduleButtons(
   for (let i = 0; i < result.rows.length; i++) {
     const id = result.rows.item(i).ScheduleID;
     const scheduleName = result.rows.item(i).ScheduleName;
+    const creationInfo = result.rows.item(i).CreationInfo;
     let tableName;
-    if (scheduleName !== translate('reminders.weeklyReading.title')) {
+    if (creationInfo !== WEEKLY_READING_TABLE_NAME && creationInfo) {
       tableName = formatScheduleTableName(id);
     } else {
+      if (!creationInfo) {
+        await legacyBugFixForV062(userDB);
+      }
       if (!shouldShowDaily) {
         continue;
       } else {
@@ -238,6 +255,7 @@ async function populateHomeList(
   bibleDB,
   weeklyReadingReset,
   shouldShowDaily,
+  openMessagePopup,
   afterUpdate,
   updatePages,
 ) {
@@ -252,16 +270,20 @@ async function populateHomeList(
   let otherTitle = translate('other');
 
   //Populate daily reminders
-  await populateReminders(userDB, FREQS.DAILY, afterUpdate, updatePages).then(
-    res => {
-      if (res.length > 0) {
-        for (let i = 0; i < res.length; i++) {
-          log('daily reminder', i, 'is', res[i]);
-          todayListItems.push([res[i]]);
-        }
+  await populateReminders(
+    userDB,
+    FREQS.DAILY,
+    openMessagePopup,
+    afterUpdate,
+    updatePages,
+  ).then(res => {
+    if (res.length > 0) {
+      for (let i = 0; i < res.length; i++) {
+        log('daily reminder', i, 'is', res[i]);
+        todayListItems.push([res[i]]);
       }
-    },
-  );
+    }
+  });
 
   await populateScheduleButtons(
     userDB,
@@ -298,16 +320,20 @@ async function populateHomeList(
     });
   });
 
-  await populateReminders(userDB, FREQS.WEEKLY, afterUpdate, updatePages).then(
-    res => {
-      if (res.length > 0) {
-        for (let i = 0; i < res.length; i++) {
-          log('weekly reminder', i, 'is', res[i]);
-          thisWeekListItems.push([res[i]]);
-        }
+  await populateReminders(
+    userDB,
+    FREQS.WEEKLY,
+    openMessagePopup,
+    afterUpdate,
+    updatePages,
+  ).then(res => {
+    if (res.length > 0) {
+      for (let i = 0; i < res.length; i++) {
+        log('weekly reminder', i, 'is', res[i]);
+        thisWeekListItems.push([res[i]]);
       }
-    },
-  );
+    }
+  });
 
   if (thisWeekListItems.length > 0) {
     data.push({
@@ -317,16 +343,20 @@ async function populateHomeList(
   }
 
   //Populate monthly reminders
-  await populateReminders(userDB, FREQS.MONTHLY, afterUpdate, updatePages).then(
-    res => {
-      if (res.length > 0) {
-        for (let i = 0; i < res.length; i++) {
-          log('monthly reminder', i, 'is', res[i]);
-          thisMonthListItems.push([res[i]]);
-        }
+  await populateReminders(
+    userDB,
+    FREQS.MONTHLY,
+    openMessagePopup,
+    afterUpdate,
+    updatePages,
+  ).then(res => {
+    if (res.length > 0) {
+      for (let i = 0; i < res.length; i++) {
+        log('monthly reminder', i, 'is', res[i]);
+        thisMonthListItems.push([res[i]]);
       }
-    },
-  );
+    }
+  });
 
   if (thisMonthListItems.length > 0) {
     data.push({
@@ -390,6 +420,16 @@ export default function Home(props) {
   const [shouldShowDaily, setShouldShowDaily] = useState();
   const completedHidden = true;
 
+  const afterUpdate = useUpdate(updatePages, dispatch);
+
+  const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
+
+  const {
+    ScheduleListPopups,
+    setScheduleButtons,
+    openRemindersPopup,
+  } = useScheduleButtonsList(userDB, afterUpdate, completedHidden, updatePages);
+
   //Set add and settings button in nav bar with appropriate onPress attribute
   useEffect(() => {
     navigation.setOptions({
@@ -439,6 +479,7 @@ export default function Home(props) {
           bibleDB,
           weeklyReadingReset,
           shouldShowDaily,
+          openMessagePopup,
           afterUpdate,
           updatePages,
         ).then(res => {
@@ -454,20 +495,20 @@ export default function Home(props) {
     weeklyReadingReset,
     shouldShowDaily,
     afterUpdate,
+    openMessagePopup,
   ]);
-
-  const afterUpdate = useUpdate(updatePages, dispatch);
-
-  const {
-    ScheduleListPopups,
-    setScheduleButtons,
-    openRemindersPopup,
-  } = useScheduleButtonsList(userDB, afterUpdate, completedHidden, updatePages);
 
   let isScheduleListEmpty = scheduleListItems.length === 0 ? true : false;
 
   return (
     <SafeAreaView style={styles.container}>
+      <MessagePopup
+        displayPopup={messagePopup.isDisplayed}
+        title={messagePopup.title}
+        message={messagePopup.message}
+        onClosePress={closeMessagePopup}
+        onConfirm={messagePopup.onConfirm}
+      />
       <ScheduleListPopups />
       <View style={styles.header}>
         <TextButton

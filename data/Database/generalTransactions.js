@@ -92,7 +92,10 @@ export async function loadData(db, tableName, doesTrack) {
     var previousDate;
 
     for (let i = 0; i < results.rows.length; ++i) {
-      const item = {...results.rows.item(i), doesTrack: doesTrack};
+      const item = {
+        ...results.rows.item(i),
+        doesTrack: doesTrack,
+      };
       if (item.ReadingDayID) {
         if (item.CompletionDate === previousDate) {
           innerItems.push(item);

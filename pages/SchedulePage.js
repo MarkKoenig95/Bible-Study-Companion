@@ -36,12 +36,7 @@ function SchedulePage(props) {
   const {userDB, updatePages} = globalState.state;
 
   const scheduleName = route.params.name;
-  const scheduleID = route.params.id;
-
-  const tableName =
-    scheduleName !== translate('reminders.weeklyReading.title')
-      ? formatScheduleTableName(scheduleID)
-      : WEEKLY_READING_TABLE_NAME;
+  const tableName = route.params.table;
 
   const [listItems, setListItems] = useState([]);
 

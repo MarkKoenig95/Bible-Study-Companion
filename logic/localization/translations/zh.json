@@ -328,15 +328,16 @@
   },
   "links": {
     "languageTag": "cmn-hans",
+    "hasStudyBible": false,
+    "finderLocale": "CHS",
     "www": {
       "bible": "圣经",
       "books": "圣经卷目",
       "how-to-read-the-bible": "怎样阅读圣经",
       "introduction": "圣经入门",
-      "library": "多媒体图书馆",
-      "study-bible": "nwt"
+      "library": "多媒体图书馆"
     },
-    "wol": {"lp-e": "lp-chs", "r1": "r23", "nwtsty": "nwt"}
+    "wol": {"lp-e": "lp-chs", "r1": "r23"}
   },
   "missingTranslation": "还没翻译好",
   "morePage": {
@@ -413,6 +414,7 @@
   },
   "readingSchedules": "阅读进度表",
   "reminders": {
+    "completeReminderMessage": "请确认你想叫 “{{reminderName}}“ 完成",
     "dailyReading": "今天的阅读经文",
     "dailyText": "每日经文",
     "midweekMeetingStudy": "周中聚会研究",
@@ -425,6 +427,7 @@
   },
   "remindersPage": {
     "completed": "{{desc}}完成",
+    "deleteReminderMessage": "请确认你想删除叫 “{{reminderName}}” 的进度表?",
     "every": "每一个：",
     "name": "题目：",
     "reminderPopupTitle": "造成新的提醒",

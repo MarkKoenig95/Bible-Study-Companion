@@ -33,24 +33,26 @@ export async function updateReminderDates(userDB) {
     for (let i = 0; i < reminders.length; i++) {
       const reminder = reminders.item(i);
       log('updating tblReminders reminder', i, reminder);
-      const {newCompDate, newIsFinished} = setReminderCompDate(
-        reminder.CompletionDate,
-        reminder.IsFinished,
-        reminder.Frequency,
-        reminder.ResetValue,
-      );
+      if (reminder.IsFinished) {
+        const {newCompDate, newIsFinished} = setReminderCompDate(
+          reminder.CompletionDate,
+          reminder.IsFinished,
+          reminder.Frequency,
+          reminder.ResetValue,
+        );
 
-      log('newCompDate', newCompDate, 'newIsFinished', newIsFinished);
+        log('newCompDate', newCompDate, 'newIsFinished', newIsFinished);
 
-      if (newCompDate) {
-        await userDB
-          .transaction(txn => {
-            txn.executeSql(
-              'UPDATE tblReminders SET CompletionDate=?, IsFinished=? WHERE ID=?;',
-              [newCompDate.toString(), newIsFinished ? 1 : 0, reminder.ID],
-            );
-          })
-          .catch(errorCB);
+        if (newCompDate) {
+          await userDB
+            .transaction(txn => {
+              txn.executeSql(
+                'UPDATE tblReminders SET CompletionDate=?, IsFinished=? WHERE ID=?;',
+                [newCompDate.toString(), newIsFinished ? 1 : 0, reminder.ID],
+              );
+            })
+            .catch(errorCB);
+        }
       }
     }
   }
@@ -124,13 +126,11 @@ export function setReminderCompDate(
 ) {
   const compDate = new Date(prevCompDate);
   const newCompDate = new Date();
-  newCompDate.setHours(0);
-  newCompDate.setMinutes(0);
-  newCompDate.setSeconds(0);
+  newCompDate.setHours(0, 0, 0, 0);
   let newIsFinished = prevIsFinished;
   let shldSetCompDate = false;
 
-  if (compDate.getTime() < newCompDate.getTime()) {
+  if (compDate.getTime() <= newCompDate.getTime()) {
     shldSetCompDate = true;
   }
 
@@ -146,7 +146,8 @@ export function setReminderCompDate(
   if (shldSetCompDate) {
     switch (frequency) {
       case FREQS.DAILY:
-        newCompDate.setDate(newCompDate.getDate() + 1);
+        //Set the time to complete to be one milisecond before tomorrow
+        newCompDate.setHours(23, 59, 59, 999);
         break;
       case FREQS.WEEKLY:
         let adjDays = getWeekdaysAfterToday(resetValue);

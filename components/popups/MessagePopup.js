@@ -10,19 +10,18 @@ import {translate} from '../../logic/localization/localization';
 import styles from '../../styles/styles';
 
 export default function MessagePopup(props) {
-  const hasConfirmButton = props.onConfirm && true;
+  const {displayPopup, message, onClosePress, onConfirm, title} = props;
+  const hasConfirmButton = onConfirm && true;
 
   return (
     <Popup
-      displayPopup={props.displayPopup}
-      title={props.title}
-      onClosePress={props.onClosePress}>
+      displayPopup={displayPopup}
+      title={title}
+      onClosePress={onClosePress}>
       <View style={style.content}>
-        <Text style={style.text}>{props.message}</Text>
+        <Text style={style.text}>{message}</Text>
       </View>
-      {hasConfirmButton && (
-        <IconButton name="check" onPress={props.onConfirm} />
-      )}
+      {hasConfirmButton && <IconButton name="check" onPress={onConfirm} />}
     </Popup>
   );
 }
@@ -41,22 +40,30 @@ export function useMessagePopup() {
     });
   }, []);
 
-  const openMessagePopup = useCallback((message, title, onConfirm) => {
-    if (!title) {
-      title = translate('warning');
-    }
-    setMessagePopup({
-      isDisplayed: true,
-      message: message,
-      onConfirm: onConfirm,
-      title: title,
-    });
-  }, []);
+  const openMessagePopup = useCallback(
+    (message, title, onConfirm) => {
+      if (!title) {
+        title = translate('warning');
+      }
+      let _handleConfirm = () => {
+        onConfirm();
+        closeMessagePopup();
+      };
+
+      setMessagePopup({
+        isDisplayed: true,
+        message: message,
+        onConfirm: _handleConfirm,
+        title: title,
+      });
+    },
+    [closeMessagePopup],
+  );
 
   return {
-    openMessagePopup: openMessagePopup,
-    closeMessagePopup: closeMessagePopup,
-    messagePopup: messagePopup,
+    openMessagePopup,
+    closeMessagePopup,
+    messagePopup,
   };
 }
 
