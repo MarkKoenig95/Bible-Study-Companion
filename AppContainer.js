@@ -30,7 +30,6 @@ import {updateReminderDates} from './data/Database/reminderTransactions';
 import Home from './pages/Home';
 import Schedules from './pages/Schedules';
 import SchedulePage from './pages/SchedulePage';
-import More from './pages/More';
 import Notifications from './pages/Notifications';
 import Notification from './pages/Notification';
 import Reminders from './pages/Reminders';

@@ -52,47 +52,41 @@ const NotificationsWrapper = React.memo(props => {
     setIsActive(!isActive);
   }
 
-  const style = StyleSheet.create({
-    icon: {
-      color: colors.darkBlue,
-      fontSize: 40,
-    },
-  });
-
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={{...styles.wrapper, flexDirection: 'row'}}>
-        <View style={{flex: 1, width: '90%'}}>
-          <View style={styles.wrapperContent}>
-            <LargeText
-              style={{alignSelf: 'flex-start', color: activeColor, flex: 10}}>
-              {text}
-            </LargeText>
-            <Switch
-              style={{flex: 1}}
-              onValueChange={updateIsNotificationActive}
-              trackColor={{true: colors.lightBlue}}
-              thumbColor={color}
-              value={isActive}
-            />
-          </View>
-          <View style={styles.wrapperContent}>
-            {days.map(day => {
-              return (
-                <DayMarker
-                  key={Math.random() * 1000000000}
-                  color={color}
-                  day={day}
-                  isNotificationActive={isActive}
-                />
-              );
-            })}
-          </View>
+    <View style={{...styles.wrapper, flexDirection: 'row'}}>
+      <View style={{flex: 1, width: '90%'}}>
+        <View style={styles.wrapperContent}>
+          <LargeText
+            onPress={onPress}
+            style={{alignSelf: 'flex-start', color: activeColor, flex: 10}}>
+            {text}
+          </LargeText>
+          <Switch
+            style={{flex: 1}}
+            onValueChange={updateIsNotificationActive}
+            trackColor={{true: colors.lightBlue}}
+            thumbColor={color}
+            value={isActive}
+          />
         </View>
-
-        <Icon style={style.icon} name={'chevron-right'} />
+        <View style={styles.wrapperContent}>
+          {days.map(day => {
+            return (
+              <DayMarker
+                key={itemID + '' + day.abrev}
+                color={color}
+                day={day}
+                isNotificationActive={isActive}
+              />
+            );
+          })}
+        </View>
       </View>
-    </TouchableOpacity>
+
+      <TouchableOpacity onPress={onPress} style={style.iconContainer}>
+        <Icon style={style.icon} name={'chevron-right'} />
+      </TouchableOpacity>
+    </View>
   );
 });
 
@@ -298,13 +292,21 @@ const style = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     height: 20,
-    margin: 10,
+    margin: 3,
     width: 20,
   },
   dayAbrev: {
     fontSize: 15,
-    margin: 10,
-    marginBottom: 0,
+    margin: 3,
+    marginBottom: 2,
   },
   dayContainer: {alignItems: 'center'},
+  icon: {
+    color: colors.darkBlue,
+    fontSize: 40,
+  },
+  iconContainer: {
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+  },
 });

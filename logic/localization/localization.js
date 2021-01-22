@@ -126,5 +126,11 @@ export function dateFormulator(year, approxDesc) {
 }
 
 export function translationExists(translation) {
-  return translation.slice(0, 10) !== '[missing "';
+  let doesExist;
+  try {
+    doesExist = translation.slice(0, 10) !== '[missing "';
+  } catch (e) {
+    console.error(e);
+  }
+  return doesExist;
 }

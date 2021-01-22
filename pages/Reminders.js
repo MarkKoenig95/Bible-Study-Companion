@@ -263,7 +263,7 @@ const RecursSection = props => {
   let ordinal = translationExists(ordinalSpecial)
     ? ordinalSpecial
     : ordinalPlain;
-  let isOrdinalAfter = translate('ordinal.after') === 'true';
+  let isOrdinalAfter = translate('ordinal.after');
 
   //If it's not editing we display the text as is
   //If it is editing, then we either show a picker for a weekday or we show a numerical input

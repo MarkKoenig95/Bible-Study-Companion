@@ -202,6 +202,7 @@ export async function updateNotifications(userDB, notification) {
   */
   results.map(item => {
     let nextNotif = Date.parse(item.NextNotifDate);
+    let notifIsSet;
     log(item);
     if (nextNotif < now.getTime()) {
       const {days, times} = getValueArraysFromItem(item);
@@ -211,21 +212,32 @@ export async function updateNotifications(userDB, notification) {
         return;
       }
 
-      notification.scheduleNotif({
-        id: item.ID,
-        date: nextDate,
-        title: item.Name,
+      notification.getScheduledLocalNotifications(notifs => {
+        notifs.forEach(notif => {
+          if (notif.id == item.ID) {
+            notifIsSet = true;
+          }
+        });
+
+        if (!notifIsSet) {
+          notification.scheduleNotif({
+            id: item.ID,
+            date: nextDate,
+            title: item.Name,
+          });
+
+          updateValue(
+            userDB,
+            'tblNotifications',
+            item.ID,
+            'NextNotifDate',
+            nextDate.toString(),
+            () => {
+              console.log('Updated notification', item.Name, 'to', nextDate);
+            },
+          );
+        }
       });
-      updateValue(
-        userDB,
-        'tblNotifications',
-        item.ID,
-        'NextNotifDate',
-        nextDate.toString(),
-        () => {
-          console.log('Updated notification', item.Name, 'to', nextDate);
-        },
-      );
     }
   });
   log('updating notifications finished');
