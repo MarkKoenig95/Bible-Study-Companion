@@ -1,11 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
-import {
-  FREQS,
-  setReminderCompDate,
-} from '../../data/Database/reminderTransactions';
+import {setReminderCompDate} from '../../data/Database/reminderTransactions';
 import {translate} from '../../logic/localization/localization';
-import {createPickerArray, sanitizeNumber} from '../../logic/logic';
+import {FREQS, createPickerArray, sanitizeNumber} from '../../logic/logic';
 import {View} from 'react-native';
 import IconButton from '../buttons/IconButton';
 import {Body} from '../text/Text';

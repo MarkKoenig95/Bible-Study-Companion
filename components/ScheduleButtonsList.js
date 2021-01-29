@@ -10,9 +10,8 @@ import {
   VERSE_POSITION,
   checkReadingPortion,
   checkStartVerse,
-  WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
-import {arraysMatch} from '../logic/logic';
+import {WEEKLY_READING_TABLE_NAME, arraysMatch} from '../logic/logic';
 
 function condenseReadingPortion(item, prevBookNum) {
   let startBook = item.StartBookName;

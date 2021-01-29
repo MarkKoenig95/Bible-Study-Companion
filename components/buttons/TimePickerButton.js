@@ -3,12 +3,13 @@ import {View, StyleSheet} from 'react-native';
 
 import styles, {colors} from '../../styles/styles';
 import {Body} from '../text/Text';
-import {TouchableOpacity} from 'react-native';
+import {Platform, TouchableOpacity} from 'react-native';
 
 import moment from 'moment';
 import {DateTimePicker} from '../inputs/DateTimePicker';
 import TextButton from './TextButton';
 import {translate} from '../../logic/localization/localization';
+import {useEffect} from 'react';
 
 export default function TimePickerButton(props) {
   const {time, onChange, invert, textPrefix} = props;
@@ -16,6 +17,12 @@ export default function TimePickerButton(props) {
 
   const backgroundColor = invert ? colors.lightBlue : colors.smoke + '40';
   const textStyle = props.textStyle;
+
+  useEffect(() => {
+    if (isTimePickerVisible && Platform.OS === 'android') {
+      setIsTimePickerVisible(false);
+    }
+  }, [isTimePickerVisible]);
 
   return (
     <View
@@ -60,17 +67,25 @@ const TimePickerSection = props => {
     onChange(tempTime);
   };
 
+  const onPickerChange = (e, newTime) => {
+    if (newTime) {
+      setTempTime(newTime);
+
+      if (Platform.OS === 'android') {
+        if (e.type === 'set') {
+          onChange(newTime);
+        } else if (e.type === 'dismissed') {
+          onEditCancel();
+        } else {
+          onChange(newTime);
+        }
+      }
+    }
+  };
+
   return (
     <View>
-      <DateTimePicker
-        value={tempTime}
-        mode="time"
-        onChange={(e, newTime) => {
-          if (newTime) {
-            setTempTime(newTime);
-          }
-        }}
-      />
+      <DateTimePicker value={tempTime} mode="time" onChange={onPickerChange} />
       <View style={style.buttonContainer}>
         <TextButton onPress={onEditCancel} text={translate('actions.cancel')} />
         <TextButton onPress={onEditDone} text={translate('actions.done')} />

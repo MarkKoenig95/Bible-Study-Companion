@@ -3,6 +3,7 @@
     "cancel": "取消",
     "done": "完成"
   },
+  "appName": "Bible Study Companion",
   "bibleBook": "书卷",
   "bibleBooks": {
     "1": {
@@ -369,7 +370,7 @@
     "8": "第",
     "9": "第",
     "after": false,
-    "special": {"0": 0}
+    "special": {"count": 0}
   },
   "other": "其他",
   "prompts": {
@@ -454,8 +455,11 @@
     "customDescription": "创建一本出版物的自定义进度表"
   },
   "settingsPage": {
-    "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文",
-    "title": "设定"
+    "about": "关于",
+    "contact": "联系",
+    "title": "设定",
+    "version": "版本",
+    "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文"
   },
   "thisMonth": "这个月",
   "thisWeek": "这周",

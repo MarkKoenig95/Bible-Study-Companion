@@ -9,11 +9,14 @@ import {
 } from './generalTransactions';
 import {translate} from '../../logic/localization/localization';
 import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {getWeeksBetween, getWeekdaysBeforeToday} from '../../logic/logic';
+import {
+  WEEKLY_READING_TABLE_NAME,
+  getWeeksBetween,
+  getWeekdaysBeforeToday,
+} from '../../logic/logic';
 
 const prefix = 'scheduleTransactions.';
 export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
-export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
 
 var qryMaxChapters;
 var qryMaxVerses;

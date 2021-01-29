@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {SafeAreaView, Switch, View} from 'react-native';
+import {Linking, SafeAreaView, ScrollView, Switch, View} from 'react-native';
 
 import {Body} from '../components/text/Text';
 
@@ -22,6 +22,7 @@ export default function Settings(props) {
 
   const {dispatch} = globalState;
   const {
+    appVersion,
     bibleDB,
     userDB,
     updatePages,
@@ -45,7 +46,7 @@ export default function Settings(props) {
   function updateWeeklyReadingResetDay(value) {
     let saniVal = parseInt(value, 10);
     /*
-      At the begining of the process of updating the picker there is a synthedic event.
+      At the begining of the process of updating the picker there is a synthetic event.
       If that is passed straight into the query there will be massive bugs. this reduces
       the value to update only if it truely is a number or can at least be parsed to one.
     */
@@ -67,7 +68,7 @@ export default function Settings(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.contentWithoutHeader}>
+      <ScrollView style={styles.contentWithoutHeader}>
         <WeeklyReadingSettings
           isShown={showDaily.value}
           readingResetDay={weeklyReadingResetDay.value}
@@ -84,7 +85,26 @@ export default function Settings(props) {
           onPress={() => navigation.navigate('Reminders', {})}
           text={translate('remindersPage.title')}
         />
-      </View>
+        <SettingsWrapper
+          iconName="mail-outline"
+          text={translate(prefix + 'contact')}
+          onPress={() => {
+            Linking.openURL('mailto:humanappmaker@gmail.com');
+          }}
+        />
+        <SettingsWrapper
+          iconName="web"
+          text={translate(prefix + 'about')}
+          onPress={() => {
+            Linking.openURL('http://www.biblesc.com');
+          }}
+        />
+        <SettingsWrapper
+          noArrow
+          iconName="settings"
+          text={translate(prefix + 'version') + ':   ' + appVersion}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -99,7 +119,7 @@ function WeeklyReadingSettings(props) {
   return (
     <SettingsWrapper noArrow text={translate('reminders.weeklyReading.title')}>
       <BreakLine />
-      <View style={styles.wrapperContent}>
+      <View style={{...styles.wrapperContent, width: '90%'}}>
         <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
           {translate('reminders.weeklyReading.showDaily')}
         </Body>

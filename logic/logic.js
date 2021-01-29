@@ -1,8 +1,15 @@
 import React, {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
-import {WEEKLY_READING_TABLE_NAME} from '../data/Database/scheduleTransactions';
 import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
+
+export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
+export const FREQS = {
+  DAILY: 0,
+  WEEKLY: 1,
+  MONTHLY: 2,
+  NEVER: 3,
+};
 
 export const ERROR = {NAME_TAKEN: 'NAME_TAKEN'};
 

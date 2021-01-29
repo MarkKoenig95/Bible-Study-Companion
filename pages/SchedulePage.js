@@ -16,10 +16,9 @@ import {
   formatScheduleTableName,
   setHideCompleted,
   getScheduleSettings,
-  WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
-import {useUpdate} from '../logic/logic';
+import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 
 const prefix = 'schedulePage.';

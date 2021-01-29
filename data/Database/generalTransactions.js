@@ -3,7 +3,8 @@ import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
 import {LocalDBPath, PrePopulatedDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
-import {FREQS} from './reminderTransactions';
+import {FREQS} from '../../logic/logic';
+import {version} from '../../package.json';
 
 SQLite.enablePromise(true);
 
@@ -119,6 +120,34 @@ export async function loadData(db, tableName, doesTrack) {
   }
 }
 
+export async function appVersion(db) {
+  let prevVersion;
+  let currVersion = version;
+
+  await db
+    .transaction(txn => {
+      txn
+        .executeSql(
+          'SELECT Description FROM tblUserPrefs WHERE Name="AppVersion";',
+          [],
+        )
+        .then(([t, res]) => {
+          prevVersion = res.rows.item(0).Description;
+        });
+    })
+    .catch(errorCB);
+
+  if (prevVersion !== currVersion) {
+    db.transaction(txn => {
+      txn.executeSql(
+        'UPDATE tblUserPrefs SET Description=? WHERE Name="AppVersion";',
+        [currVersion],
+      );
+    }).catch(errorCB);
+  }
+  return {prevVersion, currVersion};
+}
+
 export async function getVersion(db) {
   let result;
 
@@ -161,6 +190,8 @@ export async function getSettings(userDB) {
               break;
             case 'WeeklyReadingResetDay':
               weeklyReadingResetDay = {id: pref.ID, value: pref.Value};
+              break;
+            case 'AppVersion':
               break;
             default:
               console.log(

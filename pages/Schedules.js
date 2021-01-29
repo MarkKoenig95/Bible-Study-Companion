@@ -14,12 +14,11 @@ import {loadData, log} from '../data/Database/generalTransactions';
 import {
   addSchedule,
   formatScheduleTableName,
-  WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
 
 import {translate} from '../logic/localization/localization';
 import LoadingPopup from '../components/popups/LoadingPopup';
-import {useUpdate} from '../logic/logic';
+import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/logic';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
 import {Heading} from '../components/text/Text';
 

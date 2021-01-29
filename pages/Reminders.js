@@ -20,10 +20,10 @@ import {
   useUpdate,
   sanitizeNumber,
   createPickerArray,
+  FREQS,
   ERROR,
 } from '../logic/logic';
 import {
-  FREQS,
   setReminderCompDate,
   addReminder,
   deleteReminder,

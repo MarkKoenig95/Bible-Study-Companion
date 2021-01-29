@@ -24,6 +24,10 @@ export function setShowDaily(showDaily) {
   return updateValue('showDaily', showDaily);
 }
 
+export function setAppVersion(appVersion) {
+  return updateValue('appVersion', appVersion);
+}
+
 export function setWeeklyReadingResetDay(weeklyReadingResetDay) {
   return updateValue('weeklyReadingResetDay', weeklyReadingResetDay);
 }

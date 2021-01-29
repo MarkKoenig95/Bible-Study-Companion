@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "upgrades": {
     "to_v1": [
       [
@@ -43,6 +43,11 @@
       ],
       [
         "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"WeeklyReadingResetDay\", \"The day that the user has their midweek meeting. Determines when to reset midweek reading and study reminders. (0-6)\", 4);"
+      ]
+    ],
+    "to_v2": [
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"AppVersion\", \"\", 0);"
       ]
     ]
   }

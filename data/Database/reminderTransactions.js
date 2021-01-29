@@ -1,12 +1,6 @@
 import {errorCB, log} from './generalTransactions';
 import {getWeekdaysAfterToday, ERROR} from '../../logic/logic';
-
-export const FREQS = {
-  DAILY: 0,
-  WEEKLY: 1,
-  MONTHLY: 2,
-  NEVER: 3,
-};
+import {FREQS} from '../../logic/logic';
 
 const tblRemindersRows = `
     ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE

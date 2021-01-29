@@ -17,17 +17,22 @@ import {
   errorCB,
   updateValue,
   log,
+  appVersion,
 } from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
   createWeeklyReadingSchedule,
-  WEEKLY_READING_TABLE_NAME,
 } from '../data/Database/scheduleTransactions';
-import {legacyBugFixForV062, useUpdate} from '../logic/logic';
+import {
+  WEEKLY_READING_TABLE_NAME,
+  legacyBugFixForV062,
+  useUpdate,
+  FREQS,
+} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
-import {FREQS} from '../data/Database/reminderTransactions';
 import SectionListHeader from '../components/SectionListHeader';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
+import {setAppVersion} from '../data/Store/actions';
 
 const prefix = 'homePage.';
 let populatingHomeList = false;
@@ -432,6 +437,15 @@ export default function Home(props) {
 
   //Set add and settings button in nav bar with appropriate onPress attribute
   useEffect(() => {
+    let navToSchedules = () => {
+      navigation.navigate('SchedulesStack', {
+        screen: 'Schedules',
+        params: {
+          isCreatingSchedule: true,
+        },
+      });
+    };
+
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.navHeaderContainer}>
@@ -440,20 +454,22 @@ export default function Home(props) {
             buttonStyle={styles.navHeaderButton}
             iconOnly
             invertColor
-            onPress={() => {
-              navigation.navigate('SchedulesStack', {
-                screen: 'Schedules',
-                params: {
-                  isCreatingSchedule: true,
-                },
-              });
-            }}
+            onPress={navToSchedules}
             name="add"
           />
         </View>
       ),
     });
-  }, [navigation]);
+
+    if (userDB) {
+      appVersion(userDB).then(({prevVersion, currVersion}) => {
+        dispatch(setAppVersion(currVersion));
+        if (!prevVersion) {
+          navToSchedules();
+        }
+      });
+    }
+  }, [dispatch, navigation, userDB]);
 
   useEffect(() => {
     if (weeklyReadingResetDay !== undefined) {
