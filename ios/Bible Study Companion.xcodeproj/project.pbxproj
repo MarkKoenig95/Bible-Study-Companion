@@ -12,6 +12,8 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		254096E525C97DF700B1DE33 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 254096E825C97DF700B1DE33 /* InfoPlist.strings */; };
+		254096E625C97DF700B1DE33 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 254096E825C97DF700B1DE33 /* InfoPlist.strings */; };
 		258143CD24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 258143CC24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m */; };
 		2585272B24EFB28B006C9573 /* BibleStudyCompanionIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2585272A24EFB28B006C9573 /* BibleStudyCompanionIcon.png */; };
 		25A488FA244047130029655C /* www in Resources */ = {isa = PBXBuildFile; fileRef = 25A488F9244047130029655C /* www */; };
@@ -58,6 +60,10 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = BibleStudyCompanion/main.m; sourceTree = "<group>"; };
 		1B5D9843EADA57E7FD9ED111 /* Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-BibleStudyCompanionTests/Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		232EF5A6FDECEBBBD67D7D6C /* Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-tvOSTests/Pods-BibleStudyCompanion-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		254096E725C97DF700B1DE33 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		254096E925C97DFB00B1DE33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		2546B07B25C2FAFA0054AB78 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		2546B07E25C2FB550054AB78 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		258143CC24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RNBackgroundFetch+AppDelegate.m"; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/RNBackgroundFetch+AppDelegate.m"; sourceTree = "<group>"; };
 		2585272A24EFB28B006C9573 /* BibleStudyCompanionIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BibleStudyCompanionIcon.png; path = assets/BibleStudyCompanionIcon.png; sourceTree = "<group>"; };
 		2585272C24EFB500006C9573 /* Bible Study Companion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bible Study Companion.entitlements"; path = "BibleStudyCompanion/Bible Study Companion.entitlements"; sourceTree = "<group>"; };
@@ -142,6 +148,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				254096E825C97DF700B1DE33 /* InfoPlist.strings */,
 			);
 			name = BibleStudyCompanion;
 			sourceTree = "<group>";
@@ -334,6 +341,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -360,6 +368,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				254096E525C97DF700B1DE33 /* InfoPlist.strings in Resources */,
 				25A488FA244047130029655C /* www in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				2585272B24EFB28B006C9573 /* BibleStudyCompanionIcon.png in Resources */,
@@ -372,6 +381,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
+				254096E625C97DF700B1DE33 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -697,9 +707,20 @@
 			isa = PBXVariantGroup;
 			children = (
 				13B07FB21A68108700A75B9A /* Base */,
+				2546B07B25C2FAFA0054AB78 /* zh-Hans */,
+				2546B07E25C2FB550054AB78 /* en */,
 			);
 			name = LaunchScreen.xib;
 			path = BibleStudyCompanion;
+			sourceTree = "<group>";
+		};
+		254096E825C97DF700B1DE33 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				254096E725C97DF700B1DE33 /* en */,
+				254096E925C97DFB00B1DE33 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

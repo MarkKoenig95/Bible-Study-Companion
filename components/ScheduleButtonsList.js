@@ -229,6 +229,8 @@ export default function useScheduleButtonsList(
       let result;
       let thisTableName;
       let title;
+      let readingDayIDs = [];
+      let areButtonsFinished = [];
       if (items.length === 1) {
         let item = items[0];
         if (!item.onPress) {
@@ -262,8 +264,6 @@ export default function useScheduleButtonsList(
         }
       } else {
         let buttons = [];
-        let areButtonsFinished = [];
-        let readingDayIDs = [];
         let readingPortions;
         let hiddenPortions;
         let completionDate;
@@ -334,7 +334,7 @@ export default function useScheduleButtonsList(
 
           buttons.push(
             <ScheduleButton
-              key={Math.random() * 10000 + 'w'}
+              key={JSON.stringify(item)}
               item={item}
               tableName={thisTableName}
               title={title}
@@ -349,9 +349,10 @@ export default function useScheduleButtonsList(
         if (
           buttonsPopup.id === index &&
           buttonsPopup.isDisplayed &&
-          !arraysMatch(areButtonsFinished, buttonsPopup.areButtonsFinished)
+          !arraysMatch(areButtonsFinished, buttonsPopup.areButtonsFinished) &&
+          arraysMatch(readingDayIDs, buttonsPopup.readingDayIDs)
         ) {
-          openButtonsPopup(index, buttons, areButtonsFinished);
+          openButtonsPopup(index, buttons, areButtonsFinished, readingDayIDs);
         }
 
         readingPortions = isFinished ? readingPortions : hiddenPortions;
@@ -370,7 +371,12 @@ export default function useScheduleButtonsList(
               }
             }}
             onPress={() => {
-              openButtonsPopup(index, buttons, areButtonsFinished);
+              openButtonsPopup(
+                index,
+                buttons,
+                areButtonsFinished,
+                readingDayIDs,
+              );
             }}
           />
         );
@@ -388,6 +394,7 @@ export default function useScheduleButtonsList(
       buttonsPopup.id,
       buttonsPopup.isDisplayed,
       buttonsPopup.areButtonsFinished,
+      buttonsPopup.readingDayIDs,
       openButtonsPopup,
     ],
   );

@@ -16,7 +16,9 @@ export default function ButtonsPopup(props) {
 export function useButtonsPopup() {
   const [buttonsPopup, setButtonsPopup] = useState({
     isDisplayed: false,
+    areButtonsFinished: [],
     buttons: [],
+    readingDayIDs: [],
   });
 
   const closeButtonsPopup = useCallback(() => {
@@ -25,14 +27,18 @@ export function useButtonsPopup() {
     });
   }, []);
 
-  const openButtonsPopup = useCallback((id, buttons, areButtonsFinished) => {
-    setButtonsPopup({
-      id: id,
-      isDisplayed: true,
-      buttons: buttons,
-      areButtonsFinished: areButtonsFinished,
-    });
-  }, []);
+  const openButtonsPopup = useCallback(
+    (id, buttons, areButtonsFinished = [], readingDayIDs = []) => {
+      setButtonsPopup({
+        id: id,
+        isDisplayed: true,
+        buttons: buttons,
+        areButtonsFinished: areButtonsFinished,
+        readingDayIDs: readingDayIDs,
+      });
+    },
+    [],
+  );
 
   return {
     openButtonsPopup: openButtonsPopup,

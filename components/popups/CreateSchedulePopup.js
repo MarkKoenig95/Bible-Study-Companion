@@ -22,7 +22,7 @@ export default function CreateSchedulePopup(props) {
   //State and defaults for schedule info inputs
   const defaults = {
     scheduleName: '',
-    scheduleDuration: '',
+    scheduleDuration: '1',
     chapter: '1',
     verse: '1',
     selectedItems: [],
