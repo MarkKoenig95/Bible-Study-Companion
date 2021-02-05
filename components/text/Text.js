@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, StyleSheet} from 'react-native';
 
-import styles, {colors} from '../../styles/styles';
+import {colors} from '../../styles/styles';
 
 const base = {
   color: colors.lightText,
@@ -32,11 +32,12 @@ const style = StyleSheet.create({
 
 export function createCustomTextComponent(thisStyle) {
   return props => {
+    const {children, dark, style} = props;
     let color = {};
-    color.color = props.dark ? colors.darkText : colors.lightText;
+    color.color = dark ? colors.darkText : colors.lightText;
     return (
-      <Text {...props} style={[thisStyle, color, props.style]}>
-        {props.children}
+      <Text {...props} style={[thisStyle, color, style]}>
+        {children}
       </Text>
     );
   };

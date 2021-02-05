@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet} from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import styles, {colors} from '../../styles/styles';
@@ -8,15 +8,17 @@ import styles, {colors} from '../../styles/styles';
 export default function CustomDropdown(props) {
   const {
     items,
+    onTextChange,
     placeholder,
     selectedItems,
     setSelectedItems,
-    onTextChange,
+    testID,
     width,
   } = props;
 
   return (
     <SearchableDropdown
+      testID={testID}
       onItemSelect={item => {
         const sItems = selectedItems;
         sItems.pop();

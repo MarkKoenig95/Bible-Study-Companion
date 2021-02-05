@@ -18,12 +18,15 @@ export const SCHEDULE_TYPES = {
 };
 
 export default function ScheduleTypeSelectionPopup(props) {
+  const {testID} = props;
   return (
     <Popup
+      testID={testID}
       displayPopup={props.displayPopup}
       title={translate(prefix + 'scheduleType')}
       onClosePress={props.onClosePress}>
       <ScheduleSelectionButton
+        testID={testID + '.sequentialButton'}
         title={translate(prefix + 'sequential')}
         description={translate(prefix + 'sequentialDescription')}
         onPress={() => {
@@ -31,6 +34,7 @@ export default function ScheduleTypeSelectionPopup(props) {
         }}
       />
       <ScheduleSelectionButton
+        testID={testID + '.chronologicalButton'}
         title={translate(prefix + 'chronological')}
         description={translate(prefix + 'chronologicalDescription')}
         onPress={() => {
@@ -38,6 +42,7 @@ export default function ScheduleTypeSelectionPopup(props) {
         }}
       />
       <ScheduleSelectionButton
+        testID={testID + '.thematicButton'}
         title={translate(prefix + 'thematic')}
         description={translate(prefix + 'thematicDescription')}
         onPress={() => {
@@ -45,6 +50,7 @@ export default function ScheduleTypeSelectionPopup(props) {
         }}
       />
       <ScheduleSelectionButton
+        testID={testID + '.customButton'}
         title={translate(prefix + 'custom')}
         description={translate(prefix + 'customDescription')}
         onPress={() => {
@@ -56,10 +62,11 @@ export default function ScheduleTypeSelectionPopup(props) {
 }
 
 function ScheduleSelectionButton(props) {
+  const {description, onPress, testID, title} = props;
   return (
-    <CustomButton style={{width: '95%'}} onPress={props.onPress}>
-      <Body style={styles.buttonText}>{props.title}</Body>
-      <Text style={styles.buttonText}>{props.description}</Text>
+    <CustomButton testID={testID} style={{width: '95%'}} onPress={onPress}>
+      <Body style={styles.buttonText}>{title}</Body>
+      <Text style={styles.buttonText}>{description}</Text>
     </CustomButton>
   );
 }

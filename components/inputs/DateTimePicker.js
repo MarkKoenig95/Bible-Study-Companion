@@ -4,7 +4,7 @@ import {Platform, View} from 'react-native';
 import {Appearance} from 'react-native';
 import {colors} from '../../styles/styles';
 
-export const DateTimePicker = React.memo(props => {
+const DateTimePicker = React.memo(props => {
   let style = {borderRadius: 10, overflow: 'hidden'};
   const colorScheme = Appearance.getColorScheme();
 
@@ -21,3 +21,5 @@ export const DateTimePicker = React.memo(props => {
     </View>
   );
 });
+
+export default DateTimePicker;

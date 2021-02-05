@@ -16,7 +16,7 @@ import styles from '../../styles/styles';
 let prefix;
 
 export default function CreateReminderPopup(props) {
-  const {displayPopup, onAddReminder, onClosePress, title} = props;
+  const {displayPopup, onAddReminder, onClosePress, testID, title} = props;
   prefix = props.prefix;
 
   //State values for reminder info
@@ -76,13 +76,19 @@ export default function CreateReminderPopup(props) {
 
   return (
     <Popup
+      testID={testID}
       displayPopup={displayPopup}
       title={title}
       onClosePress={onClosePress}
       style={style.reminderContainer}>
-      <NameSection name={name} setName={setName} />
+      <NameSection
+        testID={testID + '.nameSection'}
+        name={name}
+        setName={setName}
+      />
 
       <FrequencySection
+        testID={testID + '.frequencySection'}
         frequency={frequency}
         frequencyPickerValues={frequencyPickerValues}
         setFrequency={setFrequency}
@@ -90,6 +96,7 @@ export default function CreateReminderPopup(props) {
 
       {!isDaily && (
         <RecursSection
+          testID={testID + '.recursSection'}
           isWeekly={isWeekly}
           resetStr={resetStr}
           resetValue={resetValue}
@@ -98,23 +105,39 @@ export default function CreateReminderPopup(props) {
         />
       )}
 
-      <IconButton name="add" onPress={onAddPress} />
+      <IconButton
+        testID={testID + '.addButton'}
+        name="add"
+        onPress={onAddPress}
+      />
     </Popup>
   );
 }
 
 const RecursSection = props => {
-  let {isWeekly, resetValue, setResetValue, resetStr, setResetStr} = props;
+  const {
+    isWeekly,
+    resetStr,
+    resetValue,
+    setResetStr,
+    setResetValue,
+    testID,
+  } = props;
 
   //If it's not editing we display the text as is
   //If it is editing, then we either show a picker for a weekday or we show a numerical input
   return (
-    <View style={style.reminderContent}>
+    <View testID={testID} style={style.reminderContent}>
       <Body style={{alignSelf: 'center'}}>{translate(prefix + 'every')}</Body>
       {isWeekly ? (
-        <WeekdayPicker onChange={setResetValue} currentValue={resetValue} />
+        <WeekdayPicker
+          testID={testID + '.weekdayPicker'}
+          onChange={setResetValue}
+          currentValue={resetValue}
+        />
       ) : (
         <CustomInput
+          testID={testID + '.resetValueInput'}
           containerStyle={{maxWidth: 100}}
           value={resetStr}
           onChangeText={newValue => {
@@ -133,12 +156,13 @@ const RecursSection = props => {
 };
 
 const FrequencySection = props => {
-  let {frequency, frequencyPickerValues, setFrequency} = props;
+  const {frequency, frequencyPickerValues, setFrequency, testID} = props;
   return (
-    <View style={style.reminderContent}>
+    <View testID={testID} style={style.reminderContent}>
       <Body style={{alignSelf: 'center'}}>{translate(prefix + 'repeats')}</Body>
 
       <Picker
+        testID={testID + '.picker'}
         onChange={setFrequency}
         values={frequencyPickerValues}
         currentValue={frequency}
@@ -148,12 +172,17 @@ const FrequencySection = props => {
 };
 
 const NameSection = props => {
-  let {name, setName} = props;
+  const {name, setName, testID} = props;
   return (
-    <View style={[style.reminderContent, {borderTopWidth: 0}]}>
+    <View testID={testID} style={[style.reminderContent, {borderTopWidth: 0}]}>
       <Body style={{alignSelf: 'center'}}>{translate(prefix + 'name')}</Body>
 
-      <CustomInput value={name} onChangeText={setName} textAlign={'center'} />
+      <CustomInput
+        testID={testID + '.nameInput'}
+        value={name}
+        onChangeText={setName}
+        textAlign={'center'}
+      />
     </View>
   );
 };

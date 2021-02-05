@@ -5,9 +5,12 @@ import CustomButton from './CustomButton';
 import styles from '../../styles/styles';
 
 export default function TextButton(props) {
-  const {buttonStyle, onPress, text, textStyle} = props;
+  const {buttonStyle, onPress, testID, text, textStyle} = props;
   return (
-    <CustomButton style={[styles.button, buttonStyle]} onPress={onPress}>
+    <CustomButton
+      testID={testID}
+      style={[styles.button, buttonStyle]}
+      onPress={onPress}>
       <Text style={[styles.buttonText, textStyle]}>{text}</Text>
     </CustomButton>
   );

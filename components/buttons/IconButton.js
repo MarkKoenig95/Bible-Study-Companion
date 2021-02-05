@@ -18,6 +18,7 @@ export default function IconButton(props) {
     invertColor,
     name,
     onPress,
+    testID,
     textStyle,
     title,
     titleStyle,
@@ -76,6 +77,7 @@ export default function IconButton(props) {
   return (
     <View>
       <CustomButton
+        testID={testID}
         style={!hasTitle ? thisButtonStyle : containerStyle}
         onPress={onPress}>
         <Icon style={thisIconStyle} name={name} />

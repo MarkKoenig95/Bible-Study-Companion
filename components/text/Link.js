@@ -6,15 +6,16 @@ import Text from '../text/Text';
 import {colors} from '../../styles/styles';
 
 export default function Link(props) {
-  const {containerStyle, href, text, textStyle} = props;
+  const {children, containerStyle, href, testID, text, textStyle} = props;
   const hasText = text ? true : false;
 
   return (
     <TouchableOpacity
+      testID={testID}
       style={containerStyle}
       onPress={() => Linking.openURL(href)}>
       {hasText && <Text style={[style.link, textStyle]}>{text}</Text>}
-      {props.children}
+      {children}
     </TouchableOpacity>
   );
 }

@@ -12,11 +12,11 @@ import {translate} from '../../logic/localization/localization';
 import {useEffect} from 'react';
 
 export default function TimePickerButton(props) {
-  const {time, onChange, invert, textPrefix} = props;
+  const {time, onChange, invert, testID, textPrefix, textStyle} = props;
+
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
 
   const backgroundColor = invert ? colors.lightBlue : colors.smoke + '40';
-  const textStyle = props.textStyle;
 
   useEffect(() => {
     if (isTimePickerVisible && Platform.OS === 'android') {
@@ -26,12 +26,14 @@ export default function TimePickerButton(props) {
 
   return (
     <View
+      testID={testID}
       style={{
         ...style.selectTimeButton,
         backgroundColor: backgroundColor,
       }}>
       {!isTimePickerVisible ? (
         <TouchableOpacity
+          testID={testID + '.showPickerButton'}
           onPress={() => {
             setIsTimePickerVisible(!isTimePickerVisible);
           }}>
@@ -41,6 +43,7 @@ export default function TimePickerButton(props) {
         </TouchableOpacity>
       ) : (
         <TimePickerSection
+          testID={testID + 'timePickerSection'}
           hideTimePicker={() => {
             setIsTimePickerVisible(false);
           }}
@@ -53,7 +56,7 @@ export default function TimePickerButton(props) {
 }
 
 const TimePickerSection = props => {
-  const {hideTimePicker, onChange, time} = props;
+  const {hideTimePicker, onChange, testID, time} = props;
 
   const [tempTime, setTempTime] = useState(time);
 
@@ -84,11 +87,24 @@ const TimePickerSection = props => {
   };
 
   return (
-    <View>
-      <DateTimePicker value={tempTime} mode="time" onChange={onPickerChange} />
+    <View testID={testID}>
+      <DateTimePicker
+        testID={testID + '.picker'}
+        value={tempTime}
+        mode="time"
+        onChange={onPickerChange}
+      />
       <View style={style.buttonContainer}>
-        <TextButton onPress={onEditCancel} text={translate('actions.cancel')} />
-        <TextButton onPress={onEditDone} text={translate('actions.done')} />
+        <TextButton
+          testID={testID + '.cancelButton'}
+          onPress={onEditCancel}
+          text={translate('actions.cancel')}
+        />
+        <TextButton
+          testID={testID + '.doneButton'}
+          onPress={onEditDone}
+          text={translate('actions.done')}
+        />
       </View>
     </View>
   );

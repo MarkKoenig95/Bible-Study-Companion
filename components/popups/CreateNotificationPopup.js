@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 
 import styles, {colors} from '../../styles/styles';
@@ -11,7 +11,7 @@ import CheckBox from '../buttons/CheckBox';
 import TimePickerButton from '../buttons/TimePickerButton';
 
 function WeekdayCheckbox(props) {
-  const {abrev, id, checked, onPress} = props;
+  const {abrev, checked, id, onPress, testID} = props;
   return (
     <View style={style.weekdayCheckboxContainer}>
       <Text
@@ -22,6 +22,7 @@ function WeekdayCheckbox(props) {
         {abrev}
       </Text>
       <CheckBox
+        testID={testID}
         checked={checked}
         uncheckedColor={styles.lightText.color}
         checkedColor={colors.darkBlue}
@@ -34,7 +35,7 @@ function WeekdayCheckbox(props) {
 }
 
 export default function CreateNotificationPopup(props) {
-  const {prefix, onAddPress} = props;
+  const {displayPopup, prefix, onAddPress, onClosePress, testID, title} = props;
   const [time, setTime] = useState(new Date(2020, 0, 1, 8, 0, 0));
   const [notificationName, setNotificationName] = useState('');
   const [dayValues, setDayValues] = useState({
@@ -58,10 +59,12 @@ export default function CreateNotificationPopup(props) {
 
   return (
     <Popup
-      displayPopup={props.displayPopup}
-      title={props.title}
-      onClosePress={props.onClosePress}>
+      testID={testID}
+      displayPopup={displayPopup}
+      title={title}
+      onClosePress={onClosePress}>
       <CustomInput
+        testID={testID + '.nameInput'}
         title={translate(prefix + 'notificationName')}
         onChangeText={setNotificationName}
         value={notificationName}
@@ -71,6 +74,7 @@ export default function CreateNotificationPopup(props) {
         {weekdays.map(day => {
           return (
             <WeekdayCheckbox
+              testID={testID + '.weekdayCheckbox.' + day.abrev}
               key={Math.random() * 1000000}
               abrev={day.abrev}
               id={day.id}
@@ -84,12 +88,14 @@ export default function CreateNotificationPopup(props) {
       </View>
 
       <TimePickerButton
+        testID={testID + '.timePicker'}
         textPrefix={translate('prompts.setNotification')}
         time={time}
         onChange={setTime}
       />
 
       <IconButton
+        testID={testID + '.addButton'}
         name="add"
         onPress={() => {
           onAddPress(notificationName, days, time);

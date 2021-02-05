@@ -1,5 +1,5 @@
 import {errorCB, log} from './generalTransactions';
-import {getWeekdaysAfterToday, ERROR} from '../../logic/logic';
+import {getWeekdays, ERROR} from '../../logic/logic';
 import {FREQS} from '../../logic/logic';
 
 const tblRemindersRows = `
@@ -144,7 +144,7 @@ export function setReminderCompDate(
         newCompDate.setHours(23, 59, 59, 999);
         break;
       case FREQS.WEEKLY:
-        let adjDays = getWeekdaysAfterToday(resetValue);
+        let adjDays = getWeekdays().afterToday(resetValue);
         adjDays = adjDays === 0 ? 7 : adjDays;
         newCompDate.setDate(newCompDate.getDate() + adjDays);
         break;

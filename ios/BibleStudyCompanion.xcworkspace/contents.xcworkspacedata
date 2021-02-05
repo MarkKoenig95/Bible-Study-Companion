@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/markkoenig95/Documents/_Programming/ReactNativeProjects/BibleStudyCompanion/ios/Bible Study Companion.xcodeproj">
+      location = "group:/Users/markkoenig95/Documents/_Programming/ReactNativeProjects/BibleStudyCompanion/ios/BibleStudyCompanion.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

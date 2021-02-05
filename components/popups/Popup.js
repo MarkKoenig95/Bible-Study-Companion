@@ -1,12 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Animated,
-  Keyboard,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Keyboard, ScrollView, StyleSheet, View} from 'react-native';
 
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
@@ -14,6 +7,7 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 
 export default function Popup(props) {
+  const {children, displayPopup, onClosePress, testID, title} = props;
   const [spacing, setSpacing] = useState(0);
 
   useEffect(() => {
@@ -28,7 +22,7 @@ export default function Popup(props) {
   }, []);
 
   const [justifyContent, setJustifyContent] = useState('center');
-  const display = !props.displayPopup ? 'none' : 'flex';
+  const display = !displayPopup ? 'none' : 'flex';
 
   const _keyboardDidShow = () => {
     setJustifyContent('flex-start');
@@ -41,6 +35,7 @@ export default function Popup(props) {
   };
   return (
     <View
+      testID={testID}
       style={[
         styles.background,
         {
@@ -48,18 +43,24 @@ export default function Popup(props) {
           justifyContent: justifyContent,
         },
       ]}>
-      <View style={[styles.popup, props.style]}>
+      <View style={[styles.popup, style]}>
         <View style={style.title}>
-          <Text style={style.text}>{props.title}</Text>
-          <IconButton name="close" invertColor onPress={props.onClosePress} />
+          <Text style={style.text}>{title}</Text>
+          <IconButton
+            testID={testID + '.closeButton'}
+            name="close"
+            invertColor
+            onPress={onClosePress}
+          />
         </View>
         <ScrollView
+          testID={testID + '.scrollView'}
           keyboardShouldPersistTaps="handled"
           style={style.content}
           contentContainerStyle={style.contentContainer}>
-          {props.children}
+          {children}
 
-          <View style={{height: spacing}} />
+          <View testID={testID + '.view'} style={{height: spacing}} />
         </ScrollView>
       </View>
     </View>

@@ -33,19 +33,20 @@ import CreateReminderPopup, {
   useCreateReminderPopup,
 } from '../components/popups/CreateReminderPopup';
 
-const prefix = 'remindersPage.';
+const pageTitle = 'remindersPage';
 
 const ReminderWrapper = props => {
   const {
+    completionDate,
     frequency,
     isFinished,
     itemID,
     name,
-    resetValue,
-    completionDate,
-    onUpdateReminder,
-    onUpdateIsFinished,
     onDeleteReminder,
+    onUpdateIsFinished,
+    onUpdateReminder,
+    resetValue,
+    testID,
   } = props;
 
   //State values for reminder info
@@ -156,6 +157,7 @@ const ReminderWrapper = props => {
       <View style={[styles.wrapperContent, {width: '95%'}]}>
         {!isEditing && (
           <AdjButtonSection
+            testID={testID + '.adjustmentButtons'}
             isEditing={isEditing}
             onDeleteReminder={onDeleteReminder}
             setIsEditing={setIsEditing}
@@ -164,12 +166,14 @@ const ReminderWrapper = props => {
 
         <View style={{flex: 6}}>
           <NameSection
+            testID={testID + '.nameSection'}
             isEditing={isEditing}
             reminderName={reminderName}
             setReminderName={setReminderName}
           />
 
           <FrequencySection
+            testID={testID + '.frequencySection'}
             isEditing={isEditing}
             freq={freq}
             freqPickerValues={freqPickerValues}
@@ -179,6 +183,7 @@ const ReminderWrapper = props => {
 
           {(isWeekly || isMonthly) && (
             <RecursSection
+              testID={testID + '.reccurenceSection'}
               isEditing={isEditing}
               isWeekly={isWeekly}
               resetStr={resetStr}
@@ -190,12 +195,14 @@ const ReminderWrapper = props => {
 
           {!isEditing ? (
             <IsCompletedSection
+              testID={testID + '.isCompleteSection'}
               completedDesc={completedDesc}
               isFinished={isFinished}
               toggleIsFinished={toggleIsFinished}
             />
           ) : (
             <ActionButtonSection
+              testID={testID + '.actionButtons'}
               onEditCancel={onEditCancel}
               onEditDone={onEditDone}
             />
@@ -207,20 +214,29 @@ const ReminderWrapper = props => {
 };
 
 const ActionButtonSection = props => {
-  const {onEditCancel, onEditDone} = props;
+  const {onEditCancel, onEditDone, testID} = props;
   return (
-    <View style={style.reminderContent}>
-      <TextButton onPress={onEditCancel} text={translate('actions.cancel')} />
-      <TextButton onPress={onEditDone} text={translate('actions.done')} />
+    <View testID={testID} style={style.reminderContent}>
+      <TextButton
+        testID={testID + '.cancelButton'}
+        onPress={onEditCancel}
+        text={translate('actions.cancel')}
+      />
+      <TextButton
+        testID={testID + '.doneButton'}
+        onPress={onEditDone}
+        text={translate('actions.done')}
+      />
     </View>
   );
 };
 
 const AdjButtonSection = props => {
-  const {isEditing, onDeleteReminder, setIsEditing} = props;
+  const {isEditing, onDeleteReminder, setIsEditing, testID} = props;
   return (
-    <View style={style.buttonContainer}>
+    <View testID={testID} style={style.buttonContainer}>
       <IconButton
+        testID={testID + '.editButton'}
         buttonStyle={style.editButton}
         iconOnly
         name="edit"
@@ -229,6 +245,7 @@ const AdjButtonSection = props => {
         }}
       />
       <IconButton
+        testID={testID + '.deleteButton'}
         buttonStyle={style.deleteButton}
         iconOnly
         name="delete"
@@ -239,11 +256,17 @@ const AdjButtonSection = props => {
 };
 
 const IsCompletedSection = props => {
-  const {completedDesc, isFinished, toggleIsFinished} = props;
+  const {completedDesc, isFinished, testID, toggleIsFinished} = props;
   return (
-    <View style={style.reminderContent}>
-      <Body dark>{translate(prefix + 'completed', {desc: completedDesc})}</Body>
-      <CheckBox checked={isFinished} onPress={toggleIsFinished} />
+    <View testID={testID} style={style.reminderContent}>
+      <Body dark>
+        {translate(pageTitle + '.completed', {desc: completedDesc})}
+      </Body>
+      <CheckBox
+        testID={testID + '.checkBox'}
+        checked={isFinished}
+        onPress={toggleIsFinished}
+      />
     </View>
   );
 };
@@ -256,6 +279,7 @@ const RecursSection = props => {
     setResetVal,
     resetStr,
     setResetStr,
+    testID,
   } = props;
 
   let ordinalSpecial = translate('ordinal.special.' + resetVal);
@@ -268,23 +292,34 @@ const RecursSection = props => {
   //If it's not editing we display the text as is
   //If it is editing, then we either show a picker for a weekday or we show a numerical input
   return (
-    <View style={style.reminderContent}>
+    <View testID={testID} style={style.reminderContent}>
       <Body dark style={{alignSelf: 'center'}}>
-        {translate(prefix + 'every')}
+        {translate(pageTitle + '.every')}
       </Body>
       {!isOrdinalAfter && !isWeekly && (
-        <Body dark style={{alignSelf: 'center'}}>
+        <Body
+          testID={testID + '.ordinalBefore'}
+          dark
+          style={{alignSelf: 'center'}}>
           {ordinal}
         </Body>
       )}
       {!isEditing ? (
-        <Body dark style={{color: colors.darkBlue}}>
+        <Body
+          testID={testID + '.resetValueString'}
+          dark
+          style={{color: colors.darkBlue}}>
           {resetStr}
         </Body>
       ) : isWeekly ? (
-        <WeekdayPicker onChange={setResetVal} currentValue={resetVal} />
+        <WeekdayPicker
+          testID={testID + '.weekdayPicker'}
+          onChange={setResetVal}
+          currentValue={resetVal}
+        />
       ) : (
         <CustomInput
+          testID={testID + '.resetValueInput'}
           containerStyle={{maxWidth: 100}}
           value={resetStr}
           onChangeText={newValue => {
@@ -299,7 +334,10 @@ const RecursSection = props => {
         />
       )}
       {isOrdinalAfter && !isWeekly && (
-        <Body dark style={{alignSelf: 'center'}}>
+        <Body
+          testID={testID + '.ordinalAfter'}
+          dark
+          style={{alignSelf: 'center'}}>
           {ordinal}
         </Body>
       )}
@@ -308,18 +346,19 @@ const RecursSection = props => {
 };
 
 const FrequencySection = props => {
-  let {isEditing, recursText, freq, freqPickerValues, setFreq} = props;
+  let {isEditing, freq, freqPickerValues, recursText, setFreq, testID} = props;
   return (
-    <View style={style.reminderContent}>
+    <View testID={testID} style={style.reminderContent}>
       <Body dark style={{alignSelf: 'center'}}>
-        {translate(prefix + 'repeats')}
+        {translate(pageTitle + '.repeats')}
       </Body>
       {!isEditing ? (
-        <Body dark style={{color: colors.darkBlue}}>
+        <Body testID={testID + '.text'} dark style={{color: colors.darkBlue}}>
           {recursText}
         </Body>
       ) : (
         <Picker
+          testID={testID + '.picker'}
           onChange={setFreq}
           values={freqPickerValues}
           currentValue={freq}
@@ -330,11 +369,11 @@ const FrequencySection = props => {
 };
 
 const NameSection = props => {
-  let {isEditing, reminderName, setReminderName} = props;
+  let {isEditing, reminderName, setReminderName, testID} = props;
   return (
-    <View style={[style.reminderContent, {borderTopWidth: 0}]}>
+    <View testID={testID} style={[style.reminderContent, {borderTopWidth: 0}]}>
       <Body dark style={{alignSelf: 'center'}}>
-        {translate(prefix + 'name')}
+        {translate(pageTitle + '.name')}
       </Body>
       {!isEditing ? (
         <Body
@@ -356,8 +395,9 @@ const NameSection = props => {
 };
 
 export default function Reminders(props) {
+  const {navigation} = props;
+
   console.log('loaded reminders page');
-  const navigation = props.navigation;
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
@@ -401,6 +441,7 @@ export default function Reminders(props) {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
+          testID={pageTitle + '.header.addButton'}
           iconOnly
           invertColor
           onPress={reminderPopup.open}
@@ -490,6 +531,7 @@ export default function Reminders(props) {
   return (
     <SafeAreaView style={styles.container}>
       <MessagePopup
+        testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
         title={messagePopup.title}
         message={messagePopup.message}
@@ -497,11 +539,12 @@ export default function Reminders(props) {
         onConfirm={messagePopup.onConfirm}
       />
       <CreateReminderPopup
+        testID={pageTitle + '.createRemindersPopup'}
         displayPopup={reminderPopup.isDisplayed}
         onAddReminder={onAddReminder}
         onClosePress={reminderPopup.close}
         title={reminderPopup.title}
-        prefix={prefix}
+        prefix={pageTitle + '.'}
       />
       <View style={styles.contentWithoutHeader}>
         <FlatList
@@ -510,6 +553,7 @@ export default function Reminders(props) {
           renderItem={({item}) => {
             return (
               <ReminderWrapper
+                testID={pageTitle + '.reminder.' + item.Name}
                 itemID={item.ID}
                 completionDate={item.CompletionDate}
                 name={item.Name}

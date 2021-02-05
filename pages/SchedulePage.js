@@ -13,7 +13,6 @@ import {store} from '../data/Store/store.js';
 import {loadData} from '../data/Database/generalTransactions';
 import {
   deleteSchedule,
-  formatScheduleTableName,
   setHideCompleted,
   getScheduleSettings,
 } from '../data/Database/scheduleTransactions';
@@ -21,7 +20,7 @@ import TextButton from '../components/buttons/TextButton';
 import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/logic';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 
-const prefix = 'schedulePage.';
+const pageTitle = 'schedulePage';
 let flatListRef;
 let settingFirstUnfinished = false;
 
@@ -59,6 +58,7 @@ function SchedulePage(props) {
     updatePages,
     tableName,
     scheduleName,
+    pageTitle,
   );
 
   //Set delete button in nav bar with appropriate onPress attribute
@@ -68,6 +68,7 @@ function SchedulePage(props) {
         if (tableName !== WEEKLY_READING_TABLE_NAME) {
           return (
             <IconButton
+              testID={pageTitle + '.header.deleteButton'}
               iconOnly
               invertColor
               onPress={() => {
@@ -144,8 +145,9 @@ function SchedulePage(props) {
   }, [afterUpdate, navigation, scheduleName, tableName, userDB]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView testID={pageTitle} style={styles.container}>
       <MessagePopup
+        testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
         title={messagePopup.title}
         message={messagePopup.message}
@@ -155,7 +157,8 @@ function SchedulePage(props) {
       <ScheduleListPopups />
       <View style={styles.header}>
         <CheckBox
-          title={translate(prefix + 'hideCompleted')}
+          testID={pageTitle + '.hideCompletedButton'}
+          title={translate(pageTitle + '.hideCompleted')}
           checked={completedHidden}
           uncheckedColor={styles.lightText.color}
           checkedColor={colors.darkBlue}
@@ -168,6 +171,7 @@ function SchedulePage(props) {
           }}
         />
         <TextButton
+          testID={pageTitle + '.readingRemindersButton'}
           text={translate('readingRemindersPopup.readingReminders')}
           onPress={openRemindersPopup}
         />

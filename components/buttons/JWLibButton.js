@@ -7,9 +7,10 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 import {openJWLibrary} from '../../logic/logic';
 
-export default function JWLibButton(props) {
+export default function JWLibButton({testID}) {
   return (
     <TouchableOpacity
+      testID={testID}
       style={[style.container, styles.navHeaderButton]}
       onPress={openJWLibrary}>
       <Text dark>JW</Text>

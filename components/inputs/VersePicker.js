@@ -6,7 +6,7 @@ import {translate} from '../../logic/localization/localization';
 import CustomInput from './CustomInput';
 import Text from '../text/Text';
 
-import styles, {colors} from '../../styles/styles';
+import styles from '../../styles/styles';
 import {store} from '../../data/Store/store.js';
 import CustomDropdown from './CustomDropdown';
 
@@ -29,10 +29,20 @@ async function loadData(bibleDB) {
 }
 
 export default function VersePicker(props) {
+  const {
+    chapterValue,
+    defaultChapterValue,
+    defaultVerseValue,
+    onChange,
+    testID,
+    title,
+    verseValue,
+  } = props;
+
   const globalState = useContext(store);
   const {bibleDB} = globalState.state;
-  const selectedItems = props.selectedItems;
-  const setSelectedItems = items => props.onChange('selectedItems', items);
+  const selectedItems = selectedItems;
+  const setSelectedItems = sItems => onChange('selectedItems', sItems);
   const [bookName, setBookName] = useState('');
 
   useEffect(() => {
@@ -40,11 +50,12 @@ export default function VersePicker(props) {
   }, [bibleDB]);
 
   return (
-    <View style={styles.versePicker}>
-      <Text style={style.title}>{props.title}</Text>
+    <View testID={testID} style={styles.versePicker}>
+      <Text style={style.title}>{title}</Text>
 
       <View style={style.container}>
         <CustomDropdown
+          testID={testID + '.bibleBookPicker'}
           items={items}
           placeholder={translate('bibleBook')}
           selectedItems={selectedItems}
@@ -55,12 +66,13 @@ export default function VersePicker(props) {
         />
 
         <CustomInput
+          testID={testID + '.chapterInput'}
           style={style.input}
           containerStyle={style.inputContainer}
-          onChangeText={text => props.onChange('chapter', text)}
+          onChangeText={text => onChange('chapter', text)}
           textAlign="center"
-          value={props.chapterValue}
-          defaultValue={props.defaultChapterValue}
+          value={chapterValue}
+          defaultValue={defaultChapterValue}
           placeholder={translate('versePicker.chapterAbrev')}
           keyboardType={'number-pad'}
         />
@@ -68,12 +80,13 @@ export default function VersePicker(props) {
         <Text style={style.text}>:</Text>
 
         <CustomInput
+          testID={testID + '.verseInput'}
           style={style.input}
           containerStyle={style.inputContainer}
-          onChangeText={text => props.onChange('verse', text)}
+          onChangeText={text => onChange('verse', text)}
           textAlign="center"
-          value={props.verseValue}
-          defaultValue={props.defaultVerseValue}
+          value={verseValue}
+          defaultValue={defaultVerseValue}
           placeholder={translate('versePicker.verseAbrev')}
           keyboardType={'numeric'}
         />

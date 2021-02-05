@@ -10,19 +10,18 @@ import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import styles from '../styles/styles';
 
 import {store} from '../data/Store/store';
-import {loadData, log} from '../data/Database/generalTransactions';
+import {loadData} from '../data/Database/generalTransactions';
 import {
   addSchedule,
   formatScheduleTableName,
 } from '../data/Database/scheduleTransactions';
 
-import {translate} from '../logic/localization/localization';
 import LoadingPopup from '../components/popups/LoadingPopup';
 import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/logic';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
-import {Heading} from '../components/text/Text';
 
 let scheduleType;
+const pageTitle = 'schedulesPage';
 
 export default function Schedules(props) {
   console.log('loaded schedules page');
@@ -57,6 +56,7 @@ export default function Schedules(props) {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
+          testID={pageTitle + '.header.addButton'}
           iconOnly
           invertColor
           onPress={() => {
@@ -119,15 +119,20 @@ export default function Schedules(props) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LoadingPopup displayPopup={isLoading} />
+    <SafeAreaView testID={pageTitle} style={styles.container}>
+      <LoadingPopup
+        testID={pageTitle + '.loadingPopup'}
+        displayPopup={isLoading}
+      />
       <MessagePopup
+        testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
         title={messagePopup.title}
         message={messagePopup.message}
         onClosePress={closeMessagePopup}
       />
       <CreateSchedulePopup
+        testID={pageTitle + '.createSchedulePopup'}
         displayPopup={isCreateSchedulePopupDisplayed}
         onAdd={onAddSchedule}
         onClosePress={() => {
@@ -137,6 +142,7 @@ export default function Schedules(props) {
         type={scheduleType}
       />
       <ScheduleTypeSelectionPopup
+        testID={pageTitle + '.scheduleTypePopup'}
         displayPopup={isScheduleTypePopupDisplayed}
         onConfirm={type => {
           scheduleType = type;
@@ -154,6 +160,7 @@ export default function Schedules(props) {
           renderItem={({item}) => {
             return (
               <TextButton
+                testID={pageTitle + '.' + item.ScheduleName}
                 key={item.ScheduleID}
                 text={item.ScheduleName}
                 onPress={() => {

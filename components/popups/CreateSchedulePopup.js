@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Keyboard, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 
 import CustomDropdown from '../inputs/CustomDropdown';
 import IconButton from '../buttons/IconButton';
@@ -17,7 +17,7 @@ import styles from '../../styles/styles';
 const prefix = 'createSchedulePopup.';
 
 export default function CreateSchedulePopup(props) {
-  const {displayPopup, onAdd, onClosePress, onError, type} = props;
+  const {displayPopup, onAdd, onClosePress, onError, testID, type} = props;
 
   //State and defaults for schedule info inputs
   const defaults = {
@@ -125,10 +125,12 @@ export default function CreateSchedulePopup(props) {
 
   return (
     <Popup
+      testID={testID}
       displayPopup={displayPopup}
       title={translate(prefix + 'createSchedule')}
       onClosePress={onClosePress}>
       <CustomInput
+        testID={testID + '.scheduleNameInput'}
         title={translate(prefix + 'scheduleName')}
         onChangeText={setScheduleName}
         value={scheduleName}
@@ -137,6 +139,7 @@ export default function CreateSchedulePopup(props) {
 
       {!isCustom && (
         <CustomInput
+          testID={testID + '.scheduleDurationInput'}
           title={translate(prefix + 'scheduleDuration')}
           onChangeText={onScheduleDurationChange}
           inputStyle={style.smallInput}
@@ -147,6 +150,7 @@ export default function CreateSchedulePopup(props) {
       )}
       {!isCustom && (
         <VersePicker
+          testID={testID + '.scheduleVerseInput'}
           title={translate(prefix + 'startingVerse')}
           onChange={onVersePickerChange}
           selectedItems={versePicker.selectedItems}
@@ -160,6 +164,7 @@ export default function CreateSchedulePopup(props) {
             {translate(prefix + 'readingPortionDesc.title')}
           </Text>
           <CustomDropdown
+            testID={testID + '.portionDescriptionDropdown'}
             items={[
               {name: translate(prefix + 'readingPortionDesc.article')},
               {name: translate(prefix + 'readingPortionDesc.chapter')},
@@ -180,6 +185,7 @@ export default function CreateSchedulePopup(props) {
       )}
       {isCustom && hasReadingPortionDesc && (
         <CustomInput
+          testID={testID + '.portionsPerDayInput'}
           title={translate(prefix + 'portionsPerDay', {
             portionDesc: readingPortionDesc,
           })}
@@ -198,6 +204,7 @@ export default function CreateSchedulePopup(props) {
       )}
       {isCustom && hasReadingPortionDesc && (
         <CustomInput
+          testID={testID + '.startingPortionInput'}
           title={translate(prefix + 'startingPortion', {
             portionDesc: readingPortionDesc,
           })}
@@ -217,6 +224,7 @@ export default function CreateSchedulePopup(props) {
       )}
       {isCustom && hasReadingPortionDesc && (
         <CustomInput
+          testID={testID + '.numberOfPortionsInput'}
           title={translate(prefix + 'numberOfPortions', {
             portionDesc: readingPortionDesc,
           })}
@@ -236,11 +244,16 @@ export default function CreateSchedulePopup(props) {
       <View style={[styles.wrapperContent, {justifyContent: 'space-around'}]}>
         <Body>{translate(prefix + 'shouldTrack')}</Body>
         <CheckBox
+          testID={testID + '.doesTrackCheckbox'}
           checked={doesTrack}
           onPress={() => setDoesTrack(!doesTrack)}
         />
       </View>
-      <IconButton name="add" onPress={onAddPress} />
+      <IconButton
+        testID={testID + '.addButton'}
+        name="add"
+        onPress={onAddPress}
+      />
     </Popup>
   );
 }

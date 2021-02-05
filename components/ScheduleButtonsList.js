@@ -74,6 +74,7 @@ function ScheduleButton(props) {
     onUpdateReadStatus,
     openReadingPopup,
     tableName,
+    testID,
     title,
     update,
   } = props;
@@ -109,6 +110,7 @@ function ScheduleButton(props) {
 
   return (
     <ScheduleDayButton
+      testID={testID + '.' + item.ReadingPortion}
       readingPortion={item.ReadingPortion}
       completionDate={item.doesTrack && item.CompletionDate}
       completedHidden={completedHidden}
@@ -121,7 +123,7 @@ function ScheduleButton(props) {
   );
 }
 
-function useScheduleListPopups(onUpdateReadStatus) {
+function useScheduleListPopups(onUpdateReadStatus, testID) {
   const {buttonsPopup, openButtonsPopup, closeButtonsPopup} = useButtonsPopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
@@ -147,6 +149,7 @@ function useScheduleListPopups(onUpdateReadStatus) {
     return (
       <View style={{width: '100%'}}>
         <ReadingInfoPopup
+          testI={testID + '.readingInfoPopup'}
           popupProps={{
             displayPopup: readingPopup.isDisplayed,
             title: readingPopup.title,
@@ -170,11 +173,13 @@ function useScheduleListPopups(onUpdateReadStatus) {
           readingPortion={readingPopup.readingPortion}
         />
         <ButtonsPopup
+          testI={testID + '.buttonsPopup'}
           displayPopup={buttonsPopup.isDisplayed}
           buttons={buttonsPopup.buttons}
           onClosePress={closeButtonsPopup}
         />
         <ReadingRemindersPopup
+          testI={testID + '.readingRemindersPopup'}
           displayPopup={isRemindersPopupDisplayed}
           onClosePress={() => {
             setIsRemindersPopupDisplayed(false);
@@ -202,6 +207,7 @@ export default function useScheduleButtonsList(
   updatePages,
   tableName,
   scheduleName,
+  testID,
 ) {
   console.log('loaded schedule page');
 
@@ -222,7 +228,7 @@ export default function useScheduleButtonsList(
     openReadingPopup,
     closeReadingPopup,
     openRemindersPopup,
-  } = useScheduleListPopups(onUpdateReadStatus);
+  } = useScheduleListPopups(onUpdateReadStatus, testID);
 
   const setScheduleButtons = useCallback(
     (items, index) => {
@@ -238,6 +244,7 @@ export default function useScheduleButtonsList(
           title = scheduleName || item.title;
           result = (
             <ScheduleButton
+              testID={testID}
               item={item}
               tableName={thisTableName}
               title={title}
@@ -251,6 +258,7 @@ export default function useScheduleButtonsList(
         } else {
           result = (
             <ScheduleDayButton
+              testID={testID + '.' + item.readingPortion}
               isFinished={item.isFinished}
               completionDate={item.completionDate}
               completedHidden={item.completedHidden}
@@ -334,6 +342,7 @@ export default function useScheduleButtonsList(
 
           buttons.push(
             <ScheduleButton
+              testID={testID}
               key={JSON.stringify(item)}
               item={item}
               tableName={thisTableName}

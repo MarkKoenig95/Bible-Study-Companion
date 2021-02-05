@@ -13,6 +13,7 @@ export default function CustomInput(props) {
     description,
     inputStyle,
     onChangeText,
+    testID,
     title,
     titleStyle,
     value,
@@ -26,6 +27,7 @@ export default function CustomInput(props) {
       )}
       <View style={style.inputContainer}>
         <TextInput
+          testID={testID}
           placeholderTextColor={colors.gray}
           style={[styles.input, inputStyle]}
           onBlur={() => {

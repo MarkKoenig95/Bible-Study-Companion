@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback} from 'react';
 
 import Popup from './Popup';
 
@@ -6,9 +6,10 @@ import {translate} from '../../logic/localization/localization';
 import {View} from 'react-native';
 
 export default function ButtonsPopup(props) {
+  const {buttons} = props;
   return (
     <Popup {...props} title={translate('buttonsPopup.title')}>
-      <View>{props.buttons.map(btn => btn)}</View>
+      <View style={{width: '95%'}}>{buttons.map(btn => btn)}</View>
     </Popup>
   );
 }

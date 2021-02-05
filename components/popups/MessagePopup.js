@@ -10,18 +10,25 @@ import {translate} from '../../logic/localization/localization';
 import styles from '../../styles/styles';
 
 export default function MessagePopup(props) {
-  const {displayPopup, message, onClosePress, onConfirm, title} = props;
+  const {displayPopup, message, onClosePress, onConfirm, testID, title} = props;
   const hasConfirmButton = onConfirm && true;
 
   return (
     <Popup
+      testID={testID}
       displayPopup={displayPopup}
       title={title}
       onClosePress={onClosePress}>
       <View style={style.content}>
         <Text style={style.text}>{message}</Text>
       </View>
-      {hasConfirmButton && <IconButton name="check" onPress={onConfirm} />}
+      {hasConfirmButton && (
+        <IconButton
+          testID={testID + '.confirmButton'}
+          name="check"
+          onPress={onConfirm}
+        />
+      )}
     </Popup>
   );
 }

@@ -9,13 +9,24 @@ import styles, {colors} from '../../styles/styles';
 import {formatDate} from '../../data/Database/generalTransactions';
 
 const ScheduleDayButton = React.memo(props => {
-  let {completionDate, update, isFinished, onLongPress, onPress} = props;
+  const {
+    completedHidden,
+    completionDate,
+    isFinished,
+    onLongPress,
+    onPress,
+    readingPortion,
+    testID,
+    textStyle,
+    title,
+    update,
+  } = props;
 
   const [isDatePassed, setIsDatePassed] = useState(false);
 
-  const display = isFinished && props.completedHidden ? 'none' : 'flex';
+  const display = isFinished && completedHidden ? 'none' : 'flex';
   const color = !isDatePassed || isFinished ? colors.lightGray : '#f00';
-  const hasTitle = props.title ? true : false;
+  const hasTitle = title ? true : false;
 
   useEffect(() => {
     let date = Date.parse(completionDate);
@@ -26,11 +37,13 @@ const ScheduleDayButton = React.memo(props => {
 
   return (
     <CustomButton
-      style={[style.columnContainer, props.style, {display: display}]}
+      testID={testID}
+      style={[style.columnContainer, style, {display: display}]}
       onPress={onPress}
       onLongPress={onLongPress}>
       <View style={{...style.rowContainer}}>
         <CheckBox
+          testID={testID + '.checkBox'}
           checked={isFinished}
           onPress={onLongPress}
           checkedColor={colors.lightGray}
@@ -40,37 +53,39 @@ const ScheduleDayButton = React.memo(props => {
           <Text
             style={[
               styles.buttonText,
-              props.textStyle,
+              textStyle,
               {
                 color: colors.lightGray,
                 fontWeight: 'bold',
               },
             ]}>
-            {props.title}
+            {title}
           </Text>
         )}
         <Text
+          testID={testID + '.completionDate'}
           style={[
             styles.buttonText,
-            props.textStyle,
+            textStyle,
             {
               color: color,
             },
           ]}>
-          {props.completionDate}
+          {completionDate}
         </Text>
       </View>
       <Text
+        testID={testID + '.readingPortion'}
         style={[
           styles.buttonText,
           style.readingPortion,
-          props.textStyle,
+          textStyle,
           {
             color: !isFinished ? colors.darkGray : colors.lightGray,
             textDecorationLine: !isFinished ? 'none' : 'line-through',
           },
         ]}>
-        {props.readingPortion}
+        {readingPortion}
       </Text>
     </CustomButton>
   );

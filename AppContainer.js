@@ -17,12 +17,7 @@ import {
   setWeeklyReadingResetDay,
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
-import {
-  errorCB,
-  log,
-  updateValue,
-  getSettings,
-} from './data/Database/generalTransactions';
+import {log, getSettings} from './data/Database/generalTransactions';
 import {runQueries} from './data/Database/scheduleTransactions';
 import {updateNotifications} from './data/Database/notificationTransactions';
 import {updateReminderDates} from './data/Database/reminderTransactions';
@@ -36,7 +31,7 @@ import Reminders from './pages/Reminders';
 import Settings from './pages/Settings';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import styles, {colors} from './styles/styles';
+import {colors} from './styles/styles';
 import {useNotifications} from './logic/notifications/NotifService';
 
 import {useLocalization, translate} from './logic/localization/localization';
@@ -245,6 +240,7 @@ export default function AppContainer() {
           name="HomeStack"
           component={HomeStack}
           options={{
+            tabBarTestID: 'tabs.homePage',
             tabBarLabel: translate('homePage.title'),
             tabBarIcon: ({color, size}) => (
               <Icon
@@ -260,6 +256,7 @@ export default function AppContainer() {
           name="SchedulesStack"
           component={SchedulesStack}
           options={{
+            tabBarTestID: 'tabs.schedulesPage',
             tabBarLabel: translate('schedules'),
             tabBarIcon: ({color, size}) => (
               <Icon
@@ -275,6 +272,7 @@ export default function AppContainer() {
           name="SettingsStack"
           component={SettingsStack}
           options={{
+            tabBarTestID: 'tabs.settingsPage',
             tabBarLabel: translate('settingsPage.title'),
             tabBarIcon: ({color, size}) => (
               <Icon

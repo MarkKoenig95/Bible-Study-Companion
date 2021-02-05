@@ -13,7 +13,7 @@ import WeekdayPicker from '../components/inputs/WeekdayPicker';
 import {updateValue} from '../data/Database/generalTransactions';
 import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions';
 
-const prefix = 'settingsPage.';
+const pageTitle = 'settingsPage';
 
 export default function Settings(props) {
   console.log('loaded Settings page');
@@ -67,42 +67,48 @@ export default function Settings(props) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView testID={pageTitle} style={styles.container}>
       <ScrollView style={styles.contentWithoutHeader}>
         <WeeklyReadingSettings
+          testID={pageTitle + '.weeklyReading'}
           isShown={showDaily.value}
           readingResetDay={weeklyReadingResetDay.value}
           setReadingResetDay={updateWeeklyReadingResetDay}
           toggleIsShown={toggleIsShown}
         />
         <SettingsWrapper
+          testID={pageTitle + '.notifications'}
           iconName="alarm"
           onPress={() => navigation.navigate('Notifications', {})}
           text={translate('notificationsPage.title')}
         />
         <SettingsWrapper
+          testID={pageTitle + '.reminders'}
           iconName="check-box"
           onPress={() => navigation.navigate('Reminders', {})}
           text={translate('remindersPage.title')}
         />
         <SettingsWrapper
+          testID={pageTitle + '.contact'}
           iconName="mail-outline"
-          text={translate(prefix + 'contact')}
+          text={translate(pageTitle + '.contact')}
           onPress={() => {
             Linking.openURL('mailto:humanappmaker@gmail.com');
           }}
         />
         <SettingsWrapper
+          testID={pageTitle + '.about'}
           iconName="web"
-          text={translate(prefix + 'about')}
+          text={translate(pageTitle + '.about')}
           onPress={() => {
             Linking.openURL('http://www.biblesc.com');
           }}
         />
         <SettingsWrapper
+          testID={pageTitle + '.version'}
           noArrow
           iconName="settings"
-          text={translate(prefix + 'version') + ':   ' + appVersion}
+          text={translate(pageTitle + '.version') + ':   ' + appVersion}
         />
       </ScrollView>
     </SafeAreaView>
@@ -110,20 +116,30 @@ export default function Settings(props) {
 }
 
 function WeeklyReadingSettings(props) {
-  const {isShown, toggleIsShown, readingResetDay, setReadingResetDay} = props;
+  const {
+    isShown,
+    toggleIsShown,
+    readingResetDay,
+    setReadingResetDay,
+    testID,
+  } = props;
 
   const activeColor = colors.darkBlue;
 
   const color = isShown ? activeColor : colors.gray;
 
   return (
-    <SettingsWrapper noArrow text={translate('reminders.weeklyReading.title')}>
+    <SettingsWrapper
+      testID={testID}
+      noArrow
+      text={translate('reminders.weeklyReading.title')}>
       <BreakLine />
       <View style={{...styles.wrapperContent, width: '90%'}}>
         <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
           {translate('reminders.weeklyReading.showDaily')}
         </Body>
         <Switch
+          testID={testID + '.showWeeklySwitch'}
           style={{alignSelf: 'flex-end'}}
           onValueChange={toggleIsShown}
           trackColor={{true: colors.lightBlue}}
@@ -134,9 +150,10 @@ function WeeklyReadingSettings(props) {
       <BreakLine />
       <View style={{width: '90%'}}>
         <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
-          {translate(prefix + 'weeklyReadingResetDay')}
+          {translate(pageTitle + '.weeklyReadingResetDay')}
         </Body>
         <WeekdayPicker
+          testID={testID + '.weekdayPicker'}
           containerStyle={{alignSelf: 'flex-end'}}
           onChange={setReadingResetDay}
           currentValue={readingResetDay}

@@ -12,7 +12,7 @@ import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup
 import {
   WEEKLY_READING_TABLE_NAME,
   getWeeksBetween,
-  getWeekdaysBeforeToday,
+  getWeekdays,
 } from '../../logic/logic';
 
 const prefix = 'scheduleTransactions.';
@@ -372,7 +372,7 @@ export async function createWeeklyReadingSchedule(
   on Thursday, then Wednesday will be index 6 of the week and Thursday will be index 0 of
   the week (Thanks Number Theory!)
   */
-  let adjustedWeekIndex = getWeekdaysBeforeToday(resetDayOfWeek);
+  let adjustedWeekIndex = getWeekdays().beforeToday(resetDayOfWeek);
   console.log('adjustedWeekIndex "After"', adjustedWeekIndex);
   let adjustedDate = date.getDate() - adjustedWeekIndex;
   date.setDate(adjustedDate);

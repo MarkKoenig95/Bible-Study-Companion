@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1130"
+   LastUpgradeVersion = "1230"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Bible Study Companion.app"
+               BuildableName = "BibleStudyCompanion.app"
                BlueprintName = "BibleStudyCompanion"
-               ReferencedContainer = "container:Bible Study Companion.xcodeproj">
+               ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
                BuildableName = "BibleStudyCompanionTests.xctest"
                BlueprintName = "BibleStudyCompanionTests"
-               ReferencedContainer = "container:Bible Study Companion.xcodeproj">
+               ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Bible Study Companion.app"
+            BuildableName = "BibleStudyCompanion.app"
             BlueprintName = "BibleStudyCompanion"
-            ReferencedContainer = "container:Bible Study Companion.xcodeproj">
+            ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Bible Study Companion.app"
+            BuildableName = "BibleStudyCompanion.app"
             BlueprintName = "BibleStudyCompanion"
-            ReferencedContainer = "container:Bible Study Companion.xcodeproj">
+            ReferencedContainer = "container:BibleStudyCompanion.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -1,0 +1,799 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`testing if popups render renders ReadingRemindersPopup and matches snapshot 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#93b5b360",
+        "elevation": 3,
+        "height": "100%",
+        "justifyContent": "center",
+        "width": "100%",
+        "zIndex": 2,
+      },
+      Object {
+        "display": "none",
+        "justifyContent": "center",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "#93b5b3",
+          "borderRadius": 10,
+          "maxHeight": "95%",
+          "minHeight": 300,
+          "overflow": "hidden",
+          "width": "85%",
+          "zIndex": 2,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "#f2f6f5",
+          "flexDirection": "row",
+          "height": 60,
+          "justifyContent": "space-around",
+          "padding": 5,
+          "paddingLeft": 20,
+          "paddingRight": 20,
+          "position": "absolute",
+          "top": 0,
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {},
+            Object {
+              "color": "#f2f6f5",
+            },
+            Object {
+              "color": "#63707e",
+              "flex": 4,
+              "fontSize": 20,
+              "padding": 10,
+            },
+          ]
+        }
+      >
+        Reading Reminders
+      </Text>
+      <View>
+        <View
+          accessible={true}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#93b5b3",
+              "borderRadius": 25,
+              "elevation": 0,
+              "height": 50,
+              "margin": 10,
+              "opacity": 1,
+              "padding": 10,
+              "shadowColor": "#0f7a72",
+              "shadowOffset": Object {
+                "height": 6,
+                "width": 6,
+              },
+              "shadowOpacity": 0.2,
+              "shadowRadius": 3,
+              "width": 50,
+            }
+          }
+        >
+          <Text
+            allowFontScaling={false}
+            style={
+              Array [
+                Object {
+                  "color": undefined,
+                  "fontSize": 12,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                  "fontSize": 30,
+                },
+                Object {
+                  "fontFamily": "Material Icons",
+                  "fontStyle": "normal",
+                  "fontWeight": "normal",
+                },
+                Object {},
+              ]
+            }
+          >
+            
+          </Text>
+        </View>
+      </View>
+    </View>
+    <RCTScrollView
+      contentContainerStyle={
+        Object {
+          "alignContent": "center",
+          "alignItems": "center",
+          "flexDirection": "column",
+          "justifyContent": "space-around",
+          "maxWidth": "100%",
+          "padding": 10,
+        }
+      }
+      keyboardShouldPersistTaps="handled"
+      style={
+        Object {
+          "alignContent": "center",
+          "flexDirection": "column",
+          "marginBottom": 10,
+          "marginTop": 60,
+          "width": "100%",
+        }
+      }
+    >
+      <View>
+        <View>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 25,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Create the right surroundings
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Find a location that is quiet and free from distractions
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            (Perhaps put your phone into silent mode)
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 25,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Pray before you read
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Ask Jehovah to put you in the proper frame of mind and to give you his Holy Spirit to help you understand and apply what you read.
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 25,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Meditate on what you read
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Don’t rush, read to understand.
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            You could ask these questions:
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            What does this tell me about Jehovah God?
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            How does this section of the Scriptures contribute to the Bible’s message?
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            How can I apply this in my life?
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            How can I use these verses to help others?
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Imagine yourself in the scene:
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            What would you see, hear, and smell?
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            What may be the feelings of those involved?
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Do research in order to:
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Understand the reading portion’s context.
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Understand difficult concepts clearly.
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 25,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Apply what you read
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            If we see the practical value of an activity, we benefit more from it.
+          </Text>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            We need to take action to apply what we learned in our life and understand how we can use what we learned to help others.
+          </Text>
+        </View>
+        <View
+          style={
+            Object {
+              "alignItems": "flex-end",
+              "flexDirection": "row",
+              "flexWrap": "wrap",
+            }
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "padding": 10,
+                  "paddingTop": 20,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Reminders derived from:
+          </Text>
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "opacity": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {},
+                  Object {
+                    "color": "#f2f6f5",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0f7a72",
+                      "fontSize": 20,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+              nwt 36; 
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "opacity": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {},
+                  Object {
+                    "color": "#f2f6f5",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0f7a72",
+                      "fontSize": 20,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+              mwb18.03 8; 
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "opacity": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {},
+                  Object {
+                    "color": "#f2f6f5",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0f7a72",
+                      "fontSize": 20,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+              w12 1/15 15; 
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "opacity": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {},
+                  Object {
+                    "color": "#f2f6f5",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0f7a72",
+                      "fontSize": 20,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+              wp17.1 4; 
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "opacity": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {},
+                  Object {
+                    "color": "#f2f6f5",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0f7a72",
+                      "fontSize": 20,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+              w16.05 24-26; 
+            </Text>
+          </View>
+          <Text
+            style={
+              Array [
+                Object {
+                  "alignSelf": "flex-start",
+                  "color": "#f2f6f5",
+                  "fontSize": 18,
+                  "padding": 10,
+                },
+                Object {
+                  "color": "#f2f6f5",
+                },
+                undefined,
+              ]
+            }
+          >
+            Please go to those links to get a deeper understanding of the thoughts expressed
+          </Text>
+        </View>
+        <View
+          style={
+            Object {
+              "height": 0,
+            }
+          }
+        />
+      </View>
+    </RCTScrollView>
+  </View>
+</View>
+`;

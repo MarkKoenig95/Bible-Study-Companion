@@ -6,13 +6,13 @@ import {LargeText} from '../components/text/Text';
 
 import styles, {colors} from '../styles/styles';
 
-export function SettingsWrapper(props) {
-  const {iconName, noArrow, text} = props;
+export default function SettingsWrapper(props) {
+  const {iconName, noArrow, testID, text} = props;
   const onPress = props.onPress ? props.onPress : () => {};
   const hasIcon = iconName ? true : false;
   const hasText = text ? true : false;
   return (
-    <TouchableOpacity style={style.wrapper} onPress={onPress}>
+    <TouchableOpacity testID={testID} style={style.wrapper} onPress={onPress}>
       <View style={style.wrapperContent}>
         {(hasIcon || hasText) && (
           <View style={style.titleContent}>

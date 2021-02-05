@@ -10,7 +10,7 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconButton from '../components/buttons/IconButton';
-import Text, {LargeText, Heading} from '../components/text/Text';
+import Text, {LargeText} from '../components/text/Text';
 
 import styles, {colors} from '../styles/styles';
 
@@ -33,12 +33,12 @@ import CreateNotificationPopup, {
 } from '../components/popups/CreateNotificationPopup';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
-const prefix = 'notificationsPage.';
+const pageTitle = 'notificationsPage';
 
 const days = [];
 
 const NotificationsWrapper = React.memo(props => {
-  const {days, itemID, onPress, onUpdateIsActive, text} = props;
+  const {days, itemID, onPress, onUpdateIsActive, testID, text} = props;
   const isActiveProp = props.isActive;
 
   const [isActive, setIsActive] = useState(isActiveProp);
@@ -53,15 +53,17 @@ const NotificationsWrapper = React.memo(props => {
   }
 
   return (
-    <View style={{...styles.wrapper, flexDirection: 'row'}}>
+    <View testID={testID} style={{...styles.wrapper, flexDirection: 'row'}}>
       <View style={{flex: 1, width: '90%'}}>
         <View style={styles.wrapperContent}>
           <LargeText
+            testID={testID + '.text'}
             onPress={onPress}
             style={{alignSelf: 'flex-start', color: activeColor, flex: 10}}>
             {text}
           </LargeText>
           <Switch
+            testID={testID + '.switch'}
             style={{flex: 1}}
             onValueChange={updateIsNotificationActive}
             trackColor={{true: colors.lightBlue}}
@@ -73,6 +75,7 @@ const NotificationsWrapper = React.memo(props => {
           {days.map(day => {
             return (
               <DayMarker
+                testID={testID + '.dayMarker.' + day}
                 key={itemID + '' + day.abrev}
                 color={color}
                 day={day}
@@ -83,7 +86,10 @@ const NotificationsWrapper = React.memo(props => {
         </View>
       </View>
 
-      <TouchableOpacity onPress={onPress} style={style.iconContainer}>
+      <TouchableOpacity
+        testID={testID + '.chevronButton'}
+        onPress={onPress}
+        style={style.iconContainer}>
         <Icon style={style.icon} name={'chevron-right'} />
       </TouchableOpacity>
     </View>
@@ -91,19 +97,21 @@ const NotificationsWrapper = React.memo(props => {
 });
 
 function DayMarker(props) {
-  const isDayActive = props.day.value;
-  const {color} = props;
+  const {color, day, testID} = props;
+  const isDayActive = day.value;
   const activeColor = isDayActive ? color : colors.smoke;
   return (
-    <View style={style.dayContainer}>
+    <View testID={testID} style={style.dayContainer}>
       <Text
+        testID={testID + '.text'}
         style={{
           ...style.dayAbrev,
           color: color,
         }}>
-        {props.day.abrev}
+        {day.abrev}
       </Text>
       <View
+        testID={testID + '.indicator'}
         style={{
           ...style.dayMarker,
           borderColor: color,
@@ -242,15 +250,17 @@ export default function Notifications(props) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView testID={pageTitle} style={styles.container}>
       <MessagePopup
+        testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
         title={messagePopup.title}
         message={messagePopup.message}
         onClosePress={closeMessagePopup}
       />
       <CreateNotificationPopup
-        prefix={prefix}
+        testID={pageTitle + '.createNotificationPopup'}
+        prefix={pageTitle + '.'}
         onAddPress={onAddNotification}
         displayPopup={notificationPopup.isDisplayed}
         title={notificationPopup.title}
@@ -269,6 +279,7 @@ export default function Notifications(props) {
 
             return (
               <NotificationsWrapper
+                testID={pageTitle + '.' + item.Name}
                 itemID={item.ID}
                 text={item.Name}
                 days={days}

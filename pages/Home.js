@@ -34,7 +34,7 @@ import SectionListHeader from '../components/SectionListHeader';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import {setAppVersion} from '../data/Store/actions';
 
-const prefix = 'homePage.';
+const pageTitle = 'homePage';
 let populatingHomeList = false;
 
 async function populateReminders(
@@ -433,7 +433,13 @@ export default function Home(props) {
     ScheduleListPopups,
     setScheduleButtons,
     openRemindersPopup,
-  } = useScheduleButtonsList(userDB, afterUpdate, completedHidden, updatePages);
+  } = useScheduleButtonsList(
+    userDB,
+    afterUpdate,
+    completedHidden,
+    updatePages,
+    pageTitle,
+  );
 
   //Set add and settings button in nav bar with appropriate onPress attribute
   useEffect(() => {
@@ -448,9 +454,10 @@ export default function Home(props) {
 
     navigation.setOptions({
       headerRight: () => (
-        <View style={styles.navHeaderContainer}>
-          <JWLibButton />
+        <View testID={pageTitle + '.header'} style={styles.navHeaderContainer}>
+          <JWLibButton testID={pageTitle + '.header.jwLibraryButton'} />
           <IconButton
+            testID={pageTitle + '.header.addScheduleButton'}
             buttonStyle={styles.navHeaderButton}
             iconOnly
             invertColor
@@ -517,8 +524,9 @@ export default function Home(props) {
   let isScheduleListEmpty = scheduleListItems.length === 0 ? true : false;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID={pageTitle}>
       <MessagePopup
+        testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
         title={messagePopup.title}
         message={messagePopup.message}
@@ -528,6 +536,7 @@ export default function Home(props) {
       <ScheduleListPopups />
       <View style={styles.header}>
         <TextButton
+          testID={pageTitle + '.readingRemindersButton'}
           buttonStyle={{width: '90%'}}
           text={translate('readingRemindersPopup.readingReminders')}
           onPress={openRemindersPopup}
@@ -544,11 +553,14 @@ export default function Home(props) {
             renderSectionHeader={SectionListHeader}
           />
         ) : (
-          <View>
-            <SubHeading style={{...styles.buttonText, alignSelf: 'center'}}>
-              {translate(prefix + 'emptyList')}
+          <View testID={pageTitle + '.emptyList'}>
+            <SubHeading
+              testID={pageTitle + '.emptyList.text'}
+              style={{...styles.buttonText, alignSelf: 'center'}}>
+              {translate(pageTitle + '.emptyList')}
             </SubHeading>
             <IconButton
+              testID={pageTitle + '.emptyList.addScheduleButton'}
               buttonStyle={{alignSelf: 'center'}}
               onPress={() => {
                 navigation.navigate('SchedulesStack', {

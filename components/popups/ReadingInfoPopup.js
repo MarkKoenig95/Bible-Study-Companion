@@ -1,4 +1,10 @@
-import React, {useContext, useEffect, useState, useCallback} from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from 'react';
 
 import {View} from 'react-native';
 
@@ -6,7 +12,6 @@ import Popup from './Popup';
 import {Body, SubHeading} from '../text/Text';
 import Link from '../text/Link';
 import IconButton from '../buttons/IconButton';
-import TextButton from '../buttons/TextButton';
 
 import {
   translate,
@@ -17,7 +22,6 @@ import {
 import {errorCB} from '../../data/Database/generalTransactions';
 import {findMaxChapter} from '../../data/Database/scheduleTransactions';
 import {store} from '../../data/Store/store.js';
-import {openJWLibrary} from '../../logic/logic';
 
 const blankInfo = {
   id: 0,
@@ -194,14 +198,14 @@ function makeJWLibLink(
 }
 
 function InfoSegment(props) {
-  const {info, segment} = props;
+  const {info, segment, testID} = props;
 
   const hasInfo = info[segment] ? true : false;
 
   return (
     <View>
       {hasInfo && <SubHeading>{translate(prefix + segment)}:</SubHeading>}
-      {hasInfo && <Body>{info[segment]}</Body>}
+      {hasInfo && <Body testID={testID}>{info[segment]}</Body>}
     </View>
   );
 }
@@ -214,6 +218,7 @@ function ReadingInfoSection(props) {
     endChapter,
     endVerse,
     readingPortion,
+    testID,
   } = props;
 
   const href = makeJWLibLink(
@@ -227,15 +232,27 @@ function ReadingInfoSection(props) {
   const info = items[bookNumber];
 
   return (
-    <View style={{alignSelf: 'flex-start', margin: 15}}>
+    <View testID={testID} style={{alignSelf: 'flex-start', margin: 15}}>
       <SubHeading>{translate(prefix + 'readingPortion')}:</SubHeading>
-      <Link href={href} text={readingPortion} />
+      <Link testID={testID + '.link'} href={href} text={readingPortion} />
 
-      <InfoSegment segment="whereWritten" info={info} />
+      <InfoSegment
+        testID={testID + '.whereWritten'}
+        segment="whereWritten"
+        info={info}
+      />
 
-      <InfoSegment segment="whenWritten" info={info} />
+      <InfoSegment
+        testID={testID + '.whenWritten'}
+        segment="whenWritten"
+        info={info}
+      />
 
-      <InfoSegment segment="timeCovered" info={info} />
+      <InfoSegment
+        testID={testID + '.timeCovered'}
+        segment="timeCovered"
+        info={info}
+      />
     </View>
   );
 }
@@ -305,12 +322,19 @@ async function createReadingSections(
 }
 
 export default function ReadingInfoPopup(props) {
-  const {onConfirm, popupProps} = props;
+  const {onConfirm, popupProps, testID} = props;
 
   const globalState = useContext(store);
   const {bibleDB} = globalState.state;
 
   const [readingSections, setReadingSections] = useState([]);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (bibleDB) {
@@ -323,7 +347,9 @@ export default function ReadingInfoPopup(props) {
         props.endChapter,
         props.endVerse,
       ).then(res => {
-        setReadingSections(res);
+        if (mountedRef.current) {
+          setReadingSections(res);
+        }
       });
     }
   }, [bibleDB, props]);
@@ -335,10 +361,14 @@ export default function ReadingInfoPopup(props) {
   }, [bibleDB]);
 
   return (
-    <Popup {...popupProps} title={translate(prefix + 'readingInfo')}>
+    <Popup
+      {...popupProps}
+      testID={testID}
+      title={translate(prefix + 'readingInfo')}>
       {readingSections.map(section => {
         return (
           <ReadingInfoSection
+            testID={testID + '.' + section.key}
             key={section.key}
             bookNumber={section.bookNumber}
             startChapter={section.startChapter}
@@ -349,7 +379,11 @@ export default function ReadingInfoPopup(props) {
           />
         );
       })}
-      <IconButton name="check" onPress={onConfirm} />
+      <IconButton
+        testID={testID + '.confirmButton'}
+        name="check"
+        onPress={onConfirm}
+      />
     </Popup>
   );
 }

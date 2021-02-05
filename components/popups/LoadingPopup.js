@@ -1,15 +1,17 @@
 import React from 'react';
-import {ActivityIndicator, Modal, View} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 
 import styles, {colors} from '../../styles/styles';
 
 export default function LoadingPopup(props) {
+  const {displayPopup, testID} = props;
   return (
     <View
+      testID={testID}
       style={[
         styles.background,
         {
-          display: !props.displayPopup ? 'none' : 'flex',
+          display: !displayPopup ? 'none' : 'flex',
           justifyContent: 'center',
         },
       ]}>

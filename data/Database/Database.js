@@ -1,4 +1,3 @@
-import React from 'react';
 import SQLite from 'react-native-sqlite-storage';
 import bibleInfoDBUpgrade from './upgrades/bible-info-db-upgrade.json';
 import userInfoDBUpgrade from './upgrades/user-info-db-upgrade.json';
