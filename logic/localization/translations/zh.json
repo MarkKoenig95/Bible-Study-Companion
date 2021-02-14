@@ -76,7 +76,7 @@
     "numberOfPortions": "多少{{portionDesc}}",
     "numberOfPortionsPhld": "出版物一共包括多少{{portionDesc}}",
     "readingPortionDesc": {
-      "title": "描述朗读部分",
+      "title": "描述朗读的部分",
       "article": "文章",
       "chapter": "章",
       "page": "页",
@@ -87,12 +87,12 @@
     "portionsPerDayPhld": "你每天想读多少{{portionDesc}}",
     "scheduleName": "进度表题目",
     "scheduleDuration": "计划周期",
-    "scheduleDurPhld": "进度表至始至终持续多长时间？",
+    "scheduleDurPhld": "进度表自始至终持续多长时间？",
     "shouldTrack": "跟踪阅读",
     "startingPortion": "开始{{portionDesc}}",
     "startingPortionPhld": "你想从哪一{{portionDesc}}开始",
     "startingVerse": "开始经文",
-    "unfinished": "请正确得填写所有必填字段以安排时间表"
+    "unfinished": "请正确的填写所有必填字段以及安排的时间表"
   },
   "date": {
     "approxDesc": {
@@ -140,7 +140,7 @@
   "morePage": {"title": "更多"},
   "notification": {
     "baseTitle": "今天的阅读",
-    "bigText": "咱们看一看今天有什么要做的",
+    "bigText": "看一看今天有什么要做的",
     "message": "加油"
   },
   "notificationsPage": {
@@ -169,14 +169,14 @@
   "other": "其他",
   "prompts": {
     "setNotification": "定提醒的时间：",
-    "nameTaken": "这个进度表题目已经运用了请选择还没用的题目"
+    "nameTaken": "这个进度表题目已经使用了，请选择还没用的"
   },
   "readingRemindersPopup": {
     "readingReminders": "阅读前提醒",
     "heading0": "创造良好的环境",
     "body0-1": "找个安静且不受干扰的地方。",
     "body0-2": "（可以的话，把手机调整到静音模式）",
-    "heading1": "读圣经前要祷告",
+    "heading1": "读圣经前别忘记祷告",
     "body1-1": "求耶和华帮你怀着正确的态度，也请他赐给你，他的神圣力量。这样才能帮你理解并运用你所学到的知识。",
     "heading2": "仔细沉思你所读到的内容",
     "body2-1": "不要读得太快，边读边思考。",
@@ -190,15 +190,15 @@
     "body2-7": "如果你是其中的人物，会有什么感觉？",
     "subheading2-3": "查找相关资料为了.....",
     "body2-8": "正确地明白这部分的背景。",
-    "body2-9": "完整的还有清楚的理解很难理解的事。",
-    "heading3": "运用你所学到的资料",
+    "body2-9": "完整清楚地理解不容易的概念。",
+    "heading3": "运用你所读到的资料",
     "body3-1": "如果我们看出自己所做的事情有实用价值，得到的益处就会更大。研读圣经也一样。",
-    "body3-2": "我们为了在自己身上还有为别人要采取行动运用我们所学到的事。",
-    "subheading3-1": "提醒来自下边的资料：",
-    "body3-3": "请查考上面的资料，为了更深入地了解圣经的意思。"
+    "body3-2": "我们需要采取行动，将我们所学到的知识运用到自己的生活中，并了解如何利用所学到的知识来帮助他人。",
+    "subheading3-1": "提醒来自以下的资料：",
+    "body3-3": "请查考以上的资料，为了更深入地了解圣经的意思。"
   },
   "readingInfoPopup": {
-    "readingInfo": "阅读部分资料",
+    "readingInfo": "阅读信息",
     "readingPortion": "阅读部分",
     "timeCovered": "覆盖时期",
     "whereWritten": "写作地点",
@@ -207,14 +207,14 @@
   },
   "readingSchedules": "阅读进度表",
   "reminders": {
-    "completeReminderMessage": "请确认你想叫 “{{reminderName}}“ 完成",
+    "completeReminderMessage": "请确认你让 “{{reminderName}}“ 完成",
     "dailyReading": "今天的阅读经文",
     "dailyText": "每日经文",
     "midweekMeetingStudy": "周中聚会",
     "reminder": "提醒",
     "weekendMeetingStudy": "周末聚会",
     "weeklyReading": {
-      "title": "这周的朗读经文",
+      "title": "本周的阅读经文",
       "showDaily": "显示每周阅读的范围"
     }
   },
