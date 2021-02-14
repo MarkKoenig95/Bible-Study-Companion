@@ -134,9 +134,13 @@ function SchedulePage(props) {
 
   const onDeleteSchedule = useCallback(() => {
     navigation.dispatch(StackActions.pop(1));
-    deleteSchedule(userDB, tableName, scheduleName).then(() => {
-      afterUpdate();
-    });
+    //Wait a little while to delete the schedule so that we pop this page from the stack
+    //before it tries to render a nonexistant schedule
+    setTimeout(() => {
+      deleteSchedule(userDB, tableName, scheduleName).then(() => {
+        afterUpdate();
+      });
+    }, 750);
   }, [afterUpdate, navigation, scheduleName, tableName, userDB]);
 
   return (

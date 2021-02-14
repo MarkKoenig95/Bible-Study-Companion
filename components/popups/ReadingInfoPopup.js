@@ -33,7 +33,7 @@ const prefix = 'readingInfoPopup.';
 
 async function loadData(bibleDB, tableName = 'tblBibleBooks') {
   await bibleDB.transaction(txn => {
-    txn.executeSql('SELECT * FROM ' + tableName, []).then(([t, results]) => {
+    txn.executeSql(`SELECT * FROM ${tableName};`, []).then(([t, results]) => {
       for (let i = 0; i < results.rows.length; ++i) {
         let item = results.rows.item(i);
         let bibleBooksPrefix = 'bibleBooks.' + item.BibleBookID;
@@ -71,7 +71,7 @@ async function queryMaxInfo(bibleDB, bookNumber) {
     .transaction(txn => {
       txn
         .executeSql(
-          'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?',
+          'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?;',
           [bookNumber, maxChapter],
         )
         .then(([t, res]) => {

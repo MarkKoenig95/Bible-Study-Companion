@@ -191,10 +191,9 @@ export default function Notifications(props) {
     await userDB
       .transaction(txn => {
         txn
-          .executeSql(
-            `SELECT ID FROM tblNotifications WHERE Name="${notificationName}"`,
-            [],
-          )
+          .executeSql('SELECT ID FROM tblNotifications WHERE Name=?;', [
+            notificationName,
+          ])
           .then(([t, res]) => {
             notificationID = res.rows.item(0).ID;
           });

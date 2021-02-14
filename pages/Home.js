@@ -51,7 +51,7 @@ async function populateReminders(
     .transaction(txn => {
       txn
         .executeSql(
-          'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0',
+          'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0;',
           [frequency],
         )
         .then(([t, res]) => {
@@ -122,7 +122,7 @@ async function populateScheduleButtons(
   //Get the user's list of reading schedules
   await userDB
     .transaction(txn => {
-      let sql = 'SELECT * FROM tblSchedules WHERE DoesTrack=?';
+      let sql = 'SELECT * FROM tblSchedules WHERE DoesTrack=?;';
       txn.executeSql(sql, [doesTrack ? 1 : 0]).then(([t, res]) => {
         result = res;
       });
@@ -159,7 +159,7 @@ async function populateScheduleButtons(
         const sql = `SELECT * FROM ${tableName}
                 WHERE IsFinished=0
                 ORDER BY ReadingDayID ASC
-                LIMIT 1`;
+                LIMIT 1;`;
         txn.executeSql(sql, []).then(([t, res]) => {
           if (res.rows.length > 0) {
             completionDate = res.rows.item(0).CompletionDate;
@@ -174,7 +174,7 @@ async function populateScheduleButtons(
       .transaction(txn => {
         const sql = `SELECT * FROM ${tableName}
                 WHERE CompletionDate=?
-                ORDER BY ReadingDayID ASC`;
+                ORDER BY ReadingDayID ASC;`;
         txn.executeSql(sql, [completionDate]).then(([t, res]) => {
           items = res.rows;
         });
@@ -223,7 +223,7 @@ async function populateWeeklyReading(
   await userDB
     .transaction(txn => {
       const sql = `SELECT * FROM ${tableName}
-            ORDER BY ReadingDayID ASC`;
+            ORDER BY ReadingDayID ASC;`;
       txn.executeSql(sql, []).then(([t, res]) => {
         items = res.rows;
       });

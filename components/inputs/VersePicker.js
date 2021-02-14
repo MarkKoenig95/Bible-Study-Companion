@@ -15,7 +15,7 @@ const items = [];
 async function loadData(bibleDB) {
   await bibleDB.transaction(txn => {
     txn
-      .executeSql('SELECT BibleBookID, BookName FROM tblBibleBooks', [])
+      .executeSql('SELECT BibleBookID, BookName FROM tblBibleBooks;', [])
       .then(([txn, results]) => {
         for (let i = 0; i < results.rows.length; ++i) {
           let item = results.rows.item(i);

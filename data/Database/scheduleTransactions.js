@@ -32,37 +32,29 @@ let qryThematicLeastIndices;
 
 export async function deleteSchedule(db, tableName, scheduleName) {
   db.transaction(txn => {
-    txn.executeSql(
-      `DELETE FROM tblSchedules WHERE ScheduleName='${scheduleName}'`,
-      [],
-    );
+    txn.executeSql('DELETE FROM tblSchedules WHERE ScheduleName=?;', [
+      scheduleName,
+    ]);
 
-    txn.executeSql(`DROP TABLE IF EXISTS  ${tableName}`, []).then(() => {
+    txn.executeSql(`DROP TABLE IF EXISTS ${tableName};`, []).then(() => {
       console.log('Deleted table ', tableName);
     });
   }).catch(errorCB);
 }
 
-export function clearSchedules(txn) {
-  txn.executeSql('SELECT * FROM tblSchedules', []).then(([t, res]) => {
-    for (let i = 0; i < res.rows.length; ++i) {
-      let schedule = res.rows.item(i).ScheduleName;
-      txn.executeSql(`DROP TABLE IF EXISTS  ${schedule}`, [], () => {
-        console.log('Deleted table ', schedule);
-      });
-    }
-  });
-
-  txn.executeSql('DELETE FROM tblSchedules', []);
-}
-
-export function updateReadStatus(db, tableName, id, status, afterUpdate) {
+export function updateReadStatus(
+  db,
+  tableName,
+  id,
+  status,
+  afterUpdate = () => {},
+) {
   let bool = status ? 1 : 0;
   db.transaction(txn => {
     let sql = `UPDATE ${tableName}
-    SET IsFinished=${bool}
-    WHERE ReadingDayID=${id};`;
-    txn.executeSql(sql, []).then(afterUpdate());
+    SET IsFinished=?
+    WHERE ReadingDayID=?;`;
+    txn.executeSql(sql, [bool, id]).then(afterUpdate());
   }).catch(errorCB);
 }
 
@@ -90,7 +82,7 @@ export async function getScheduleSettings(db, scheduleName) {
   await db
     .transaction(txn => {
       txn
-        .executeSql('SELECT * FROM tblSchedules WHERE ScheduleName=?', [
+        .executeSql('SELECT * FROM tblSchedules WHERE ScheduleName=?;', [
           scheduleName,
         ])
         .then(([t, res]) => {
@@ -132,7 +124,7 @@ function createQryOrderIndex(query) {
 
 export async function runQueries(bibleDB) {
   if (!tblVerseIndex) {
-    let sql = 'SELECT * FROM tblVerseIndex';
+    let sql = 'SELECT * FROM tblVerseIndex;';
 
     await getQuery(bibleDB, sql).then(res => {
       tblVerseIndex = res;
@@ -140,33 +132,35 @@ export async function runQueries(bibleDB) {
   }
 
   if (!qryMaxVerses) {
-    await getQuery(bibleDB, 'SELECT * FROM qryMaxVerses').then(res => {
+    await getQuery(bibleDB, 'SELECT * FROM qryMaxVerses;').then(res => {
       qryMaxVerses = res;
     });
   }
 
   if (!qryChronologicalOrder) {
-    await getQuery(bibleDB, 'SELECT * FROM qryChronologicalOrder').then(res => {
-      qryChronologicalOrder = res;
-      qryChronologicalIndex = createQryOrderIndex(res);
-    });
+    await getQuery(bibleDB, 'SELECT * FROM qryChronologicalOrder;').then(
+      res => {
+        qryChronologicalOrder = res;
+        qryChronologicalIndex = createQryOrderIndex(res);
+      },
+    );
   }
 
   if (!qryThematicOrder) {
-    await getQuery(bibleDB, 'SELECT * FROM qryThematicOrder').then(res => {
+    await getQuery(bibleDB, 'SELECT * FROM qryThematicOrder;').then(res => {
       qryThematicOrder = res;
       qryThematicIndex = createQryOrderIndex(res);
     });
   }
 
   if (!qryThematicCount) {
-    await getQuery(bibleDB, 'SELECT * FROM qryThematicCount').then(res => {
+    await getQuery(bibleDB, 'SELECT * FROM qryThematicCount;').then(res => {
       qryThematicCount = res;
     });
   }
 
   if (!qryThematicLeastIndices) {
-    await getQuery(bibleDB, 'SELECT * FROM qryThematicLeastIndices').then(
+    await getQuery(bibleDB, 'SELECT * FROM qryThematicLeastIndices;').then(
       res => {
         qryThematicLeastIndices = res;
       },
@@ -198,7 +192,7 @@ async function createScheduleTable(userDB, tableName, scheduleType) {
             (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             CompletionDate DATE,
             ReadingPortion VARCHAR(20), 
-            IsFinished BOOLEAN DEFAULT 0)`;
+            IsFinished BOOLEAN DEFAULT 0);`;
   }
 
   await userDB
@@ -253,10 +247,9 @@ export async function addSchedule(
     .transaction(txn => {
       //Check if a schedule with that name already exists
       txn
-        .executeSql(
-          `SELECT 1 FROM tblSchedules WHERE ScheduleName="${scheduleName}"`,
-          [],
-        )
+        .executeSql('SELECT 1 FROM tblSchedules WHERE ScheduleName=?;', [
+          scheduleName,
+        ])
         .then(([txn, res]) => {
           scheduleNameExists = res.rows.length > 0;
         });
@@ -302,7 +295,7 @@ export async function addSchedule(
                 IsDay5Active,
                 IsDay6Active) 
                 VALUES (?, 0, ?, ?, ?,
-                  ?, ?, ?, ?, ?, ?, ?)`,
+                  ?, ?, ?, ?, ?, ?, ?);`,
             [
               scheduleName,
               doesTrack,
@@ -318,7 +311,7 @@ export async function addSchedule(
         //Get the newly created schedule info to extract it's ID to use for unique table name creation
         txn
           .executeSql(
-            'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName = ?',
+            'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName=?;',
             [scheduleName],
           )
           .then(([txn, res]) => {
@@ -395,7 +388,7 @@ export async function createWeeklyReadingSchedule(
     .transaction(txn => {
       txn
         .executeSql(
-          'SELECT * FROM tblDates WHERE Name="WeeklyReadingStart" OR Name="WeeklyReadingCurrent"',
+          'SELECT * FROM tblDates WHERE Name="WeeklyReadingStart" OR Name="WeeklyReadingCurrent";',
         )
         .then(([t, res]) => {
           for (let i = 0; i < res.rows.length; i++) {
@@ -459,7 +452,8 @@ export async function createWeeklyReadingSchedule(
       .transaction(txn => {
         txn.executeSql(`DROP TABLE IF EXISTS ${tableName};`, []);
         txn.executeSql(
-          `DELETE FROM tblSchedules WHERE CreationInfo="${tableName}" OR CreationInfo IS NULL;`,
+          'DELETE FROM tblSchedules WHERE CreationInfo=? OR CreationInfo IS NULL;',
+          [tableName],
         );
       })
       .catch(err => {
@@ -472,7 +466,7 @@ export async function createWeeklyReadingSchedule(
       .transaction(txn => {
         txn
           .executeSql(
-            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?)',
+            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?);',
             [scheduleName, SCHEDULE_TYPES.SEQUENTIAL, tableName],
           )
           .then(() => {
@@ -487,7 +481,7 @@ export async function createWeeklyReadingSchedule(
     await bibleDB
       .transaction(txn => {
         txn
-          .executeSql('SELECT * FROM tblVerseIndex WHERE WeeklyOrder=?', [
+          .executeSql('SELECT * FROM tblVerseIndex WHERE WeeklyOrder=?;', [
             currentWeek,
           ])
           .then(([t, res]) => {
@@ -561,7 +555,7 @@ export async function findMaxChapter(bibleDB, bookId) {
     await bibleDB
       .transaction(txn => {
         txn
-          .executeSql('SELECT BibleBook, MaxChapter FROM qryMaxChapters', [])
+          .executeSql('SELECT BibleBook, MaxChapter FROM qryMaxChapters;', [])
           .then(([txn, res]) => {
             qryMaxChapters = res;
           });
@@ -620,10 +614,10 @@ async function findVerseIndex(
     .transaction(txn => {
       const sql = `SELECT VerseID 
         FROM tblVerseIndex 
-        WHERE BibleBook = ${bookId} AND Chapter = ${chapter} AND Verse = ${verse};`;
+        WHERE BibleBook=? AND Chapter=? AND Verse=?;`;
 
       //Find index in table for specific verse
-      txn.executeSql(sql, []).then(([txn, res]) => {
+      txn.executeSql(sql, [bookId, chapter, verse]).then(([txn, res]) => {
         if (res.rows.length > 0) {
           //The verse searched for exists
           found = true;
@@ -678,7 +672,7 @@ async function findVerseIndex(
     }
     await bibleDB.transaction(txn => {
       txn
-        .executeSql(`SELECT * FROM ${queryOrView} WHERE VerseID=?`, [index])
+        .executeSql(`SELECT * FROM ${queryOrView} WHERE VerseID=?;`, [index])
         .then(([t, res]) => {
           index = res.rows.item(0)[indexKey] - 1;
         })
@@ -1569,7 +1563,7 @@ async function insertReadingPortions(
 
   let {placeholders, values} = createPlaceholdersFromArray(temp);
 
-  let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders}`;
+  let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders};`;
 
   log('insert sql', sql, 'values', values);
 

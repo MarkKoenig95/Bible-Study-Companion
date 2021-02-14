@@ -100,10 +100,9 @@ export async function addNotification(
   await userDB
     .transaction(txn => {
       txn
-        .executeSql(
-          `SELECT 1 FROM tblNotifications WHERE Name="${notificationName}"`,
-          [],
-        )
+        .executeSql('SELECT 1 FROM tblNotifications WHERE Name=?;', [
+          notificationName,
+        ])
         .then(([t, res]) => {
           nameExists = res.rows.length > 0;
           console.log(res.rows.length);
@@ -246,7 +245,7 @@ export async function updateNotifications(userDB, notification) {
 export async function deleteNotification(db, id, notification) {
   db.transaction(txn => {
     txn
-      .executeSql(`DELETE FROM tblNotifications WHERE ID='${id}'`, [])
+      .executeSql('DELETE FROM tblNotifications WHERE ID=?;', [id])
       .then(() => {
         notification.cancelNotif(id);
       });
@@ -258,7 +257,7 @@ async function checkNextNotificationDate(userDB, notificationID) {
   await userDB
     .transaction(txn => {
       txn
-        .executeSql(`SELECT NextNotifDate FROM tblNotifications WHERE ID=?`, [
+        .executeSql('SELECT NextNotifDate FROM tblNotifications WHERE ID=?;', [
           notificationID,
         ])
         .then(([t, res]) => {

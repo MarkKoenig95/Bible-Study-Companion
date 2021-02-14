@@ -180,7 +180,7 @@ export async function getSettings(userDB) {
   let weeklyReadingResetDay;
 
   await userDB.transaction(txn => {
-    txn.executeSql('SELECT * FROM tblUserPrefs', []).then(([t, res]) => {
+    txn.executeSql('SELECT * FROM tblUserPrefs;', []).then(([t, res]) => {
       if (res.rows.length > 0) {
         for (let i = 0; i < res.rows.length; i++) {
           const pref = res.rows.item(i);
@@ -349,14 +349,7 @@ export function listAllTables(db, cb) {
   db.transaction(txn => {
     txn
       .executeSql(
-        `
-        SELECT 
-            name
-        FROM 
-            sqlite_master 
-        WHERE 
-            type ='table' AND 
-            name NOT LIKE 'sqlite_%';`,
+        'SELECT name FROM sqlite_master WHERE type ="table" AND name NOT LIKE "sqlite_%";',
         [],
       )
       .then(cb);

@@ -17,7 +17,7 @@ export async function updateReminderDates(userDB) {
 
   await userDB
     .transaction(txn => {
-      txn.executeSql('SELECT * FROM tblReminders', []).then(([t, res]) => {
+      txn.executeSql('SELECT * FROM tblReminders;', []).then(([t, res]) => {
         reminders = res.rows;
       });
     })
@@ -65,7 +65,7 @@ export async function addReminder(
   await userDB
     .transaction(txn => {
       txn
-        .executeSql('SELECT 1 FROM tblReminders WHERE Name=?', [name])
+        .executeSql('SELECT 1 FROM tblReminders WHERE Name=?;', [name])
         .then(([t, res]) => {
           nameExists = res.rows.length > 0;
         });
@@ -105,7 +105,7 @@ export async function addReminder(
 export async function deleteReminder(userDB, id) {
   userDB
     .transaction(txn => {
-      txn.executeSql('DELETE FROM tblReminders WHERE ID=?', [id]);
+      txn.executeSql('DELETE FROM tblReminders WHERE ID=?;', [id]);
     })
     .catch(errorCB);
 }

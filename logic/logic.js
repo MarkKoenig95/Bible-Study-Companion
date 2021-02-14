@@ -115,7 +115,8 @@ export async function legacyBugFixForV062(userDB) {
   await userDB
     .transaction(txn => {
       txn.executeSql(
-        `UPDATE tblSchedules SET CreationInfo = "${tableName}" WHERE CreationInfo IS NULL;`,
+        'UPDATE tblSchedules SET CreationInfo=? WHERE CreationInfo IS NULL;',
+        [tableName],
       );
     })
     .catch(err => {
