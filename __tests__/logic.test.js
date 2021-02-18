@@ -1,3 +1,8 @@
+import {
+  createPlaceholdersFromArray,
+  formatDate,
+} from '../data/Database/generalTransactions';
+import {VERSE_POSITION} from '../data/Database/scheduleTransactions';
 import {getWeekdays, getWeeksBetween} from '../logic/logic';
 
 beforeAll(() => {
@@ -34,4 +39,139 @@ test('given a weekday (4, Thursday) getWeekdays().afterToday() returns the numbe
   expect(getWeekdays().afterToday(4)).toBe(0);
   expect(getWeekdays().afterToday(5)).toBe(1);
   expect(getWeekdays().afterToday(6)).toBe(2);
+});
+
+test('formatDate', () => {
+  let date = formatDate(new Date());
+  expect(date).toBe('2/4/21');
+});
+
+test('createPlaceholdersFromArray', () => {
+  let newDate = formatDate(new Date());
+
+  let portion1 = [
+    'Malachi',
+    39,
+    4,
+    4,
+    'Malachi',
+    39,
+    4,
+    6,
+    newDate,
+    'Malachi 4:4-6',
+    VERSE_POSITION.END,
+  ];
+
+  let portion2 = [
+    'Revelation',
+    66,
+    1,
+    1,
+    'Revelation',
+    66,
+    22,
+    21,
+    newDate,
+    'Revelation 1-22',
+    VERSE_POSITION.START_AND_END,
+  ];
+
+  let portion3 = [
+    'Isaiah',
+    23,
+    1,
+    1,
+    'Isaiah',
+    23,
+    1,
+    6,
+    newDate,
+    'Isaiah 1:1-6',
+    VERSE_POSITION.START,
+  ];
+
+  let readingPortions = [
+    portion1,
+    portion2,
+    portion3,
+    portion1,
+    portion2,
+    portion3,
+  ];
+
+  let result = createPlaceholdersFromArray(readingPortions);
+
+  expect(result).toStrictEqual({
+    placeholders:
+      '( ?,?,?,?,?,?,?,?,?,?,? ),( ?,?,?,?,?,?,?,?,?,?,? ),( ?,?,?,?,?,?,?,?,?,?,? ),( ?,?,?,?,?,?,?,?,?,?,? ),( ?,?,?,?,?,?,?,?,?,?,? ),( ?,?,?,?,?,?,?,?,?,?,? )',
+    values: [
+      'Malachi',
+      39,
+      4,
+      4,
+      'Malachi',
+      39,
+      4,
+      6,
+      '2/4/21',
+      'Malachi 4:4-6',
+      2,
+      'Revelation',
+      66,
+      1,
+      1,
+      'Revelation',
+      66,
+      22,
+      21,
+      '2/4/21',
+      'Revelation 1-22',
+      3,
+      'Isaiah',
+      23,
+      1,
+      1,
+      'Isaiah',
+      23,
+      1,
+      6,
+      '2/4/21',
+      'Isaiah 1:1-6',
+      0,
+      'Malachi',
+      39,
+      4,
+      4,
+      'Malachi',
+      39,
+      4,
+      6,
+      '2/4/21',
+      'Malachi 4:4-6',
+      2,
+      'Revelation',
+      66,
+      1,
+      1,
+      'Revelation',
+      66,
+      22,
+      21,
+      '2/4/21',
+      'Revelation 1-22',
+      3,
+      'Isaiah',
+      23,
+      1,
+      1,
+      'Isaiah',
+      23,
+      1,
+      6,
+      '2/4/21',
+      'Isaiah 1:1-6',
+      0,
+    ],
+  });
 });

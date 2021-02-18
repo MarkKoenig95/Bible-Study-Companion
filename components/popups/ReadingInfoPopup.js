@@ -36,8 +36,9 @@ const items = [blankInfo];
 const prefix = 'readingInfoPopup.';
 
 async function loadData(bibleDB, tableName = 'tblBibleBooks') {
-  await bibleDB.transaction(txn => {
-    txn.executeSql(`SELECT * FROM ${tableName};`, []).then(([t, results]) => {
+  await bibleDB
+    .executeSql(`SELECT * FROM ${tableName};`, [])
+    .then(([results]) => {
       for (let i = 0; i < results.rows.length; ++i) {
         let item = results.rows.item(i);
         let bibleBooksPrefix = 'bibleBooks.' + item.BibleBookID;
@@ -61,26 +62,22 @@ async function loadData(bibleDB, tableName = 'tblBibleBooks') {
         });
       }
     });
-  });
 }
 
 async function queryMaxInfo(bibleDB, bookNumber) {
   //Set maxChapter
-  let maxChapter = await findMaxChapter(bibleDB, bookNumber);
+  let maxChapter = findMaxChapter(bookNumber);
 
   let maxVerse;
 
   //Use maxChapter to find maxVerse
   await bibleDB
-    .transaction(txn => {
-      txn
-        .executeSql(
-          'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?;',
-          [bookNumber, maxChapter],
-        )
-        .then(([t, res]) => {
-          maxVerse = res.rows.item(0).MaxVerse;
-        });
+    .executeSql(
+      'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?;',
+      [bookNumber, maxChapter],
+    )
+    .then(([res]) => {
+      maxVerse = res.rows.item(0).MaxVerse;
     })
     .catch(errorCB);
 

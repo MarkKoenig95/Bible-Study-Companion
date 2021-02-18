@@ -15,6 +15,8 @@ jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 jest.mock('../data/Store/store');
 
+jest.mock('../logic/notifications/NotifService');
+
 jest.mock('react-native-push-notification', () => ({
   configure: jest.fn(),
   onRegister: jest.fn(),
@@ -32,22 +34,6 @@ jest.mock('react-native-localize', () => ({
   removeEventListener: jest.fn(),
 }));
 
-jest.mock('react-native-sqlite-storage', () => ({
-  enablePromise: jest.fn(),
-  DEBUG: jest.fn(),
-  openDatabase: (...args) => {
-    return {
-      transaction: (...args) =>
-        Promise.resolve({
-          executeSql: query => {
-            return Promise.resolve([]);
-          },
-        }),
-      executeSql: query => {
-        return Promise.resolve([]);
-      },
-    };
-  },
-}));
+jest.mock('react-native-sqlite-storage');
 
 jest.mock('../logic/localization/localization');

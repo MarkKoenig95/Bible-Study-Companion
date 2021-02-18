@@ -1,7 +1,14 @@
 const en = require('../translations/en.json');
 
-export function translate(keyString) {
+export function translate(keyString, parameters) {
   let value = translator(keyString, en);
+
+  if (parameters) {
+    Object.keys(parameters).forEach(key => {
+      let re = new RegExp(`{{${key}}}`, 'g');
+      value = value.replace(re, parameters[key]);
+    });
+  }
   return value;
 }
 

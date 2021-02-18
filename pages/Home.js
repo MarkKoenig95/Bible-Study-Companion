@@ -48,19 +48,14 @@ async function populateReminders(
   let reminders;
 
   await userDB
-    .transaction(txn => {
-      txn
-        .executeSql(
-          'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0;',
-          [frequency],
-        )
-        .then(([t, res]) => {
-          reminders = res.rows;
-        });
+    .executeSql(
+      'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0;',
+      [frequency],
+    )
+    .then(([res]) => {
+      reminders = res.rows;
     })
-    .catch(err => {
-      errorCB(err);
-    });
+    .catch(errorCB);
 
   if (reminders.length > 0) {
     for (let i = 0; i < reminders.length; i++) {
@@ -121,15 +116,13 @@ async function populateScheduleButtons(
 
   //Get the user's list of reading schedules
   await userDB
-    .transaction(txn => {
-      let sql = 'SELECT * FROM tblSchedules WHERE DoesTrack=?;';
-      txn.executeSql(sql, [doesTrack ? 1 : 0]).then(([t, res]) => {
-        result = res;
-      });
+    .executeSql('SELECT * FROM tblSchedules WHERE DoesTrack=?;', [
+      doesTrack ? 1 : 0,
+    ])
+    .then(([res]) => {
+      result = res;
     })
-    .catch(err => {
-      errorCB(err);
-    });
+    .catch(errorCB);
 
   //Loop through the list and select the first reading portion that is not completed
   for (let i = 0; i < result.rows.length; i++) {
@@ -155,33 +148,31 @@ async function populateScheduleButtons(
 
     //Populate reading portions from all schedules for today
     await userDB
-      .transaction(txn => {
-        const sql = `SELECT * FROM ${tableName}
-                WHERE IsFinished=0
-                ORDER BY ReadingDayID ASC
-                LIMIT 1;`;
-        txn.executeSql(sql, []).then(([t, res]) => {
-          if (res.rows.length > 0) {
-            completionDate = res.rows.item(0).CompletionDate;
-          }
-        });
+      .executeSql(
+        `SELECT * FROM ${tableName}
+         WHERE IsFinished=0
+         ORDER BY ReadingDayID ASC
+         LIMIT 1;`,
+        [],
+      )
+      .then(([res]) => {
+        if (res.rows.length > 0) {
+          completionDate = res.rows.item(0).CompletionDate;
+        }
       })
-      .catch(err => {
-        errorCB(err);
-      });
+      .catch(errorCB);
 
     await userDB
-      .transaction(txn => {
-        const sql = `SELECT * FROM ${tableName}
-                WHERE CompletionDate=?
-                ORDER BY ReadingDayID ASC;`;
-        txn.executeSql(sql, [completionDate]).then(([t, res]) => {
-          items = res.rows;
-        });
+      .executeSql(
+        `SELECT * FROM ${tableName}
+         WHERE CompletionDate=?
+         ORDER BY ReadingDayID ASC;`,
+        [completionDate],
+      )
+      .then(([res]) => {
+        items = res.rows;
       })
-      .catch(err => {
-        errorCB(err);
-      });
+      .catch(errorCB);
 
     let innerHomeListItems = [];
 
@@ -221,16 +212,15 @@ async function populateWeeklyReading(
   await createWeeklyReadingSchedule(userDB, bibleDB, weeklyReadingReset);
 
   await userDB
-    .transaction(txn => {
-      const sql = `SELECT * FROM ${tableName}
-            ORDER BY ReadingDayID ASC;`;
-      txn.executeSql(sql, []).then(([t, res]) => {
-        items = res.rows;
-      });
+    .executeSql(
+      `SELECT * FROM ${tableName}
+       ORDER BY ReadingDayID ASC;`,
+      [],
+    )
+    .then(([res]) => {
+      items = res.rows;
     })
-    .catch(err => {
-      errorCB(err);
-    });
+    .catch(errorCB);
 
   let innerListItems = [];
   if (items.length > 0) {

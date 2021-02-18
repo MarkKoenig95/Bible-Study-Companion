@@ -170,26 +170,23 @@ export default function Notification(props) {
 
   useEffect(() => {
     userDB
-      .transaction(txn => {
-        txn
-          .executeSql('SELECT * FROM tblNotifications WHERE ID=?;', [
-            notificationID,
-          ])
-          .then(([t, res]) => {
-            let thisNotif = res.rows.item(0);
-            let tempListItems = [];
-            for (let i = 0; i < 7; i++) {
-              tempListItems.push({
-                day: i,
-                id: thisNotif.ID,
-                isActive: thisNotif[`IsDay${i}Active`],
-                isNotifActive: thisNotif.IsNotificationActive,
-                time: new Date(thisNotif[`Day${i}Time`]),
-                weekday: translate(`weekdays.${i}.name`),
-              });
-            }
-            setListItems(tempListItems);
+      .executeSql('SELECT * FROM tblNotifications WHERE ID=?;', [
+        notificationID,
+      ])
+      .then(([res]) => {
+        let thisNotif = res.rows.item(0);
+        let tempListItems = [];
+        for (let i = 0; i < 7; i++) {
+          tempListItems.push({
+            day: i,
+            id: thisNotif.ID,
+            isActive: thisNotif[`IsDay${i}Active`],
+            isNotifActive: thisNotif.IsNotificationActive,
+            time: new Date(thisNotif[`Day${i}Time`]),
+            weekday: translate(`weekdays.${i}.name`),
           });
+        }
+        setListItems(tempListItems);
       })
       .catch(errorCB);
   }, [userDB, updatePages, notificationID]);

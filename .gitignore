@@ -61,3 +61,6 @@ buck-out/
 
 # React Native Tools
 .vscode/.react
+
+# Temporary Files
+___temp

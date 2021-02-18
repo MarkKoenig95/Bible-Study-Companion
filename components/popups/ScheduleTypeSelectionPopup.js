@@ -10,6 +10,13 @@ import CustomButton from '../buttons/CustomButton';
 
 const prefix = 'scheduleTypePopup.';
 
+/**
+ * @typedef ScheduleType
+ * @property {integer} [SEQUENTIAL=0]
+ * @property {integer} [CHRONOLOGICAL=1]
+ * @property {integer} [THEMATIC=2]
+ * @property {integer} [CUSTOM=3]
+ */
 export const SCHEDULE_TYPES = {
   SEQUENTIAL: 0,
   CHRONOLOGICAL: 1,

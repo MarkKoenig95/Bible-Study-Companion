@@ -1,12 +1,17 @@
 const shouldLog = false;
 import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
-import {LocalDBPath, PrePopulatedDBPath} from '../fileSystem';
+import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
 import {FREQS} from '../../logic/logic';
 import {version} from '../../package.json';
 
 SQLite.enablePromise(true);
+
+/**
+ * @typedef Database
+ * @property {Function} executeSql
+ */
 
 export function log() {
   if (shouldLog) {
@@ -19,21 +24,20 @@ export function errorCB(err) {
 }
 
 export async function updateValue(
-  db,
+  DB,
   tableName,
   id,
   column,
   value,
   afterUpdate = () => {},
 ) {
-  await db
-    .transaction(txn => {
-      let sql = `UPDATE ${tableName}
-                    SET ${column}=?
-                    WHERE ID=?;`;
-      txn.executeSql(sql, [value, id]).then(afterUpdate);
-    })
-    .catch(errorCB);
+  await runSQL(
+    DB,
+    `UPDATE ${tableName}
+       SET ${column}=?
+       WHERE ID=?;`,
+    [value, id],
+  ).then(afterUpdate);
 }
 
 export function createPlaceholdersFromArray(array) {
@@ -72,137 +76,139 @@ export function formatDate(date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-export async function loadData(db, tableName, doesTrack) {
-  if (db) {
-    let results;
-    await db
-      .transaction(txn => {
-        txn.executeSql(`SELECT * FROM ${tableName};`, []).then(([t, res]) => {
-          results = res;
-        });
-      })
-      .catch(errorCB);
+/**
+ * Returns an array of schedule days (which is an array of separate reading objects for the day)
+ * for use in a FlatList typically
+ * @param {Database} db
+ * @param {string} tableName
+ * @param {boolean} doesTrack
+ */
+export async function loadData(DB, tableName, doesTrack) {
+  if (!DB) {
+    return;
+  }
 
-    if (!results) {
-      return;
-    }
+  let results = await runSQL(DB, `SELECT * FROM ${tableName};`);
 
-    var listItems = [];
+  if (!results) {
+    return;
+  }
 
-    var innerItems = [];
-    var previousDate;
+  var listItems = [];
 
-    for (let i = 0; i < results.rows.length; ++i) {
-      const item = {
-        ...results.rows.item(i),
-        doesTrack: doesTrack,
-      };
-      if (item.ReadingDayID) {
-        if (item.CompletionDate === previousDate) {
-          innerItems.push(item);
-        } else {
-          if (innerItems.length > 0) {
-            listItems.push(innerItems);
-          }
-          innerItems = [item];
-          previousDate = item.CompletionDate;
-        }
+  var innerItems = [];
+  var previousDate;
 
-        if (i >= results.rows.length - 1) {
+  for (let i = 0; i < results.rows.length; ++i) {
+    const item = {
+      ...results.rows.item(i),
+      doesTrack: doesTrack,
+    };
+    if (item.ReadingDayID) {
+      if (item.CompletionDate === previousDate) {
+        innerItems.push(item);
+      } else {
+        if (innerItems.length > 0) {
           listItems.push(innerItems);
         }
-      } else {
-        listItems.push(item);
+        innerItems = [item];
+        previousDate = item.CompletionDate;
       }
-    }
 
-    return listItems;
+      if (i >= results.rows.length - 1) {
+        listItems.push(innerItems);
+      }
+    } else {
+      listItems.push(item);
+    }
   }
+
+  return listItems;
 }
 
-export async function appVersion(db) {
+export async function appVersion(userDB) {
   let prevVersion;
   let currVersion = version;
 
-  await db
-    .transaction(txn => {
-      txn
-        .executeSql(
-          'SELECT Description FROM tblUserPrefs WHERE Name="AppVersion";',
-          [],
-        )
-        .then(([t, res]) => {
-          prevVersion = res.rows.item(0).Description;
-        });
-    })
-    .catch(errorCB);
+  await runSQL(
+    userDB,
+    'SELECT Description FROM tblUserPrefs WHERE Name="AppVersion";',
+  ).then(res => {
+    prevVersion = res.rows.item(0).Description;
+  });
 
   if (prevVersion !== currVersion) {
-    db.transaction(txn => {
-      txn.executeSql(
-        'UPDATE tblUserPrefs SET Description=? WHERE Name="AppVersion";',
-        [currVersion],
-      );
-    }).catch(errorCB);
+    await runSQL(
+      userDB,
+      'UPDATE tblUserPrefs SET Description=? WHERE Name="AppVersion";',
+      [currVersion],
+    );
   }
   return {prevVersion, currVersion};
 }
 
-export async function getVersion(db) {
-  let result;
+/**
+ * Returns the user_version of the given database
+ * @param {Database} db
+ */
+export async function getVersion(DB) {
+  let result = await runSQL(DB, 'PRAGMA user_version;');
 
-  await db
-    .transaction(txn => {
-      txn.executeSql('PRAGMA user_version;', []).then(([txn, res]) => {
-        result = res;
-      });
+  return result.rows.item(0).user_version;
+}
+
+/**
+ * A centralized query function to make other code cleaner, more readable, and to centralize error handling
+ * @param {Database} DB
+ * @param {string} sql
+ * @param {array} args
+ * @returns {DBQueryResult}
+ */
+export async function runSQL(DB, sql, args = []) {
+  let result;
+  await DB.executeSql(sql, args)
+    .then(([res]) => {
+      result = res;
     })
     .catch(errorCB);
 
   return result;
 }
 
-export async function getQuery(bibleDB, sql) {
-  let result;
-  await bibleDB
-    .transaction(txn => {
-      txn.executeSql(sql, []).then(([t, res]) => {
-        result = res;
-      });
-    })
-    .catch(errorCB);
-
-  return result;
-}
-
+/**
+ * Returns an object with the items from tblUserPrefs as the keys
+ * @param {Database} userDB
+ * @returns {object}
+ * @property {integer} showDaily.ID
+ * @property {boolean} showDaily.Value - Should the home page show the daily portion of the weekly reading
+ * @property {integer} weeklyReadingResetDay.ID
+ * @property {integer} weeklyReadingResetDay.Value - The day of the week to recreate the weekly reading schedule
+ */
 export async function getSettings(userDB) {
   let showDaily;
   let weeklyReadingResetDay;
 
-  await userDB.transaction(txn => {
-    txn.executeSql('SELECT * FROM tblUserPrefs;', []).then(([t, res]) => {
-      if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          const pref = res.rows.item(i);
-          switch (pref.Name) {
-            case 'ShowWeeklyReadingDailyPortion':
-              showDaily = {id: pref.ID, value: pref.Value ? true : false};
-              break;
-            case 'WeeklyReadingResetDay':
-              weeklyReadingResetDay = {id: pref.ID, value: pref.Value};
-              break;
-            case 'AppVersion':
-              break;
-            default:
-              console.log(
-                'Name of tblUserPrefs item is not included in switch statement',
-              );
-              break;
-          }
-        }
+  let tblUserPrefs = await runSQL(userDB, 'SELECT * FROM tblUserPrefs;');
+  if (tblUserPrefs.rows.length > 0) {
+    for (let i = 0; i < tblUserPrefs.rows.length; i++) {
+      const pref = tblUserPrefs.rows.item(i);
+      switch (pref.Name) {
+        case 'ShowWeeklyReadingDailyPortion':
+          showDaily = {id: pref.ID, value: pref.Value ? true : false};
+          break;
+        case 'WeeklyReadingResetDay':
+          weeklyReadingResetDay = {id: pref.ID, value: pref.Value};
+          break;
+        case 'AppVersion':
+          break;
+        default:
+          console.log(
+            'Name of tblUserPrefs item is not included in switch statement',
+          );
+          break;
       }
-    });
-  });
+    }
+  }
 
   return {showDaily, weeklyReadingResetDay};
 }
@@ -273,9 +279,14 @@ function setDatabaseParameters(upgradeJSON) {
   );
 }
 
+/**
+ * Checks the user's database version and runs sql statements from the upgradeJSON to update it
+ * accordingly if the version there does not match the user's
+ * @param {Database} db
+ * @param {object} upgradeJSON
+ */
 export async function upgradeDB(db, upgradeJSON) {
   let DB;
-  let res = await getVersion(db);
 
   log('Upgrading', db.dbname);
 
@@ -283,7 +294,7 @@ export async function upgradeDB(db, upgradeJSON) {
   var json = setDatabaseParameters(upgradeJSON);
 
   let upgradeVersion = upgradeJSON.version;
-  let userVersion = res.rows.item(0).user_version;
+  let userVersion = await getVersion(db);
 
   log('upgradeVersion', upgradeVersion, 'userVersion', userVersion);
 
@@ -293,9 +304,7 @@ export async function upgradeDB(db, upgradeJSON) {
 
     if (!upgradeJSON.upgrades) {
       log('Replacing DB:', db.dbname, '.....');
-      await replaceDB(db, upgradeJSON.name).then(res => {
-        DB = res;
-      });
+      DB = await replaceDB(db, upgradeJSON.name);
       return DB;
     }
 
@@ -337,25 +346,16 @@ export async function upgradeDB(db, upgradeJSON) {
   return db;
 }
 
-export function listAllTables(db, cb) {
-  if (!cb) {
-    cb = ([txn, results]) => {
-      for (let i = 0; i < results.rows.length; i++) {
-        console.log(results.rows.item(i));
-      }
-    };
-  }
-
-  db.transaction(txn => {
-    txn
-      .executeSql(
-        'SELECT name FROM sqlite_master WHERE type ="table" AND name NOT LIKE "sqlite_%";',
-        [],
-      )
-      .then(cb);
-  });
-}
-
+/**
+ * A binary search algorithm for finding a target value in a query result from the database if given
+ * a secondary value and key it will search for a value that satisfies both values for my purposes I
+ * only need 2 in my algorithm. So this was easier to make than a more general case.
+ * @param {DBQueryResult} query
+ * @param {string} primaryKey
+ * @param {*} primaryTargetValue
+ * @param {string} secondaryKey
+ * @param {*} secondaryTargetValue
+ */
 export function searchQuery(
   query,
   primaryKey,
@@ -370,18 +370,6 @@ export function searchQuery(
   var prevIndex;
   var startPointer = 0;
   var endPointer = query.rows.length;
-
-  log(
-    'Search query:',
-    'safetyCheck=',
-    safetyCheck,
-    'startPointer=',
-    startPointer,
-    'endPointer=',
-    endPointer,
-    'found=',
-    found,
-  );
 
   while (!found && safetyCheck < safetyBoundary) {
     let isHigh;
@@ -435,18 +423,6 @@ export function searchQuery(
       console.log('Exited with safety check');
     }
   }
-
-  log(
-    'Search query:',
-    'safetyCheck=',
-    safetyCheck,
-    'startPointer=',
-    startPointer,
-    'endPointer=',
-    endPointer,
-    'found=',
-    found,
-  );
 
   return index;
 }

@@ -4,6 +4,13 @@ import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
 
 export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
+
+/**
+ * @typedef {number} Frequency
+ * @enum
+ */
+
+/** @type {Frequency} */
 export const FREQS = {
   DAILY: 0,
   WEEKLY: 1,
@@ -11,6 +18,13 @@ export const FREQS = {
   NEVER: 3,
 };
 
+/**
+ * @typedef {object} Error
+ * @property {string} Error.NAME_TAKEN
+ * @enum
+ */
+
+/** @type {Error} */
 export const ERROR = {NAME_TAKEN: 'NAME_TAKEN'};
 
 export function openJWLibrary() {
@@ -119,13 +133,9 @@ export function createDailyTextLink() {
 export async function legacyBugFixForV062(userDB) {
   const tableName = WEEKLY_READING_TABLE_NAME;
   await userDB
-    .transaction(txn => {
-      txn.executeSql(
-        'UPDATE tblSchedules SET CreationInfo=? WHERE CreationInfo IS NULL;',
-        [tableName],
-      );
-    })
-    .catch(err => {
-      console.error(err);
-    });
+    .executeSql(
+      'UPDATE tblSchedules SET CreationInfo=? WHERE CreationInfo IS NULL;',
+      [tableName],
+    )
+    .catch(console.error);
 }

@@ -157,6 +157,7 @@ export default function AppContainer() {
 
   useEffect(() => {
     initializeData().then(data => {
+      console.log('data is', data);
       log('Setting context values');
       dispatch(setUserDB(data.userDB));
       dispatch(setBibleDB(data.bibleDB));

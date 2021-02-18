@@ -13,19 +13,17 @@ import CustomDropdown from './CustomDropdown';
 const items = [];
 
 async function loadData(bibleDB) {
-  await bibleDB.transaction(txn => {
-    txn
-      .executeSql('SELECT BibleBookID, BookName FROM tblBibleBooks;', [])
-      .then(([txn, results]) => {
-        for (let i = 0; i < results.rows.length; ++i) {
-          let item = results.rows.item(i);
-          items.push({
-            id: item.BibleBookID,
-            name: translate('bibleBooks.' + item.BibleBookID + '.name'),
-          });
-        }
-      });
-  });
+  await bibleDB
+    .executeSql('SELECT BibleBookID, BookName FROM tblBibleBooks;', [])
+    .then(([res]) => {
+      for (let i = 0; i < res.rows.length; ++i) {
+        let item = res.rows.item(i);
+        items.push({
+          id: item.BibleBookID,
+          name: translate('bibleBooks.' + item.BibleBookID + '.name'),
+        });
+      }
+    });
 }
 
 export default function VersePicker(props) {
@@ -34,6 +32,7 @@ export default function VersePicker(props) {
     defaultChapterValue,
     defaultVerseValue,
     onChange,
+    selectedItems,
     testID,
     title,
     verseValue,
@@ -41,7 +40,6 @@ export default function VersePicker(props) {
 
   const globalState = useContext(store);
   const {bibleDB} = globalState.state;
-  const selectedItems = selectedItems;
   const setSelectedItems = sItems => onChange('selectedItems', sItems);
   const [bookName, setBookName] = useState('');
 

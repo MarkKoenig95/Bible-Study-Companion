@@ -1,4 +1,4 @@
-import {errorCB, log} from './generalTransactions';
+import {log, runSQL} from './generalTransactions';
 import {getWeekdays, ERROR} from '../../logic/logic';
 import {FREQS} from '../../logic/logic';
 
@@ -11,21 +11,17 @@ const tblRemindersRows = `
     CompletionDate DATE
     `;
 
+/**
+ * Checks all reminders in the database and updates them if deemed appropriate, otherwise doesn't adjust them
+ * @param {Database} userDB
+ */
 export async function updateReminderDates(userDB) {
   log('updating reminders');
-  let reminders = [];
+  let reminders = await runSQL(userDB, 'SELECT * FROM tblReminders;');
 
-  await userDB
-    .transaction(txn => {
-      txn.executeSql('SELECT * FROM tblReminders;', []).then(([t, res]) => {
-        reminders = res.rows;
-      });
-    })
-    .catch(errorCB);
-
-  if (reminders.length > 0) {
-    for (let i = 0; i < reminders.length; i++) {
-      const reminder = reminders.item(i);
+  if (reminders.rows.length > 0) {
+    for (let i = 0; i < reminders.rows.length; i++) {
+      const reminder = reminders.rows.item(i);
       log('updating tblReminders reminder', i, reminder);
       if (reminder.IsFinished) {
         const {newCompDate, newIsFinished} = setReminderCompDate(
@@ -38,20 +34,25 @@ export async function updateReminderDates(userDB) {
         log('newCompDate', newCompDate, 'newIsFinished', newIsFinished);
 
         if (newCompDate) {
-          await userDB
-            .transaction(txn => {
-              txn.executeSql(
-                'UPDATE tblReminders SET CompletionDate=?, IsFinished=? WHERE ID=?;',
-                [newCompDate.toString(), newIsFinished ? 1 : 0, reminder.ID],
-              );
-            })
-            .catch(errorCB);
+          await runSQL(
+            userDB,
+            'UPDATE tblReminders SET CompletionDate=?, IsFinished=? WHERE ID=?;',
+            [newCompDate.toString(), newIsFinished ? 1 : 0, reminder.ID],
+          );
         }
       }
     }
   }
 }
 
+/**
+ * Given creation information adds a reminder to the database
+ * @param {Database} userDB
+ * @param {string} name
+ * @param {Frequency} frequency
+ * @param {number} resetValue
+ * @param {Date} completionDate
+ */
 export async function addReminder(
   userDB,
   name,
@@ -62,15 +63,11 @@ export async function addReminder(
   let nameExists;
 
   //Check if the reminder already exists or not
-  await userDB
-    .transaction(txn => {
-      txn
-        .executeSql('SELECT 1 FROM tblReminders WHERE Name=?;', [name])
-        .then(([t, res]) => {
-          nameExists = res.rows.length > 0;
-        });
-    })
-    .catch(errorCB);
+  await runSQL(userDB, 'SELECT 1 FROM tblReminders WHERE Name=?;', [name]).then(
+    res => {
+      nameExists = res.rows.length > 0;
+    },
+  );
 
   if (nameExists) {
     console.warn('Reminder name taken');
@@ -86,30 +83,29 @@ export async function addReminder(
       VALUES 
       (?, ?, ?, ?);`;
 
-  await userDB
-    .transaction(txn => {
-      txn
-        .executeSql(SQL, [
-          name,
-          frequency,
-          resetValue,
-          completionDate.toString(),
-        ])
-        .then(() => {
-          log(name, 'reminder created successfully');
-        });
-    })
-    .catch(errorCB);
+  await runSQL(userDB, SQL, [
+    name,
+    frequency,
+    resetValue,
+    completionDate.toString(),
+  ]).then(() => {
+    log(name, 'reminder created successfully');
+  });
 }
 
 export async function deleteReminder(userDB, id) {
-  userDB
-    .transaction(txn => {
-      txn.executeSql('DELETE FROM tblReminders WHERE ID=?;', [id]);
-    })
-    .catch(errorCB);
+  await runSQL(userDB, 'DELETE FROM tblReminders WHERE ID=?;', [id]);
 }
 
+/**
+ * Given the previous values for a reminder returns new completion date and isFinished values
+ * @param {Date} prevCompDate
+ * @param {boolean} prevIsFinished
+ * @param {Frequency} prevFrequency
+ * @param {number} prevResetValue
+ * @param {Frequency} frequency
+ * @param {number} resetValue
+ */
 export function setReminderCompDate(
   prevCompDate,
   prevIsFinished,
@@ -150,9 +146,16 @@ export function setReminderCompDate(
         break;
       case FREQS.MONTHLY:
         if (resetValue <= newCompDate.getDate()) {
+          /* Set the date to be just more than a month from the current date the function itself
+            handles adjustments based on how many days the current month has, we just need to make
+            sure that we end up within the next month */
           newCompDate.setDate(32);
         }
         newCompDate.setDate(resetValue);
+        break;
+      case FREQS.NEVER:
+        break;
+      default:
         break;
     }
     newIsFinished = false;

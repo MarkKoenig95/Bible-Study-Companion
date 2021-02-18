@@ -8,7 +8,7 @@ import {translate} from '../logic/localization/localization';
 import {store} from '../data/Store/store.js';
 
 import {useUpdate} from '../logic/logic';
-import {SettingsWrapper} from '../components/SettingsWrapper';
+import SettingsWrapper from '../components/SettingsWrapper';
 import WeekdayPicker from '../components/inputs/WeekdayPicker';
 import {updateValue} from '../data/Database/generalTransactions';
 import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions';
@@ -16,8 +16,9 @@ import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions
 const pageTitle = 'settingsPage';
 
 export default function Settings(props) {
+  const {navigation} = props;
+
   console.log('loaded Settings page');
-  const navigation = props.navigation;
   const globalState = useContext(store);
 
   const {dispatch} = globalState;

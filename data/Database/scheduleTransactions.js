@@ -5,7 +5,7 @@ import {
   createPlaceholdersFromArray,
   errorCB,
   formatDate,
-  getQuery,
+  runSQL,
 } from './generalTransactions';
 import {translate} from '../../logic/localization/localization';
 import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
@@ -16,101 +16,160 @@ import {
 } from '../../logic/logic';
 
 const prefix = 'scheduleTransactions.';
+
+/** @typedef {number} integer */
+
+/**
+ * @typedef VersePosition
+ * @enum
+ * @property {integer} [START=0] Indicates that the verse (or span of verses) includes the starting verse of the chapter
+ * @property {integer} [MIDDLE=1] Indicates that the verse (or span of verses) does not include the starting or ending verse of the chapter
+ * @property {integer} [END=2] Indicates that the verse (or span of verses) includes the ending verse of the chapter
+ * @property {integer} [START_AND_END=3] Indicates that the verse (or span of verses) includes both the starting and ending verse of the chapter
+ */
 export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
 
+/**
+ * The result from a query to the database
+ * @typedef {object} DBQueryResult
+ * @property {object} DBQueryResult.rows - The rows returned containing data matching the query
+ * @property {integer} DBQueryResult.rows.length - The number of rows in the result
+ * @property {Function} DBQueryResult.rows.item - Accepts an index and returns the item at that index
+ */
+
+/** @type {DBQueryResult} */
 var qryMaxChapters;
+/** @type {DBQueryResult} */
 var qryMaxVerses;
+/** @type {DBQueryResult} */
 var tblVerseIndex;
+/** @type {DBQueryResult} */
 var qryChronologicalOrder;
+/** @type {DBQueryResult} */
 var qryChronologicalIndex;
+/** @type {DBQueryResult} */
 var qryThematicOrder;
+/** @type {DBQueryResult} */
 var qryThematicIndex;
+/** @type {DBQueryResult} */
 var qryThematicCount;
+/** @type {DBQueryResult} */
 let qryThematicLeastIndices;
 
-//Updating schedule info
+//------------------------------------- Updating schedule info -------------------------------------
 
+/**
+ * Deletes a schedule from the database and the reference to such schedule in tblSchedules
+ * @param {Database} db
+ * @param {string} tableName - A string formatted from the function formatScheduleTableName
+ * @param {string} scheduleName
+ */
 export async function deleteSchedule(db, tableName, scheduleName) {
-  db.transaction(txn => {
-    txn.executeSql('DELETE FROM tblSchedules WHERE ScheduleName=?;', [
-      scheduleName,
-    ]);
+  await runSQL(db, 'DELETE FROM tblSchedules WHERE ScheduleName=?;', [
+    scheduleName,
+  ]);
 
-    txn.executeSql(`DROP TABLE IF EXISTS ${tableName};`, []).then(() => {
-      console.log('Deleted table ', tableName);
-    });
-  }).catch(errorCB);
+  await runSQL(db, `DROP TABLE IF EXISTS ${tableName};`).then(() => {
+    console.log('Deleted table ', tableName);
+  });
 }
 
-export function updateReadStatus(
-  db,
-  tableName,
-  id,
-  status,
-  afterUpdate = () => {},
-) {
+/**
+ * Updates the read flag in a schedule table of a reading day item
+ * @param {Database} db
+ * @param {string} tableName - A string formatted from the function formatScheduleTableName
+ * @param {integer} id - The reading day ID of the item to be updated
+ * @param {boolean} status - The value to update the status to
+ * @param {Function} afterUpdate - A callback to be fired when the update has completed
+ */
+export function updateReadStatus(db, tableName, id, status, afterUpdate) {
   let bool = status ? 1 : 0;
-  db.transaction(txn => {
-    let sql = `UPDATE ${tableName}
-    SET IsFinished=?
-    WHERE ReadingDayID=?;`;
-    txn.executeSql(sql, [bool, id]).then(afterUpdate());
-  }).catch(errorCB);
+
+  runSQL(db, `UPDATE ${tableName} SET IsFinished=? WHERE ReadingDayID=?;`, [
+    bool,
+    id,
+  ]).then(afterUpdate);
 }
 
+/**
+ * Given a unique and existing name value updates the date value of the matching element in the database
+ * @param {Database} userDB
+ * @param {Date} date
+ * @param {string} name - Unique name value corresponding to the item to be updated in the table
+ * @param {Function} afterUpdate - A callback to be fired when the update has completed
+ */
 export async function updateDates(userDB, date, name, afterUpdate = () => {}) {
-  await userDB
-    .transaction(txn => {
-      let sql = `UPDATE tblDates
-                  SET Date=?
-                  WHERE Name=?;`;
-      txn.executeSql(sql, [date.toString(), name]).then(afterUpdate());
-    })
-    .catch(errorCB);
+  await runSQL(userDB, 'UPDATE tblDates SET Date=? WHERE Name=?;', [
+    date.toString(),
+    name,
+  ]).then(afterUpdate);
 }
 
+/** @param {integer} id */
 export function formatScheduleTableName(id) {
   const tableName = 'tblSchedule' + id;
 
   return tableName;
 }
 
+/**
+ * Given a schedule name, returns the settings associated with it
+ * @param {Database} db
+ * @param {string} scheduleName
+ * @returns {object}
+ * @property {boolean} hideCompleted - True if user wants previously read reading portions to not be shown
+ * @property {boolean} doesTrack - False if user wants completion dates of reading portions to not be shown
+ */
 export async function getScheduleSettings(db, scheduleName) {
   let hideCompleted;
   let doesTrack;
 
-  await db
-    .transaction(txn => {
-      txn
-        .executeSql('SELECT * FROM tblSchedules WHERE ScheduleName=?;', [
-          scheduleName,
-        ])
-        .then(([t, res]) => {
-          if (res.rows.length > 0) {
-            hideCompleted = res.rows.item(0).HideCompleted ? true : false;
-            doesTrack = res.rows.item(0).DoesTrack ? true : false;
-          }
-        });
-    })
-    .catch(errorCB);
+  let result = await runSQL(
+    db,
+    'SELECT * FROM tblSchedules WHERE ScheduleName=?;',
+    [scheduleName],
+  );
+
+  if (result.rows.length > 0) {
+    hideCompleted = result.rows.item(0).HideCompleted ? true : false;
+    doesTrack = result.rows.item(0).DoesTrack ? true : false;
+  }
 
   return {doesTrack, hideCompleted};
 }
 
+/**
+ * Given a schedule name, will update the value of the hide completed setting associated with it
+ * @param {Database} db
+ * @param {string} scheduleName
+ * @param {boolean} value
+ */
 export async function setHideCompleted(db, scheduleName, value) {
   let hideCompleted = value ? 1 : 0;
 
-  await db
-    .transaction(txn => {
-      txn.executeSql(
-        'UPDATE tblSchedules SET HideCompleted=? WHERE ScheduleName=?;',
-        [hideCompleted, scheduleName],
-      );
-    })
-    .catch(errorCB);
+  await runSQL(
+    db,
+    'UPDATE tblSchedules SET HideCompleted=? WHERE ScheduleName=?;',
+    [hideCompleted, scheduleName],
+  );
 }
 
-//Seting up needed info
+//-------------------------------------- Seting up needed info --------------------------------------
+/**
+ * Creates a mock query object based on the typical style of database fetches in order to
+ * unify index calls between different table ordering schemes:
+ * Chronological, Thematic, and Sequential
+ *
+ * The main point is to save storage space. Instead of having 3 copies of the same 31077 items
+ * in tblVerseIndex we have the base query (tblVerseIndex)  which stores all of the relevant
+ * information for the verse (Bible Book, Chapter, Verse number, etc.) and then 2 other
+ * queries sorted according to their corresponding scheme (Chronological and Thematic) which
+ * have a reference to the correct VerseID in the main table.
+ *
+ * @param {object} query a resulting query object from a database fetch result
+ * @returns {object} a Mocked database fetch result which takes a sequential index, and
+ *  returns the corresponding value from the tblVerseIndex table
+ */
 function createQryOrderIndex(query) {
   const item = i => {
     const index = query.rows.item(i).VerseID - 1;
@@ -122,54 +181,67 @@ function createQryOrderIndex(query) {
   return {rows: {length: length, item: item}};
 }
 
+/**
+ * Initializes query variables to be used in schedule creation
+ * @param {Database} bibleDB
+ */
 export async function runQueries(bibleDB) {
   if (!tblVerseIndex) {
-    let sql = 'SELECT * FROM tblVerseIndex;';
-
-    await getQuery(bibleDB, sql).then(res => {
-      tblVerseIndex = res;
-    });
+    tblVerseIndex = await runSQL(bibleDB, 'SELECT * FROM tblVerseIndex;');
   }
 
   if (!qryMaxVerses) {
-    await getQuery(bibleDB, 'SELECT * FROM qryMaxVerses;').then(res => {
-      qryMaxVerses = res;
-    });
+    qryMaxVerses = await runSQL(bibleDB, 'SELECT * FROM qryMaxVerses;');
+  }
+
+  if (!qryMaxChapters) {
+    qryMaxChapters = await runSQL(bibleDB, 'SELECT * FROM qryMaxChapters;');
   }
 
   if (!qryChronologicalOrder) {
-    await getQuery(bibleDB, 'SELECT * FROM qryChronologicalOrder;').then(
-      res => {
-        qryChronologicalOrder = res;
-        qryChronologicalIndex = createQryOrderIndex(res);
-      },
+    qryChronologicalOrder = await runSQL(
+      bibleDB,
+      'SELECT * FROM qryChronologicalOrder;',
     );
+    qryChronologicalIndex = createQryOrderIndex(qryChronologicalOrder);
   }
 
   if (!qryThematicOrder) {
-    await getQuery(bibleDB, 'SELECT * FROM qryThematicOrder;').then(res => {
-      qryThematicOrder = res;
-      qryThematicIndex = createQryOrderIndex(res);
-    });
+    qryThematicOrder = await runSQL(bibleDB, 'SELECT * FROM qryThematicOrder;');
+    qryThematicIndex = createQryOrderIndex(qryThematicOrder);
   }
 
   if (!qryThematicCount) {
-    await getQuery(bibleDB, 'SELECT * FROM qryThematicCount;').then(res => {
-      qryThematicCount = res;
-    });
+    qryThematicCount = await runSQL(bibleDB, 'SELECT * FROM qryThematicCount;');
   }
 
   if (!qryThematicLeastIndices) {
-    await getQuery(bibleDB, 'SELECT * FROM qryThematicLeastIndices;').then(
-      res => {
-        qryThematicLeastIndices = res;
-      },
+    qryThematicLeastIndices = await runSQL(
+      bibleDB,
+      'SELECT * FROM qryThematicLeastIndices;',
     );
   }
+
+  return {
+    tblVerseIndex,
+    qryChronologicalIndex,
+    qryChronologicalOrder,
+    qryMaxChapters,
+    qryMaxVerses,
+    qryThematicCount,
+    qryThematicIndex,
+    qryThematicLeastIndices,
+    qryThematicOrder,
+  };
 }
 
-//Creating schedules
-async function createScheduleTable(userDB, tableName, scheduleType) {
+//---------------------------------------- Creating schedules ----------------------------------------
+/**
+ * @param {Database} userDB
+ * @param {string} tableName
+ * @param {ScheduleType} scheduleType
+ */
+export async function createScheduleTable(userDB, tableName, scheduleType) {
   let SQL;
 
   if (scheduleType !== SCHEDULE_TYPES.CUSTOM) {
@@ -195,25 +267,43 @@ async function createScheduleTable(userDB, tableName, scheduleType) {
             IsFinished BOOLEAN DEFAULT 0);`;
   }
 
-  await userDB
-    .transaction(txn => {
-      //Create a table for this new schedule based on the formated name
-      txn.executeSql(SQL, []).then(() => {
-        log('Table', tableName, 'created successfully');
-      });
-    })
-    .catch(errorCB);
+  //Create a table for this new schedule based on the formated name
+  await runSQL(userDB, SQL).then(() => {
+    log('Table', tableName, 'created successfully');
+  });
 
   return;
 }
 
+/**
+ * Creates a Bible reading schedule or a custom schedule.
+ * If creating a Bible reading schedule, then duration, bookId, chapter, and verse are required.
+ * StartingPortion, maxPortion, readingPortionDesc, and portionsPerDay are not.
+ * If creating a custom schedule, then it is the oposite.
+ * @param {Database} userDB
+ * @param {Database} bibleDB
+ * @param {ScheduleType} scheduleType
+ * @param {string} scheduleName
+ * @param {boolean} [doesTrack=true] - Should the schedule keep track of the completion dates for reading days?
+ * @param {Array<(0|1)>} [activeDays=[1,1,1,1,1,1,1]] - A length 7 array of 1s or 0s. For future versions where the user can choose which weekdays they would like to read on and which weekdays to skip
+ * @param {number} duration - The length (in years) the user wants the Bible reading schedule to last
+ * @param {integer} bookId - The number of the Bible book the user chose to start from
+ * @param {integer} chapter - The number of the Bible book the user chose to start from
+ * @param {integer} verse - The number of the Bible book the user chose to start from
+ * @param {number} startingPortion - (Must be between 0 and 1,000,000,000,000,000) The portion to begin the schedule from
+ * @param {number} maxPortion - The number of the last portion in the publication
+ * @param {string} readingPortionDesc - A user provided description of the sections to break up their reading by
+ * @param {number} portionsPerDay - How many portions to read each day
+ * @param {Function} successCallBack
+ * @param {Function} errorCallBack
+ */
 export async function addSchedule(
   userDB,
   bibleDB,
   scheduleType,
   scheduleName,
-  doesTrack,
-  activeDays,
+  doesTrack = true,
+  activeDays = [1, 1, 1, 1, 1, 1, 1],
   duration,
   bookId,
   chapter,
@@ -243,18 +333,12 @@ export async function addSchedule(
   let tableName;
   let creationInfo;
 
-  await userDB
-    .transaction(txn => {
-      //Check if a schedule with that name already exists
-      txn
-        .executeSql('SELECT 1 FROM tblSchedules WHERE ScheduleName=?;', [
-          scheduleName,
-        ])
-        .then(([txn, res]) => {
-          scheduleNameExists = res.rows.length > 0;
-        });
-    })
-    .catch(errorCB);
+  //Check if a schedule with that name already exists
+  await runSQL(userDB, 'SELECT 1 FROM tblSchedules WHERE ScheduleName=?;', [
+    scheduleName,
+  ]).then(res => {
+    scheduleNameExists = res.rows.length > 0;
+  });
 
   if (scheduleType !== SCHEDULE_TYPES.CUSTOM) {
     creationInfo = {
@@ -276,57 +360,46 @@ export async function addSchedule(
     log('Creating schehdule table');
 
     //If it doesn't already exist, add a value to the schedules table with correlating info
-    await userDB
-      .transaction(txn => {
-        txn
-          .executeSql(
-            `INSERT INTO 
-              tblSchedules (
-                ScheduleName, 
-                HideCompleted, 
-                DoesTrack, 
-                ScheduleType, 
-                CreationInfo,
-                IsDay0Active,
-                IsDay1Active,
-                IsDay2Active,
-                IsDay3Active,
-                IsDay4Active,
-                IsDay5Active,
-                IsDay6Active) 
-                VALUES (?, 0, ?, ?, ?,
-                  ?, ?, ?, ?, ?, ?, ?);`,
-            [
-              scheduleName,
-              doesTrack,
-              scheduleType,
-              JSON.stringify(creationInfo),
-              ...activeDays,
-            ],
-          )
-          .then(() => {
-            log(scheduleName, 'inserted successfully');
-          });
+    await runSQL(
+      userDB,
+      `INSERT INTO
+        tblSchedules (
+          ScheduleName,
+          HideCompleted,
+          DoesTrack,
+          ScheduleType,
+          CreationInfo,
+          IsDay0Active,
+          IsDay1Active,
+          IsDay2Active,
+          IsDay3Active,
+          IsDay4Active,
+          IsDay5Active,
+          IsDay6Active)
+          VALUES (?, 0, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?, ?);`,
+      [
+        scheduleName,
+        doesTrack,
+        scheduleType,
+        JSON.stringify(creationInfo),
+        ...activeDays,
+      ],
+    ).then(() => {
+      log(scheduleName, 'inserted successfully');
+    });
 
-        //Get the newly created schedule info to extract it's ID to use for unique table name creation
-        txn
-          .executeSql(
-            'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName=?;',
-            [scheduleName],
-          )
-          .then(([txn, res]) => {
-            let id = res.rows.item(0).ScheduleID;
-            tableName = formatScheduleTableName(id);
+    //Get the newly created schedule info to extract it's ID to use for unique table name creation
+    await runSQL(
+      userDB,
+      'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName=?;',
+      [scheduleName],
+    ).then(res => {
+      let id = res.rows.item(0).ScheduleID;
+      tableName = formatScheduleTableName(id);
 
-            log(
-              'Creating table for schedule',
-              scheduleName,
-              'named',
-              tableName,
-            );
-          });
-      })
-      .catch(errorCB);
+      log('Creating table for schedule', scheduleName, 'named', tableName);
+    });
 
     await createScheduleTable(userDB, tableName, scheduleType);
 
@@ -360,6 +433,14 @@ export async function addSchedule(
   }
 }
 
+/**
+ * Creates a Bible reading schedule based on the weekly Christian Life and Ministry meeting workbook
+ * recreated on a user defined weekday each week (usually the day after their meeting)
+ * @param {Database} userDB
+ * @param {Database} bibleDB
+ * @param {integer} resetDayOfWeek - (0 - 6) The weekday to recreate the schedule on
+ * @param {boolean} [shouldForceUpdate=false] - An (optional) flag which, when used will recreate the schedule regardless of any other factors
+ */
 export async function createWeeklyReadingSchedule(
   userDB,
   bibleDB,
@@ -384,29 +465,22 @@ export async function createWeeklyReadingSchedule(
 
   timeKeeper('Started at creating weekly reading schedule at.....');
 
-  await userDB
-    .transaction(txn => {
-      txn
-        .executeSql(
-          'SELECT * FROM tblDates WHERE Name="WeeklyReadingStart" OR Name="WeeklyReadingCurrent";',
-        )
-        .then(([t, res]) => {
-          for (let i = 0; i < res.rows.length; i++) {
-            const name = res.rows.item(i).Name;
-            switch (name) {
-              case 'WeeklyReadingStart':
-                weeklyReadingStart = res.rows.item(i);
-                break;
-              case 'WeeklyReadingCurrent':
-                weeklyReadingCurrent = res.rows.item(i).Date;
-                break;
-            }
-          }
-        });
-    })
-    .catch(err => {
-      errorCB(err);
-    });
+  let tblDates = await runSQL(
+    userDB,
+    'SELECT * FROM tblDates WHERE Name="WeeklyReadingStart" OR Name="WeeklyReadingCurrent";',
+  );
+
+  for (let i = 0; i < tblDates.rows.length; i++) {
+    const name = tblDates.rows.item(i).Name;
+    switch (name) {
+      case 'WeeklyReadingStart':
+        weeklyReadingStart = tblDates.rows.item(i);
+        break;
+      case 'WeeklyReadingCurrent':
+        weeklyReadingCurrent = tblDates.rows.item(i).Date;
+        break;
+    }
+  }
 
   //The description of this date is the order in which it falls matching the Weekly Order in the bibleDB
   let startIndex = parseInt(weeklyReadingStart.Description, 10);
@@ -448,49 +522,32 @@ export async function createWeeklyReadingSchedule(
     await updateDates(userDB, date, 'WeeklyReadingCurrent', () => {});
 
     //drop table from previous week
-    await userDB
-      .transaction(txn => {
-        txn.executeSql(`DROP TABLE IF EXISTS ${tableName};`, []);
-        txn.executeSql(
-          'DELETE FROM tblSchedules WHERE CreationInfo=? OR CreationInfo IS NULL;',
-          [tableName],
-        );
-      })
-      .catch(err => {
-        errorCB(err);
-      });
+    await runSQL(userDB, `DROP TABLE IF EXISTS ${tableName};`);
+
+    await runSQL(
+      userDB,
+      'DELETE FROM tblSchedules WHERE CreationInfo=? OR CreationInfo IS NULL;',
+      [tableName],
+    );
 
     let scheduleName = translate('reminders.weeklyReading.title');
 
-    await userDB
-      .transaction(txn => {
-        txn
-          .executeSql(
-            'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?);',
-            [scheduleName, SCHEDULE_TYPES.SEQUENTIAL, tableName],
-          )
-          .then(() => {
-            log(scheduleName, 'inserted successfully');
-          });
-      })
-      .catch(errorCB);
+    await runSQL(
+      userDB,
+      'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?);',
+      [scheduleName, SCHEDULE_TYPES.SEQUENTIAL, tableName],
+    ).then(() => {
+      log(scheduleName, 'inserted successfully');
+    });
 
     await createScheduleTable(userDB, tableName);
 
     //Generate schedule for current week
-    await bibleDB
-      .transaction(txn => {
-        txn
-          .executeSql('SELECT * FROM tblVerseIndex WHERE WeeklyOrder=?;', [
-            currentWeek,
-          ])
-          .then(([t, res]) => {
-            weeklyReadingInfo = res;
-          });
-      })
-      .catch(err => {
-        errorCB(err);
-      });
+    weeklyReadingInfo = await runSQL(
+      bibleDB,
+      'SELECT * FROM tblVerseIndex WHERE WeeklyOrder=?;',
+      [currentWeek],
+    );
 
     let versesPerDay = Math.floor(weeklyReadingInfo.rows.length / 7);
     let pointer = 0;
@@ -548,26 +605,25 @@ export async function createWeeklyReadingSchedule(
   }
 }
 
-//Searching for indexes based on values
-export async function findMaxChapter(bibleDB, bookId) {
-  if (!qryMaxChapters) {
-    //Obtain max chapters info
-    await bibleDB
-      .transaction(txn => {
-        txn
-          .executeSql('SELECT BibleBook, MaxChapter FROM qryMaxChapters;', [])
-          .then(([txn, res]) => {
-            qryMaxChapters = res;
-          });
-      })
-      .catch(errorCB);
-  }
+//------------------------------ Searching for indexes based on values ------------------------------
+/**
+ * Given a Bible book returns the largest chapter for it
+ * @param {integer} bookId
+ * @returns {integer}
+ */
+export function findMaxChapter(bookId) {
   let index = searchQuery(qryMaxChapters, 'BibleBook', bookId);
 
   return qryMaxChapters.rows.item(index).MaxChapter;
 }
 
-function findMaxVerse(bookId, chapter) {
+/**
+ * Given a Bible book and chapter returns the largest verse for it
+ * @param {integer} bookId
+ * @param {integer} chapter
+ * @returns {integer}
+ */
+export function findMaxVerse(bookId, chapter) {
   let index = searchQuery(
     qryMaxVerses,
     'BibleBook',
@@ -579,10 +635,27 @@ function findMaxVerse(bookId, chapter) {
   return qryMaxVerses.rows.item(index).MaxVerse;
 }
 
-function findNearestVerse(bookId, chapter, verse) {
+/**
+ * Given a Bible book, chapter, and verse returns the information for the closest matching result in the Bible
+ * @param {integer} bookId
+ * @param {integer} chapter
+ * @param {integer} verse
+ * @returns {Array<integer>} [bookId, chapter, verse]
+ */
+export function findNearestVerse(bookId, chapter, verse) {
   let index = 0;
 
   log('bookId:', bookId, 'chapter:', chapter, 'verse:', verse);
+
+  let maxChapter = findMaxChapter(bookId);
+
+  if (chapter > maxChapter) {
+    let maxBook = 66;
+    bookId++;
+    bookId = bookId % maxBook;
+    chapter = 1;
+    verse = 1;
+  }
 
   index = searchQuery(qryMaxVerses, 'BibleBook', bookId, 'Chapter', chapter);
 
@@ -599,7 +672,16 @@ function findNearestVerse(bookId, chapter, verse) {
   return [bookId, chapter, verse];
 }
 
-async function findVerseIndex(
+/**
+ * Given the information for a verse returns the index for the correlative item in the database
+ * @param {Database} bibleDB
+ * @param {integer} bookId
+ * @param {integer} chapter
+ * @param {integer} verse
+ * @param {ScheduleType} scheduleType
+ * @param {boolean} [isFirstTime=false]
+ */
+export async function findVerseIndex(
   bibleDB,
   bookId,
   chapter,
@@ -610,22 +692,20 @@ async function findVerseIndex(
   let index = 0;
   let found;
 
-  await bibleDB
-    .transaction(txn => {
-      const sql = `SELECT VerseID 
-        FROM tblVerseIndex 
-        WHERE BibleBook=? AND Chapter=? AND Verse=?;`;
-
-      //Find index in table for specific verse
-      txn.executeSql(sql, [bookId, chapter, verse]).then(([txn, res]) => {
-        if (res.rows.length > 0) {
-          //The verse searched for exists
-          found = true;
-          index = res.rows.item(0).VerseID;
-        }
-      });
-    })
-    .catch(errorCB);
+  //Find index in table for specific verse
+  await runSQL(
+    bibleDB,
+    `SELECT VerseID 
+       FROM tblVerseIndex 
+       WHERE BibleBook=? AND Chapter=? AND Verse=?;`,
+    [bookId, chapter, verse],
+  ).then(res => {
+    if (res.rows.length > 0) {
+      //The verse searched for exists
+      found = true;
+      index = res.rows.item(0).VerseID;
+    }
+  });
 
   log('isFirstTime', isFirstTime);
 
@@ -633,11 +713,13 @@ async function findVerseIndex(
   //(Make sure the recurssive call only runs once too)
   if (!found && isFirstTime) {
     //First check if the chapter is out of bounds and adjust. This makes later processses easier
-    let maxChapter = await findMaxChapter(bibleDB, bookId);
+    let maxChapter = findMaxChapter(bookId);
 
     if (chapter > maxChapter) {
-      chapter = 1;
+      let maxBook = 66;
       bookId++;
+      bookId = bookId % maxBook;
+      chapter = 1;
       verse = 1;
     }
 
@@ -670,20 +752,17 @@ async function findVerseIndex(
         console.log('Schedule Type was not defined');
         break;
     }
-    await bibleDB.transaction(txn => {
-      txn
-        .executeSql(`SELECT * FROM ${queryOrView} WHERE VerseID=?;`, [index])
-        .then(([t, res]) => {
-          index = res.rows.item(0)[indexKey] - 1;
-        })
-        .catch(errorCB);
+    await runSQL(bibleDB, `SELECT * FROM ${queryOrView} WHERE VerseID=?;`, [
+      index,
+    ]).then(res => {
+      index = res.rows.item(0)[indexKey] - 1;
     });
   }
 
   return index;
 }
 
-//Setting up values for schedule creation
+//----------------------------- Setting up values for schedule creation -----------------------------
 
 function setQryVerseIndex(scheduleType) {
   let tempQuery;
@@ -704,16 +783,27 @@ function setQryVerseIndex(scheduleType) {
   return tempQuery;
 }
 
-function setScheduleParameters(dur, qryVerseIndex, scheduleType) {
+/**
+ * Given schedule creation information returns
+ * @param {number} dur - The number of years the schedule will last for
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {ScheduleType} scheduleType
+ * @returns {object}
+ * @property {Array<string>} keys - Keys (day of a schedule) used to access other returned objects
+ * @property {number} duration - Number of days the schedule will last for
+ * @property {object} leastIndex - Smallest index for the given key (day) of the schedule
+ * @property {object} maxIndex - Largest index for the given key (day) of the schedule
+ * @property {object} versesPerDay - How many verses should be read for the given key (day) of the schedule
+ * @property {object} buffer - Acceptable number of verses to be subtracted or added to the amount of verses for the day in order to adjust to a cleaner value (ex. the begining of a chapter)
+ */
+export function setScheduleParameters(dur, qryVerseIndex, scheduleType) {
   dur = parseFloat(dur, 10);
 
   //Transform the duration into an amount of days based on the years given by user
   const duration = dur * 365 + dur * 7;
-  /*
-    Apparently, (I assume because of truncating of decimal places) the schedules get farther
+  /* Apparently, (I assume because of truncating of decimal places) the schedules get farther
     and farther off target the more years they run, thus the "+ duration * 7" adjustment.
-    It matches the target numbers well even all the way up to a 7 year schedule.
-  */
+    It matches the target numbers well even all the way up to a 7 year schedule. */
 
   let leastIndex = {};
   let maxIndex = {};
@@ -732,6 +822,9 @@ function setScheduleParameters(dur, qryVerseIndex, scheduleType) {
   } else {
     let tempDur = duration / 7 - dur * 0.5;
 
+    /* qryThematicCount is a count of the number of verses with each corresponding day value 1 - 7
+      This way we can keep track of each themed day of the week with the different pointers
+      as well as knowing what the minimum and maximum verse indexes are for each theme */
     for (let k = 0; k < qryThematicCount.rows.length; k++) {
       const element = qryThematicCount.rows.item(k);
       let totalVerses = element.Count;
@@ -753,7 +846,16 @@ function setScheduleParameters(dur, qryVerseIndex, scheduleType) {
   };
 }
 
-async function setTrackers(
+/**
+ * Initializes mutable objects and arrays which will be used in schedule creation
+ * @param {Database} bibleDB
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} requestedIndex - The index which the user has selected, or which has been adjusted to the nearest existing value to it
+ * @param {Array} keys - An array of keys corresponding to each section of a schedule
+ * @param {object} leastIndex - An object with keys corresponding to the smallest index for each section of a schedule
+ * @param {object} maxIndex - An object with keys corresponding to the largest index for each section of a schedule
+ */
+export async function setTrackers(
   bibleDB,
   qryVerseIndex,
   requestedIndex,
@@ -779,16 +881,13 @@ async function setTrackers(
   } else {
     //We have a schedule with multiple types of days
     let startKey;
-    await bibleDB.transaction(txn => {
-      txn
-        .executeSql('SELECT * FROM qryThematicOrder WHERE VerseID=?', [
-          requestedIndex + 1,
-        ])
-        .then(([t, res]) => {
-          startKey = res.rows.item(0).ThematicOrder - 1;
-        })
-        .catch(errorCB);
+
+    await runSQL(bibleDB, 'SELECT * FROM qryThematicOrder WHERE VerseID=?;', [
+      requestedIndex + 1,
+    ]).then(res => {
+      startKey = res.rows.item(0).ThematicOrder - 1;
     });
+
     let key = keys[startKey];
     //Set accurate start index for theme corresponding to selected start verse
     pointer[key] = requestedIndex;
@@ -829,16 +928,29 @@ async function setTrackers(
   }
 
   return {
-    pointer: pointer,
-    keyIndex: keyIndex,
-    endIndex: endIndex,
-    hasLooped: hasLooped,
-    isEnd: isEnd,
-    verseOverflow: verseOverflow,
+    pointer,
+    keyIndex,
+    endIndex,
+    hasLooped,
+    isEnd,
+    verseOverflow,
   };
 }
 
-function setAdjustedMessage(
+/**
+ * Checks if verse at index chosen by algorithm matches the verse given by the user.
+ * If not returns a string detailing the adjustment in order to inform the user.
+ * If no difference returns nothing (undefined)
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {string} bibleBookPrefix - The first part of the key relating to the location of the translation string for a book name
+ * @param {string} bibleBookSuffix - The last part of the key relating to the location of the translation string for a book name
+ * @param {integer} bookId
+ * @param {integer} chapter
+ * @param {integer} verse
+ * @param {integer} pointer - The index which our create bible schedule algorithm decided on
+ * @returns {(undefined|string)}
+ */
+export function setAdjustedMessage(
   bibleBookPrefix,
   bibleBookSuffix,
   bookId,
@@ -878,9 +990,17 @@ function setAdjustedMessage(
   return adjustedVerseMessage;
 }
 
-//For use in creating schedules
-
-function checkOrderedVerseBuffer(qryVerseIndex, checkIndex, buffer) {
+//---------------------------------- For use in creating schedules ----------------------------------
+/**
+ * Returns an index adjustment for a value in the given query which marks a clean demarcation for a reading
+ * (ex. the end of a chapter) within a range +- the given buffer if one is found, otherwise returns zero
+ * @requires qryVerseIndex to be a sequential table reference
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} checkIndex - The current index in the query to check against
+ * @param {integer} buffer - An acceptable range of verses + or - the index to check against
+ * @returns {integer} the adjustment, which when added to the original index gives the new index
+ */
+export function checkOrderedVerseBuffer(qryVerseIndex, checkIndex, buffer) {
   let endPortion = qryVerseIndex.rows.item(checkIndex);
   let endBook = endPortion.BibleBook;
   let endChapter = endPortion.Chapter;
@@ -899,12 +1019,22 @@ function checkOrderedVerseBuffer(qryVerseIndex, checkIndex, buffer) {
   return 0;
 }
 
-function checkAnyVerseBuffer(
+/**
+ * Returns an index adjustment for a value in the given query which marks a clean demarcation for a reading
+ * (ex. the end of a chapter) within a range +- the given buffer if one is found, otherwise returns zero
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} checkIndex - The current index in the query to check against
+ * @param {integer} buffer - An acceptable range of verses + or - the index to check against
+ * @param {integer} maxIndex - The largest index for the current portion of the schedule
+ * @param {integer} leastIndex - The smallest index for the current portion of the schedule
+ * @returns {integer} the adjustment, which when added to the original index gives the new index
+ */
+export function checkAnyVerseBuffer(
   qryVerseIndex,
   checkIndex,
   buffer,
   maxIndex,
-  leatIndex,
+  leastIndex,
 ) {
   let checkPortion = qryVerseIndex.rows.item(checkIndex);
   let checkBook = checkPortion.BibleBook;
@@ -934,8 +1064,10 @@ function checkAnyVerseBuffer(
 
     if (endValue > 0) {
       tracker = 1;
-    } else {
+    } else if (endValue < 0) {
       tracker = -1;
+    } else {
+      return 0;
     }
 
     for (let i = tracker; comparison(i, endValue); i += tracker) {
@@ -944,7 +1076,7 @@ function checkAnyVerseBuffer(
         i = maxIndex - checkIndex;
         endValue = i - 1;
       }
-      if (currentIndex < leatIndex) {
+      if (currentIndex < leastIndex) {
         break;
       }
       let currentPortion = qryVerseIndex.rows.item(checkIndex + i);
@@ -973,7 +1105,7 @@ function checkAnyVerseBuffer(
   log('checking min adjustment');
 
   //Check the lower bound
-  let minAdj = checker(0 - buffer) - 1;
+  let minAdj = checker(0 - buffer - 1);
 
   log('min adjustment = ', minAdj);
 
@@ -1000,6 +1132,13 @@ function checkAnyVerseBuffer(
   return adjustment;
 }
 
+/**
+ * Given information for a verse returns whether or not the given verse is the start of its chapter
+ * @param {integer} bookId
+ * @param {integer} chapter
+ * @param {integer} verse
+ * @returns {boolean}
+ */
 export function checkStartVerse(bookId, chapter, verse) {
   let isStart = false;
   if (bookId === 43 && chapter === 8) {
@@ -1012,7 +1151,16 @@ export function checkStartVerse(bookId, chapter, verse) {
   return isStart;
 }
 
-function checkStartAndEndPositions(qryVerseIndex, startIndex, endIndex) {
+/**
+ * Given a start index and an end index returns whether they are the start and end of their verse span
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} startIndex - First index for a verse span
+ * @param {integer} endIndex - Last index for a verse span
+ * @returns {object} Keys = {startPosition, endPosition}
+ * @property {VersePosition} startPosition
+ * @property {VersePosition} endPosition
+ */
+export function checkStartAndEndPositions(qryVerseIndex, startIndex, endIndex) {
   let endBookId = qryVerseIndex.rows.item(endIndex).BibleBook;
   let endChapter = qryVerseIndex.rows.item(endIndex).Chapter;
   let endVerse = qryVerseIndex.rows.item(endIndex).Verse;
@@ -1047,22 +1195,43 @@ function checkStartAndEndPositions(qryVerseIndex, startIndex, endIndex) {
   return {startPosition: startPosition, endPosition: endPosition};
 }
 
-function checkResultPosition(isStart, isEnd) {
-  let start = VERSE_POSITION.START;
-  let middle = VERSE_POSITION.MIDDLE;
-  let end = VERSE_POSITION.END;
-
-  if (isStart || isEnd) {
+/**
+ * Given start and and values returns the correct VERSE_POSITION value for a verse or verse span
+ * @param {boolean} isStart
+ * @param {boolean} isEnd
+ * @returns {VersePosition}
+ */
+export function checkResultPosition(isStart, isEnd) {
+  if (isStart && isEnd) {
+    return VERSE_POSITION.START_AND_END;
+  } else if (isStart || isEnd) {
     if (isStart) {
-      return start;
+      return VERSE_POSITION.START;
     } else {
-      return end;
+      return VERSE_POSITION.END;
     }
   } else {
-    return middle;
+    return VERSE_POSITION.MIDDLE;
   }
 }
 
+/**
+ * Given the information for the start and end of a reading portion returns a consolidated string detailing
+ * the verse span and a position of the verse span relative to the chapter
+ * @param {string} startBook - The name of the start book
+ * @param {string} endBook - The name of the end book
+ *
+ * @returns {object} keys = {description, position}
+ * @property {string} description - Details the span of verses to be read
+ * @property {VersePosition} position - An identifier detaling the location of the entire reading relative to the chapter
+ *
+ * @param {integer} startChapter
+ * @param {integer} startVerse
+ * @param {boolean} isStart
+ * @param {integer} endChapter
+ * @param {integer} endVerse
+ * @param {boolean} isEnd
+ */
 export function checkReadingPortion(
   startBook,
   startChapter,
@@ -1073,47 +1242,66 @@ export function checkReadingPortion(
   endVerse,
   isEnd,
 ) {
-  let startAndEnd = VERSE_POSITION.START_AND_END;
+  let resultPosition = checkResultPosition(isStart, isEnd);
+  let isStartAndEnd = resultPosition === VERSE_POSITION.START_AND_END;
   let resultString;
-  let resultPosition;
 
   if (startBook === endBook) {
     if (startChapter === endChapter) {
       if (startVerse === endVerse) {
         // Here we have the same book, chapter, and verse
-        resultPosition = checkResultPosition(isStart, isEnd);
+        // This means we only have one verse
         resultString = `${startBook} ${startChapter}:${startVerse}`;
-      } else if (isStart && isEnd) {
+      } else if (isStartAndEnd) {
         // Here we have the same book, chapter, and different verses
-        resultPosition = startAndEnd;
+        // Since the positions of the verses are start and end, then this includes the entire chapter
         resultString = `${startBook} ${startChapter}`;
       } else {
         // Here we have the same book, chapter, and different verses
-        resultPosition = checkResultPosition(isStart, isEnd);
+        // Since the position of one of these verses is in the middle we elaborate the verses to be read
         resultString = `${startBook} ${startChapter}:${startVerse}-${endVerse}`;
       }
-    } else if (isStart && isEnd) {
+    } else if (isStartAndEnd) {
       // Here we have the same book and different chapters
-      resultPosition = startAndEnd;
+      // Since the positions of the verses are start and end, then this includes the entire span of chapters
       resultString = `${startBook} ${startChapter}-${endChapter}`;
     } else {
       // Here we have the same book and different chapters
-      resultPosition = checkResultPosition(isStart, isEnd);
+      // Since the position of one of these verses is in the middle we elaborate the verses to be read
       resultString = `${startBook} ${startChapter}:${startVerse}-${endChapter}:${endVerse}`;
     }
-  } else if (isStart && isEnd) {
+  } else if (isStartAndEnd) {
     // Here we have the different books
-    resultPosition = startAndEnd;
+    // Since the positions of the verses are start and end, then this includes the entire span of chapters
     resultString = `${startBook} ${startChapter}-${endBook} ${endChapter}`;
   } else {
     // Here we have the different books
-    resultPosition = checkResultPosition(isStart, isEnd);
+    // Since the position of one of these verses is in the middle we elaborate the verses to be read
     resultString = `${startBook} ${startChapter}:${startVerse}-${endBook} ${endChapter}:${endVerse}`;
   }
   return {description: resultString, position: resultPosition};
 }
 
-function checkEnd(
+/**
+ * Takes tracking variables and determines whether adjustments need to be made to them, then returns the adjustments
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} dayEndIndex
+ * @param {integer} maxIndex
+ * @param {integer} leastIndex
+ * @param {integer} endIndex
+ * @param {number} verseOverflow
+ * @param {boolean} hasLooped
+ * @param {integer} buffer
+ * @param {boolean} isEnd
+ * @param {ScheduleType} scheduleType
+ *
+ * @returns {object} result
+ * @property {integer} result.dayEndIndex - Adjusted index for the end of this reading day
+ * @property {boolean} result.isEnd - Flag indicating if we have reached the end of the schedule (for this key at least)
+ * @property {boolean} result.hasLooped - Flag indicating if we have passed the largest index and returned to the smallest index
+ * @property {number} result.verseOverflow - Adjusted value keeping track of whether we should subtract verses from the next day or add to it
+ */
+export function checkEnd(
   qryVerseIndex,
   dayEndIndex,
   maxIndex,
@@ -1135,10 +1323,14 @@ function checkEnd(
   ) => {
     let isEnd = false;
 
+    // Check the case where we go from the maximum index back to the least index for the given schedule
+    // (ex. from 31077 back to 0) then we set the hasLooped flag to indicate for future checks
     if (!hasLooped) {
       if (dayEndIndex >= maxIndex) {
         dayEndIndex = dayEndIndex - maxIndex + leastIndex;
         hasLooped = true;
+        // TODO: We can get rid of this duplication by just putting it outside the if statement
+        // since it will run afterwards no matter what
         if (dayEndIndex >= endIndex - buffer) {
           dayEndIndex = endIndex;
           isEnd = true;
@@ -1158,6 +1350,8 @@ function checkEnd(
     return {index, endFlag, loopFlag};
   };
 
+  // Check the current value to see whether we have reached the maximum value index for the current
+  // schedule type and will need to loop, or if we have reached the last index for the whole schedule
   let checkResult = checker(
     hasLooped,
     dayEndIndex,
@@ -1217,10 +1411,10 @@ function checkEnd(
   }
 
   return {
-    dayEndIndex: dayEndIndex,
-    isEnd: isEnd,
-    hasLooped: hasLooped,
-    verseOverflow: verseOverflow,
+    dayEndIndex,
+    isEnd,
+    hasLooped,
+    verseOverflow,
   };
 }
 
@@ -1240,6 +1434,21 @@ const bibleScheduleValuesArray = [
   'VersePosition',
 ];
 
+/**
+ * Takes values for a schedule reading day and returns an array of values for use in a database transaction
+ * @param {string} startBookName
+ * @param {integer} startBookNumber
+ * @param {integer} startChapter
+ * @param {integer} startVerse
+ * @param {string} endBookName
+ * @param {integer} endBookNumber
+ * @param {integer} endChapter
+ * @param {integer} endVerse
+ * @param {Date} date
+ * @param {string} description
+ * @param {VersePosition} versePosition
+ * @returns {Array} An array of the given values in the correct order
+ */
 function createReadingPortionArray(
   startBookName,
   startBookNumber,
@@ -1307,7 +1516,17 @@ function createCustomReadingPortionArray(date, description) {
   return result;
 }
 
-function createReadingPortion(
+/**
+ * Given result values for a reading portion calls other helper functions to create a final array of values for insertion into schedule
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} dayStartIndex
+ * @param {VersePosition} dayStartPosition
+ * @param {integer} dayEndIndex
+ * @param {VersePosition} dayEndPosition
+ * @param {Date} date
+ * @returns {Array}
+ */
+export function createReadingPortion(
   qryVerseIndex,
   dayStartIndex,
   dayStartPosition,
@@ -1379,7 +1598,18 @@ function createReadingPortion(
   return portion;
 }
 
-function createReadingPortions(
+/**
+ * Given result values for a reading day calls other helper functions to create a final array of reading portion array values for insertion into schedule
+ * @param {DBQueryResult} qryVerseIndex
+ * @param {integer} dayStartIndex
+ * @param {integer} dayEndIndex
+ * @param {Date} date
+ * @param {ScheduleType} scheduleType
+ * @param {integer} leastIndex
+ * @param {integer} maxIndex
+ * @returns {Array<Array>}
+ */
+export function createReadingPortions(
   qryVerseIndex,
   dayStartIndex,
   dayEndIndex,
@@ -1533,7 +1763,7 @@ function createReadingPortions(
   return portions;
 }
 
-async function insertReadingPortions(
+export async function insertReadingPortions(
   userDB,
   readingPortions,
   tableName,
@@ -1563,23 +1793,20 @@ async function insertReadingPortions(
 
   let {placeholders, values} = createPlaceholdersFromArray(temp);
 
-  let sql = `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders};`;
+  await runSQL(
+    userDB,
+    `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders};`,
+    values,
+  ).then(res => {
+    if (res.rowsAffected > 0) {
+      log('Insert success');
+    } else {
+      wasSuccessful = false;
+      console.log('Insert failed');
+    }
+  });
 
-  log('insert sql', sql, 'values', values);
-
-  await userDB
-    .transaction(txn => {
-      txn.executeSql(sql, values).then(([tx, results]) => {
-        if (results.rowsAffected > 0) {
-          log('Insert success');
-        } else {
-          wasSuccessful = false;
-          console.log('Insert failed');
-        }
-      });
-    })
-    .catch(errorCB);
-
+  //If there are more than 50 results we keep cycling until we have inserted all of them
   if (!isEnd) {
     await insertReadingPortions(
       userDB,
@@ -1597,9 +1824,22 @@ async function insertReadingPortions(
   return wasSuccessful;
 }
 
-//Schedule creation generator algorithms
+//----------------------------- Schedule creation generator algorithms -----------------------------
 
-async function generateBibleSchedule(
+/**
+ * Creates a bible reading schedule
+ * @param {Database} userDB
+ * @param {Database} bibleDB
+ * @param {ScheduleType} scheduleType
+ * @param {number} dur - Duration of the schedule, in years
+ * @param {integer} bookId - Number of the bible book to start from (1-66)
+ * @param {integer} chapter
+ * @param {integer} verse
+ * @param {string} tableName
+ * @param {Function} successCB
+ * @param {Function} messageCB
+ */
+export async function generateBibleSchedule(
   userDB,
   bibleDB,
   scheduleType,
@@ -1800,7 +2040,17 @@ async function generateBibleSchedule(
     });
 }
 
-function generateCustomSchedule(
+/**
+ * Creates a schedule for reading a publication such as a book or magazine breaking it up by user specified "portions" (Article, Page, Chapter, etc.)
+ * @param {Database} userDB
+ * @param {string} tableName
+ * @param {number} startingPortion - (Must be between 0 and 1,000,000,000,000,000) The portion to begin the schedule from
+ * @param {number} maxPortion - The number of the last portion in the publication
+ * @param {string} readingPortionDesc - A user provided description of the sections to break up their reading by
+ * @param {number} portionsPerDay - How many portions to read each day
+ * @param {Function} successCB
+ */
+export function generateCustomSchedule(
   userDB,
   tableName,
   startingPortion,
@@ -1810,14 +2060,15 @@ function generateCustomSchedule(
   successCB,
 ) {
   log('started creating schedule');
+
+  portionsPerDay = parseFloat(portionsPerDay, 10);
+  maxPortion = parseFloat(maxPortion, 10);
+
   let date = new Date();
   let pointer = parseFloat(startingPortion, 10);
   let readingPortion = '';
   let readingPortions = [];
   let adjustment = portionsPerDay < 1 ? 0 : 1;
-
-  portionsPerDay = parseFloat(portionsPerDay, 10);
-  maxPortion = parseFloat(maxPortion, 10);
 
   log(
     'pointer',
@@ -1858,6 +2109,10 @@ function generateCustomSchedule(
     readingPortions.push(temp);
     //Move date ahead
     date.setDate(date.getDate() + 1);
+  }
+
+  if (readingPortions.length < 1) {
+    return;
   }
 
   insertReadingPortions(

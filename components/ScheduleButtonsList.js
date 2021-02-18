@@ -149,7 +149,7 @@ function useScheduleListPopups(onUpdateReadStatus, testID) {
     return (
       <View style={{width: '100%'}}>
         <ReadingInfoPopup
-          testI={testID + '.readingInfoPopup'}
+          testID={testID + '.readingInfoPopup'}
           popupProps={{
             displayPopup: readingPopup.isDisplayed,
             title: readingPopup.title,
@@ -173,13 +173,13 @@ function useScheduleListPopups(onUpdateReadStatus, testID) {
           readingPortion={readingPopup.readingPortion}
         />
         <ButtonsPopup
-          testI={testID + '.buttonsPopup'}
+          testID={testID + '.buttonsPopup'}
           displayPopup={buttonsPopup.isDisplayed}
           buttons={buttonsPopup.buttons}
           onClosePress={closeButtonsPopup}
         />
         <ReadingRemindersPopup
-          testI={testID + '.readingRemindersPopup'}
+          testID={testID + '.readingRemindersPopup'}
           displayPopup={isRemindersPopupDisplayed}
           onClosePress={() => {
             setIsRemindersPopupDisplayed(false);

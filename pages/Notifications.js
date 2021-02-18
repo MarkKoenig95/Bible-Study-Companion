@@ -123,8 +123,8 @@ function DayMarker(props) {
 }
 
 export default function Notifications(props) {
+  const {navigation} = props;
   console.log('loaded notifications page');
-  const navigation = props.navigation;
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
@@ -143,6 +143,7 @@ export default function Notifications(props) {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
+          testID={pageTitle + '.header.addButton'}
           iconOnly
           invertColor
           onPress={notificationPopup.open}
@@ -197,18 +198,13 @@ export default function Notifications(props) {
     log('successfully added notification to table');
 
     await userDB
-      .transaction(txn => {
-        txn
-          .executeSql('SELECT ID FROM tblNotifications WHERE Name=?;', [
-            notificationName,
-          ])
-          .then(([t, res]) => {
-            notificationID = res.rows.item(0).ID;
-          });
+      .executeSql('SELECT ID FROM tblNotifications WHERE Name=?;', [
+        notificationName,
+      ])
+      .then(([res]) => {
+        notificationID = res.rows.item(0).ID;
       })
-      .catch(err => {
-        errorCB(err);
-      });
+      .catch(errorCB);
 
     notificationPopup.close();
 
