@@ -68,6 +68,8 @@
 		2585272A24EFB28B006C9573 /* BibleStudyCompanionIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BibleStudyCompanionIcon.png; path = assets/BibleStudyCompanionIcon.png; sourceTree = "<group>"; };
 		2585272C24EFB500006C9573 /* Bible Study Companion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bible Study Companion.entitlements"; path = "BibleStudyCompanion/Bible Study Companion.entitlements"; sourceTree = "<group>"; };
 		25A488F9244047130029655C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../android/app/src/main/assets/www; sourceTree = "<group>"; };
+		25F7171025FAFA55007E5345 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		25F7171125FAFA55007E5345 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* BibleStudyCompanion-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BibleStudyCompanion-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* BibleStudyCompanion-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BibleStudyCompanion-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		42F7B9BB1DAC34FBDE260C9F /* Pods-BibleStudyCompanion-BibleStudyCompanionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-BibleStudyCompanionTests.release.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-BibleStudyCompanionTests/Pods-BibleStudyCompanion-BibleStudyCompanionTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 				en,
 				Base,
 				"zh-Hans",
+				it,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -709,6 +712,7 @@
 				13B07FB21A68108700A75B9A /* Base */,
 				2546B07B25C2FAFA0054AB78 /* zh-Hans */,
 				2546B07E25C2FB550054AB78 /* en */,
+				25F7171025FAFA55007E5345 /* it */,
 			);
 			name = LaunchScreen.xib;
 			path = BibleStudyCompanion;
@@ -719,6 +723,7 @@
 			children = (
 				254096E725C97DF700B1DE33 /* en */,
 				254096E925C97DFB00B1DE33 /* zh-Hans */,
+				25F7171125FAFA55007E5345 /* it */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
