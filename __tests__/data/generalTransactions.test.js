@@ -12,7 +12,7 @@ import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json'
 let userDB;
 
 beforeAll(async () => {
-  userDB = SQLite.openDatabase('UserInfo.db');
+  userDB = SQLite.openDatabase('generalTransactions_UserInfo.db');
 });
 
 afterAll(() => {

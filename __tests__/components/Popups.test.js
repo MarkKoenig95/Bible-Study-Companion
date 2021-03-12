@@ -1,5 +1,5 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+import renderer, {act} from 'react-test-renderer';
 import CreateNotificationPopup from '../../components/popups/CreateNotificationPopup';
 import CreateReminderPopup from '../../components/popups/CreateReminderPopup';
 import CreateSchedulePopup from '../../components/popups/CreateSchedulePopup';
@@ -29,44 +29,60 @@ afterAll(() => {
 });
 
 describe('testing if popups render', () => {
-  it('renders CreateNotificationPopup correctly', () => {
-    renderer.create(<CreateNotificationPopup />);
+  it('renders CreateNotificationPopup correctly', async () => {
+    await act(async () => {
+      renderer.create(<CreateNotificationPopup />);
+    });
   });
-  it('renders CreateReminderPopup correctly', () => {
-    renderer.create(<CreateReminderPopup />);
+  it('renders CreateReminderPopup correctly', async () => {
+    await act(async () => {
+      renderer.create(<CreateReminderPopup />);
+    });
   });
-  it('renders CreateSchedulePopup correctly', () => {
-    renderer.create(
-      <StateProvider>
-        <CreateSchedulePopup />
-      </StateProvider>,
-    );
+  it('renders CreateSchedulePopup correctly', async () => {
+    await act(async () => {
+      renderer.create(
+        <StateProvider>
+          <CreateSchedulePopup />
+        </StateProvider>,
+      );
+    });
   });
-  it('renders LoadingPopup correctly', () => {
-    renderer.create(<LoadingPopup />);
+  it('renders LoadingPopup correctly', async () => {
+    await act(async () => {
+      renderer.create(<LoadingPopup />);
+    });
   });
-  it('renders MessagePopup correctly', () => {
-    renderer.create(<MessagePopup />);
+  it('renders MessagePopup correctly', async () => {
+    await act(async () => {
+      renderer.create(<MessagePopup />);
+    });
   });
   it('renders Popup and matches snapshot', () => {
     const tree = renderer.create(<Popup />).toJSON();
     expect(tree).toMatchSnapshot();
   });
-  it('renders ReadingInfoPopup correctly', () => {
-    renderer.create(
-      <StateProvider>
-        <ReadingInfoPopup />
-      </StateProvider>,
-    );
+  it('renders ReadingInfoPopup correctly', async () => {
+    await act(async () => {
+      renderer.create(
+        <StateProvider>
+          <ReadingInfoPopup />
+        </StateProvider>,
+      );
+    });
   });
   it('renders ReadingRemindersPopup and matches snapshot', () => {
     const tree = renderer.create(<ReadingRemindersPopup />).toJSON();
     expect(tree).toMatchSnapshot();
   });
-  it('renders ScheduleTypeSelectionPopup correctly', () => {
-    renderer.create(<ScheduleTypeSelectionPopup />);
+  it('renders ScheduleTypeSelectionPopup correctly', async () => {
+    await act(async () => {
+      renderer.create(<ScheduleTypeSelectionPopup />);
+    });
   });
-  it('renders SelectedDayButtonsPopup correctly', () => {
-    renderer.create(<SelectedDayButtonsPopup buttons={[]} />);
+  it('renders SelectedDayButtonsPopup correctly', async () => {
+    await act(async () => {
+      renderer.create(<SelectedDayButtonsPopup buttons={[]} />);
+    });
   });
 });

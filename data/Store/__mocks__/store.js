@@ -3,12 +3,13 @@ import {UPDATE_VALUE} from '../actions';
 
 import SQLite from 'react-native-sqlite-storage';
 
-const DB = SQLite.openDatabase();
+const bibleDB = SQLite.openDatabase('BibleStudyCompanion.db');
+const userDB = SQLite.openDatabase('e2e_UserInfo.db');
 
 let initialState = {
   appVersion: null,
-  bibleDB: DB,
-  userDB: DB,
+  bibleDB: bibleDB,
+  userDB: userDB,
   isFirstRender: true,
   updatePages: 0,
   showDaily: {value: false, id: 0},

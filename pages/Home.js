@@ -18,6 +18,7 @@ import {
   updateValue,
   log,
   appVersion,
+  runSQL,
 } from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
@@ -37,7 +38,16 @@ import {setAppVersion} from '../data/Store/actions';
 const pageTitle = 'homePage';
 let populatingHomeList = false;
 
-async function populateReminders(
+/**
+ * Returns an array of objects with information about unfinished reminders matching the given frequency
+ * @param {Database} userDB
+ * @param {Frequency} frequency
+ * @param {Function} openMessagePopup
+ * @param {Function} afterUpdate A function used to force pages to rerender after an event
+ * @param {integer} update A value used to keep all pages in the app rendered after the database updates
+ * @returns {Array<object>}
+ */
+export async function populateReminders(
   userDB,
   frequency,
   openMessagePopup,
@@ -45,22 +55,17 @@ async function populateReminders(
   update,
 ) {
   let result = [];
-  let reminders;
 
-  await userDB
-    .executeSql(
-      'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0;',
-      [frequency],
-    )
-    .then(([res]) => {
-      reminders = res.rows;
-    })
-    .catch(errorCB);
+  let reminders = await runSQL(
+    userDB,
+    'SELECT * FROM tblReminders WHERE Frequency=? AND IsFinished=0;',
+    [frequency],
+  );
 
-  if (reminders.length > 0) {
-    for (let i = 0; i < reminders.length; i++) {
-      log('currently checking reminder', reminders.item(i));
-      const reminder = reminders.item(i);
+  if (reminders.rows.length > 0) {
+    for (let i = 0; i < reminders.rows.length; i++) {
+      log('currently checking reminder', reminders.rows.item(i));
+      const reminder = reminders.rows.item(i);
       let compDate =
         frequency !== FREQS.NEVER ? reminder.CompletionDate : new Date();
       let completionDate = new Date(compDate);
@@ -102,27 +107,32 @@ async function populateReminders(
   return result;
 }
 
-async function populateScheduleButtons(
+/**
+ * Returns an array of arrays containing reading day item objects
+ * @param {Database} userDB
+ * @param {boolean} shouldShowDaily
+ * @param {boolean} doesTrack
+ * @param {integer} updatePages
+ * @returns {Array<Array<object>>}
+ */
+export async function populateScheduleButtons(
   userDB,
   shouldShowDaily,
   doesTrack,
   updatePages,
 ) {
-  let result;
   let homeListItems = [];
   let date = new Date();
   let todayFormatted = formatDate(date);
   let today = Date.parse(todayFormatted);
 
   //Get the user's list of reading schedules
-  await userDB
-    .executeSql('SELECT * FROM tblSchedules WHERE DoesTrack=?;', [
-      doesTrack ? 1 : 0,
-    ])
-    .then(([res]) => {
-      result = res;
-    })
-    .catch(errorCB);
+
+  let result = await runSQL(
+    userDB,
+    'SELECT * FROM tblSchedules WHERE DoesTrack=?;',
+    [doesTrack ? 1 : 0],
+  );
 
   //Loop through the list and select the first reading portion that is not completed
   for (let i = 0; i < result.rows.length; i++) {
@@ -143,41 +153,33 @@ async function populateScheduleButtons(
       }
     }
 
-    let items;
     let completionDate;
 
     //Populate reading portions from all schedules for today
-    await userDB
-      .executeSql(
-        `SELECT * FROM ${tableName}
+    await runSQL(
+      userDB,
+      `SELECT * FROM ${tableName}
          WHERE IsFinished=0
          ORDER BY ReadingDayID ASC
          LIMIT 1;`,
-        [],
-      )
-      .then(([res]) => {
-        if (res.rows.length > 0) {
-          completionDate = res.rows.item(0).CompletionDate;
-        }
-      })
-      .catch(errorCB);
+    ).then(res => {
+      if (res.rows.length > 0) {
+        completionDate = res.rows.item(0).CompletionDate;
+      }
+    });
 
-    await userDB
-      .executeSql(
-        `SELECT * FROM ${tableName}
+    let table = await runSQL(
+      userDB,
+      `SELECT * FROM ${tableName}
          WHERE CompletionDate=?
          ORDER BY ReadingDayID ASC;`,
-        [completionDate],
-      )
-      .then(([res]) => {
-        items = res.rows;
-      })
-      .catch(errorCB);
+      [completionDate],
+    );
 
     let innerHomeListItems = [];
 
-    for (let j = 0; j < items.length; j++) {
-      const item = items.item(j);
+    for (let j = 0; j < table.rows.length; j++) {
+      const item = table.rows.item(j);
 
       if (Date.parse(item.CompletionDate) <= today) {
         //Add reading portion info to the list
@@ -198,7 +200,15 @@ async function populateScheduleButtons(
   return homeListItems;
 }
 
-async function populateWeeklyReading(
+/**
+ * Returns an array of arrays containing weekly reading day item objects
+ * @param {Database} userDB
+ * @param {Database} bibleDB
+ * @param {integer} weeklyReadingReset - The day of the week on which the user wants their weekly reading schedule to reset
+ * @param {integer} update
+ * @returns {Array<Array<object>>}
+ */
+export async function populateWeeklyReading(
   userDB,
   bibleDB,
   weeklyReadingReset,
@@ -206,26 +216,20 @@ async function populateWeeklyReading(
 ) {
   let tableName = WEEKLY_READING_TABLE_NAME;
   let title = translate('reminders.weeklyReading.title');
-  let items;
   let listItems = [];
 
   await createWeeklyReadingSchedule(userDB, bibleDB, weeklyReadingReset);
 
-  await userDB
-    .executeSql(
-      `SELECT * FROM ${tableName}
+  let table = await runSQL(
+    userDB,
+    `SELECT * FROM ${tableName}
        ORDER BY ReadingDayID ASC;`,
-      [],
-    )
-    .then(([res]) => {
-      items = res.rows;
-    })
-    .catch(errorCB);
+  );
 
   let innerListItems = [];
-  if (items.length > 0) {
-    for (let j = 0; j < items.length; j++) {
-      const item = items.item(j);
+  if (table.rows.length > 0) {
+    for (let j = 0; j < table.rows.length; j++) {
+      const item = table.rows.item(j);
 
       if (!item.IsFinished) {
         //Add reading portion info to the list
@@ -245,7 +249,18 @@ async function populateWeeklyReading(
   return listItems;
 }
 
-async function populateHomeList(
+/**
+ * Returns an Array of sections for the home page
+ * @param {Database} userDB
+ * @param {Database} bibleDB
+ * @param {integer} weeklyReadingReset
+ * @param {boolean} shouldShowDaily
+ * @param {Function} openMessagePopup
+ * @param {Function} afterUpdate
+ * @param {integer} updatePages
+ * @returns {Array<object>}
+ */
+export async function populateHomeList(
   userDB,
   bibleDB,
   weeklyReadingReset,
@@ -264,7 +279,7 @@ async function populateHomeList(
   let thisMonthTitle = translate('thisMonth');
   let otherTitle = translate('other');
 
-  //Populate daily reminders
+  // -------------------------- Populate daily reminders --------------------------
   await populateReminders(
     userDB,
     FREQS.DAILY,
@@ -301,7 +316,7 @@ async function populateHomeList(
     });
   }
 
-  //Populate weekly reminders
+  // -------------------------- Populate weekly reminders --------------------------
 
   await populateWeeklyReading(
     userDB,
@@ -337,7 +352,7 @@ async function populateHomeList(
     });
   }
 
-  //Populate monthly reminders
+  // -------------------------- Populate monthly reminders --------------------------
   await populateReminders(
     userDB,
     FREQS.MONTHLY,
@@ -360,7 +375,7 @@ async function populateHomeList(
     });
   }
 
-  //Populate untracked reminders
+  // -------------------------- Populate untracked reminders --------------------------
 
   await populateScheduleButtons(
     userDB,

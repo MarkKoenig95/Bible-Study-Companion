@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 function openDatabase(dbName) {
-  const dbPath = path.resolve(__dirname, '../___temp/', dbName);
+  const dbPath = path.resolve(__dirname, '..', '___temp', dbName);
 
   const DB = new sqlite3.Database(dbPath, err => {
     if (err) {

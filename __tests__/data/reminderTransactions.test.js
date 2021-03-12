@@ -20,7 +20,7 @@ async function getTblReminders() {
 }
 
 beforeAll(async () => {
-  userDB = SQLite.openDatabase('UserInfo.db');
+  userDB = SQLite.openDatabase('reminderTransactions_UserInfo.db');
 
   await upgradeDB(userDB, upgradeJSON);
 });

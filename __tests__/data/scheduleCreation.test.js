@@ -97,7 +97,7 @@ function getUserDB() {
   if (userDB) {
     userDB.deleteDB();
   }
-  userDB = SQLite.openDatabase('UserInfo.db');
+  userDB = SQLite.openDatabase('scheduleCreation_UserInfo.db');
 }
 
 async function setScheduleTable(scheduleType) {

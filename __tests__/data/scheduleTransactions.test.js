@@ -38,7 +38,7 @@ async function getSchedules() {
 beforeAll(async () => {
   bibleDB = SQLite.openDatabase('BibleStudyCompanion.db');
 
-  userDB = SQLite.openDatabase('UserInfo.db');
+  userDB = SQLite.openDatabase('scheduleTransactions_UserInfo.db');
 
   await upgradeDB(userDB, upgradeJSON);
 });

@@ -15,17 +15,16 @@ const notificationName = 'notification';
 let notificationID;
 let userDB;
 
-// There is a bug regarding this in jest. for now I use this solution If i ever have to erase my
-// node_modules folder and reinstall I want this link that I can reference back to
-// https://github.com/facebook/jest/issues/10221#issuecomment-654687396
-
 beforeAll(async () => {
-  userDB = SQLite.openDatabase('UserInfo.db');
+  userDB = SQLite.openDatabase('notificationTransactions_UserInfo.db');
 
   await upgradeDB(userDB, upgradeJSON);
 });
 
 beforeEach(() => {
+  // There is a bug regarding this in jest. for now I use this solution If i ever have to erase my
+  // node_modules folder and reinstall I want this link that I can reference back to
+  // https://github.com/facebook/jest/issues/10221#issuecomment-654687396
   jest.useFakeTimers('modern');
   jest.setSystemTime(new Date(2021, 2, 7, 9, 0, 0, 0).getTime()); // Sunday, March 7th 2021 at 9:00am
 });

@@ -96,3 +96,5 @@ export function dateFormulator(year, approxDesc) {
 
   return dateString;
 }
+
+export function useLocalization() {}

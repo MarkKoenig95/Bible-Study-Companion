@@ -1,5 +1,5 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+import renderer, {act} from 'react-test-renderer';
 import Text, {
   Body,
   SubHeading,
@@ -9,22 +9,34 @@ import Text, {
 import Link from '../../components/text/Link';
 
 describe('testing if text renders', () => {
-  it('renders Text correctly', () => {
-    renderer.create(<Text />);
+  it('renders Text correctly', async () => {
+    await act(async () => {
+      renderer.create(<Text />);
+    });
   });
-  it('renders Body correctly', () => {
-    renderer.create(<Body />);
+  it('renders Body correctly', async () => {
+    await act(async () => {
+      renderer.create(<Body />);
+    });
   });
-  it('renders SubHeading correctly', () => {
-    renderer.create(<SubHeading />);
+  it('renders SubHeading correctly', async () => {
+    await act(async () => {
+      renderer.create(<SubHeading />);
+    });
   });
-  it('renders Heading correctly', () => {
-    renderer.create(<Heading />);
+  it('renders Heading correctly', async () => {
+    await act(async () => {
+      renderer.create(<Heading />);
+    });
   });
-  it('renders LargeText correctly', () => {
-    renderer.create(<LargeText />);
+  it('renders LargeText correctly', async () => {
+    await act(async () => {
+      renderer.create(<LargeText />);
+    });
   });
-  it('renders Link correctly', () => {
-    renderer.create(<Link />);
+  it('renders Link correctly', async () => {
+    await act(async () => {
+      renderer.create(<Link />);
+    });
   });
 });
