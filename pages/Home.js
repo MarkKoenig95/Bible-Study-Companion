@@ -443,6 +443,8 @@ export default function Home(props) {
     afterUpdate,
     completedHidden,
     updatePages,
+    null,
+    null,
     pageTitle,
   );
 
