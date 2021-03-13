@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import SearchableDropdown from 'react-native-searchable-dropdown';
+import SearchableDropdown from './__mocks__/react-native-searchable-dropdown';
 
 import styles, {colors} from '../../styles/styles';
 

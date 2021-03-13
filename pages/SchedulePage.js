@@ -178,6 +178,7 @@ function SchedulePage(props) {
       </View>
       <View style={styles.content}>
         <FlatList
+          testID={pageTitle + '.buttonList'}
           data={listItems}
           keyExtractor={(item, index) => index.toString()}
           ref={ref => {

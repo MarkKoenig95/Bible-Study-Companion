@@ -12,8 +12,6 @@ import Settings from '../pages/Settings';
 import renderer, {act} from 'react-test-renderer';
 import {StateProvider} from '../data/Store/store';
 
-jest.mock('../data/Store/store');
-
 const navigation = {dispatch: jest.fn(), setOptions: jest.fn()};
 const route = {params: {name: 'A', table: 'tblA', id: 0}};
 
