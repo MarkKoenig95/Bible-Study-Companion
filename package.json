@@ -57,6 +57,7 @@
     "detox-getprops": "^0.1.2",
     "eslint": "6.8.0",
     "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-detox": "^1.0.0",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
     "metro-react-native-babel-preset": "0.56.4",

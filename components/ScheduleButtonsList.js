@@ -272,6 +272,7 @@ export default function useScheduleButtonsList(
         }
       } else {
         let buttons = [];
+        let firstPortion;
         let readingPortions;
         let hiddenPortions;
         let completionDate;
@@ -299,6 +300,7 @@ export default function useScheduleButtonsList(
             isFinished = tempIsFinished;
             title = scheduleName || item.title;
             readingPortions = item.ReadingPortion;
+            firstPortion = item.ReadingPortion;
             hiddenPortions = !tempIsFinished ? item.ReadingPortion : '';
             completionDate = item.doesTrack && item.CompletionDate;
           }
@@ -330,6 +332,7 @@ export default function useScheduleButtonsList(
                 endVerse,
                 true,
               );
+              firstPortion = description;
               readingPortions = description;
               hiddenPortions = description;
             }
@@ -368,6 +371,7 @@ export default function useScheduleButtonsList(
 
         result = (
           <ScheduleDayButton
+            testID={testID + '.multiPortionStartingWith.' + firstPortion}
             readingPortion={readingPortions}
             completionDate={completionDate}
             completedHidden={completedHidden}
@@ -395,6 +399,7 @@ export default function useScheduleButtonsList(
     [
       tableName,
       scheduleName,
+      testID,
       completedHidden,
       updatePages,
       onUpdateReadStatus,
