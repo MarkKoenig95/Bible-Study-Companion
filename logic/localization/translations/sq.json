@@ -1,0 +1,279 @@
+{
+  "actions": {"cancel": "Fshi", "done": "U krye"},
+  "appName": "Bibla ndihmës për studim",
+  "bibleBook": "Libri i Biblës",
+  "bibleBooks": {
+    "1": {"name": "Zanafilla", "whereWritten": "Shkretëtirë"},
+    "2": {"name": "Eksodi / Dalja", "whereWritten": "Shkretëtirë"},
+    "3": {"name": "Levitiku", "whereWritten": "Shkretëtirë"},
+    "4": {
+      "name": "Numrat",
+      "whereWritten": "Shkretëtirë dhe rrafshinat e Moabit"
+    },
+    "5": {"name": "Ligji i përtërirë", "whereWritten": "Rrafshinat e Moabit"},
+    "6": {"name": "Josiu", "whereWritten": "Kanan"},
+    "7": {"name": "Gjykatësit", "whereWritten": "Izrael"},
+    "8": {"name": "Rutha", "whereWritten": "Izrael"},
+    "9": {"name": "1 Samuelit", "whereWritten": "Izrael"},
+    "10": {"name": "2 Samuelit", "whereWritten": "Izrael"},
+    "11": {"name": "1 Mbretërve", "whereWritten": "Judë"},
+    "12": {"name": "2 Mbrëtërve", "whereWritten": "Judë dhe Egjipt"},
+    "13": {"name": "1 Kronikave", "whereWritten": "Jeruzalem (?)"},
+    "14": {"name": "2 Kronikave", "whereWritten": "Jeruzalem (?)"},
+    "15": {"name": "Ezdra", "whereWritten": "Jeruzalem"},
+    "16": {"name": "Nehemia", "whereWritten": "Jeruzalem"},
+    "17": {"name": "Ester", "whereWritten": "Shushan dhe Elam "},
+    "18": {"name": "Jobi", "whereWritten": "Shkretëtirë"},
+    "19": {"name": "Psalmet", "whereWritten": "Përshkrim"},
+    "20": {"name": "Proverbat", "whereWritten": "Jeruzalem"},
+    "21": {"name": "Eklisiastiu", "whereWritten": "Jeruzalem"},
+    "22": {"name": "Kënga e Solomonit", "whereWritten": "Jeruzalem"},
+    "23": {"name": "Isaia", "whereWritten": "Jeruzalem"},
+    "24": {"name": "Jeremia", "whereWritten": "Judë; Egjipt"},
+    "25": {"name": "Vajtimet", "whereWritten": "Afër Jeruzalemit"},
+    "26": {"name": "Ezekieli", "whereWritten": "Babiloni"},
+    "27": {"name": "Danieli", "whereWritten": "Babiloni"},
+    "28": {"name": "Hozea", "whereWritten": "Samari (Krahinë)"},
+    "29": {"name": "Joeli", "whereWritten": "Judë"},
+    "30": {"name": "Amosi", "whereWritten": "Judë"},
+    "31": {"name": "Abdia", "whereWritten": "Përshkrim"},
+    "32": {"name": "Jonai", "whereWritten": "Përshkrimi"},
+    "33": {"name": "Mikea", "whereWritten": "Judë"},
+    "34": {"name": "Naumi", "whereWritten": "Judë"},
+    "35": {"name": "Habakuku", "whereWritten": "Judë"},
+    "36": {"name": "Sofonia", "whereWritten": "Judë"},
+    "37": {"name": "Hageu", "whereWritten": "Jeruzalemi i rindërtuar"},
+    "38": {"name": "Zakaria", "whereWritten": "Jeruzalemi i rindërtuar"},
+    "39": {"name": "Malakia", "whereWritten": "Jeruzalemi i rindërtuar"},
+    "40": {"name": "Mateu", "whereWritten": "Izrael"},
+    "41": {"name": "Marku", "whereWritten": "Romë"},
+    "42": {"name": "Luka", "whereWritten": "Çezare"},
+    "43": {"name": "Gjoni", "whereWritten": "Efes, ose afër"},
+    "44": {"name": "Veprat", "whereWritten": "Romë"},
+    "45": {"name": "Romakëve", "whereWritten": "Korint"},
+    "46": {"name": "1 Korintasve", "whereWritten": "Efesianëve"},
+    "47": {"name": "2 Korintasve", "whereWritten": "Maqedoni"},
+    "48": {
+      "name": "Galatasve",
+      "whereWritten": "Korint, ose Antioki e Sirisë"
+    },
+    "49": {"name": "Efesianëve", "whereWritten": "Romë"},
+    "50": {"name": "Filipianëve", "whereWritten": "Romë"},
+    "51": {"name": "Kolosianëve", "whereWritten": "Romë"},
+    "52": {"name": "1 Selanikasve", "whereWritten": "Korint"},
+    "53": {"name": "2 Selanikasve", "whereWritten": "Korint"},
+    "54": {"name": "1 Timoteut", "whereWritten": "Maqedoni"},
+    "55": {"name": "2 Timoteut", "whereWritten": "Romë"},
+    "56": {"name": "Titit", "whereWritten": "Maqedoni (?)"},
+    "57": {"name": "Filemonit", "whereWritten": "Romë"},
+    "58": {"name": "Hebrenjve", "whereWritten": "Romë"},
+    "59": {"name": "Jakovi", "whereWritten": "Jeruzalemi"},
+    "60": {"name": "1 Pjetrit", "whereWritten": "Babiloni"},
+    "61": {"name": "2 Pjetrit", "whereWritten": "Babiloni (?)"},
+    "62": {"name": "1 Gjonit", "whereWritten": "Efes, ose afër"},
+    "63": {"name": "2 Gjonit", "whereWritten": "Efes, ose afër"},
+    "64": {"name": "3 Gjonit", "whereWritten": "Efes ose afër"},
+    "65": {"name": "Juda", "whereWritten": "Izrael (?)"},
+    "66": {"name": "Zbulesa", "whereWritten": "Patmos"}
+  },
+  "buttonsPopup": {"title": "Pjesët e leximit"},
+  "createSchedulePopup": {
+    "createSchedule": "Krijo program",
+    "numberOfPortions": "numri i {{portionDesc}}",
+    "numberOfPortionsPhld": "Numri i përgjithshëm i {{portionDesc}} në artikull në botim",
+    "readingPortionDesc": {
+      "title": "Leximi i përshkrimit të pjesës",
+      "article": "Artikulli",
+      "chapter": "Kapitulli",
+      "page": "Faqe",
+      "paragraph": "Paragrafi"
+    },
+    "readingPortionDescPhld": "Përshkrimi i pjesës së leximit",
+    "portionsPerDay": "{{portionDesc}} në ditë",
+    "portionsPerDayPhld": "Sa {{portionDesc}} për të lexuar çdo ditë",
+    "scheduleName": "Titulli ",
+    "scheduleDuration": "Kohëzgjatja e Programit",
+    "scheduleDurPhld": "Për sa vjet duhet të zgjasë programi i leximit nga fillimi në fund?",
+    "shouldTrack": "Gjurmoj datat e leximit ?",
+    "startingPortion": "Duke filluar {{portionDesc}}",
+    "startingPortionPhld": "{{portionDesc}}Do të pëlqente të filloje nga ",
+    "startingVerse": "Fillo vargun nga",
+    "unfinished": "Ju lutem plotësoni të gjitha fushat e kërkuara me vlera të vlefshme për të krijuar një program"
+  },
+  "date": {
+    "approxDesc": {
+      "approxDate": "{{after}}{{about}}{{before}} {{date}}",
+      "about": "Rreth",
+      "after": "Pas",
+      "before": "Para"
+    },
+    "ancientDate": "{{year}} {{bceOrCe}}",
+    "bce": "P.E.S",
+    "ce": "E.S",
+    "dateSpan": "{{startDate}} - {{endDate}}",
+    "specialCases": {
+      "1": "“Në fillim të” deri {{endYear}}",
+      "3": "1 Muaj në {{endYear}}",
+      "5": "2 Muaj në {{endYear}}",
+      "8": "11 Vitet e gjykimit të Gjykatësve {{startYear}}  deri në {{endYear}}",
+      "13": "Pas 1 Kronikave 9:44: rreth {{startYear}} deri {{endYear}}",
+      "18": "Mbi 140 vjet midis {{startYear}} dhe {{endYear}}",
+      "37": "112 ditë në {{endYear}}",
+      "43": "Pas hyrjes {{startYear}} deri {{endYear}}"
+    }
+  },
+  "frequencies": {
+    "daily": "Ditor",
+    "weekly": "Javor",
+    "monthly": "Mujor",
+    "never": "Kurrë"
+  },
+  "homePage": {
+    "emptyList": "Ske më për të lexuar për sot",
+    "title": "Shtëpia"
+  },
+  "links": {
+    "languageTag": "sq",
+    "hasStudyBible": false,
+    "finderLocale": "AL",
+    "www": {
+      "bible": "bibla",
+      "books": "libra",
+      "how-to-read-the-bible": "si-të-lexosh-biblën",
+      "introduction": "njihu-me-fjalën-e-perëndisë",
+      "library": "bibliotekë"
+    },
+    "wol": {"lp-e": "lp-al", "r1": "r41"}
+  },
+  "missingTranslation": "Përkthimi nuk ekziston",
+  "morePage": {"title": "Më tepër"},
+  "notification": {
+    "baseTitle": "Leximi i ditës",
+    "bigText": "Le të shohim se çfarë ke për të kryer akoma sot",
+    "message": "Eja ta kryejmë"
+  },
+  "notificationsPage": {
+    "title": "Njoftime",
+    "notificationName": "Titulli i njoftimit",
+    "notificationPopupTitle": "Krijo njoftim të ri"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": "Je i sigurt që dëshiron të fshish \"{{notificationName}}\" Njoftim?"
+  },
+  "openJWLibrary": "Hap JW Library",
+  "ordinal": {
+    "0": "etë",
+    "1": "të",
+    "2": "të",
+    "3": "tës",
+    "4": "ës",
+    "5": "ës",
+    "6": "tës",
+    "7": "tës",
+    "8": "tës",
+    "9": "të",
+    "after": true,
+    "special": {"count": 0}
+  },
+  "other": "Tjetër",
+  "prompts": {
+    "setNotification": "Përshkrim: ",
+    "nameTaken": "Të lutem përdor një titull të ri"
+  },
+  "readingRemindersPopup": {
+    "readingReminders": "Kujtesa e leximit",
+    "heading0": "Krijoni mjedisin e duhur\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body0-1": "Gjeni një vendndodhje që është e qetë dhe pa shpërqendrime\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body0-2": "(Ndoshta mund të vendosësh telefonin në modalitetin i heshtur)",
+    "heading1": "Lutu para se të lexosh\n\n( Shiko linkun e mëposhtëm për më tepër ) ",
+    "body1-1": "Kërkoji Jehovait që të përgatisë mëndjen  dhe zemrën tënde dhe t'ju japë frymën e tij të Shenjtë për t'ju ndihmuar  jo vetëm që të kuptoni por edhe zbatoni atë që lexoni.\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "heading2": "Medito për atë që lexon\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-1": "Mos nxito, lexo për të kuptuar.\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "subheading2-1": "Mund të bësh këto pyetje:\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-2": "Çfarë më tregon kjo për Perëndinë Jehova?\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-3": "Si kontribuon kjo pjesë e Shkrimeve në mesazhin e Biblës?\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-4": "Si mund ta zbatoj këtë në jetën time?\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-5": "Si mund t'i përdor këto vargje për të ndihmuar të tjerët?\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "subheading2-2": "Imagjinoni veten në skenë:\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-6": "Çfarë shihni, dëgjoni dhe nuhatni?\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-7": "Cilat mund të jenë ndjenjat e atyre që janë përfshirë?\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "subheading2-3": "Bëni kërkime në mënyrë që: \n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-8": "Kupto kontekstin e pjesës së leximit.\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body2-9": "Kupto qartë konceptet e vështira.\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "heading3": "Zbato ato që lexon\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body3-1": "Nëse shohim vlerën praktike të një aktiviteti, përfitojmë më shumë nga ajo.\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "body3-2": "Duhet të ndërmarrim veprime për të zbatuar në jetën tonë atë që kemi mësuar, dhe të kuptojmë se si mund të përdorim atë informacion për të ndihmuar të tjerët.\n\n( Shiko linkun e mëposhtëm për më tepër )",
+    "subheading3-1": "Burimi i informacionit rrjedh nga :",
+    "body3-3": "Të lutem kliko tek linku për të pasur kuptueshmëri më të qartë mbi mendimet e shprehura"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "Informacione mbi leximin",
+    "readingPortion": "Pjesa e leximit",
+    "timeCovered": "Kohëzgjatja e shkrimit",
+    "whereWritten": "Ku u shkrua",
+    "whenWritten": "Kur u shkrua",
+    "writers": "Shkrimtari/ët"
+  },
+  "readingSchedules": "Programet",
+  "reminders": {
+    "completeReminderMessage": "Are you sure you want to mark reminder \"{{reminderName}}\" complete?",
+    "dailyReading": "Leximi i ditës",
+    "dailyText": "Shkrimi i ditës",
+    "midweekMeetingStudy": "Studimi i mbledhjes së meajavës ",
+    "reminder": "Kujtues",
+    "weekendMeetingStudy": "Studimi i Mbledhjes së fundjavës",
+    "weeklyReading": {
+      "title": "Leximi i mbledhjes javore",
+      "showDaily": "Trego pjesën ditore të leximit javor"
+    }
+  },
+  "remindersPage": {
+    "completed": "U krye {{desc}}",
+    "deleteReminderMessage": "Jeni i sigurt që dëshironi ta fshihni \"{{reminderName}}\" kujtesë?",
+    "every": "Çdo: ",
+    "name": "Titullo: ",
+    "reminderPopupTitle": "Krijo një kujtesë të re",
+    "repeats": "Përsërit:",
+    "title": "Kujto"
+  },
+  "schedules": "Programet",
+  "schedulePage": {
+    "deleteScheduleMessage": "A je i bindur se dëshiron ta fshish” \"{{scheduleName}}\" programi?",
+    "hideCompleted": "Fshi atë që është e kryer"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "Fillo vargun nga “{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" deri \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\"sepse kërkesa fillestare ishte jashtë kufijve."
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "Lloji i programit",
+    "sequential": "Sipas radhës / Vijues",
+    "sequentialDescription": "Lexo biblën nga Zanifilla deri tek Zbulesa",
+    "chronological": "Kronologjik",
+    "chronologicalDescription": "Lexoni biblën sipas radhës në të cilën ndodhën ngjarjet.  (EKSPERIMENTALE: Nëse gjeni një mospërputhje ju lutem më kontaktoni)",
+    "thematic": "Tematike",
+    "thematicDescription": "Çdo ditë, lexoni nga një seksion tjetër i Biblës në një cikël javor: Dita 1 - Ligjet, 2 - Historia, 3 - Psalmet, 4 - Poemat, 5 - Profecitë, 6 - Ungjijtë, 7 - Letrat",
+    "custom": "Personalizo",
+    "customDescription": "Krijoni një program të personalizuar për një botim"
+  },
+  "settingsPage": {
+    "about": "Rreth",
+    "contact": "Kontakto",
+    "title": "Cilësimet",
+    "version": "Versioni",
+    "weeklyReadingResetDay": "Dita për të rivendosur leximin javor:"
+  },
+  "thisMonth": "Këtë muaj",
+  "thisWeek": "Këtë javë",
+  "today": "Sot",
+  "versePicker": {"chapterAbrev": "Kp", "verseAbrev": "Vg"},
+  "warning": "Kujdes",
+  "weekdays": {
+    "0": {"abrev": "Die", "name": "E diel"},
+    "1": {"abrev": "Hën", "name": "E hënë"},
+    "2": {"abrev": "Mar", "name": "E martë"},
+    "3": {"abrev": "Mër", "name": "E mërkurrë"},
+    "4": {"abrev": "Enj", "name": "E enjte"},
+    "5": {"abrev": "Prt", "name": "E premte"},
+    "6": {"abrev": "Sht", "name": "E shtunë"}
+  }
+}

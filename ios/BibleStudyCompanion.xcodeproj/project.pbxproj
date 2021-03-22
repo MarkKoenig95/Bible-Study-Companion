@@ -64,6 +64,8 @@
 		254096E925C97DFB00B1DE33 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		2546B07B25C2FAFA0054AB78 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		2546B07E25C2FB550054AB78 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		2549099426085B9B00C6D598 /* sq */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sq; path = sq.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		2549099526085B9B00C6D598 /* sq */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sq; path = sq.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		258143CC24F8CC5E005AE5D5 /* RNBackgroundFetch+AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RNBackgroundFetch+AppDelegate.m"; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/RNBackgroundFetch+AppDelegate.m"; sourceTree = "<group>"; };
 		2585272A24EFB28B006C9573 /* BibleStudyCompanionIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BibleStudyCompanionIcon.png; path = assets/BibleStudyCompanionIcon.png; sourceTree = "<group>"; };
 		2585272C24EFB500006C9573 /* Bible Study Companion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Bible Study Companion.entitlements"; path = "BibleStudyCompanion/Bible Study Companion.entitlements"; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 				Base,
 				"zh-Hans",
 				it,
+				sq,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -713,6 +716,7 @@
 				2546B07B25C2FAFA0054AB78 /* zh-Hans */,
 				2546B07E25C2FB550054AB78 /* en */,
 				25F7171025FAFA55007E5345 /* it */,
+				2549099426085B9B00C6D598 /* sq */,
 			);
 			name = LaunchScreen.xib;
 			path = BibleStudyCompanion;
@@ -724,6 +728,7 @@
 				254096E725C97DF700B1DE33 /* en */,
 				254096E925C97DFB00B1DE33 /* zh-Hans */,
 				25F7171125FAFA55007E5345 /* it */,
+				2549099526085B9B00C6D598 /* sq */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
