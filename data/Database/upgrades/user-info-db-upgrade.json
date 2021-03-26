@@ -21,13 +21,13 @@
         "INSERT INTO tblDates(Name, Description, Date) VALUES (\"WeeklyReadingStart\", \"@{weeklyReadingStartOrder}\", \"@{weeklyReadingStartDate}\"), (\"WeeklyReadingCurrent\", \"Last date of mid-week reading schedule read\", \"0\");"
       ],
       [
-        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES (\"@{dailyReading}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES (\"@{dailyReading}\", \"@{baseDate}\", 0, 1, 1, 1, 1, 1, 1, 1, \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\");"
       ],
       [
-        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{midweekMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{midweekMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\");"
       ],
       [
-        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weekendMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime}, @{baseTime});"
+        "INSERT INTO tblNotifications(Name, NextNotifDate, IsNotificationActive, IsDay0Active, IsDay1Active, IsDay2Active, IsDay3Active, IsDay4Active, IsDay5Active, IsDay6Active, Day0Time, Day1Time, Day2Time, Day3Time, Day4Time, Day5Time, Day6Time)  VALUES  (\"@{weekendMeetingStudy}\", \"@{baseDate}\", 0, 0, 0, 0, 0, 0, 0, 0, \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\", \"@{baseTime}\");"
       ],
       [
         "INSERT INTO tblReminders(Name, IsFinished, Frequency, ResetValue, CompletionDate) VALUES (\"@{dailyText}\", 0, @{daily}, 0, \"@{baseDate}\");"

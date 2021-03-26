@@ -21,10 +21,11 @@ const pageTitle = 'notificationPage';
 
 const WeekdayWrapper = React.memo(props => {
   const {day, isNotifActive, itemID, onUpdate, testID, weekday} = props;
-  const isActiveProp = isActive;
+  const isActiveProp = props.isActive;
+  const timeProp = props.time;
 
   const [isActive, setIsActive] = useState(isActiveProp && isNotifActive);
-  const [time, setTime] = useState(time);
+  const [time, setTime] = useState(timeProp);
 
   const activeColor = colors.darkBlue;
 

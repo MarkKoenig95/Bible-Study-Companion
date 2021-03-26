@@ -6,7 +6,7 @@ import {Body} from '../text/Text';
 import {Platform, TouchableOpacity} from 'react-native';
 
 import moment from 'moment';
-import {DateTimePicker} from '../inputs/DateTimePicker';
+import DateTimePicker from '../inputs/DateTimePicker';
 import TextButton from './TextButton';
 import {translate} from '../../logic/localization/localization';
 import {useEffect} from 'react';

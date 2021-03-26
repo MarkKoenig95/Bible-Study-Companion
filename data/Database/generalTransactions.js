@@ -245,10 +245,10 @@ function setDatabaseParameters(upgradeJSON) {
     JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
       switch (group) {
         case 'baseDate':
-          let date = formatDate(new Date(0));
+          let date = new Date(0);
           return date;
         case 'baseTime':
-          let time = formatDate(new Date(2020, 0, 1, 8, 0, 0));
+          let time = new Date(2020, 0, 1, 8, 0, 0);
           return time;
         case 'weeklyReadingStartDate':
           //This year we will start at August 3rd. This refers to the 30th day in the schedule
@@ -328,7 +328,7 @@ export async function upgradeDB(db, upgradeJSON) {
 
     statements = [
       ...statements,
-      ...[[`PRAGMA user_version = ${upgradeVersion};`, []]],
+      ...[[`PRAGMA user_version=${upgradeVersion};`, []]],
     ];
 
     log(statements);

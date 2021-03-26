@@ -20,7 +20,7 @@ export default function CustomDropdown(props) {
     <SearchableDropdown
       testID={testID}
       onItemSelect={item => {
-        const sItems = selectedItems;
+        const sItems = [...selectedItems];
         sItems.pop();
         sItems.push(item);
         setSelectedItems(sItems);
@@ -35,7 +35,9 @@ export default function CustomDropdown(props) {
       itemsContainerStyle={style.itemContainer}
       items={items}
       defaultIndex={0}
+      multi={false}
       resetValue={false}
+      selectedItems={selectedItems}
       textInputProps={{
         testID: testID + '.input',
         placeholder: placeholder,

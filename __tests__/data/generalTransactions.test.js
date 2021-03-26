@@ -50,14 +50,14 @@ test('appVersion run 1', async () => {
   let {prevVersion, currVersion} = await appVersion(userDB);
 
   expect(prevVersion).toBe('');
-  expect(currVersion).toBe('1.0.0');
+  expect(currVersion).toBe('1.0.2');
 });
 
 test('appVersion run 2', async () => {
   let {prevVersion, currVersion} = await appVersion(userDB);
 
-  expect(prevVersion).toBe('1.0.0');
-  expect(currVersion).toBe('1.0.0');
+  expect(prevVersion).toBe('1.0.2');
+  expect(currVersion).toBe('1.0.2');
 });
 
 test('updateValue', async () => {
