@@ -13,7 +13,9 @@ beforeAll(async () => {
   if (device.getPlatform() !== 'ios') {
     waitTime *= 5;
   }
+
   await device.launchApp({permissions: {notifications: 'YES'}});
+
   //Once this element shows up we know that the database has been set up
   await waitFor(element(by.text('Daily Text')))
     .toBeVisible()

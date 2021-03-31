@@ -529,7 +529,7 @@ export default function Reminders(props) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView testID={pageTitle} style={styles.container}>
       <MessagePopup
         testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
