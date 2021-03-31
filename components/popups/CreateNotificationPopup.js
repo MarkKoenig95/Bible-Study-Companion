@@ -8,7 +8,7 @@ import {translate} from '../../logic/localization/localization';
 import IconButton from '../buttons/IconButton';
 import Text from '../text/Text';
 import CheckBox from '../buttons/CheckBox';
-import TimePickerButton from '../buttons/TimePickerButton';
+import TimePickerButton from '../buttons/DateTimePickerButton';
 
 function WeekdayCheckbox(props) {
   const {abrev, checked, id, onPress, testID} = props;
@@ -71,7 +71,7 @@ export default function CreateNotificationPopup(props) {
         placeholder={translate(prefix + 'notificationName')}
       />
       <View style={styles.wrapperContent}>
-        {weekdays.map(day => {
+        {weekdays.map((day) => {
           return (
             <WeekdayCheckbox
               testID={testID + '.weekdayCheckbox.' + day.abrev}
@@ -89,9 +89,10 @@ export default function CreateNotificationPopup(props) {
 
       <TimePickerButton
         testID={testID + '.timePicker'}
+        mode={'time'}
+        onChange={setTime}
         textPrefix={translate('prompts.setNotification')}
         time={time}
-        onChange={setTime}
       />
 
       <IconButton

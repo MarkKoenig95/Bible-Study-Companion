@@ -37,15 +37,11 @@ export default function Schedules(props) {
 
   const [listItems, setListItems] = useState([]);
 
-  const [
-    isCreateSchedulePopupDisplayed,
-    setIsCreateSchedulePopupDisplayed,
-  ] = useState(false);
+  const [isCreateSchedulePopupDisplayed, setIsCreateSchedulePopupDisplayed] =
+    useState(false);
 
-  const [
-    isScheduleTypePopupDisplayed,
-    setIsScheduleTypePopupDisplayed,
-  ] = useState(isCreatingSchedule);
+  const [isScheduleTypePopupDisplayed, setIsScheduleTypePopupDisplayed] =
+    useState(isCreatingSchedule);
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 

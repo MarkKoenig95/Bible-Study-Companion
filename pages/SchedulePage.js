@@ -1,6 +1,5 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {SafeAreaView, View, FlatList} from 'react-native';
-import {StackActions} from '@react-navigation/native';
 import {translate} from '../logic/localization/localization';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
@@ -16,15 +15,18 @@ import {
   getScheduleSettings,
   renameSchedule,
   setDoesTrack,
+  updateScheduleStartDate,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
 import {
   WEEKLY_READING_TABLE_NAME,
   useUpdate,
   useToggleState,
+  pageBack,
 } from '../logic/general';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 import ScheduleSettingsPopup from '../components/popups/ScheduleSettingsPopup';
+import LoadingPopup from '../components/popups/LoadingPopup';
 
 const pageTitle = 'schedulePage';
 let flatListRef;
@@ -37,41 +39,88 @@ function SchedulePage(props) {
 
   const globalState = useContext(store);
   const {dispatch} = globalState;
-  const {userDB, updatePages} = globalState.state;
+  const {bibleDB, userDB, updatePages} = globalState.state;
 
   const scheduleName = route.params.name;
   const tableName = route.params.table;
 
   const [listItems, setListItems] = useState([]);
-
   const [completedHidden, setCompletedHidden] = useState();
   const [shouldTrack, setShouldTrack] = useState();
-
+  const [startDate, setStartDate] = useState(new Date());
   const [firstUnfinished, setFirstUnfinished] = useState();
+  const [isLoading, setLoadingPopup] = useState(false);
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
-  const [
-    settingsPopupIsDisplayed,
-    toggleSettingsPopupIsDisplayed,
-  ] = useToggleState(false);
+  const [settingsPopupIsDisplayed, toggleSettingsPopupIsDisplayed] =
+    useToggleState(false);
 
   const afterUpdate = useUpdate(updatePages, dispatch);
 
-  const {
-    ScheduleListPopups,
-    setScheduleButtons,
-    openRemindersPopup,
-  } = useScheduleButtonsList(
-    userDB,
-    afterUpdate,
-    completedHidden,
-    updatePages,
-    tableName,
-    scheduleName,
-    pageTitle,
+  const {ScheduleListPopups, setScheduleButtons, openRemindersPopup} =
+    useScheduleButtonsList(
+      userDB,
+      afterUpdate,
+      completedHidden,
+      updatePages,
+      tableName,
+      scheduleName,
+      pageTitle,
+    );
+
+  const _handleScheduleNameChange = useCallback(
+    (newScheduleName) => {
+      renameSchedule(userDB, scheduleName, newScheduleName).then(() => {
+        afterUpdate();
+        pageBack(navigation);
+      });
+    },
+    [navigation, userDB, scheduleName, afterUpdate],
   );
 
-  //Set delete button in nav bar with appropriate onPress attribute
+  const _handleSetHideCompleted = useCallback(() => {
+    setHideCompleted(userDB, scheduleName, !completedHidden).then(afterUpdate);
+    setCompletedHidden(!completedHidden);
+  }, [afterUpdate, completedHidden, scheduleName, userDB]);
+
+  const _handleSetDoesTrack = useCallback(() => {
+    setDoesTrack(userDB, scheduleName, !shouldTrack).then(afterUpdate);
+    setShouldTrack(!shouldTrack);
+  }, [afterUpdate, shouldTrack, scheduleName, userDB]);
+
+  const _handleDeleteSchedule = useCallback(() => {
+    pageBack(navigation);
+    //Wait a little while to delete the schedule so that we pop this page from the stack
+    //before it tries to render a nonexistant schedule
+    //(in the past this caused an error that made it impossible for some to delete schedules)
+    setTimeout(() => {
+      deleteSchedule(userDB, tableName, scheduleName).then(afterUpdate);
+    }, 750);
+  }, [afterUpdate, navigation, scheduleName, tableName, userDB]);
+
+  const _handleStartDateChange = useCallback(
+    (newStartDate) => {
+      openMessagePopup(
+        translate('schedulePage.recreateScheduleWarning'),
+        translate('warning'),
+        () => {
+          setLoadingPopup(true);
+          updateScheduleStartDate(
+            userDB,
+            bibleDB,
+            scheduleName,
+            newStartDate,
+          ).then(() => {
+            afterUpdate();
+            pageBack(navigation);
+          });
+        },
+      );
+    },
+    [afterUpdate, bibleDB, navigation, openMessagePopup, scheduleName, userDB],
+  );
+
+  //Set delete and settings buttons in nav bar with appropriate onPress attributes
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => {
@@ -128,16 +177,17 @@ function SchedulePage(props) {
       typeof shouldTrack === 'undefined' ||
       typeof completedHidden === 'undefined'
     ) {
-      getScheduleSettings(userDB, scheduleName).then(settings => {
-        const {doesTrack, hideCompleted} = settings;
+      getScheduleSettings(userDB, scheduleName).then((settings) => {
+        const {startDate, doesTrack, hideCompleted} = settings;
 
         setShouldTrack(doesTrack);
         setCompletedHidden(hideCompleted);
+        setStartDate(startDate);
       });
       return;
     }
 
-    loadData(userDB, tableName, shouldTrack).then(res => {
+    loadData(userDB, tableName, shouldTrack).then((res) => {
       if (res) {
         setListItems(res);
       }
@@ -172,36 +222,12 @@ function SchedulePage(props) {
     }
   }, [completedHidden, firstUnfinished, listItems]);
 
-  const _handleScheduleNameChange = useCallback(
-    newScheduleName => {
-      renameSchedule(userDB, scheduleName, newScheduleName).then(afterUpdate);
-    },
-    [userDB, scheduleName, afterUpdate],
-  );
-
-  const _handleSetHideCompleted = useCallback(() => {
-    setHideCompleted(userDB, scheduleName, !completedHidden).then(afterUpdate);
-    setCompletedHidden(!completedHidden);
-  }, [afterUpdate, completedHidden, scheduleName, userDB]);
-
-  const _handleSetDoesTrack = useCallback(() => {
-    setDoesTrack(userDB, scheduleName, !shouldTrack).then(afterUpdate);
-    setShouldTrack(!shouldTrack);
-  }, [afterUpdate, shouldTrack, scheduleName, userDB]);
-
-  const _handleDeleteSchedule = useCallback(() => {
-    navigation.dispatch(StackActions.pop(1));
-    //Wait a little while to delete the schedule so that we pop this page from the stack
-    //before it tries to render a nonexistant schedule
-    setTimeout(() => {
-      deleteSchedule(userDB, tableName, scheduleName).then(() => {
-        afterUpdate();
-      });
-    }, 750);
-  }, [afterUpdate, navigation, scheduleName, tableName, userDB]);
-
   return (
     <SafeAreaView testID={pageTitle} style={styles.container}>
+      <LoadingPopup
+        testID={pageTitle + '.loadingPopup'}
+        displayPopup={isLoading}
+      />
       <MessagePopup
         testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}
@@ -219,7 +245,9 @@ function SchedulePage(props) {
         onScheduleNameChange={_handleScheduleNameChange}
         onSetDoesTrack={_handleSetDoesTrack}
         onSetHideCompleted={_handleSetHideCompleted}
+        onStartDateChange={_handleStartDateChange}
         scheduleName={scheduleName}
+        startDate={startDate}
         title={translate('settingsPage.title')}
       />
       <ScheduleListPopups />
@@ -235,7 +263,7 @@ function SchedulePage(props) {
           testID={pageTitle + '.buttonList'}
           data={listItems}
           keyExtractor={(item, index) => index.toString()}
-          ref={ref => {
+          ref={(ref) => {
             flatListRef = ref;
           }}
           getItemLayout={(data, index) => ({

@@ -1,5 +1,6 @@
 import {useCallback, useState} from 'react';
 import {Linking, Platform} from 'react-native';
+import {StackActions, StackActionType} from '@react-navigation/native';
 import {runSQL} from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
@@ -199,6 +200,12 @@ export function versionIsLessThan(version: string, checkVersion: string) {
 
   //If we've gotten here it should be because they are equal
   return false;
+}
+
+export function pageBack(navigation: {
+  dispatch: (action: StackActionType) => void;
+}) {
+  navigation.dispatch(StackActions.pop(1));
 }
 
 // !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------

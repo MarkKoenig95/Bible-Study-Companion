@@ -5,7 +5,7 @@ import CustomButton from '../../components/buttons/CustomButton';
 import IconButton from '../../components/buttons/IconButton';
 import ScheduleDayButton from '../../components/buttons/ScheduleDayButton';
 import TextButton from '../../components/buttons/TextButton';
-import TimePickerButton from '../../components/buttons/TimePickerButton';
+import TimePickerButton from '../../components/buttons/DateTimePickerButton';
 
 describe('testing if buttons render', () => {
   it('renders CheckBox correctly', async () => {

@@ -89,6 +89,7 @@
     "scheduleDuration": "Schedule Duration",
     "scheduleDurPhld": "How many years the schedule should last from start to finish?",
     "shouldTrack": "Track reading dates?",
+    "startDate": "Start date",
     "startingPortion": "Starting {{portionDesc}}",
     "startingPortionPhld": "{{portionDesc}} you would like to start from",
     "startingVerse": "Starting Verse",
@@ -234,7 +235,8 @@
   "schedules": "Schedules",
   "schedulePage": {
     "deleteScheduleMessage": "Are you sure you want to delete \"{{scheduleName}}\" schedule?",
-    "hideCompleted": "Hide Completed"
+    "hideCompleted": "Hide Completed",
+    "recreateScheduleWarning": "Doing this will require recreating this schedule. Are you sure you want to recreate this schedule?"
   },
   "scheduleTransactions": {
     "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds."

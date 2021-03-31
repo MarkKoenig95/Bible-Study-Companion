@@ -6,7 +6,7 @@ import Text, {Body} from '../text/Text';
 
 import CustomInput from './CustomInput';
 import {useToggleState} from '../../logic/general';
-import styles from '../../styles/styles';
+import {colors} from '../../styles/styles';
 
 const Editing = (props: {
   onCancelEdit: () => void;
@@ -16,16 +16,10 @@ const Editing = (props: {
   testID: string;
   title: string;
 }) => {
-  const {
-    onCancelEdit,
-    onChangeText,
-    onConfirmEdit,
-    text,
-    testID,
-    title,
-  } = props;
+  const {onCancelEdit, onChangeText, onConfirmEdit, text, testID, title} =
+    props;
   return (
-    <View style={styles.row}>
+    <View style={style.row}>
       <CustomInput
         testID={testID}
         title={title}
@@ -56,9 +50,9 @@ const Displaying = (props: {
 }) => {
   const {testID, text, title, toggleIsEditing} = props;
   return (
-    <View style={styles.row}>
+    <View style={style.row}>
       <View>
-        <Text>{title}</Text>
+        <Text style={style.title}>{title}</Text>
         <Body>{text}</Body>
       </View>
 
@@ -121,4 +115,14 @@ const style = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
+  row: {
+    alignItems: 'center',
+    borderBottomColor: colors.smoke,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 7,
+    width: '100%',
+  },
+  title: {marginLeft: 10},
 });

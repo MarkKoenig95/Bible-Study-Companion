@@ -1,14 +1,15 @@
 import React from 'react';
 
 import Popup from './Popup';
-import Text, {Body} from '../text/Text';
+import {Body} from '../text/Text';
 
 import {translate} from '../../logic/localization/localization';
 
 import styles, {colors} from '../../styles/styles';
 import CheckBox from '../buttons/CheckBox';
 import {ToggleEditInput} from '../inputs/ToggleEditInput';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import DateTimePickerButton from '../buttons/DateTimePickerButton';
 
 interface SettingsPopupProps {
   completedHidden: boolean;
@@ -18,7 +19,9 @@ interface SettingsPopupProps {
   onScheduleNameChange: (name: string) => void;
   onSetDoesTrack: Function;
   onSetHideCompleted: Function;
+  onStartDateChange: Function;
   scheduleName: string;
+  startDate: Date;
   testID: string;
   title: string;
 }
@@ -32,7 +35,9 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
     onScheduleNameChange,
     onSetDoesTrack,
     onSetHideCompleted,
+    onStartDateChange,
     scheduleName,
+    startDate,
     testID,
     title,
   } = props;
@@ -43,7 +48,7 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
       displayPopup={displayPopup}
       title={title}
       onClosePress={onClosePress}>
-      <View style={styles.row}>
+      <View style={style.row}>
         <Body>{translate('schedulePage.hideCompleted')}</Body>
         <CheckBox
           testID={testID + '.hideCompletedCheckBox'}
@@ -53,7 +58,7 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
           onPress={onSetHideCompleted}
         />
       </View>
-      <View style={styles.row}>
+      <View style={style.row}>
         <Body>{translate('createSchedulePopup.shouldTrack')}</Body>
         <CheckBox
           testID={testID + '.shouldTrackCheckBox'}
@@ -63,16 +68,35 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
           onPress={onSetDoesTrack}
         />
       </View>
-      <View style={styles.row}>
-        <ToggleEditInput
-          testID={testID + '.scheduleNameInput'}
-          onTextChange={onScheduleNameChange}
-          text={scheduleName}
-          title={translate('createSchedulePopup.scheduleName')}
+      <ToggleEditInput
+        testID={testID + '.scheduleNameInput'}
+        onTextChange={onScheduleNameChange}
+        text={scheduleName}
+        title={translate('createSchedulePopup.scheduleName')}
+      />
+
+      <View style={style.row}>
+        <Body>{translate('createSchedulePopup.startDate')}</Body>
+        <DateTimePickerButton
+          testID={testID + '.timePicker'}
+          mode={'date'}
+          onChange={onStartDateChange}
+          textPrefix={translate('prompts.setNotification')}
+          time={startDate}
         />
       </View>
-      <Text>Change start date</Text>
-      <Text>Add a way to update all items earlier than a chosen item</Text>
     </Popup>
   );
 }
+
+const style = StyleSheet.create({
+  row: {
+    alignItems: 'center',
+    borderBottomColor: colors.smoke,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 7,
+    width: '100%',
+  },
+});

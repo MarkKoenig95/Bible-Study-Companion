@@ -12,14 +12,14 @@ import {store} from '../data/Store/store.js';
 
 import {errorCB, updateValue} from '../data/Database/generalTransactions';
 import {useUpdate} from '../logic/general';
-import TimePickerButton from '../components/buttons/TimePickerButton';
+import TimePickerButton from '../components/buttons/DateTimePickerButton';
 import {deleteNotification} from '../data/Database/notificationTransactions';
 import IconButton from '../components/buttons/IconButton';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 const pageTitle = 'notificationPage';
 
-const WeekdayWrapper = React.memo(props => {
+const WeekdayWrapper = React.memo((props) => {
   const {day, isNotifActive, itemID, onUpdate, testID, weekday} = props;
   const isActiveProp = props.isActive;
   const timeProp = props.time;
@@ -50,9 +50,10 @@ const WeekdayWrapper = React.memo(props => {
           <TimePickerButton
             testID={testID + '.timePicker'}
             invert
+            mode={'time'}
+            onChange={onTimeChange}
             textStyle={{color: color}}
             time={time}
-            onChange={onTimeChange}
           />
         </View>
         <Switch
@@ -207,7 +208,7 @@ export default function Notification(props) {
           testID={pageTitle + '.list'}
           data={listItems}
           renderItem={renderItem}
-          keyExtractor={item => item.weekday}
+          keyExtractor={(item) => item.weekday}
         />
       </View>
     </SafeAreaView>

@@ -78,7 +78,7 @@ export async function insertReadingPortions(
     userDB,
     `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders};`,
     values,
-  ).then(res => {
+  ).then((res) => {
     if (res.rowsAffected > 0) {
       log('Insert success');
     } else {
@@ -95,7 +95,7 @@ export async function insertReadingPortions(
       tableName,
       valuesArray,
       startIndex,
-    ).then(result => {
+    ).then((result) => {
       if (wasSuccessful) {
         wasSuccessful = result;
       }
@@ -198,7 +198,7 @@ export async function addSchedule(
   //Check if a schedule with that name already exists
   await runSQL(userDB, 'SELECT 1 FROM tblSchedules WHERE ScheduleName=?;', [
     scheduleName,
-  ]).then(res => {
+  ]).then((res) => {
     scheduleNameExists = res.rows.length > 0;
   });
 
@@ -262,7 +262,7 @@ export async function addSchedule(
     userDB,
     'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName=?;',
     [scheduleName],
-  ).then(res => {
+  ).then((res) => {
     let id = res.rows.item(0).ScheduleID;
     tableName = formatScheduleTableName(id);
 
@@ -301,7 +301,7 @@ export async function addSchedule(
   }
 
   await insertReadingPortions(userDB, readingPortions, tableName, valuesArray)
-    .then(wasSucessful => {
+    .then((wasSucessful) => {
       if (wasSucessful) {
         console.log('Every insert was successful');
         if (adjustedVerseMessage) {
@@ -313,7 +313,7 @@ export async function addSchedule(
       }
       timeKeeper('Ended at.....');
     })
-    .catch(err => {
+    .catch((err) => {
       errorCB(err);
       timeKeeper('Ended at.....');
     });
@@ -446,13 +446,13 @@ export async function createWeeklyReadingSchedule(
       tableName,
       bibleScheduleValuesArray,
     )
-      .then(wasSucessful => {
+      .then((wasSucessful) => {
         if (!wasSucessful) {
           console.log('Insert failed');
         }
         timeKeeper('Ended at.....');
       })
-      .catch(err => {
+      .catch((err) => {
         errorCB(err);
         timeKeeper('Ended at.....');
       });
@@ -502,6 +502,17 @@ export function updateReadStatus(
     bool,
     id,
   ]).then(afterUpdate);
+}
+
+export async function updateScheduleStartDate(
+  userDB,
+  bibleDB,
+  scheduleName,
+  newStartDate,
+) {
+  await recreateSchedule(userDB, bibleDB, scheduleName, {
+    startDate: newStartDate,
+  });
 }
 
 /**
@@ -566,21 +577,31 @@ export async function updateDates(userDB, date, name, afterUpdate = () => {}) {
  * @property {boolean} doesTrack - False if user wants completion dates of reading portions to not be shown
  */
 export async function getScheduleSettings(userDB, scheduleName) {
-  let hideCompleted;
+  let activeDays = [];
+  let creationInfo;
   let doesTrack;
+  let hideCompleted;
+  let startDate;
 
-  let result = await runSQL(
+  let {rows} = await runSQL(
     userDB,
     'SELECT * FROM tblSchedules WHERE ScheduleName=?;',
     [scheduleName],
   );
 
-  if (result.rows.length > 0) {
-    hideCompleted = result.rows.item(0).HideCompleted ? true : false;
-    doesTrack = result.rows.item(0).DoesTrack ? true : false;
+  if (rows.length > 0) {
+    let scheduleInfo = rows.item(0);
+    for (let i = 0; i < 7; i++) {
+      let dayIsActive = scheduleInfo[`IsDay${i}Active`] ? true : false;
+      activeDays.push(dayIsActive);
+    }
+    creationInfo = JSON.parse(scheduleInfo.CreationInfo);
+    doesTrack = scheduleInfo.DoesTrack ? true : false;
+    hideCompleted = scheduleInfo.HideCompleted ? true : false;
+    startDate = new Date(scheduleInfo.StartDate);
   }
 
-  return {doesTrack, hideCompleted};
+  return {activeDays, creationInfo, doesTrack, hideCompleted, startDate};
 }
 
 /**
@@ -700,7 +721,7 @@ export async function findCorrespondingIndex(
       chapter,
       verse,
     ],
-  ).then(res => {
+  ).then((res) => {
     if (res.rows.length > 0) {
       let item = res.rows.item(0);
 
@@ -735,7 +756,7 @@ export async function matchFinishedPortions(
     origScheduleFinished.rows.length - 1,
   );
 
-  let updates = finishedSpans.map(async span => {
+  let updates = finishedSpans.map(async (span) => {
     let startPortion = origScheduleFinished.rows.item(span.startIndex);
     let endPortion = origScheduleFinished.rows.item(span.endIndex);
 
@@ -775,6 +796,34 @@ export async function matchFinishedPortions(
 }
 
 /**
+ * Checks if there is already a schedule with the given name and recursively checks a new name until finding one that doesn't exsits then returns the resulting string
+ * @param {Database} userDB
+ * @param {string} scheduleName
+ * @param {number | undefined} itteration
+ * @returns {string}
+ */
+async function createOldScheduleName(userDB, scheduleName, itteration) {
+  let suffix = ` ${itteration}`;
+  if (!itteration) {
+    suffix = '';
+    itteration = 0;
+  }
+  let newScheduleName = `${scheduleName} (${translate('old')}${suffix})`;
+
+  let {rows} = await runSQL(
+    userDB,
+    'SELECT 1 FROM tblSchedules WHERE ScheduleName=?;',
+    [newScheduleName],
+  );
+
+  if (rows.length > 0) {
+    return createOldScheduleName(userDB, scheduleName, itteration + 1);
+  }
+
+  return newScheduleName;
+}
+
+/**
  *
  * @param {Database} userDB
  * @param {Database} bibleDB
@@ -802,14 +851,14 @@ export async function recreateSchedule(
   let oldScheduleInfo;
   await runSQL(userDB, 'SELECT * FROM tblSchedules WHERE ScheduleName=?;', [
     scheduleName,
-  ]).then(res => {
+  ]).then((res) => {
     oldScheduleInfo = res.rows.item(0);
   });
 
   let oldCreationInfo = JSON.parse(oldScheduleInfo.CreationInfo);
 
   //Change old schedule name
-  let oldScheduleName = `${scheduleName} (${translate('old')})`;
+  let oldScheduleName = await createOldScheduleName(userDB, scheduleName);
   await renameSchedule(userDB, scheduleName, oldScheduleName);
 
   //Merge old schedule info with given schedule creation info
@@ -858,7 +907,7 @@ export async function recreateSchedule(
     userDB,
     'SELECT * FROM tblSchedules WHERE ScheduleName=? OR ScheduleName=?;',
     [oldScheduleName, scheduleName],
-  ).then(res => {
+  ).then((res) => {
     for (let i = 0; i < res.rows.length; i++) {
       const item = res.rows.item(i);
 
