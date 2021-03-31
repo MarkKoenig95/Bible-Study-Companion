@@ -81,8 +81,7 @@ describe('Edit reminder', () => {
 
   it('name', async () => {
     await element(by.id(pref + 'nameSection.input')).replaceText('New');
-    // Need to tap this twice for some reason
-    await element(by.id(pref + 'actionButtons.done')).tap();
+
     await element(by.id(pref + 'actionButtons.done')).tap();
 
     await expect(element(by.id(prefix + 'reminder.New'))).toBeVisible();
@@ -131,8 +130,6 @@ describe('Edit reminder', () => {
   it('cancels editing', async () => {
     await element(by.id(pref + 'nameSection.input')).replaceText('New');
 
-    // Have to tap this twice for some reason
-    await element(by.id(pref + 'actionButtons.cancel')).tap();
     await element(by.id(pref + 'actionButtons.cancel')).tap();
 
     await expect(element(by.id(prefix + 'reminder.New'))).not.toBeVisible();

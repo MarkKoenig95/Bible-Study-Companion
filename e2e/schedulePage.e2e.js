@@ -38,7 +38,13 @@ beforeAll(async () => {
     .toBeVisible()
     .withTimeout(2 * waitTime);
 
-  await element(by.id(prefix + 'hideCompletedButton')).tap();
+  await element(by.id(prefix + 'header.settingsButton')).tap();
+
+  await waitFor(element(by.id(prefix + 'settingsPopup')))
+    .toBeVisible()
+    .withTimeout(2 * waitTime);
+
+  await element(by.id(prefix + 'settingsPopup.hideCompletedCheckBox')).tap();
 });
 
 beforeEach(async () => {

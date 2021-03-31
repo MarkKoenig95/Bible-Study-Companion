@@ -3,27 +3,27 @@
   "runnerConfig": "e2e/config.json",
   "configurations": {
     "ios.sim.release": {
-      "binaryPath": "ios/build/BibleStudyCompanion/Build/Products/Release-iphonesimulator/BibleStudyCompanion.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Release -scheme BibleStudyCompanion -destination id=6A2BA0C5-616C-4504-BFB4-05DF5DF6852F",
+      "binaryPath": "ios//Build/Products/Release-iphonesimulator/BibleStudyCompanion.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Release -scheme BibleStudyCompanion -destination id=0F61AED1-28BF-4E53-858E-8634260ED47E",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 11"
+        "type": "iPhone 12"
       }
     },
     "ios.sim.debug": {
-      "binaryPath": "ios/build/BibleStudyCompanion/Build/Products/Debug-iphonesimulator/BibleStudyCompanion.app",
-      "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=6A2BA0C5-616C-4504-BFB4-05DF5DF6852F",
+      "binaryPath": "ios//Build/Products/Debug-iphonesimulator/BibleStudyCompanion.app",
+      "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=0F61AED1-28BF-4E53-858E-8634260ED47E",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 11"
+        "type": "iPhone 12"
       }
     },
     "ios.none": {
-      "binaryPath": "ios/build/BibleStudyCompanion/Build/Products/Debug-iphoneos/BibleStudyCompanion.app",
+      "binaryPath": "ios//Build/Products/Debug-iphoneos/BibleStudyCompanion.app",
       "build": "RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion ",
       "type": "ios.none",
       "device": {
-        "type": "iPhone 11"
+        "type": "iPhone 12"
       },
       "session": {
         "server": "ws://localhost:8099",
