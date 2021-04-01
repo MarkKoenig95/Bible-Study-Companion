@@ -1,5 +1,8 @@
 import {getProps} from 'detox-getprops';
 
+const prefix = 'schedulesPage.';
+var waitTime = 1000;
+
 async function waitForSeconds(seconds) {
   let wait = new Promise((res, rej) => {
     setTimeout(res, seconds * waitTime);
@@ -7,15 +10,13 @@ async function waitForSeconds(seconds) {
   await wait;
 }
 
-const prefix = 'schedulesPage.';
-var waitTime = 1000;
-
 beforeAll(async () => {
   if (device.getPlatform() !== 'ios') {
     waitTime *= 5;
   }
+
   await device.launchApp({permissions: {notifications: 'YES'}});
-  // Once this element shows up we know that the database has loaded
+
   await waitFor(element(by.text('Daily Text')))
     .toBeVisible()
     .withTimeout(waitTime * 8);
@@ -23,7 +24,6 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await device.reloadReactNative();
-  // Once this element shows up we know that the database has loaded
   await waitFor(element(by.text('Daily Text')))
     .toBeVisible()
     .withTimeout(waitTime * 8);

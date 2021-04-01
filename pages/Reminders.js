@@ -153,7 +153,7 @@ const ReminderWrapper = props => {
   }
 
   return (
-    <View style={styles.wrapper}>
+    <View testID={testID} style={styles.wrapper}>
       <View style={[styles.wrapperContent, {width: '95%'}]}>
         {!isEditing && (
           <AdjButtonSection
@@ -218,12 +218,12 @@ const ActionButtonSection = props => {
   return (
     <View testID={testID} style={style.reminderContent}>
       <TextButton
-        testID={testID + '.cancelButton'}
+        testID={testID + '.cancel'}
         onPress={onEditCancel}
         text={translate('actions.cancel')}
       />
       <TextButton
-        testID={testID + '.doneButton'}
+        testID={testID + '.done'}
         onPress={onEditDone}
         text={translate('actions.done')}
       />
@@ -236,7 +236,7 @@ const AdjButtonSection = props => {
   return (
     <View testID={testID} style={style.buttonContainer}>
       <IconButton
-        testID={testID + '.editButton'}
+        testID={testID + '.edit'}
         buttonStyle={style.editButton}
         iconOnly
         name="edit"
@@ -245,7 +245,7 @@ const AdjButtonSection = props => {
         }}
       />
       <IconButton
-        testID={testID + '.deleteButton'}
+        testID={testID + '.delete'}
         buttonStyle={style.deleteButton}
         iconOnly
         name="delete"
@@ -306,7 +306,7 @@ const RecursSection = props => {
       )}
       {!isEditing ? (
         <Body
-          testID={testID + '.resetValueString'}
+          testID={testID + '.display'}
           dark
           style={{color: colors.darkBlue}}>
           {resetStr}
@@ -353,7 +353,10 @@ const FrequencySection = props => {
         {translate(pageTitle + '.repeats')}
       </Body>
       {!isEditing ? (
-        <Body testID={testID + '.text'} dark style={{color: colors.darkBlue}}>
+        <Body
+          testID={testID + '.display'}
+          dark
+          style={{color: colors.darkBlue}}>
           {recursText}
         </Body>
       ) : (
@@ -377,6 +380,7 @@ const NameSection = props => {
       </Body>
       {!isEditing ? (
         <Body
+          testID={testID + '.display'}
           dark
           style={{
             color: colors.darkBlue,
@@ -385,6 +389,7 @@ const NameSection = props => {
         </Body>
       ) : (
         <CustomInput
+          testID={testID + '.input'}
           value={reminderName}
           onChangeText={setReminderName}
           textAlign={'center'}
@@ -548,6 +553,7 @@ export default function Reminders(props) {
       />
       <View style={styles.contentWithoutHeader}>
         <FlatList
+          testID={pageTitle + '.list'}
           data={listItems}
           keyExtractor={(item, index) => index + JSON.stringify(item)}
           renderItem={({item}) => {
