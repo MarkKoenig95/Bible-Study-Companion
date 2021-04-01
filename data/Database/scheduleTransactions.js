@@ -1105,7 +1105,7 @@ export function checkAnyVerseBuffer(
   log('checking min adjustment');
 
   //Check the lower bound
-  let minAdj = checker(0 - buffer - 1);
+  let minAdj = checker(0 - buffer - 1) - 1;
 
   log('min adjustment = ', minAdj);
 
@@ -1329,8 +1329,7 @@ export function checkEnd(
       if (dayEndIndex >= maxIndex) {
         dayEndIndex = dayEndIndex - maxIndex + leastIndex;
         hasLooped = true;
-        // TODO: We can get rid of this duplication by just putting it outside the if statement
-        // since it will run afterwards no matter what
+
         if (dayEndIndex >= endIndex - buffer) {
           dayEndIndex = endIndex;
           isEnd = true;
@@ -1642,18 +1641,31 @@ export function createReadingPortions(
     return portions;
   }
 
+  //Otherwise we need to run through the whole day's reading, find when the reading changes position
+  //relative to the order in the bible, and then sort and condense the resulting arrays to clean up
   let addPortionsToSort = (qryVerseIndex, startIndex, endIndex) => {
     let prevVerseID = qryVerseIndex.rows.item(startIndex).VerseID - 1;
     let startVerseID = qryVerseIndex.rows.item(startIndex).VerseID;
     let nextStartIndex = startIndex;
     let portionsToSort = [];
+    let lastPortionIsSeparate = false;
 
     for (let index = startIndex; index <= endIndex; index++) {
       let currentVerseID = qryVerseIndex.rows.item(index).VerseID;
+      let tempEndIndex;
+      let shouldPush = false;
 
-      if (currentVerseID !== prevVerseID + 1 || index === endIndex) {
-        let tempEndIndex = index === endIndex ? index : index - 1;
+      if (index === endIndex) {
+        tempEndIndex = index;
+        shouldPush = true;
+      }
 
+      if (currentVerseID !== prevVerseID + 1 && !lastPortionIsSeparate) {
+        tempEndIndex = index - 1;
+        shouldPush = true;
+      }
+
+      if (shouldPush) {
         let {startPosition, endPosition} = checkStartAndEndPositions(
           qryVerseIndex,
           nextStartIndex,
@@ -1675,12 +1687,15 @@ export function createReadingPortions(
       }
 
       prevVerseID = qryVerseIndex.rows.item(index).VerseID;
+
+      if (index === endIndex && tempEndIndex !== index) {
+        index--;
+        lastPortionIsSeparate = true;
+      }
     }
     return portionsToSort;
   };
 
-  //Otherwise we need to run through the whole day's reading, find when the reading changes position
-  //relative to the order in the bible, and then sort and condense the resulting arrays to clean up
   if (dayStartIndex < dayEndIndex) {
     portionsToSort = addPortionsToSort(
       qryVerseIndex,
@@ -1725,7 +1740,58 @@ export function createReadingPortions(
     );
     portions.push(portion);
   } else {
-    //And condense the portions if the last VerseID of one equals the first VerseID of another
+    const sortPortionsByChronoOrder = portions => {
+      let prevBibleBook = qryVerseIndex.rows.item(portions[0].startIndex)
+        .BibleBook;
+      let portionArrays = [[]];
+      let innerIndex = 0;
+
+      //Setup portions array to contain arrays of portions with the same bible book
+      portions.forEach(portion => {
+        if (
+          prevBibleBook ===
+          qryVerseIndex.rows.item(portion.startIndex).BibleBook
+        ) {
+          portionArrays[innerIndex].push(portion);
+        } else {
+          innerIndex++;
+          portionArrays[innerIndex] = [];
+          portionArrays[innerIndex].push(portion);
+        }
+
+        prevBibleBook = qryVerseIndex.rows.item(portion.endIndex).BibleBook;
+      });
+
+      //Now that the portions array is initialized and we have compartmentalized portions by their
+      //bible books, we can sort the individual arrays by each portion's Chronological order again
+      portionArrays.forEach(portionArray => {
+        portionArray.sort(
+          (a, b) =>
+            qryVerseIndex.rows.item(a.startIndex).ChronologicalOrder -
+            qryVerseIndex.rows.item(b.startIndex).ChronologicalOrder,
+        );
+      });
+
+      //Then we sort all of the portions by the chronological order of their least item
+      portionArrays.sort(
+        (a, b) =>
+          qryVerseIndex.rows.item(a[0].startIndex).ChronologicalOrder -
+          qryVerseIndex.rows.item(b[0].startIndex).ChronologicalOrder,
+      );
+      //Finally, we extract all of the items into a single dimensional array as we recieved it
+      let result = [];
+      portionArrays.forEach(array => {
+        result = [...result, ...array];
+      });
+
+      return result;
+    };
+
+    if (scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL) {
+      portionsToSort = [...sortPortionsByChronoOrder(portionsToSort)];
+    }
+
+    //Condense the portions if the last VerseID of one equals the first VerseID of another
     let arrayToCompare;
     let tempPortions = [];
 
@@ -1925,7 +1991,7 @@ export async function generateBibleSchedule(
         continue;
       }
 
-      log('versesPerDay', versesPerDay[key], 'buffer', buffer[key]);
+      log('day', i);
 
       let dayStartIndex = pointer[key];
 
@@ -1933,6 +1999,25 @@ export async function generateBibleSchedule(
       let dayEndIndex = pointer[key] + Math.round(versesToday);
 
       verseOverflow[key] = versesToday - Math.floor(versesToday);
+
+      log(
+        'Before checkEnd: dayEndIndex =',
+        dayEndIndex,
+        'maxIndex =',
+        maxIndex[key],
+        'leastIndex =',
+        leastIndex[key],
+        'endIndex =',
+        endIndex[key],
+        'verseOverflow =',
+        verseOverflow[key],
+        'hasLooped =',
+        hasLooped[key],
+        'buffer =',
+        buffer[key],
+        'isEnd =',
+        isEnd[key],
+      );
 
       let endCheck = checkEnd(
         qryVerseIndex,
@@ -1947,12 +2032,29 @@ export async function generateBibleSchedule(
         scheduleType,
       );
 
-      log('Check end finished');
-
       dayEndIndex = endCheck.dayEndIndex;
       isEnd[key] = endCheck.isEnd;
       hasLooped[key] = endCheck.hasLooped;
       verseOverflow[key] += endCheck.verseOverflow;
+
+      log(
+        'after check end: dayEndIndex =',
+        dayEndIndex,
+        'maxIndex =',
+        maxIndex[key],
+        'leastIndex =',
+        leastIndex[key],
+        'endIndex =',
+        endIndex[key],
+        'verseOverflow =',
+        verseOverflow[key],
+        'hasLooped =',
+        hasLooped[key],
+        'buffer =',
+        buffer[key],
+        'isEnd =',
+        isEnd[key],
+      );
 
       let portions = createReadingPortions(
         qryVerseIndex,
@@ -1964,7 +2066,7 @@ export async function generateBibleSchedule(
         maxIndex[key],
       );
 
-      log('Created reading portions');
+      log('Created reading portions:', portions);
 
       for (let j = 0; j < portions.length; j++) {
         const el = portions[j];

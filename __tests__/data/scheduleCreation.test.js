@@ -716,6 +716,7 @@ describe('given a query object, a start index and preprocessed schedule paramete
   });
 });
 
+//setAdjustedMessage
 describe('given a bible, book, chapter, and verse (originally provided by the user), check if the verse was adjusted. return a message informing the user of the adjustment', () => {
   test('A bible verse which matches the given index', () => {
     const bibleBookPrefix = 'bibleBooks.';
@@ -762,7 +763,7 @@ describe('given a database table query an index for an element in the query, and
 
   critical point = 0
   small buffer = 1
-  mid range buffer = 20
+  average buffer = 20
   large buffer = 417715
 
   expected results
@@ -806,7 +807,7 @@ describe('given a database table query an index for an element in the query, and
   test('A chronological table with a small buffer "0" (should return 0 as the adjustment)', () => {
     let index = 20;
     let adjustment = checkAnyVerseBuffer(
-      tblVerseIndex,
+      qryChronologicalIndex,
       index,
       0,
       otherScheduleParametersResult.maxIndex[1],
@@ -820,7 +821,7 @@ describe('given a database table query an index for an element in the query, and
   test('A chronological table with a small buffer "1" (should return 0 as the adjustment)', () => {
     let index = 20;
     let adjustment = checkAnyVerseBuffer(
-      tblVerseIndex,
+      qryChronologicalIndex,
       index,
       1,
       otherScheduleParametersResult.maxIndex[1],
@@ -1291,7 +1292,7 @@ describe('test checkEnd for SEQUENTIAL schedule given tracking indicators for sc
 describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for schedule creation determines whether adjustments need to be made, then returns the adjusted indicators', () => {
   test('index equals max index', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryChronologicalIndex,
       otherScheduleParametersResult.maxIndex[1],
       otherScheduleParametersResult.maxIndex[1],
       otherScheduleParametersResult.leastIndex[1],
@@ -1312,7 +1313,7 @@ describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for
 
   test('index greater than max index', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryChronologicalIndex,
       otherScheduleParametersResult.maxIndex[1] + 100,
       otherScheduleParametersResult.maxIndex[1],
       otherScheduleParametersResult.leastIndex[1],
@@ -1333,7 +1334,7 @@ describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for
 
   test('index past end index in middle of span of all verses has looped is true', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryChronologicalIndex,
       15000,
       otherScheduleParametersResult.maxIndex[1],
       otherScheduleParametersResult.leastIndex[1],
@@ -1354,7 +1355,7 @@ describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for
 
   test('index less than end index and has looped (a typical value)', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryChronologicalIndex,
       14000,
       otherScheduleParametersResult.maxIndex[1],
       otherScheduleParametersResult.leastIndex[1],
@@ -1366,16 +1367,16 @@ describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for
       SCHEDULE_TYPES.CHRONOLOGICAL,
     );
     expect(endCheck).toStrictEqual({
-      dayEndIndex: 13996,
+      dayEndIndex: 13999,
       isEnd: false,
       hasLooped: true,
-      verseOverflow: 4,
+      verseOverflow: 1,
     });
   });
 
   test('index greater than end index and has not looped (a typical value)', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryChronologicalIndex,
       15000,
       otherScheduleParametersResult.maxIndex[1],
       otherScheduleParametersResult.leastIndex[1],
@@ -1387,10 +1388,31 @@ describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for
       SCHEDULE_TYPES.CHRONOLOGICAL,
     );
     expect(endCheck).toStrictEqual({
-      dayEndIndex: 15000,
+      dayEndIndex: 15001,
       isEnd: false,
       hasLooped: false,
-      verseOverflow: 0,
+      verseOverflow: -1,
+    });
+  });
+
+  test('special case found in bug relating to index subtraction being 1 verse off', () => {
+    let endCheck = checkEnd(
+      qryChronologicalIndex,
+      12375,
+      otherScheduleParametersResult.maxIndex[1],
+      otherScheduleParametersResult.leastIndex[1],
+      12032,
+      0,
+      false,
+      21,
+      false,
+      SCHEDULE_TYPES.CHRONOLOGICAL,
+    );
+    expect(endCheck).toStrictEqual({
+      dayEndIndex: 12369,
+      isEnd: false,
+      hasLooped: false,
+      verseOverflow: 6,
     });
   });
 });
@@ -1398,7 +1420,7 @@ describe('test checkEnd for CHRONOLOGICAL schedule given tracking indicators for
 describe('test checkEnd for THEMATIC schedule given tracking indicators for schedule creation determines whether adjustments need to be made, then returns the adjusted indicators', () => {
   test('index equals max index  for day (theme) 1', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       thematicScheduleParametersResult.maxIndex[1],
       thematicScheduleParametersResult.maxIndex[1],
       thematicScheduleParametersResult.leastIndex[1],
@@ -1419,7 +1441,7 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
 
   test('index greater than max index  for day (theme) 2', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       thematicScheduleParametersResult.maxIndex[2] + 100,
       thematicScheduleParametersResult.maxIndex[2],
       thematicScheduleParametersResult.leastIndex[2],
@@ -1440,7 +1462,7 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
 
   test('index past end index in middle of span of all verses  for day (theme) 3 has looped is true', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       14000,
       thematicScheduleParametersResult.maxIndex[3],
       thematicScheduleParametersResult.leastIndex[3],
@@ -1461,7 +1483,7 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
 
   test('index less than end index for day (theme) 4 and has looped (a typical value)', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       16000,
       thematicScheduleParametersResult.maxIndex[4],
       thematicScheduleParametersResult.leastIndex[4],
@@ -1473,16 +1495,16 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
       SCHEDULE_TYPES.THEMATIC,
     );
     expect(endCheck).toStrictEqual({
-      dayEndIndex: 16074,
+      dayEndIndex: 15993,
       isEnd: false,
       hasLooped: true,
-      verseOverflow: -74,
+      verseOverflow: 7,
     });
   });
 
   test('index less than end index for day (theme) 5 and has looped (a typical value)', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       19000,
       thematicScheduleParametersResult.maxIndex[5],
       thematicScheduleParametersResult.leastIndex[5],
@@ -1503,7 +1525,7 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
 
   test('index greater than end index for day (theme) 6 and has not looped (a typical value)', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       26000,
       thematicScheduleParametersResult.maxIndex[6],
       thematicScheduleParametersResult.leastIndex[6],
@@ -1515,16 +1537,16 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
       SCHEDULE_TYPES.THEMATIC,
     );
     expect(endCheck).toStrictEqual({
-      dayEndIndex: 25980,
+      dayEndIndex: 26012,
       isEnd: false,
       hasLooped: false,
-      verseOverflow: 20,
+      verseOverflow: -12,
     });
   });
 
   test('index greater than end index for day (theme) 7 and has not looped (a typical value)', () => {
     let endCheck = checkEnd(
-      tblVerseIndex,
+      qryThematicIndex,
       31000,
       thematicScheduleParametersResult.maxIndex[7],
       thematicScheduleParametersResult.leastIndex[7],
@@ -1536,10 +1558,10 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
       SCHEDULE_TYPES.THEMATIC,
     );
     expect(endCheck).toStrictEqual({
-      dayEndIndex: 30994,
+      dayEndIndex: 31004,
       isEnd: false,
       hasLooped: false,
-      verseOverflow: 6,
+      verseOverflow: -4,
     });
   });
 });
@@ -1616,52 +1638,8 @@ describe('createReadingPortions', () => {
     expect(resultArray).toStrictEqual([simpleResultArray]);
   });
 
-  /*
-  test('Sequential schedule with >1 reading portion', () => {
-    let portion1 = [
-      'Revelation',
-      66,
-      22,
-      15,
-      'Revelation',
-      66,
-      22,
-      21,
-      newDate,
-      'Revelation 22:15-21',
-      VERSE_POSITION.END,
-    ];
-
-    let portion2 = [
-      'Genesis',
-      1,
-      1,
-      1,
-      'Genesis',
-      1,
-      1,
-      9,
-      newDate,
-      'Genesis 1:1-9',
-      VERSE_POSITION.START,
-    ];
-
-    let resultArray = createReadingPortions(
-      tblVerseIndex,
-      31070,
-      10,
-      date,
-      SCHEDULE_TYPES.SEQUENTIAL,
-      otherScheduleParametersResult.leastIndex[1],
-      otherScheduleParametersResult.maxIndex[1],
-    );
-
-    expect(resultArray).toStrictEqual([portion1, portion2]);
-  });
-  */
-
   test('Chronological schedule with >1 reading portion', () => {
-    let portion3 = [
+    let portion1 = [
       'Psalms',
       19,
       147,
@@ -1675,7 +1653,7 @@ describe('createReadingPortions', () => {
       VERSE_POSITION.END,
     ];
 
-    let portion1 = [
+    let portion2 = [
       '1 Chronicles',
       13,
       9,
@@ -1689,7 +1667,7 @@ describe('createReadingPortions', () => {
       VERSE_POSITION.START,
     ];
 
-    let portion2 = [
+    let portion3 = [
       'Nehemiah',
       16,
       12,
@@ -1714,6 +1692,400 @@ describe('createReadingPortions', () => {
     );
 
     expect(resultArray).toStrictEqual([portion1, portion2, portion3]);
+  });
+
+  test('Chronological schedule with >1 reading portion (Emphasizes bug where last portion is a new set)', () => {
+    let portion1 = [
+      'Psalms',
+      19,
+      33,
+      1,
+      'Psalms',
+      19,
+      33,
+      22,
+      '2/1/21',
+      'Psalms 33',
+      3,
+    ];
+
+    let portion2 = [
+      '1 Kings',
+      11,
+      9,
+      1,
+      '1 Kings',
+      11,
+      9,
+      14,
+      '2/1/21',
+      '1 Kings 9:1-14',
+      0,
+    ];
+
+    let portion3 = [
+      '1 Kings',
+      11,
+      9,
+      24,
+      '1 Kings',
+      11,
+      9,
+      25,
+      '2/1/21',
+      '1 Kings 9:24-25',
+      1,
+    ];
+
+    let portion4 = [
+      '1 Kings',
+      11,
+      9,
+      17,
+      '1 Kings',
+      11,
+      9,
+      19,
+      '2/1/21',
+      '1 Kings 9:17-19',
+      1,
+    ];
+
+    let portion5 = [
+      '1 Kings',
+      11,
+      9,
+      26,
+      '1 Kings',
+      11,
+      9,
+      28,
+      '2/1/21',
+      '1 Kings 9:26-28',
+      2,
+    ];
+
+    let portion6 = [
+      '1 Kings',
+      11,
+      10,
+      22,
+      '1 Kings',
+      11,
+      10,
+      22,
+      '2/1/21',
+      '1 Kings 10:22',
+      1,
+    ];
+
+    let portion7 = [
+      '1 Kings',
+      11,
+      10,
+      1,
+      '1 Kings',
+      11,
+      10,
+      1,
+      '2/1/21',
+      '1 Kings 10:1',
+      0,
+    ];
+
+    let portion8 = [
+      '2 Chronicles',
+      14,
+      7,
+      11,
+      '2 Chronicles',
+      14,
+      8,
+      3,
+      '2/1/21',
+      '2 Chronicles 7:11-8:3',
+      1,
+    ];
+
+    let portion9 = [
+      '2 Chronicles',
+      14,
+      8,
+      11,
+      '2 Chronicles',
+      14,
+      8,
+      16,
+      '2/1/21',
+      '2 Chronicles 8:11-16',
+      1,
+    ];
+
+    let portion10 = [
+      '2 Chronicles',
+      14,
+      8,
+      4,
+      '2 Chronicles',
+      14,
+      8,
+      6,
+      '2/1/21',
+      '2 Chronicles 8:4-6',
+      1,
+    ];
+
+    let portion11 = [
+      '2 Chronicles',
+      14,
+      8,
+      17,
+      '2 Chronicles',
+      14,
+      8,
+      18,
+      '2/1/21',
+      '2 Chronicles 8:17-18',
+      2,
+    ];
+
+    let portion12 = [
+      '2 Chronicles',
+      14,
+      9,
+      21,
+      '2 Chronicles',
+      14,
+      9,
+      21,
+      '2/1/21',
+      '2 Chronicles 9:21',
+      1,
+    ];
+
+    let resultArray = createReadingPortions(
+      qryChronologicalIndex,
+      12542,
+      12614,
+      date,
+      SCHEDULE_TYPES.CHRONOLOGICAL,
+      otherScheduleParametersResult.leastIndex[1],
+      otherScheduleParametersResult.maxIndex[1],
+    );
+
+    let expectedArray = [
+      portion1,
+      portion2,
+      portion3,
+      portion4,
+      portion5,
+      portion6,
+      portion7,
+      portion8,
+      portion9,
+      portion10,
+      portion11,
+      portion12,
+    ];
+
+    expect(resultArray).toStrictEqual(expectedArray);
+  });
+
+  test('Chronological schedule with >1 reading portion (Future expectation)', () => {
+    let portion1 = [
+      'Psalms',
+      19,
+      33,
+      1,
+      'Psalms',
+      19,
+      33,
+      22,
+      '2/1/21',
+      'Psalms 33',
+      3,
+    ];
+
+    let portion2 = [
+      '1 Kings',
+      11,
+      9,
+      1,
+      '1 Kings',
+      11,
+      9,
+      14,
+      '2/1/21',
+      '1 Kings 9:1-14',
+      0,
+    ];
+
+    let portion3 = [
+      '1 Kings',
+      11,
+      9,
+      24,
+      '1 Kings',
+      11,
+      9,
+      25,
+      '2/1/21',
+      '1 Kings 9:24-25',
+      1,
+    ];
+
+    let portion4 = [
+      '1 Kings',
+      11,
+      9,
+      17,
+      '1 Kings',
+      11,
+      9,
+      19,
+      '2/1/21',
+      '1 Kings 9:17-19',
+      1,
+    ];
+
+    let portion5 = [
+      '1 Kings',
+      11,
+      9,
+      26,
+      '1 Kings',
+      11,
+      9,
+      28,
+      '2/1/21',
+      '1 Kings 9:26-28',
+      2,
+    ];
+
+    let portion6 = [
+      '1 Kings',
+      11,
+      10,
+      22,
+      '1 Kings',
+      11,
+      10,
+      22,
+      '2/1/21',
+      '1 Kings 10:22',
+      1,
+    ];
+
+    let portion7 = [
+      '1 Kings',
+      11,
+      10,
+      1,
+      '1 Kings',
+      11,
+      10,
+      13,
+      '2/1/21',
+      '1 Kings 10:1-13',
+      0,
+    ];
+
+    let portion8 = [
+      '2 Chronicles',
+      14,
+      7,
+      11,
+      '2 Chronicles',
+      14,
+      8,
+      3,
+      '2/1/21',
+      '2 Chronicles 7:11-8:3',
+      1,
+    ];
+
+    let portion9 = [
+      '2 Chronicles',
+      14,
+      8,
+      11,
+      '2 Chronicles',
+      14,
+      8,
+      16,
+      '2/1/21',
+      '2 Chronicles 8:11-16',
+      1,
+    ];
+
+    let portion10 = [
+      '2 Chronicles',
+      14,
+      8,
+      4,
+      '2 Chronicles',
+      14,
+      8,
+      6,
+      '2/1/21',
+      '2 Chronicles 8:4-6',
+      1,
+    ];
+
+    let portion11 = [
+      '2 Chronicles',
+      14,
+      8,
+      17,
+      '2 Chronicles',
+      14,
+      8,
+      18,
+      '2/1/21',
+      '2 Chronicles 8:17-18',
+      2,
+    ];
+
+    let portion12 = [
+      '2 Chronicles',
+      14,
+      9,
+      21,
+      '2 Chronicles',
+      14,
+      9,
+      21,
+      '2/1/21',
+      '2 Chronicles 9:21',
+      1,
+    ];
+
+    let resultArray = createReadingPortions(
+      qryChronologicalIndex,
+      12542,
+      12626,
+      date,
+      SCHEDULE_TYPES.CHRONOLOGICAL,
+      otherScheduleParametersResult.leastIndex[1],
+      otherScheduleParametersResult.maxIndex[1],
+    );
+
+    let expectedArray = [
+      portion1,
+      portion2,
+      portion3,
+      portion4,
+      portion5,
+      portion6,
+      portion7,
+      portion8,
+      portion9,
+      portion10,
+      portion11,
+      portion12,
+    ];
+
+    expect(resultArray).toStrictEqual(expectedArray);
   });
 
   test('Thematic schedule with >1 reading portion', () => {
@@ -1950,14 +2322,14 @@ describe('create bible reading schedule', () => {
 
     await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
       let today = new Date();
-      expect(res.rows.length).toBe(323);
+      expect(res.rows.length).toBe(570);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('2 Kings 14:29');
+      expect(res.rows.item(0).ReadingPortion).toBe('Jonah 1-4');
       expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
 
-      expect(res.rows.item(322).ReadingPortion).toBe('Joel 1-Amos 9');
+      expect(res.rows.item(569).ReadingPortion).toBe('Hosea 1-5');
       today.setDate(today.getDate() + 36);
-      expect(res.rows.item(322).CompletionDate).toBe(formatDate(today));
+      expect(res.rows.item(569).CompletionDate).toBe(formatDate(today));
     });
   });
 
@@ -1981,14 +2353,14 @@ describe('create bible reading schedule', () => {
 
     await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
       let today = new Date();
-      expect(res.rows.length).toBe(5048);
+      expect(res.rows.length).toBe(5059);
 
       expect(res.rows.item(0).ReadingPortion).toBe('Genesis 1:1-5');
       expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
 
-      expect(res.rows.item(5047).ReadingPortion).toBe('Revelation 22:20-21');
+      expect(res.rows.item(5058).ReadingPortion).toBe('Revelation 22:20-21');
       today.setDate(today.getDate() + 4447);
-      expect(res.rows.item(5047).CompletionDate).toBe(formatDate(today));
+      expect(res.rows.item(5058).CompletionDate).toBe(formatDate(today));
     });
   });
 
@@ -2017,7 +2389,7 @@ describe('create bible reading schedule', () => {
       expect(res.rows.item(0).ReadingPortion).toBe('Genesis 1-37');
       expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
 
-      expect(res.rows.item(43).ReadingPortion).toBe('1 John 2:2-Jude 1:25');
+      expect(res.rows.item(43).ReadingPortion).toBe('1 John 2-Jude 1');
       today.setDate(today.getDate() + 41);
       expect(res.rows.item(43).CompletionDate).toBe(formatDate(today));
     });
