@@ -75,7 +75,7 @@ const NotificationsWrapper = React.memo(props => {
           {days.map(day => {
             return (
               <DayMarker
-                testID={testID + '.dayMarker.' + day}
+                testID={testID + '.dayMarker.' + day.abrev}
                 key={itemID + '' + day.abrev}
                 color={color}
                 day={day}
@@ -100,6 +100,7 @@ function DayMarker(props) {
   const {color, day, testID} = props;
   const isDayActive = day.value;
   const activeColor = isDayActive ? color : colors.smoke;
+  const accVal = isDayActive ? 'On' : 'Off';
   return (
     <View testID={testID} style={style.dayContainer}>
       <Text
@@ -112,6 +113,7 @@ function DayMarker(props) {
       </Text>
       <View
         testID={testID + '.indicator'}
+        accessibilityValue={{text: accVal}}
         style={{
           ...style.dayMarker,
           borderColor: color,
@@ -264,6 +266,7 @@ export default function Notifications(props) {
       />
       <View style={styles.contentWithoutHeader}>
         <FlatList
+          testID={pageTitle + '.list'}
           data={listItems}
           keyExtractor={(item, index) => index + JSON.stringify(item)}
           renderItem={({item}) => {

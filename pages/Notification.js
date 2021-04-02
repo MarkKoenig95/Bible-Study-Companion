@@ -48,7 +48,7 @@ const WeekdayWrapper = React.memo(props => {
         <View>
           <LargeText style={{color: activeColor}}>{weekday}</LargeText>
           <TimePickerButton
-            testID={testID + '.timePickerButton'}
+            testID={testID + '.timePicker'}
             invert
             textStyle={{color: color}}
             time={time}
@@ -204,6 +204,7 @@ export default function Notification(props) {
       />
       <View style={styles.contentWithoutHeader}>
         <FlatList
+          testID={pageTitle + '.list'}
           data={listItems}
           renderItem={renderItem}
           keyExtractor={item => item.weekday}

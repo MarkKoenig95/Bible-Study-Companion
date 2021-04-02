@@ -1,3 +1,4 @@
+import {waitForMS} from './helpers';
 // * Note to tester, I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the tome being
 // * this test will be based on that date.
@@ -5,13 +6,6 @@
 
 const prefix = 'settingsPage.';
 var waitTime = 1000;
-
-async function waitForSeconds(seconds) {
-  let wait = new Promise((res, rej) => {
-    setTimeout(res, seconds * waitTime);
-  });
-  await wait;
-}
 
 beforeAll(async () => {
   if (device.getPlatform() !== 'ios') {
@@ -46,7 +40,7 @@ describe('Weekly reading settings', () => {
     // TODO: Get rid of these bits of code
     // Not working as intended for now. Putting in this temporary workaround for the moment
     await device.reloadReactNative();
-    await waitForSeconds(3);
+    await waitForMS(3 * waitTime);
     await waitFor(element(by.text('Daily Text')))
       .toBeVisible()
       .withTimeout(40000);
@@ -61,7 +55,7 @@ describe('Weekly reading settings', () => {
     // TODO: Get rid of these bits of code
     // Not working as intended for now. Putting in this temporary workaround for the moment
     await device.reloadReactNative();
-    await waitForSeconds(3);
+    await waitForMS(3 * waitTime);
     await waitFor(element(by.text('Daily Text')))
       .toBeVisible()
       .withTimeout(40000);

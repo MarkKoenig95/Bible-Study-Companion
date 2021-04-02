@@ -2,13 +2,6 @@ const prefix = 'remindersPage.';
 const pref = prefix + 'reminder.Daily Text.';
 var waitTime = 1000;
 
-async function waitForSeconds(seconds) {
-  let wait = new Promise((res, rej) => {
-    setTimeout(res, seconds * waitTime);
-  });
-  await wait;
-}
-
 beforeAll(async () => {
   if (device.getPlatform() !== 'ios') {
     waitTime *= 5;
@@ -46,10 +39,7 @@ it('Creates a custom reminder', async () => {
   // Input the name
   await element(
     by.id(prefix + 'createRemindersPopup.nameSection.nameInput'),
-  ).clearText();
-  await element(
-    by.id(prefix + 'createRemindersPopup.nameSection.nameInput'),
-  ).typeText('Remmy');
+  ).replaceText('Remmy');
 
   // Set the repeat frequency
   await element(
@@ -62,10 +52,7 @@ it('Creates a custom reminder', async () => {
   // Set the reset frequency
   await element(
     by.id(prefix + 'createRemindersPopup.recursSection.resetValueInput'),
-  ).clearText();
-  await element(
-    by.id(prefix + 'createRemindersPopup.recursSection.resetValueInput'),
-  ).typeText('10');
+  ).replaceText('10');
 
   // Create reminder and check that it was created
   await element(by.id(prefix + 'createRemindersPopup.addButton')).tap();
@@ -93,8 +80,7 @@ describe('Edit reminder', () => {
   });
 
   it('name', async () => {
-    await element(by.id(pref + 'nameSection.input')).clearText();
-    await element(by.id(pref + 'nameSection.input')).typeText('New');
+    await element(by.id(pref + 'nameSection.input')).replaceText('New');
     // Need to tap this twice for some reason
     await element(by.id(pref + 'actionButtons.done')).tap();
     await element(by.id(pref + 'actionButtons.done')).tap();
@@ -146,8 +132,7 @@ describe('Edit reminder', () => {
   });
 
   it('cancels editing', async () => {
-    await element(by.id(pref + 'nameSection.input')).clearText();
-    await element(by.id(pref + 'nameSection.input')).typeText('New');
+    await element(by.id(pref + 'nameSection.input')).replaceText('New');
 
     // Have to tap this twice for some reason
     await element(by.id(pref + 'actionButtons.cancel')).tap();

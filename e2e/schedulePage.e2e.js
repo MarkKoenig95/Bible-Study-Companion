@@ -1,13 +1,7 @@
 import {getProps} from 'detox-getprops';
+import {waitForMS} from './helpers';
 
 var waitTime = 1000;
-
-async function waitForSeconds(seconds) {
-  let wait = new Promise((res, rej) => {
-    setTimeout(res, seconds * waitTime);
-  });
-  await wait;
-}
 
 beforeAll(async () => {
   if (device.getPlatform() !== 'ios') {
@@ -38,7 +32,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await device.reloadReactNative();
-  await waitForSeconds(3);
+  await waitForMS(3 * waitTime);
   await element(by.id('tabs.schedulesPage')).tap();
 });
 

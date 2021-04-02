@@ -33,17 +33,17 @@ export default function TimePickerButton(props) {
       }}>
       {!isTimePickerVisible ? (
         <TouchableOpacity
-          testID={testID + '.showPickerButton'}
+          testID={testID + '.showButton'}
           onPress={() => {
             setIsTimePickerVisible(!isTimePickerVisible);
           }}>
-          <Body style={textStyle}>
+          <Body testID={testID + '.display'} style={textStyle}>
             {(textPrefix || '') + moment(time).format('LT')}
           </Body>
         </TouchableOpacity>
       ) : (
         <TimePickerSection
-          testID={testID + 'timePickerSection'}
+          testID={testID + '.picker'}
           hideTimePicker={() => {
             setIsTimePickerVisible(false);
           }}
@@ -87,9 +87,9 @@ const TimePickerSection = props => {
   };
 
   return (
-    <View testID={testID}>
+    <View>
       <DateTimePicker
-        testID={testID + '.picker'}
+        testID={testID}
         value={tempTime}
         mode="time"
         onChange={onPickerChange}

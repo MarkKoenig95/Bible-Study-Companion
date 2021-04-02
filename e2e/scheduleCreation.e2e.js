@@ -1,14 +1,8 @@
 import {getProps} from 'detox-getprops';
+import {waitForMS} from './helpers';
 
 const prefix = 'schedulesPage.';
 var waitTime = 1000;
-
-async function waitForSeconds(seconds) {
-  let wait = new Promise((res, rej) => {
-    setTimeout(res, seconds * waitTime);
-  });
-  await wait;
-}
 
 beforeAll(async () => {
   if (device.getPlatform() !== 'ios') {
@@ -31,14 +25,14 @@ beforeEach(async () => {
 });
 
 it('should show schedule types popup', async () => {
-  await waitForSeconds(3);
+  await waitForMS(3 * waitTime);
   await element(by.id('schedulesPage.header.addButton')).tap();
   await expect(element(by.id('schedulesPage.scheduleTypePopup'))).toBeVisible();
 });
 
 describe('create schedule popup', () => {
   beforeEach(async () => {
-    await waitForSeconds(3);
+    await waitForMS(3 * waitTime);
     await element(by.id('schedulesPage.header.addButton')).tap();
   });
 
@@ -67,7 +61,7 @@ describe('create schedules', () => {
   beforeEach(async () => {
     await element(by.id('schedulesPage.header.addButton')).tap();
     // Need to keep waiting until the Bible info DB loads completely
-    await waitForSeconds(1);
+    await waitForMS(1 * waitTime);
   });
 
   it('creates a custom schedule', async () => {
@@ -116,8 +110,7 @@ describe('create schedules', () => {
 
     // Input vaules for the schedule creation
     await element(by.id(pref + 'scheduleNameInput')).typeText('Seq');
-    await element(by.id(pref + 'scheduleDurationInput')).clearText();
-    await element(by.id(pref + 'scheduleDurationInput')).typeText('0.1');
+    await element(by.id(pref + 'scheduleDurationInput')).replaceText('0.1');
     await waitFor(
       element(by.id(pref + 'scheduleVerseInput.bibleBookPicker.input')),
     )
@@ -157,8 +150,7 @@ describe('create schedules', () => {
 
     // Input vaules for the schedule creation
     await element(by.id(pref + 'scheduleNameInput')).typeText('Chrono');
-    await element(by.id(pref + 'scheduleDurationInput')).clearText();
-    await element(by.id(pref + 'scheduleDurationInput')).typeText('0.1');
+    await element(by.id(pref + 'scheduleDurationInput')).replaceText('0.1');
     await waitFor(
       element(by.id(pref + 'scheduleVerseInput.bibleBookPicker.input')),
     )
@@ -196,8 +188,7 @@ describe('create schedules', () => {
 
     // Input vaules for the schedule creation
     await element(by.id(pref + 'scheduleNameInput')).typeText('Thema');
-    await element(by.id(pref + 'scheduleDurationInput')).clearText();
-    await element(by.id(pref + 'scheduleDurationInput')).typeText('0.1');
+    await element(by.id(pref + 'scheduleDurationInput')).replaceText('0.1');
     await waitFor(
       element(by.id(pref + 'scheduleVerseInput.bibleBookPicker.input')),
     )
