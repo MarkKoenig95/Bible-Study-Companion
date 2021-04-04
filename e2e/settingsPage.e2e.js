@@ -1,4 +1,4 @@
-import {waitForMS} from './helpers';
+import {waitForMS} from './helpers/general';
 // * Note to tester, I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the tome being
 // * this test will be based on that date.
@@ -68,14 +68,14 @@ describe('Weekly reading settings', () => {
     await element(
       by.id(prefix + 'weeklyReading.weekdayPicker.showButton'),
     ).tap();
-    await element(by.id(prefix + 'weeklyReading.weekdayPicker')).swipe(
-      'down',
-      'slow',
-      0.085,
-    );
+    await element(
+      by.id(prefix + 'weeklyReading.weekdayPicker'),
+    ).setColumnToValue(0, 'Wednesday');
+
     await element(by.id('tabs.homePage')).tap();
+
     await expect(
-      element(by.id('homePage.multiPortionStartingWith.Numbers 17-19')),
+      element(by.id('homePage.multiPortionStartingWith.Numbers 17:1-10')),
     ).toBeVisible();
   });
 });

@@ -47,7 +47,7 @@ it('Creates a custom reminder', async () => {
   ).tap();
   await element(
     by.id(prefix + 'createRemindersPopup.frequencySection.picker'),
-  ).swipe('up', 'fast', 0.5);
+  ).setColumnToValue(0, 'Monthly');
 
   // Set the reset frequency
   await element(
@@ -90,10 +90,9 @@ describe('Edit reminder', () => {
 
   it('repeat frequency', async () => {
     await element(by.id(pref + 'frequencySection.picker.showButton')).tap();
-    await element(by.id(pref + 'frequencySection.picker')).swipe(
-      'up',
-      'fast',
-      0.085,
+    await element(by.id(pref + 'frequencySection.picker')).setColumnToValue(
+      0,
+      'Weekly',
     );
 
     await element(by.id(pref + 'actionButtons.done')).tap();
@@ -105,10 +104,9 @@ describe('Edit reminder', () => {
 
   it('repeat value for weekly', async () => {
     await element(by.id(pref + 'frequencySection.picker.showButton')).tap();
-    await element(by.id(pref + 'frequencySection.picker')).swipe(
-      'up',
-      'fast',
-      0.05,
+    await element(by.id(pref + 'frequencySection.picker')).setColumnToValue(
+      0,
+      'Weekly',
     );
 
     await element(by.id(pref + 'actionButtons.done')).tap();
@@ -118,10 +116,9 @@ describe('Edit reminder', () => {
 
   it('repeat value for monthly', async () => {
     await element(by.id(pref + 'frequencySection.picker.showButton')).tap();
-    await element(by.id(pref + 'frequencySection.picker')).swipe(
-      'up',
-      'fast',
-      0.085,
+    await element(by.id(pref + 'frequencySection.picker')).setColumnToValue(
+      0,
+      'Monthly',
     );
 
     await element(by.id(pref + 'actionButtons.done')).tap();

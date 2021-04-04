@@ -552,6 +552,7 @@ export default function Home(props) {
       <View style={styles.content}>
         {!isScheduleListEmpty ? (
           <SectionList
+            testID={pageTitle + '.list'}
             sections={scheduleListItems}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) => {

@@ -1,5 +1,5 @@
 import {getProps} from 'detox-getprops';
-import {waitForMS} from './helpers';
+import {waitForMS} from './helpers/general';
 
 const prefix = 'schedulesPage.';
 var waitTime = 1000;

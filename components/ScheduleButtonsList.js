@@ -315,6 +315,7 @@ export default function useScheduleButtonsList(
               startChapter = item.StartChapter;
               startVerse = item.StartVerse;
               isStart = checkStartVerse(startBook, startChapter, startVerse);
+              firstPortion = item.ReadingPortion;
             }
             if (i === items.length - 1) {
               endBook = item.EndBookName;
@@ -332,7 +333,6 @@ export default function useScheduleButtonsList(
                 endVerse,
                 true,
               );
-              firstPortion = description;
               readingPortions = description;
               hiddenPortions = description;
             }
