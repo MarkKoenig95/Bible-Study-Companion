@@ -110,9 +110,9 @@
       "3": "1 Mese al {{endYear}}",
       "5": "2 Mesi al {{endYear}}",
       "8": "11 anni del governo dei Giudici dal intorno {{startYear}} al {{endYear}}",
-      "13": "Dopo 1 Cronache 9:44: intorno {{startYear}} al {{endYear}}",
+      "13": "Dopo 1 Cronache 9:44: {{startYear}} al {{endYear}}",
       "18": "Oltre 140 anni tra {{startYear}} e ",
-      "37": "112 giorni  al {{endYear}}",
+      "37": "112 giorni al {{endYear}}",
       "43": "Dopo l’introduzione {{startYear}} al {{endYear}}"
     }
   },
@@ -148,7 +148,7 @@
   },
   "notificationsPage": {
     "title": "Notifiche",
-    "notificationName": "Nome notifica",
+    "notificationName": "Titolo notifica",
     "notificationPopupTitle": "Crea nuova notifica"
   },
   "notificationPage": {
@@ -168,6 +168,7 @@
     "9": "esimo",
     "after": true,
     "special": {
+      "0": "zero",
       "1": "Primo",
       "2": "secondo",
       "3": "terzo",
@@ -175,7 +176,7 @@
       "5": "quinto",
       "6": "sesto",
       "8": "ottavo ",
-      "count": 7
+      "count": 8
     }
   },
   "other": "altro",
