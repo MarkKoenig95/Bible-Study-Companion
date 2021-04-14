@@ -1,20 +1,9 @@
 import SQLite from 'react-native-sqlite-storage';
-import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {
-  appVersion,
-  getSettings,
-  getVersion,
-  runSQL,
-  updateValue,
-  upgradeDB,
-} from '../../data/Database/generalTransactions';
+import {appVersion, upgradeDB} from '../../data/Database/generalTransactions';
 import {addReminder} from '../../data/Database/reminderTransactions';
-import {
-  addSchedule,
-  generateBibleSchedule,
-} from '../../data/Database/scheduleTransactions';
+import {addSchedule} from '../../logic/scheduleTransactions';
 import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
-import {FREQS} from '../../logic/logic';
+import {FREQS, SCHEDULE_TYPES} from '../../logic/general';
 
 let userDB;
 let bibleDB;

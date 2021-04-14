@@ -1,6 +1,4 @@
 import SQLite from 'react-native-sqlite-storage';
-import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {WEEKLY_READING_TABLE_NAME} from '../../logic/logic';
 import {
   formatDate,
   loadData,
@@ -8,15 +6,18 @@ import {
   upgradeDB,
 } from '../../data/Database/generalTransactions';
 import {
-  addSchedule,
   deleteSchedule,
-  updateDates,
-  updateReadStatus,
   getScheduleSettings,
   setHideCompleted,
-  createWeeklyReadingSchedule,
+  updateDates,
+  updateReadStatus,
 } from '../../data/Database/scheduleTransactions';
+import {
+  addSchedule,
+  createWeeklyReadingSchedule,
+} from '../../logic/scheduleCreation';
 import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
+import {SCHEDULE_TYPES, WEEKLY_READING_TABLE_NAME} from '../../logic/general';
 
 const tableName = 'tblSchedule1';
 const scheduleName = 'test';

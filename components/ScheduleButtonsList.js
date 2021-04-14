@@ -5,13 +5,13 @@ import ScheduleDayButton from './buttons/ScheduleDayButton';
 import ButtonsPopup, {useButtonsPopup} from './popups/SelectedDayButtonsPopup';
 import ReadingRemindersPopup from './popups/ReadingRemindersPopup';
 import ReadingInfoPopup, {useReadingInfoPopup} from './popups/ReadingInfoPopup';
+import {updateReadStatus} from '../data/Database/scheduleTransactions';
+import {checkReadingPortion, checkStartVerse} from '../logic/scheduleCreation';
 import {
-  updateReadStatus,
+  arraysMatch,
   VERSE_POSITION,
-  checkReadingPortion,
-  checkStartVerse,
-} from '../data/Database/scheduleTransactions';
-import {WEEKLY_READING_TABLE_NAME, arraysMatch} from '../logic/logic';
+  WEEKLY_READING_TABLE_NAME,
+} from '../logic/general';
 
 function condenseReadingPortion(item, prevBookNum) {
   let startBook = item.StartBookName;

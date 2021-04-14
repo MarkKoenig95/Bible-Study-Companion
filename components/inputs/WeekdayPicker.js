@@ -1,7 +1,9 @@
 import React from 'react';
+
 import {translate} from '../../logic/localization/localization';
+import {createPickerArray} from '../../logic/general';
+
 import Picker from './CustomPicker';
-import {createPickerArray} from '../../logic/logic';
 
 export default function WeekdayPicker(props) {
   let {currentValue, onChange} = props;

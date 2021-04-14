@@ -1,30 +1,28 @@
+import SQLite from 'react-native-sqlite-storage';
+import {formatDate} from '../../data/Database/generalTransactions';
+import {createScheduleTable} from '../../data/Database/scheduleTransactions';
+import {SCHEDULE_TYPES, VERSE_POSITION} from '../../logic/general';
 import {
+  checkAnyVerseBuffer,
+  checkEnd,
+  checkOrderedVerseBuffer,
+  checkReadingPortion,
+  checkResultPosition,
+  checkStartAndEndPositions,
+  createReadingPortion,
+  createReadingPortions,
   findMaxChapter,
   findMaxVerse,
   findNearestVerse,
   findVerseIndex,
-  setScheduleParameters,
-  runQueries,
-  setTrackers,
-  setAdjustedMessage,
-  checkOrderedVerseBuffer,
-  checkAnyVerseBuffer,
-  checkStartAndEndPositions,
-  checkReadingPortion,
-  VERSE_POSITION,
-  checkResultPosition,
-  checkEnd,
-  createReadingPortion,
-  createReadingPortions,
-  insertReadingPortions,
-  createScheduleTable,
   generateBibleSchedule,
   generateCustomSchedule,
-} from '../../data/Database/scheduleTransactions';
-
-import SQLite from 'react-native-sqlite-storage';
-import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
-import {formatDate} from '../../data/Database/generalTransactions';
+  insertReadingPortions,
+  runQueries,
+  setAdjustedMessage,
+  setScheduleParameters,
+  setTrackers,
+} from '../../logic/scheduleCreation';
 
 let bibleDB;
 let userDB;

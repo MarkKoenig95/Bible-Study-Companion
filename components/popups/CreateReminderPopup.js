@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+
 import {setReminderCompDate} from '../../data/Database/reminderTransactions';
 import {translate} from '../../logic/localization/localization';
-import {FREQS, createPickerArray, sanitizeNumber} from '../../logic/logic';
-import {View} from 'react-native';
+import {FREQS, createPickerArray, sanitizeNumber} from '../../logic/general';
+
 import IconButton from '../buttons/IconButton';
 import {Body} from '../text/Text';
 import WeekdayPicker from '../inputs/WeekdayPicker';

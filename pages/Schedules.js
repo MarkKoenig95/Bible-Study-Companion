@@ -14,10 +14,10 @@ import {loadData} from '../data/Database/generalTransactions';
 import {
   addSchedule,
   formatScheduleTableName,
-} from '../data/Database/scheduleTransactions';
+} from '../logic/scheduleTransactions';
 
 import LoadingPopup from '../components/popups/LoadingPopup';
-import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/logic';
+import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/general';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
 
 let scheduleType;

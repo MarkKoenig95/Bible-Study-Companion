@@ -5,9 +5,15 @@ import {translate} from './localization/localization';
 
 export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
 
+/** @typedef {number} integer */
+
 /**
  * @typedef {number} Frequency
  * @enum
+ * @property {integer} [DAILY=0]
+ * @property {integer} [WEEKLY=1]
+ * @property {integer} [MONTHLY=2]
+ * @property {integer} [NEVER=3]
  */
 
 /** @type {Frequency} */
@@ -16,6 +22,31 @@ export const FREQS = {
   WEEKLY: 1,
   MONTHLY: 2,
   NEVER: 3,
+};
+
+/**
+ * @typedef  {number} VersePosition
+ * @enum
+ * @property {integer} [START=0] Indicates that the verse (or span of verses) includes the starting verse of the chapter
+ * @property {integer} [MIDDLE=1] Indicates that the verse (or span of verses) does not include the starting or ending verse of the chapter
+ * @property {integer} [END=2] Indicates that the verse (or span of verses) includes the ending verse of the chapter
+ * @property {integer} [START_AND_END=3] Indicates that the verse (or span of verses) includes both the starting and ending verse of the chapter
+ */
+export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
+
+/**
+ * @typedef {number} ScheduleType
+ * @enum
+ * @property {integer} [SEQUENTIAL=0]
+ * @property {integer} [CHRONOLOGICAL=1]
+ * @property {integer} [THEMATIC=2]
+ * @property {integer} [CUSTOM=3]
+ */
+export const SCHEDULE_TYPES = {
+  SEQUENTIAL: 0,
+  CHRONOLOGICAL: 1,
+  THEMATIC: 2,
+  CUSTOM: 3,
 };
 
 /**

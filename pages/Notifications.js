@@ -27,7 +27,7 @@ import {
 
 import {addNotification} from '../data/Database/notificationTransactions';
 
-import {useUpdate, ERROR} from '../logic/logic';
+import {useUpdate, ERROR} from '../logic/general';
 import CreateNotificationPopup, {
   useCreateNotificationPopup,
 } from '../components/popups/CreateNotificationPopup';

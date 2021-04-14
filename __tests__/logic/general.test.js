@@ -1,9 +1,8 @@
 import {
   createPlaceholdersFromArray,
   formatDate,
-} from '../data/Database/generalTransactions';
-import {VERSE_POSITION} from '../data/Database/scheduleTransactions';
-import {getWeekdays, getWeeksBetween} from '../logic/logic';
+} from '../../data/Database/generalTransactions';
+import {getWeekdays, getWeeksBetween, VERSE_POSITION} from '../logic/general';
 
 beforeAll(() => {
   jest.useFakeTimers('modern');

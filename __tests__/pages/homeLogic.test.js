@@ -5,15 +5,11 @@ import {
   populateWeeklyReading,
 } from '../../pages/Home';
 import SQLite from 'react-native-sqlite-storage';
-import {FREQS} from '../../logic/logic';
 import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
 import {upgradeDB} from '../../data/Database/generalTransactions';
-import {
-  addSchedule,
-  VERSE_POSITION,
-} from '../../data/Database/scheduleTransactions';
-import {SCHEDULE_TYPES} from '../../components/popups/ScheduleTypeSelectionPopup';
+import {addSchedule} from '../../logic/scheduleTransactions';
 import {addReminder} from '../../data/Database/reminderTransactions';
+import {FREQS, SCHEDULE_TYPES, VERSE_POSITION} from '../../logic/general';
 
 let userDB;
 let bibleDB;

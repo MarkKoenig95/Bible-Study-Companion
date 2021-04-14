@@ -1,6 +1,6 @@
-import {ERROR} from '../../logic/logic';
+import {ERROR} from '../../logic/general';
 
-const {log, updateValue, runSQL} = require('./generalTransactions');
+import {log, updateValue, runSQL} from './generalTransactions';
 
 const tblNotificationsColumns = {
   ID: 'ID',

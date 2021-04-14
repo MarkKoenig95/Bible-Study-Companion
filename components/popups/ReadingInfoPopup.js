@@ -20,7 +20,7 @@ import {
 } from '../../logic/localization/localization';
 
 import {errorCB} from '../../data/Database/generalTransactions';
-import {findMaxChapter} from '../../data/Database/scheduleTransactions';
+import {findMaxChapter} from '../../logic/scheduleCreation';
 import {store} from '../../data/Store/store.js';
 
 const blankInfo = {

@@ -1,6 +1,5 @@
 import {log, runSQL} from './generalTransactions';
-import {getWeekdays, ERROR} from '../../logic/logic';
-import {FREQS} from '../../logic/logic';
+import {getWeekdays, ERROR, FREQS} from '../../logic/general';
 
 const tblRemindersRows = `
     ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE

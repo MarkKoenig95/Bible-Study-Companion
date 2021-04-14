@@ -10,9 +10,8 @@ import Text, {Body} from '../text/Text';
 import Popup from './Popup';
 
 import {translate} from '../../logic/localization/localization';
-import {sanitizeNumber} from '../../logic/logic';
-import {SCHEDULE_TYPES} from './ScheduleTypeSelectionPopup';
 import styles from '../../styles/styles';
+import {sanitizeNumber, SCHEDULE_TYPES} from '../../logic/general';
 
 const prefix = 'createSchedulePopup.';
 

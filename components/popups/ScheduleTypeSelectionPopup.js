@@ -7,22 +7,9 @@ import {translate} from '../../logic/localization/localization';
 
 import styles from '../../styles/styles';
 import CustomButton from '../buttons/CustomButton';
+import {SCHEDULE_TYPES} from '../../logic/general';
 
 const prefix = 'scheduleTypePopup.';
-
-/**
- * @typedef ScheduleType
- * @property {integer} [SEQUENTIAL=0]
- * @property {integer} [CHRONOLOGICAL=1]
- * @property {integer} [THEMATIC=2]
- * @property {integer} [CUSTOM=3]
- */
-export const SCHEDULE_TYPES = {
-  SEQUENTIAL: 0,
-  CHRONOLOGICAL: 1,
-  THEMATIC: 2,
-  CUSTOM: 3,
-};
 
 export default function ScheduleTypeSelectionPopup(props) {
   const {testID} = props;

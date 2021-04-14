@@ -1,20 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {SafeAreaView, SectionList, View} from 'react-native';
 
-import IconButton from '../components/buttons/IconButton';
-import TextButton from '../components/buttons/TextButton';
-import JWLibButton from '../components/buttons/JWLibButton';
-import {SubHeading} from '../components/text/Text';
-
-import styles from '../styles/styles';
-
-import {translate} from '../logic/localization/localization';
-
-import {store} from '../data/Store/store.js';
-
 import {
   formatDate,
-  errorCB,
   updateValue,
   log,
   appVersion,
@@ -25,15 +13,24 @@ import {
   createWeeklyReadingSchedule,
 } from '../data/Database/scheduleTransactions';
 import {
-  WEEKLY_READING_TABLE_NAME,
   legacyBugFixForV062,
   useUpdate,
   FREQS,
-} from '../logic/logic';
+  WEEKLY_READING_TABLE_NAME,
+} from '../logic/general';
+import {translate} from '../logic/localization/localization';
+import {store} from '../data/Store/store.js';
+import {setAppVersion} from '../data/Store/actions';
+
+import IconButton from '../components/buttons/IconButton';
+import TextButton from '../components/buttons/TextButton';
+import JWLibButton from '../components/buttons/JWLibButton';
+import {SubHeading} from '../components/text/Text';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 import SectionListHeader from '../components/SectionListHeader';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
-import {setAppVersion} from '../data/Store/actions';
+
+import styles from '../styles/styles';
 
 const pageTitle = 'homePage';
 let populatingHomeList = false;

@@ -3,15 +3,15 @@ import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
 import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
-import {FREQS} from '../../logic/logic';
+import {FREQS} from '../../logic/general';
 import {version} from '../../package.json';
-
-SQLite.enablePromise(true);
 
 /**
  * @typedef Database
  * @property {Function} executeSql
  */
+
+SQLite.enablePromise(true);
 
 export function log() {
   if (shouldLog) {

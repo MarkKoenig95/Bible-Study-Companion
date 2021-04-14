@@ -22,7 +22,7 @@ import {
   createPickerArray,
   FREQS,
   ERROR,
-} from '../logic/logic';
+} from '../logic/general';
 import {
   setReminderCompDate,
   addReminder,

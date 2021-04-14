@@ -11,7 +11,7 @@ import {translate} from '../logic/localization/localization';
 import {store} from '../data/Store/store.js';
 
 import {errorCB, updateValue} from '../data/Database/generalTransactions';
-import {useUpdate} from '../logic/logic';
+import {useUpdate} from '../logic/general';
 import TimePickerButton from '../components/buttons/TimePickerButton';
 import {deleteNotification} from '../data/Database/notificationTransactions';
 import IconButton from '../components/buttons/IconButton';

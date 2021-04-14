@@ -7,7 +7,7 @@ import {
   updateReminderDates,
 } from '../../data/Database/reminderTransactions';
 import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
-import {FREQS} from '../../logic/logic';
+import {FREQS} from '../../logic/general';
 
 let userDB;
 
