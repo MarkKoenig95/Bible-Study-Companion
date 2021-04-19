@@ -1,6 +1,9 @@
 import SQLite from 'react-native-sqlite-storage';
 import {formatDate} from '../../data/Database/generalTransactions';
-import {createScheduleTable} from '../../data/Database/scheduleTransactions';
+import {
+  createScheduleTable,
+  insertReadingPortions,
+} from '../../data/Database/scheduleTransactions';
 import {SCHEDULE_TYPES, VERSE_POSITION} from '../../logic/general';
 import {
   checkAnyVerseBuffer,
@@ -17,7 +20,6 @@ import {
   findVerseIndex,
   generateBibleSchedule,
   generateCustomSchedule,
-  insertReadingPortions,
   runQueries,
   setAdjustedMessage,
   setScheduleParameters,
@@ -32,6 +34,22 @@ let qryThematicIndex;
 
 const tableName = 'tblTest';
 const date = new Date(2021, 1, 1);
+
+const bibleValuesArray = [
+  'StartBookName',
+  'StartBookNumber',
+  'StartChapter',
+  'StartVerse',
+  'EndBookName',
+  'EndBookNumber',
+  'EndChapter',
+  'EndVerse',
+  'CompletionDate',
+  'ReadingPortion',
+  'VersePosition',
+];
+
+const customScheduleValuesArray = ['CompletionDate', 'ReadingPortion'];
 
 const thematicScheduleParametersResult = {
   buffer: {
@@ -2188,20 +2206,6 @@ test('insertReadingPortions', async () => {
     VERSE_POSITION.START,
   ];
 
-  const valuesArray = [
-    'StartBookName',
-    'StartBookNumber',
-    'StartChapter',
-    'StartVerse',
-    'EndBookName',
-    'EndBookNumber',
-    'EndChapter',
-    'EndVerse',
-    'CompletionDate',
-    'ReadingPortion',
-    'VersePosition',
-  ];
-
   let readingPortions = [
     portion1,
     portion2,
@@ -2213,7 +2217,12 @@ test('insertReadingPortions', async () => {
 
   await setScheduleTable(SCHEDULE_TYPES.CHRONOLOGICAL);
 
-  await insertReadingPortions(userDB, readingPortions, tableName, valuesArray);
+  await insertReadingPortions(
+    userDB,
+    readingPortions,
+    tableName,
+    bibleValuesArray,
+  );
 
   await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
     expect(res.rows.length).toBe(6);
@@ -2235,69 +2244,68 @@ describe('create bible reading schedule', () => {
     0.1 Year verse that exists (Genesis 1:1)
     20 Year verse that doesn't exist (Revelation 100:100)
   */
+  let indices = {};
+
+  beforeAll(() => {
+    bibleValuesArray.forEach((el, index) => {
+      indices[el] = index;
+    });
+  });
+
   test('Sequential schedule with a minimum duration and an existing verse', async () => {
     let scheduleType = SCHEDULE_TYPES.SEQUENTIAL;
+    let today = new Date();
 
     await setScheduleTable(scheduleType);
 
-    await generateBibleSchedule(
-      userDB,
+    let {readingPortions} = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       0.1,
       1,
       1,
       1,
-      tableName,
-      () => {},
-      () => {},
     );
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
-      expect(res.rows.length).toBe(38);
+    expect(readingPortions.length).toBe(38);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Genesis 1-29');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
+    expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1-29');
+    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
 
-      expect(res.rows.item(37).ReadingPortion).toBe('Revelation 18-22');
-      today.setDate(today.getDate() + 37);
-      expect(res.rows.item(37).CompletionDate).toBe(formatDate(today));
-    });
+    today.setDate(today.getDate() + 37);
+    expect(readingPortions[37][indices.ReadingPortion]).toBe(
+      'Revelation 18-22',
+    );
+    expect(readingPortions[37][indices.CompletionDate]).toBe(formatDate(today));
   });
 
   test('Sequential schedule with a maximum duration and a non-existant verse', async () => {
     let scheduleType = SCHEDULE_TYPES.SEQUENTIAL;
+    let today = new Date();
 
     await setScheduleTable(scheduleType);
 
-    await generateBibleSchedule(
-      userDB,
+    let {readingPortions} = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       20,
       39,
       100,
       100,
-      tableName,
-      () => {},
-      () => {},
     );
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
-      expect(res.rows.length).toBe(4447);
-      // console.log('length', res.rows.length);
-      // console.log(res.rows.item(0));
-      // console.log(res.rows.item(res.rows.length - 1));
+    expect(readingPortions.length).toBe(4447);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Matthew 1:1-5');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
+    expect(readingPortions[0][indices.ReadingPortion]).toBe('Matthew 1:1-5');
+    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
 
-      expect(res.rows.item(4446).ReadingPortion).toBe('Malachi 3:17-4:6');
-      today.setDate(today.getDate() + 4446);
-      expect(res.rows.item(4446).CompletionDate).toBe(formatDate(today));
-    });
+    expect(readingPortions[4446][indices.ReadingPortion]).toBe(
+      'Malachi 3:17-4:6',
+    );
+    today.setDate(today.getDate() + 4446);
+    expect(readingPortions[4446][indices.CompletionDate]).toBe(
+      formatDate(today),
+    );
   });
 
   test('Chronological schedule with a minimum duration and a non-existant verse', async () => {
@@ -2305,30 +2313,26 @@ describe('create bible reading schedule', () => {
 
     await setScheduleTable(scheduleType);
 
-    await generateBibleSchedule(
-      userDB,
+    let {readingPortions} = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       0.1,
       31,
       100,
       100,
-      tableName,
-      () => {},
-      () => {},
     );
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
-      expect(res.rows.length).toBe(570);
+    let today = new Date();
+    expect(readingPortions.length).toBe(570);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Jonah 1-4');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
+    expect(readingPortions[0][indices.ReadingPortion]).toBe('Jonah 1-4');
+    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
 
-      expect(res.rows.item(569).ReadingPortion).toBe('Hosea 1-5');
-      today.setDate(today.getDate() + 36);
-      expect(res.rows.item(569).CompletionDate).toBe(formatDate(today));
-    });
+    today.setDate(today.getDate() + 36); //Chronological schedules have multiple schedules per day
+    expect(readingPortions[569][indices.ReadingPortion]).toBe('Hosea 1-5');
+    expect(readingPortions[569][indices.CompletionDate]).toBe(
+      formatDate(today),
+    );
   });
 
   test('Chronological schedule with a maximum duration and an existing verse', async () => {
@@ -2336,30 +2340,28 @@ describe('create bible reading schedule', () => {
 
     await setScheduleTable(scheduleType);
 
-    await generateBibleSchedule(
-      userDB,
+    let {readingPortions} = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       20,
       1,
       1,
       1,
-      tableName,
-      () => {},
-      () => {},
     );
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
-      expect(res.rows.length).toBe(5059);
+    let today = new Date();
+    expect(readingPortions.length).toBe(5059);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Genesis 1:1-5');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
+    expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1:1-5');
+    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
 
-      expect(res.rows.item(5058).ReadingPortion).toBe('Revelation 22:20-21');
-      today.setDate(today.getDate() + 4447);
-      expect(res.rows.item(5058).CompletionDate).toBe(formatDate(today));
-    });
+    today.setDate(today.getDate() + 4447); //Chronological schedules have multiple schedules per day
+    expect(readingPortions[5058][indices.ReadingPortion]).toBe(
+      'Revelation 22:20-21',
+    );
+    expect(readingPortions[5058][indices.CompletionDate]).toBe(
+      formatDate(today),
+    );
   });
 
   test('Thematic schedule with a minimum duration and an existing verse', async () => {
@@ -2367,30 +2369,24 @@ describe('create bible reading schedule', () => {
 
     await setScheduleTable(scheduleType);
 
-    await generateBibleSchedule(
-      userDB,
+    let {readingPortions} = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       0.1,
       1,
       1,
       1,
-      tableName,
-      () => {},
-      () => {},
     );
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
-      expect(res.rows.length).toBe(44);
+    let today = new Date();
+    expect(readingPortions.length).toBe(44);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Genesis 1-37');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
+    expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1-37');
+    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
 
-      expect(res.rows.item(43).ReadingPortion).toBe('1 John 2-Jude 1');
-      today.setDate(today.getDate() + 41);
-      expect(res.rows.item(43).CompletionDate).toBe(formatDate(today));
-    });
+    expect(readingPortions[43][indices.ReadingPortion]).toBe('1 John 2-Jude 1');
+    today.setDate(today.getDate() + 41);
+    expect(readingPortions[43][indices.CompletionDate]).toBe(formatDate(today));
   });
 
   test('Thematic schedule with a maximum duration and a non-existant verse', async () => {
@@ -2398,29 +2394,29 @@ describe('create bible reading schedule', () => {
 
     await setScheduleTable(scheduleType);
 
-    await generateBibleSchedule(
-      userDB,
+    let {readingPortions} = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       20,
       66,
       100,
       100,
-      tableName,
-      () => {},
-      () => {},
     );
 
     await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
       let today = new Date();
-      expect(res.rows.length).toBe(6436);
+      expect(readingPortions.length).toBe(6436);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Genesis 1:1-6');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
+      expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1:1-6');
+      expect(readingPortions[0][indices.CompletionDate]).toBe(
+        formatDate(today),
+      );
 
-      expect(res.rows.item(6435).ReadingPortion).toBe('Esther 10');
+      expect(readingPortions[6435][indices.ReadingPortion]).toBe('Esther 10');
       today.setDate(today.getDate() + 6433);
-      expect(res.rows.item(6435).CompletionDate).toBe(formatDate(today));
+      expect(readingPortions[6435][indices.CompletionDate]).toBe(
+        formatDate(today),
+      );
     });
   });
 });
@@ -2440,24 +2436,22 @@ describe('create custom reading schedule', () => {
           a giant number 1,000,000,000,000,000
           0
   */
+
+  let indices = {};
+  beforeAll(() => {
+    customScheduleValuesArray.forEach((el, index) => {
+      indices[el] = index;
+    });
+  });
+
   test('max portion smaller than starting portion', async () => {
     let scheduleType = SCHEDULE_TYPES.CUSTOM;
 
     await setScheduleTable(scheduleType);
 
-    await generateCustomSchedule(
-      userDB,
-      tableName,
-      1000000000000000,
-      0,
-      'Portion',
-      1,
-      () => {},
-    );
+    let portions = generateCustomSchedule(1000000000000000, 0, 'Portion', 1);
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      expect(res.rows.length).toBe(0);
-    });
+    expect(portions.length).toBe(0);
   });
 
   test('very large portions per day', async () => {
@@ -2465,50 +2459,28 @@ describe('create custom reading schedule', () => {
 
     await setScheduleTable(scheduleType);
 
-    await generateCustomSchedule(
-      userDB,
-      tableName,
-      1,
-      1,
-      'Portion',
-      1000000000000000,
-      () => {},
-    );
+    let portions = generateCustomSchedule(1, 1, 'Portion', 1000000000000000);
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
+    let today = new Date();
 
-      expect(res.rows.length).toBe(1);
+    expect(portions.length).toBe(1);
 
-      expect(res.rows.item(0).ReadingPortion).toBe('Portion 1');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
-    });
+    expect(portions[0][indices.ReadingPortion]).toBe('Portion 1');
+    expect(portions[0][indices.CompletionDate]).toBe(formatDate(today));
   });
 
   test('a large max portion and a small portions per day', async () => {
-    let scheduleType = SCHEDULE_TYPES.CUSTOM;
+    let portions = generateCustomSchedule(0, 1000, 'Portion', 0.1);
 
-    await setScheduleTable(scheduleType);
+    let today = new Date();
 
-    let promise = new Promise((res, rej) => {
-      generateCustomSchedule(userDB, tableName, 0, 1000, 'Portion', 0.1, () => {
-        res();
-      });
-    });
+    expect(portions.length).toBe(10001);
 
-    await promise;
+    expect(portions[0][indices.ReadingPortion]).toBe('Portion 0-0.1');
+    expect(portions[0][indices.CompletionDate]).toBe(formatDate(today));
 
-    await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
-      let today = new Date();
-
-      expect(res.rows.length).toBe(10001);
-
-      expect(res.rows.item(0).ReadingPortion).toBe('Portion 0-0.1');
-      expect(res.rows.item(0).CompletionDate).toBe(formatDate(today));
-
-      expect(res.rows.item(10000).ReadingPortion).toBe('Portion 1000');
-      today.setDate(today.getDate() + 10000);
-      expect(res.rows.item(10000).CompletionDate).toBe(formatDate(today));
-    });
+    expect(portions[10000][indices.ReadingPortion]).toBe('Portion 1000');
+    today.setDate(today.getDate() + 10000);
+    expect(portions[10000][indices.CompletionDate]).toBe(formatDate(today));
   });
 });

@@ -1324,29 +1324,31 @@ export function createReadingPortions(
 //----------------------------- Schedule creation generator algorithms -----------------------------
 /**
  * Creates a bible reading schedule
- * @param {Database} userDB
  * @param {Database} bibleDB
  * @param {ScheduleType} scheduleType
  * @param {number} dur - Duration of the schedule, in years
  * @param {integer} bookId - Number of the bible book to start from (1-66)
  * @param {integer} chapter
  * @param {integer} verse
- * @param {string} tableName
- * @param {Function} successCB
- * @param {Function} messageCB
  */
 export async function generateBibleSchedule(
-  userDB,
   bibleDB,
   scheduleType,
   dur,
   bookId,
   chapter,
   verse,
-  tableName,
-  successCB,
-  messageCB,
 ) {
+  if (
+    !qryMaxVerses ||
+    !tblVerseIndex ||
+    !qryChronologicalOrder ||
+    !qryThematicOrder ||
+    !qryThematicCount
+  ) {
+    await runQueries(bibleDB);
+  }
+
   //Get all required table and query references to be used in populating the table
   log('qryVerseIndex:', qryVerseIndex, 'qryMaxVerses:', qryMaxVerses);
 
@@ -1362,16 +1364,6 @@ export async function generateBibleSchedule(
     versesPerDay,
     buffer,
   } = setScheduleParameters(dur, qryVerseIndex, scheduleType);
-
-  if (
-    !qryMaxVerses ||
-    !tblVerseIndex ||
-    !qryChronologicalOrder ||
-    !qryThematicOrder ||
-    !qryThematicCount
-  ) {
-    await runQueries(bibleDB);
-  }
 
   log('Starting schedule generation');
 
@@ -1427,7 +1419,7 @@ export async function generateBibleSchedule(
       const key = keys[k];
 
       if (isEnd[key]) {
-        console.log('Skipped day', key);
+        log('Skipped day', key);
         continue;
       }
 
@@ -1543,7 +1535,7 @@ export async function generateBibleSchedule(
       }
 
       if (isEnd[key]) {
-        console.log('day', key, 'ended at', i, 'days');
+        log('day', key, 'ended at', i, 'days');
         endCounter++;
       }
 
@@ -1553,7 +1545,7 @@ export async function generateBibleSchedule(
       }
     }
     if (endCounter >= keys.length) {
-      console.log('Schedule created lasts', i, 'days');
+      log('Schedule created lasts', i, 'days');
       break;
     }
   }
@@ -1561,6 +1553,11 @@ export async function generateBibleSchedule(
   return {readingPortions, adjustedVerseMessage};
 }
 
+/**
+ * @param {DBQueryResult} weeklyReadingInfo
+ * @param {Date} date
+ * @returns {array} - Reading portions for schedule to be input into database
+ */
 export function generateWeeklyReadingSchedule(weeklyReadingInfo, date) {
   let versesPerDay = Math.floor(weeklyReadingInfo.rows.length / 7);
   let pointer = 0;
@@ -1600,22 +1597,16 @@ export function generateWeeklyReadingSchedule(weeklyReadingInfo, date) {
 
 /**
  * Creates a schedule for reading a publication such as a book or magazine breaking it up by user specified "portions" (Article, Page, Chapter, etc.)
- * @param {Database} userDB
- * @param {string} tableName
  * @param {number} startingPortion - (Must be between 0 and 1,000,000,000,000,000) The portion to begin the schedule from
  * @param {number} maxPortion - The number of the last portion in the publication
  * @param {string} readingPortionDesc - A user provided description of the sections to break up their reading by
  * @param {number} portionsPerDay - How many portions to read each day
- * @param {Function} successCB
  */
 export function generateCustomSchedule(
-  userDB,
-  tableName,
   startingPortion,
   maxPortion,
   readingPortionDesc,
   portionsPerDay,
-  successCB,
 ) {
   log('started creating schedule');
 
@@ -1667,10 +1658,6 @@ export function generateCustomSchedule(
     readingPortions.push(temp);
     //Move date ahead
     date.setDate(date.getDate() + 1);
-  }
-
-  if (readingPortions.length < 1) {
-    return;
   }
 
   return readingPortions;

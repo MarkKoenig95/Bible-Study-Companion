@@ -1,23 +1,26 @@
 import SQLite from 'react-native-sqlite-storage';
 import {
-  formatDate,
   loadData,
   runSQL,
   upgradeDB,
-} from '../../data/Database/generalTransactions';
-import {
-  deleteSchedule,
-  getScheduleSettings,
-  setHideCompleted,
-  updateDates,
-  updateReadStatus,
-} from '../../data/Database/scheduleTransactions';
+} from '../../../data/Database/generalTransactions';
 import {
   addSchedule,
   createWeeklyReadingSchedule,
-} from '../../logic/scheduleCreation';
-import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
-import {SCHEDULE_TYPES, WEEKLY_READING_TABLE_NAME} from '../../logic/general';
+  deleteSchedule,
+  findCorrespondingIndex,
+  getScheduleSettings,
+  renameSchedule,
+  setHideCompleted,
+  updateDates,
+  updateMultipleReadStatus,
+  updateReadStatus,
+} from '../../../data/Database/scheduleTransactions';
+import upgradeJSON from '../../../data/Database/upgrades/user-info-db-upgrade.json';
+import {
+  SCHEDULE_TYPES,
+  WEEKLY_READING_TABLE_NAME,
+} from '../../../logic/general';
 
 const tableName = 'tblSchedule1';
 const scheduleName = 'test';
@@ -44,14 +47,13 @@ beforeAll(async () => {
   await upgradeDB(userDB, upgradeJSON);
 });
 
-afterAll(() => {
+beforeEach(async () => {
   userDB.deleteDB();
-});
+  userDB = SQLite.openDatabase('scheduleTransactions_UserInfo.db');
 
-test('Create a basic bible reading schedule', async () => {
-  let today = new Date();
+  await upgradeDB(userDB, upgradeJSON);
 
-  let promise = new Promise((resolve, reject) => {
+  let createBibleSchedule = new Promise((resolve, reject) => {
     addSchedule(
       userDB,
       bibleDB,
@@ -68,68 +70,58 @@ test('Create a basic bible reading schedule', async () => {
       'readingPortionDesc',
       'portionsPerDay',
       resolve,
-      reject,
+      () => {},
     );
   });
 
-  await promise;
-
-  let tblSchedules = await getSchedules();
-
-  let table1 = await getScheduleInfo();
-
-  expect(tblSchedules.length).toBe(1);
-
-  expect(table1.length).toBe(366);
-
-  expect(table1.item(0).ReadingPortion).toBe('Genesis 1-3');
-  expect(table1.item(0).CompletionDate).toBe(formatDate(today));
-
-  expect(table1.item(365).ReadingPortion).toBe('Revelation 22');
-  today.setDate(today.getDate() + 365);
-  expect(table1.item(365).CompletionDate).toBe(formatDate(today));
+  await createBibleSchedule;
 });
 
-test('update read status to "Read"', async () => {
-  let readingItem;
-  let promise = new Promise((res, rej) => {
+afterAll(() => {
+  userDB.deleteDB();
+});
+
+test('deleteSchedule', async () => {
+  await deleteSchedule(userDB, tableName, scheduleName);
+
+  let table = await getSchedules();
+
+  expect(table.length).toBe(0);
+});
+
+test('update read status to "Finished" and back to "Unfinished"', async () => {
+  let scheduleInfo;
+
+  let setAsRead = new Promise((res, rej) => {
     updateReadStatus(userDB, tableName, 1, true, res);
   });
 
-  await promise;
+  await setAsRead;
+  scheduleInfo = await getScheduleInfo();
+  expect(scheduleInfo.item(0).IsFinished).toBe(1);
 
-  readingItem = await getScheduleInfo();
-
-  expect(readingItem.item(0).IsFinished).toBe(1);
-});
-
-test('update read status to "Unread"', async () => {
-  let readingItem;
-  let promise = new Promise((res, rej) => {
+  let setAsUnread = new Promise((res, rej) => {
     updateReadStatus(userDB, tableName, 1, false, res);
   });
 
-  await promise;
-
-  readingItem = await getScheduleInfo();
-
-  expect(readingItem.item(0).IsFinished).toBe(0);
+  await setAsUnread;
+  scheduleInfo = await getScheduleInfo();
+  expect(scheduleInfo.item(0).IsFinished).toBe(0);
 });
 
-test('set Hide Completed true', async () => {
+test('set Hide Completed true and then false', async () => {
+  let tableInfo;
   await setHideCompleted(userDB, scheduleName, true);
 
-  let table = await getSchedules();
+  tableInfo = await getSchedules();
 
-  expect(table.item(0).HideCompleted).toBe(1);
-});
+  expect(tableInfo.item(0).HideCompleted).toBe(1);
 
-test('set Hide Completed false', async () => {
   await setHideCompleted(userDB, scheduleName, false);
 
-  let table = await getSchedules();
+  tableInfo = await getSchedules();
 
-  expect(table.item(0).HideCompleted).toBe(0);
+  expect(tableInfo.item(0).HideCompleted).toBe(0);
 });
 
 test('getScheduleSettings', async () => {
@@ -190,10 +182,34 @@ test('updateDates', async () => {
   expect(date).toBe(result.rows.item(0).Date);
 });
 
-test('deleteSchedule', async () => {
-  await deleteSchedule(userDB, tableName, scheduleName);
+test('set a span of portions to "Read"', async () => {
+  await updateMultipleReadStatus(userDB, tableName, 20);
 
-  let table = await getSchedules();
+  let scheduleInfo = await getScheduleInfo();
 
-  expect(table.length).toBe(1);
+  expect(scheduleInfo.item(0).IsFinished).toBe(1);
+  expect(scheduleInfo.item(10).IsFinished).toBe(1);
+  expect(scheduleInfo.item(19).IsFinished).toBe(1);
+  expect(scheduleInfo.item(20).IsFinished).toBe(0);
+});
+
+test('rename schedule', async () => {
+  let newScheduleName = scheduleName + ' (NEW)';
+  await renameSchedule(userDB, scheduleName, newScheduleName);
+
+  let schedules = await getSchedules();
+
+  expect(schedules.item(0).ScheduleName).toBe(newScheduleName);
+});
+
+test('find the closest corresponding index for a verse in a schedule table - simple', async () => {
+  let index = await findCorrespondingIndex(userDB, tableName, 1, 1, 1);
+
+  expect(index).toBe(0);
+});
+
+test('find the closest corresponding index for a verse in a schedule table - advanced', async () => {
+  let index = await findCorrespondingIndex(userDB, tableName, 23, 39, 3);
+
+  expect(index).toBe(216);
 });

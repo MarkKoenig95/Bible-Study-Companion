@@ -272,17 +272,13 @@ export async function addSchedule(
   let valuesArray;
   //Populate the table with reading information
   if (scheduleType !== SCHEDULE_TYPES.CUSTOM) {
-    let result = generateBibleSchedule(
-      userDB,
+    let result = await generateBibleSchedule(
       bibleDB,
       scheduleType,
       duration,
       bookId,
       chapter,
       verse,
-      tableName,
-      successCallBack,
-      errorCallBack,
     );
 
     readingPortions = result.readingPortions;
@@ -290,13 +286,10 @@ export async function addSchedule(
     valuesArray = bibleScheduleValuesArray;
   } else {
     readingPortions = generateCustomSchedule(
-      userDB,
-      tableName,
       startingPortion,
       maxPortion,
       readingPortionDesc,
       portionsPerDay,
-      successCallBack,
     );
     valuesArray = customScheduleValuesArray;
   }
@@ -489,13 +482,58 @@ export async function deleteSchedule(userDB, tableName, scheduleName) {
  * @param {boolean} status - The value to update the status to
  * @param {Function} afterUpdate - A callback to be fired when the update has completed
  */
-export function updateReadStatus(userDB, tableName, id, status, afterUpdate) {
+export function updateReadStatus(
+  userDB,
+  tableName,
+  id,
+  status = true,
+  afterUpdate,
+) {
   let bool = status ? 1 : 0;
 
   runSQL(userDB, `UPDATE ${tableName} SET IsFinished=? WHERE ReadingDayID=?;`, [
     bool,
     id,
   ]).then(afterUpdate);
+}
+
+/**
+ * Updates the read flag in a schedule table for multiple reading day items
+ * @requires 0 < startID < endID
+ * @param {Database} userDB
+ * @param {string} tableName
+ * @param {integer} endID
+ * @param {integer} startID
+ * @param {boolean} status
+ */
+export async function updateMultipleReadStatus(
+  userDB,
+  tableName,
+  endID,
+  startID = 1,
+  status = true,
+) {
+  let bool = status ? 1 : 0;
+
+  await runSQL(
+    userDB,
+    `UPDATE ${tableName} SET IsFinished=? WHERE ReadingDayID<=? AND ReadingDayID>=?;`,
+    [bool, endID, startID],
+  );
+}
+
+/**
+ * Adjusts schedule name in the database for a reading schedule
+ * @param {Database} userDB
+ * @param {string} curScheduleName
+ * @param {string} newScheduleName
+ */
+export async function renameSchedule(userDB, curScheduleName, newScheduleName) {
+  await runSQL(
+    userDB,
+    'UPDATE tblSchedules SET ScheduleName=? WHERE ScheduleName=?;',
+    [newScheduleName, curScheduleName],
+  );
 }
 
 /**
@@ -555,53 +593,259 @@ export async function setHideCompleted(userDB, scheduleName, value) {
 }
 
 /**
- * Updates the read flag in a schedule table for multiple reading day items
- * @requires 0 < startID < endID
- * @param {Database} userDB
- * @param {string} tableName
- * @param {integer} endID
- * @param {integer} startID
- * @param {boolean} status
+ * Given a schedule query result finds spans of continuous portions marked as finished in the table
+ * @param {DBQueryResult} schedule
+ * @param {integer} startIndex
+ * @param {integer} endIndex
+ * @returns {Array<object>} - An array of objects with startIndex and endIndex keys indicating the span of unbroken completed portions
  */
-export async function updateMultipleReadStatus(
-  userDB,
-  tableName,
-  endID,
-  startID = 1,
-  status = true,
-) {
-  let bool = status ? 1 : 0;
+export function findFinishedPortionSpans(schedule, startIndex, endIndex) {
+  let startID = schedule.rows.item(startIndex).ReadingDayID;
+  let endID = schedule.rows.item(endIndex).ReadingDayID;
+  let idDifference = endID - startID;
+  let indexDifference = endIndex - startIndex;
 
-  await runSQL(
-    userDB,
-    `UPDATE ${tableName} SET IsFinished=? WHERE ReadingDayID<=? AND ReadingDayID>=?;`,
-    [bool, endID, startID],
-  );
+  if (idDifference === indexDifference) {
+    return [{startIndex, endIndex}];
+  }
+
+  let midIndex = Math.floor(startIndex + (endIndex - startIndex) / 2);
+
+  let left = findFinishedPortionSpans(schedule, startIndex, midIndex);
+  let right = findFinishedPortionSpans(schedule, midIndex + 1, endIndex);
+
+  // Merge the last of the left with the first of the right if the IDs only differ by one, keep the rest
+  let lastOfLeft = left[left.length - 1];
+  let firstOfRight = right[0];
+  let lastOfLeftID = schedule.rows.item(lastOfLeft.endIndex).ReadingDayID;
+  let firstOfRightID = schedule.rows.item(firstOfRight.startIndex).ReadingDayID;
+
+  if (lastOfLeftID === firstOfRightID - 1) {
+    left.pop();
+    right.shift();
+
+    let mergedSpan = {
+      startIndex: lastOfLeft.startIndex,
+      endIndex: firstOfRight.endIndex,
+    };
+    return [...left, mergedSpan, ...right];
+  }
+
+  return [...left, ...right];
 }
 
 /**
- * Adjusts schedule name in the database for a reading schedule
+ * Given a table name to search in and a set of verse info, finds the corresponding index in the table for the reading portion containing that verse
  * @param {Database} userDB
- * @param {string} curScheduleName
- * @param {string} newScheduleName
+ * @param {string} tableName
+ * @param {integer} bookNumber
+ * @param {integer} chapter
+ * @param {integer} verse
+ * @returns {integer} - The corresponding index
  */
-export async function renameSchedule(userDB, curScheduleName, newScheduleName) {
+export async function findCorrespondingIndex(
+  userDB,
+  tableName,
+  bookNumber,
+  chapter,
+  verse,
+) {
+  let correspondingIndex;
+
   await runSQL(
     userDB,
-    'UPDATE tblSchedules SET ScheduleName=? WHERE ScheduleName=?;',
-    [newScheduleName, curScheduleName],
+    `SELECT * 
+     FROM ${tableName}
+     WHERE (StartBookNumber<? 
+              OR (StartBookNumber=? AND 
+                    (StartChapter<? OR
+                        (StartChapter=? AND StartVerse<=?)))
+            )AND(
+              EndBookNumber>?
+              OR (EndBookNumber=? AND
+                    (EndChapter>? OR
+                        (EndChapter=? AND EndVerse>=?))));`,
+    [
+      bookNumber,
+      bookNumber,
+      chapter,
+      chapter,
+      verse,
+      bookNumber,
+      bookNumber,
+      chapter,
+      chapter,
+      verse,
+    ],
+  ).then(res => {
+    if (res.rows.length > 0) {
+      let item = res.rows.item(0);
+
+      correspondingIndex = item.ReadingDayID - 1;
+    }
+  });
+
+  return correspondingIndex;
+}
+
+/**
+ * Given the name of an original table and a table to match with it will update the new table's corresponding IsFinished markers for the correct reading days
+ * @param {Database} userDB
+ * @param {string} origTableName
+ * @param {string} newTableName
+ */
+export async function matchFinishedPortions(
+  userDB,
+  origTableName,
+  newTableName,
+) {
+  let origScheduleFinished = await runSQL(
+    userDB,
+    `SELECT * FROM ${origTableName} WHERE IsFinished=1;`,
   );
+
+  if (origScheduleFinished.rows.length < 1) return;
+
+  let finishedSpans = findFinishedPortionSpans(
+    origScheduleFinished,
+    0,
+    origScheduleFinished.rows.length - 1,
+  );
+
+  let updates = finishedSpans.map(async span => {
+    let startPortion = origScheduleFinished.rows.item(span.startIndex);
+    let endPortion = origScheduleFinished.rows.item(span.endIndex);
+
+    let startIndex = await findCorrespondingIndex(
+      userDB,
+      newTableName,
+      startPortion.StartBookNumber,
+      startPortion.StartChapter,
+      startPortion.StartVerse,
+    );
+
+    let endIndex = await findCorrespondingIndex(
+      userDB,
+      newTableName,
+      endPortion.EndBookNumber,
+      endPortion.EndChapter,
+      endPortion.EndVerse,
+    );
+
+    // In order to make sure we don't somehow accidentally mark every item as read because of feeding
+    // bad info into the next function
+    if (startIndex > endIndex) {
+      let tempStartIndex = startIndex;
+      startIndex = endIndex;
+      endIndex = tempStartIndex;
+    }
+
+    await updateMultipleReadStatus(
+      userDB,
+      newTableName,
+      endIndex + 1,
+      startIndex + 1,
+    );
+  });
+
+  await Promise.all(updates);
 }
 
 /**
  *
  * @param {Database} userDB
+ * @param {Database} bibleDB
  * @param {string} scheduleName
  * @param {object} creationInfo - Optional override values to implement in the new schedule
- * @property {}
+ * @property {boolean} creationInfo.doesTrack - Should the schedule keep track of the completion dates for reading days?
+ * @property {Array<(0|1)>} creationInfo.activeDays - A length 7 array of 1s or 0s. For future versions where the user can choose which weekdays they would like to read on and which weekdays to skip
+ * @property {number} creationInfo.duration - The length (in years) the user wants the Bible reading schedule to last
+ * @property {integer} creationInfo.bookId - The number of the Bible book the user chose to start from
+ * @property {integer} creationInfo.chapter - The number of the Bible book the user chose to start from
+ * @property {integer} creationInfo.verse - The number of the Bible book the user chose to start from
+ * @property {number} creationInfo.startingPortion - (Must be between 0 and 1,000,000,000,000,000) The portion to begin the schedule from
+ * @property {number} creationInfo.maxPortion - The number of the last portion in the publication
+ * @property {string} creationInfo.readingPortionDesc - A user provided description of the sections to break up their reading by
+ * @property {number} creationInfo.portionsPerDay - How many portions to read each day
  */
 export async function recreateSchedule(
   userDB,
+  bibleDB,
   scheduleName,
   creationInfo = {},
-) {}
+  afterUpdate,
+) {
+  //Get old schedule info
+  let oldScheduleInfo;
+  await runSQL(userDB, 'SELECT * FROM tblSchedules WHERE ScheduleName=?;', [
+    scheduleName,
+  ]).then(res => {
+    oldScheduleInfo = res.rows.item(0);
+  });
+
+  let oldCreationInfo = JSON.parse(oldScheduleInfo.CreationInfo);
+
+  //Change old schedule name
+  let oldScheduleName = `${scheduleName} (${translate('old')})`;
+  await renameSchedule(userDB, scheduleName, oldScheduleName);
+
+  //Merge old schedule info with given schedule creation info
+  let oldActiveDays = [];
+  for (let i = 0; i < 7; i++) {
+    oldActiveDays[i] = oldScheduleInfo[`IsDay${i}Active`];
+  }
+
+  let newCreationInfo = {
+    ...oldCreationInfo,
+    activeDays: oldActiveDays,
+    doesTrack: oldScheduleInfo.DoesTrack,
+    ...creationInfo,
+  };
+
+  //Create new schedule with the original name
+  await addSchedule(
+    userDB,
+    bibleDB,
+    parseInt(oldScheduleInfo.ScheduleType, 10),
+    scheduleName,
+    newCreationInfo.doesTrack,
+    newCreationInfo.activeDays,
+    newCreationInfo.duration,
+    newCreationInfo.bookId,
+    newCreationInfo.chapter,
+    newCreationInfo.verse,
+    newCreationInfo.startingPortion,
+    newCreationInfo.maxPortion,
+    newCreationInfo.readingPortionDesc,
+    newCreationInfo.portionsPerDay,
+    afterUpdate,
+    console.error,
+  );
+
+  //Get schedule table info
+  let oldTableName;
+  let newTableName;
+  await runSQL(
+    userDB,
+    'SELECT * FROM tblSchedules WHERE ScheduleName=? AND ScheduleName=?;',
+    [oldScheduleName, scheduleName],
+  ).then(res => {
+    for (let i = 0; i < res.rows.length; i++) {
+      const item = res.rows.item(i);
+
+      switch (item.ScheduleName) {
+        case scheduleName:
+          newTableName = formatScheduleTableName(item.ID);
+          break;
+        case oldScheduleName:
+          oldTableName = formatScheduleTableName(item.ID);
+          break;
+        default:
+          console.error('I have a bad feeling about this');
+      }
+    }
+  });
+
+  //Then we match to sync finished reading portions with old schedule
+  await matchFinishedPortions(userDB, oldTableName, newTableName);
+}

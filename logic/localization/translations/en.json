@@ -154,6 +154,7 @@
   "notificationPage": {
     "deleteNotificationMessage": "Are you sure you want to delete \"{{notificationName}}\" notification?"
   },
+  "old": "Old",
   "openJWLibrary": "Open JW Library",
   "ordinal": {
     "0": "th",
