@@ -15,10 +15,18 @@ import {
   setNotification,
   setShowDaily,
   setWeeklyReadingResetDay,
+  setAppVersion,
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
-import {log, getSettings} from './data/Database/generalTransactions';
-import {runQueries} from './data/Database/scheduleTransactions';
+import {
+  log,
+  getSettings,
+  appVersion,
+} from './data/Database/generalTransactions';
+import {
+  recreateSchedule,
+  runQueries,
+} from './data/Database/scheduleTransactions';
 import {updateNotifications} from './data/Database/notificationTransactions';
 import {updateReminderDates} from './data/Database/reminderTransactions';
 
@@ -35,6 +43,7 @@ import {colors} from './styles/styles';
 import {useNotifications} from './logic/notifications/NotifService';
 
 import {useLocalization, translate} from './logic/localization/localization';
+import {legacyBugFixFor103, versionIsLessThan} from './logic/general';
 
 const Stack = createStackNavigator();
 const navigationOptions = {
@@ -127,7 +136,7 @@ function backgroundRefreh(userDB, notification) {
       stopOnTerminate: false,
       startOnBoot: true,
     },
-    async event => {
+    async (event) => {
       let taskID = event.taskId;
       console.log('Received background fetch event');
       userDB = userDB || (await UserInfoDB.getConnection());
@@ -136,7 +145,7 @@ function backgroundRefreh(userDB, notification) {
 
       BackgroundFetch.finish(taskID);
     },
-    error => {
+    (error) => {
       console.log('Background fetch failed to start with error: ' + error);
     },
   );
@@ -156,7 +165,7 @@ export default function AppContainer() {
   const {notification} = useNotifications();
 
   useEffect(() => {
-    initializeData().then(data => {
+    initializeData().then((data) => {
       console.log('data is', data);
       log('Setting context values');
       dispatch(setUserDB(data.userDB));
@@ -190,7 +199,7 @@ export default function AppContainer() {
   }, [dispatch, updatePages, refresh]);
 
   useEffect(() => {
-    setRefresh(prev => {
+    setRefresh((prev) => {
       return prev + 1;
     });
     if (isFirstRender) {
@@ -200,7 +209,7 @@ export default function AppContainer() {
     if (userDB) {
       updateNotifications(userDB, notification);
       updateReminderDates(userDB);
-      getSettings(userDB).then(settings => {
+      getSettings(userDB).then((settings) => {
         let {showDaily, weeklyReadingResetDay} = settings;
 
         dispatch(setShowDaily(showDaily));
@@ -210,7 +219,7 @@ export default function AppContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isFirstRender, setRefresh, updatePages, userDB]);
 
-  const _handleAppStateChange = nextAppState => {
+  const _handleAppStateChange = (nextAppState) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'

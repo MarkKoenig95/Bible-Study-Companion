@@ -1,7 +1,10 @@
 import React, {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
+import {Database, runSQL} from '../data/Database/generalTransactions';
+import {recreateSchedule} from '../data/Database/scheduleTransactions';
 import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
+import {DBQueryResult} from './scheduleCreation';
 
 export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
 
@@ -64,7 +67,7 @@ export function openJWLibrary() {
   Linking.openURL(appLink);
 }
 
-export function arraysMatch(arr1, arr2) {
+export function arraysMatch(arr1: any[], arr2: any[]) {
   // Check if the arrays are the same length
   if (arr1.length !== arr2.length) {
     return false;
@@ -84,7 +87,12 @@ export function arraysMatch(arr1, arr2) {
   return true;
 }
 
-export function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
+export function sanitizeNumber(
+  prevValue: string,
+  newValue: string,
+  lowerLimit: number,
+  upperLimit: number,
+) {
   let result = '';
 
   newValue = newValue || '';
@@ -98,8 +106,8 @@ export function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
     if (newValue[newValue.length - 1] === '.') {
       result = newValue;
     } else {
-      let number = parseFloat(newValue, 10);
-      if (!isNaN(number) && (number >= lowerLimit && number <= upperLimit)) {
+      let number = parseFloat(newValue);
+      if (!isNaN(number) && number >= lowerLimit && number <= upperLimit) {
         result = number.toString();
       } else {
         result = prevValue;
@@ -110,7 +118,7 @@ export function sanitizeNumber(prevValue, newValue, lowerLimit, upperLimit) {
   return result;
 }
 
-export function getWeeksBetween(date1, date2) {
+export function getWeeksBetween(date1: string, date2: string) {
   let d1 = Date.parse(date1);
   let d2 = Date.parse(date2);
   let millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
@@ -119,13 +127,16 @@ export function getWeeksBetween(date1, date2) {
   return weeksBetween;
 }
 
-export function useUpdate(updatePages, dispatch) {
+export function useUpdate(
+  updatePages: number,
+  dispatch: (event: object) => {},
+) {
   return useCallback(() => {
     dispatch(setUpdatePages(updatePages));
   }, [updatePages, dispatch]);
 }
 
-export function createPickerArray(...labels) {
+export function createPickerArray(...labels: any[]) {
   const pickerValues = [];
   for (let i = 0; i < labels.length; i++) {
     const label = labels[i];
@@ -135,16 +146,16 @@ export function createPickerArray(...labels) {
 }
 
 export function getWeekdays() {
-  const fromToday = (resetDayOfWeek, direction) => {
+  const fromToday = (resetDayOfWeek: number, direction: -1 | 1) => {
     let date = new Date();
     let adj = (resetDayOfWeek - date.getDay()) * direction;
     return (7 + adj) % 7;
   };
   return {
-    beforeToday: reset => {
+    beforeToday: (reset: number) => {
       return fromToday(reset, -1);
     },
-    afterToday: reset => {
+    afterToday: (reset: number) => {
       return fromToday(reset, 1);
     },
   };
@@ -161,12 +172,45 @@ export function createDailyTextLink() {
   return href;
 }
 
-export async function legacyBugFixForV062(userDB) {
-  const tableName = WEEKLY_READING_TABLE_NAME;
-  await userDB
-    .executeSql(
-      'UPDATE tblSchedules SET CreationInfo=? WHERE CreationInfo IS NULL;',
-      [tableName],
-    )
-    .catch(console.error);
+export function versionIsLessThan(version: string, checkVersion: string) {
+  let values = version.split('.');
+  let checkValues = checkVersion.split('.');
+
+  for (let i = 0; i < checkValues.length; i++) {
+    if (i > values.length - 1) return false;
+
+    let checkNumber = parseInt(checkValues[i], 10);
+    let curNumber = parseInt(values[i], 10);
+
+    if (curNumber < checkNumber) return true;
+
+    if (i < checkValues.length - 1 && curNumber > checkNumber) return false;
+  }
+
+  //If we've gotten here it should be because they are equal
+  return false;
+}
+
+export async function legacyBugFixFor103(
+  userDB: Database,
+  bibleDB: Database,
+  prevVersion: string,
+) {
+  if (!versionIsLessThan(prevVersion, '1.0.3')) return;
+
+  //Recreate the schedules that have been created to fix the bug with schedule creation from earlier
+  let schedules: DBQueryResult = await runSQL(
+    userDB,
+    'SELECT * FROM tblSchedules WHERE ScheduleType=? OR ScheduleType=?',
+    [SCHEDULE_TYPES.CHRONOLOGICAL, SCHEDULE_TYPES.THEMATIC],
+  );
+
+  let promises = [];
+
+  for (let i = 0; i < schedules.rows.length; i++) {
+    const schedule = schedules.rows.item(i);
+    promises.push(recreateSchedule(userDB, bibleDB, schedule.ScheduleName));
+  }
+
+  await Promise.all(promises);
 }

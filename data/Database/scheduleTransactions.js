@@ -78,7 +78,7 @@ export async function insertReadingPortions(
     userDB,
     `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders};`,
     values,
-  ).then(res => {
+  ).then((res) => {
     if (res.rowsAffected > 0) {
       log('Insert success');
     } else {
@@ -95,7 +95,7 @@ export async function insertReadingPortions(
       tableName,
       valuesArray,
       startIndex,
-    ).then(result => {
+    ).then((result) => {
       if (wasSuccessful) {
         wasSuccessful = result;
       }
@@ -196,7 +196,7 @@ export async function addSchedule(
   //Check if a schedule with that name already exists
   await runSQL(userDB, 'SELECT 1 FROM tblSchedules WHERE ScheduleName=?;', [
     scheduleName,
-  ]).then(res => {
+  ]).then((res) => {
     scheduleNameExists = res.rows.length > 0;
   });
 
@@ -258,7 +258,7 @@ export async function addSchedule(
     userDB,
     'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName=?;',
     [scheduleName],
-  ).then(res => {
+  ).then((res) => {
     let id = res.rows.item(0).ScheduleID;
     tableName = formatScheduleTableName(id);
 
@@ -295,7 +295,7 @@ export async function addSchedule(
   }
 
   await insertReadingPortions(userDB, readingPortions, tableName, valuesArray)
-    .then(wasSucessful => {
+    .then((wasSucessful) => {
       if (wasSucessful) {
         console.log('Every insert was successful');
         if (adjustedVerseMessage) {
@@ -307,7 +307,7 @@ export async function addSchedule(
       }
       timeKeeper('Ended at.....');
     })
-    .catch(err => {
+    .catch((err) => {
       errorCB(err);
       timeKeeper('Ended at.....');
     });
@@ -440,13 +440,13 @@ export async function createWeeklyReadingSchedule(
       tableName,
       bibleScheduleValuesArray,
     )
-      .then(wasSucessful => {
+      .then((wasSucessful) => {
         if (!wasSucessful) {
           console.log('Insert failed');
         }
         timeKeeper('Ended at.....');
       })
-      .catch(err => {
+      .catch((err) => {
         errorCB(err);
         timeKeeper('Ended at.....');
       });
@@ -677,7 +677,7 @@ export async function findCorrespondingIndex(
       chapter,
       verse,
     ],
-  ).then(res => {
+  ).then((res) => {
     if (res.rows.length > 0) {
       let item = res.rows.item(0);
 
@@ -712,7 +712,7 @@ export async function matchFinishedPortions(
     origScheduleFinished.rows.length - 1,
   );
 
-  let updates = finishedSpans.map(async span => {
+  let updates = finishedSpans.map(async (span) => {
     let startPortion = origScheduleFinished.rows.item(span.startIndex);
     let endPortion = origScheduleFinished.rows.item(span.endIndex);
 
@@ -773,13 +773,12 @@ export async function recreateSchedule(
   bibleDB,
   scheduleName,
   creationInfo = {},
-  afterUpdate,
 ) {
   //Get old schedule info
   let oldScheduleInfo;
   await runSQL(userDB, 'SELECT * FROM tblSchedules WHERE ScheduleName=?;', [
     scheduleName,
-  ]).then(res => {
+  ]).then((res) => {
     oldScheduleInfo = res.rows.item(0);
   });
 
@@ -803,42 +802,46 @@ export async function recreateSchedule(
   };
 
   //Create new schedule with the original name
-  await addSchedule(
-    userDB,
-    bibleDB,
-    parseInt(oldScheduleInfo.ScheduleType, 10),
-    scheduleName,
-    newCreationInfo.doesTrack,
-    newCreationInfo.activeDays,
-    newCreationInfo.duration,
-    newCreationInfo.bookId,
-    newCreationInfo.chapter,
-    newCreationInfo.verse,
-    newCreationInfo.startingPortion,
-    newCreationInfo.maxPortion,
-    newCreationInfo.readingPortionDesc,
-    newCreationInfo.portionsPerDay,
-    afterUpdate,
-    console.error,
-  );
+  let createSchedule = new Promise((res, rej) => {
+    addSchedule(
+      userDB,
+      bibleDB,
+      parseInt(oldScheduleInfo.ScheduleType, 10),
+      scheduleName,
+      newCreationInfo.doesTrack,
+      newCreationInfo.activeDays,
+      newCreationInfo.duration,
+      newCreationInfo.bookId,
+      newCreationInfo.chapter,
+      newCreationInfo.verse,
+      newCreationInfo.startingPortion,
+      newCreationInfo.maxPortion,
+      newCreationInfo.readingPortionDesc,
+      newCreationInfo.portionsPerDay,
+      res,
+      console.error,
+    );
+  });
+
+  await createSchedule;
 
   //Get schedule table info
   let oldTableName;
   let newTableName;
   await runSQL(
     userDB,
-    'SELECT * FROM tblSchedules WHERE ScheduleName=? AND ScheduleName=?;',
+    'SELECT * FROM tblSchedules WHERE ScheduleName=? OR ScheduleName=?;',
     [oldScheduleName, scheduleName],
-  ).then(res => {
+  ).then((res) => {
     for (let i = 0; i < res.rows.length; i++) {
       const item = res.rows.item(i);
 
       switch (item.ScheduleName) {
         case scheduleName:
-          newTableName = formatScheduleTableName(item.ID);
+          newTableName = formatScheduleTableName(item.ScheduleID);
           break;
         case oldScheduleName:
-          oldTableName = formatScheduleTableName(item.ID);
+          oldTableName = formatScheduleTableName(item.ScheduleID);
           break;
         default:
           console.error('I have a bad feeling about this');

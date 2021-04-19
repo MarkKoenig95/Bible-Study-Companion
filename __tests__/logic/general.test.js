@@ -2,7 +2,12 @@ import {
   createPlaceholdersFromArray,
   formatDate,
 } from '../../data/Database/generalTransactions';
-import {getWeekdays, getWeeksBetween, VERSE_POSITION} from '../logic/general';
+import {
+  getWeekdays,
+  getWeeksBetween,
+  versionIsLessThan,
+  VERSE_POSITION,
+} from '../../logic/general';
 
 beforeAll(() => {
   jest.useFakeTimers('modern');
@@ -172,5 +177,52 @@ test('createPlaceholdersFromArray', () => {
       'Isaiah 1:1-6',
       0,
     ],
+  });
+});
+
+describe('versionIsLessThan checker', () => {
+  test('version 1.0.0 < version 1.0.1', () => {
+    let result = versionIsLessThan('1.0.0', '1.0.1');
+    expect(result).toBe(true);
+  });
+
+  test('version 1.0.0 < version 1.1.0', () => {
+    let result = versionIsLessThan('1.0.0', '1.1.0');
+    expect(result).toBe(true);
+  });
+
+  test('version 1.0.0 < version 2.0.0', () => {
+    let result = versionIsLessThan('1.0.0', '2.0.0');
+    expect(result).toBe(true);
+  });
+
+  test('version 1.0.0 < version 1.0.0', () => {
+    let result = versionIsLessThan('1.0.0', '1.0.0');
+    expect(result).toBe(false);
+  });
+
+  test('version 1.0.1 < version 1.0.0', () => {
+    let result = versionIsLessThan('1.0.1', '1.0.0');
+    expect(result).toBe(false);
+  });
+
+  test('version 1.1.0 < version 1.0.0', () => {
+    let result = versionIsLessThan('1.1.0', '1.0.0');
+    expect(result).toBe(false);
+  });
+
+  test('version 2.0.0 < version 1.0.0', () => {
+    let result = versionIsLessThan('2.0.0', '1.0.0');
+    expect(result).toBe(false);
+  });
+
+  test('version 1.0.0.0 < version 1.0.0', () => {
+    let result = versionIsLessThan('1.0.0.0', '1.0.0');
+    expect(result).toBe(false);
+  });
+
+  test('version 1.0.0 < version 1.0.0.0', () => {
+    let result = versionIsLessThan('1.0.0', '1.0.0.0');
+    expect(result).toBe(false);
   });
 });

@@ -14,7 +14,7 @@ import {loadData} from '../data/Database/generalTransactions';
 import {
   addSchedule,
   formatScheduleTableName,
-} from '../logic/scheduleTransactions';
+} from '../data/Database/scheduleTransactions';
 
 import LoadingPopup from '../components/popups/LoadingPopup';
 import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/general';
@@ -69,7 +69,7 @@ export default function Schedules(props) {
   }, [isScheduleTypePopupDisplayed, navigation]);
 
   useEffect(() => {
-    loadData(userDB, 'tblSchedules').then(res => {
+    loadData(userDB, 'tblSchedules').then((res) => {
       setListItems(res);
     });
   }, [userDB, setListItems, updatePages]);
@@ -111,7 +111,7 @@ export default function Schedules(props) {
         afterUpdate();
         setLoadingPopup(false);
       },
-      message => {
+      (message) => {
         setLoadingPopup(false);
         openMessagePopup(message);
       },
@@ -144,7 +144,7 @@ export default function Schedules(props) {
       <ScheduleTypeSelectionPopup
         testID={pageTitle + '.scheduleTypePopup'}
         displayPopup={isScheduleTypePopupDisplayed}
-        onConfirm={type => {
+        onConfirm={(type) => {
           scheduleType = type;
           setIsCreateSchedulePopupDisplayed(true);
           setIsScheduleTypePopupDisplayed(false);

@@ -5,22 +5,21 @@ import {
   formatDate,
   updateValue,
   log,
-  appVersion,
   runSQL,
+  appVersion,
 } from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
   createWeeklyReadingSchedule,
 } from '../data/Database/scheduleTransactions';
 import {
-  legacyBugFixForV062,
   useUpdate,
   FREQS,
   WEEKLY_READING_TABLE_NAME,
+  legacyBugFixFor103,
 } from '../logic/general';
 import {translate} from '../logic/localization/localization';
 import {store} from '../data/Store/store.js';
-import {setAppVersion} from '../data/Store/actions';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
@@ -31,6 +30,7 @@ import SectionListHeader from '../components/SectionListHeader';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 import styles from '../styles/styles';
+import {setAppVersion} from '../data/Store/actions';
 
 const pageTitle = 'homePage';
 let populatingHomeList = false;
@@ -140,9 +140,6 @@ export async function populateScheduleButtons(
     if (creationInfo !== WEEKLY_READING_TABLE_NAME && creationInfo) {
       tableName = formatScheduleTableName(id);
     } else {
-      if (!creationInfo) {
-        await legacyBugFixForV062(userDB);
-      }
       if (!shouldShowDaily) {
         continue;
       } else {
@@ -159,7 +156,7 @@ export async function populateScheduleButtons(
          WHERE IsFinished=0
          ORDER BY ReadingDayID ASC
          LIMIT 1;`,
-    ).then(res => {
+    ).then((res) => {
       if (res.rows.length > 0) {
         completionDate = res.rows.item(0).CompletionDate;
       }
@@ -283,7 +280,7 @@ export async function populateHomeList(
     openMessagePopup,
     afterUpdate,
     updatePages,
-  ).then(res => {
+  ).then((res) => {
     if (res.length > 0) {
       for (let i = 0; i < res.length; i++) {
         log('daily reminder', i, 'is', res[i]);
@@ -297,8 +294,8 @@ export async function populateHomeList(
     shouldShowDaily,
     true,
     updatePages,
-  ).then(results => {
-    results.map(res => {
+  ).then((results) => {
+    results.map((res) => {
       if (res.length > 0) {
         log('schedule buttons are', res);
         todayListItems.push(res);
@@ -320,8 +317,8 @@ export async function populateHomeList(
     bibleDB,
     weeklyReadingReset,
     updatePages,
-  ).then(results => {
-    results.map(res => {
+  ).then((results) => {
+    results.map((res) => {
       log('weekly reading is', res);
       thisWeekListItems.push(res);
     });
@@ -333,7 +330,7 @@ export async function populateHomeList(
     openMessagePopup,
     afterUpdate,
     updatePages,
-  ).then(res => {
+  ).then((res) => {
     if (res.length > 0) {
       for (let i = 0; i < res.length; i++) {
         log('weekly reminder', i, 'is', res[i]);
@@ -356,7 +353,7 @@ export async function populateHomeList(
     openMessagePopup,
     afterUpdate,
     updatePages,
-  ).then(res => {
+  ).then((res) => {
     if (res.length > 0) {
       for (let i = 0; i < res.length; i++) {
         log('monthly reminder', i, 'is', res[i]);
@@ -379,8 +376,8 @@ export async function populateHomeList(
     shouldShowDaily,
     false,
     updatePages,
-  ).then(results => {
-    results.map(res => {
+  ).then((results) => {
+    results.map((res) => {
       if (res.length > 0) {
         log('schedule buttons are', res);
         otherListItems.push(res);
@@ -389,7 +386,7 @@ export async function populateHomeList(
   });
 
   await populateReminders(userDB, FREQS.NEVER, afterUpdate, updatePages).then(
-    res => {
+    (res) => {
       if (res.length > 0) {
         for (let i = 0; i < res.length; i++) {
           log('other reminder', i, 'is', res[i]);
@@ -472,15 +469,17 @@ export default function Home(props) {
       ),
     });
 
-    if (userDB) {
+    if (userDB && bibleDB) {
       appVersion(userDB).then(({prevVersion, currVersion}) => {
         dispatch(setAppVersion(currVersion));
         if (!prevVersion) {
           navToSchedules();
         }
+
+        legacyBugFixFor103(userDB, bibleDB, prevVersion);
       });
     }
-  }, [dispatch, navigation, userDB]);
+  }, [bibleDB, dispatch, navigation, userDB]);
 
   useEffect(() => {
     if (weeklyReadingResetDay !== undefined) {
@@ -509,7 +508,7 @@ export default function Home(props) {
           openMessagePopup,
           afterUpdate,
           updatePages,
-        ).then(res => {
+        ).then((res) => {
           setScheduleListItems(res);
           populatingHomeList = false;
         });

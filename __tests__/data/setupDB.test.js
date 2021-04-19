@@ -1,7 +1,7 @@
 import SQLite from 'react-native-sqlite-storage';
 import {appVersion, upgradeDB} from '../../data/Database/generalTransactions';
 import {addReminder} from '../../data/Database/reminderTransactions';
-import {addSchedule} from '../../logic/scheduleTransactions';
+import {addSchedule} from '../../data/Database/scheduleTransactions';
 import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
 import {FREQS, SCHEDULE_TYPES} from '../../logic/general';
 

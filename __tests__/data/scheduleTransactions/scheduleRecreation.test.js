@@ -66,16 +66,6 @@ const checkScheduleDayEndVerse = (
 };
 
 const checkScheduleDayVerse = (bookNumber, chapter, verse, newScheduleDay) => {
-  console.log(
-    'bookNumber',
-    bookNumber,
-    'chapter',
-    chapter,
-    'verse',
-    verse,
-    'newScheduleDay',
-    newScheduleDay,
-  );
   let startCheck = checkScheduleDayStartVerse(
     bookNumber,
     chapter,
@@ -760,7 +750,7 @@ describe('match finished portions between DIFFERENT, COMPLEX schedules starting 
   });
 });
 
-describe('Test an odd edge case', () => {
+describe('Test an odd edge case for matching finished portions', () => {
   let origScheduleFinished;
 
   beforeEach(async () => {
@@ -857,14 +847,17 @@ describe('recreate schedule', () => {
       );
     });
     await createOrigSchedule;
+
+    await updateMultipleReadStatus(userDB, origTableName, 10);
   });
 
   it('recreates schedule without new info', async () => {
-    let promise = new Promise((res, rej) => {
-      recreateSchedule(userDB, bibleDB, scheduleName, null, res);
-    });
+    await recreateSchedule(userDB, bibleDB, scheduleName);
 
-    await promise;
+    let newScheduleFinished = await runSQL(
+      userDB,
+      `SELECT * FROM ${newTableName} WHERE IsFinished=1;`,
+    );
 
     let schedulesInfo = await getSchedules();
 
@@ -878,20 +871,21 @@ describe('recreate schedule', () => {
     expect(schedulesInfo.item(1).IsDay4Active).toBe(1);
     expect(schedulesInfo.item(1).IsDay5Active).toBe(1);
     expect(schedulesInfo.item(1).IsDay6Active).toBe(1);
+
+    expect(newScheduleFinished.rows.length).toBe(10);
   });
 
   it('recreates schedule with new info', async () => {
-    let promise = new Promise((res, rej) => {
-      recreateSchedule(
-        userDB,
-        bibleDB,
-        scheduleName,
-        {activeDays: [0, 0, 0, 0, 0, 0, 0], doesTrack: 0, duration: 2},
-        res,
-      );
+    await recreateSchedule(userDB, bibleDB, scheduleName, {
+      activeDays: [0, 0, 0, 0, 0, 0, 0],
+      doesTrack: 0,
+      duration: 2,
     });
 
-    await promise;
+    let newScheduleFinished = await runSQL(
+      userDB,
+      `SELECT * FROM ${newTableName} WHERE IsFinished=1;`,
+    );
 
     let schedulesInfo = await getSchedules();
 
@@ -905,5 +899,7 @@ describe('recreate schedule', () => {
     expect(schedulesInfo.item(1).IsDay4Active).toBe(0);
     expect(schedulesInfo.item(1).IsDay5Active).toBe(0);
     expect(schedulesInfo.item(1).IsDay6Active).toBe(0);
+
+    expect(newScheduleFinished.rows.length).toBe(20);
   });
 });
