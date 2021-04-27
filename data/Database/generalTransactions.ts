@@ -1,34 +1,50 @@
-const shouldLog = false;
 import SQLite from 'react-native-sqlite-storage';
 import RNFS from 'react-native-fs';
+//@ts-ignore
 import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
 import {FREQS} from '../../logic/general';
-import {version} from '../../package.json';
+const {version}: {version: string} = require('../../package.json');
+const shouldLog = false;
 
-/**
- * @typedef Database
- * @property {Function} executeSql
- */
+export interface Database {
+  dbname: any;
+  executeSql: Function;
+  sqlBatch: (arg0: any[]) => Promise<any>;
+}
+
+export interface DBQueryResult {
+  rows: {
+    length: number;
+    item: (index: number) => any;
+  };
+}
+
+export interface ReadingScheduleItem {
+  ReadingDayID: number;
+  CompletionDate: string;
+  doesTrack: boolean;
+  StartBookName?: string;
+}
 
 SQLite.enablePromise(true);
 
-export function log() {
+export function log(...args: any[]) {
   if (shouldLog) {
-    console.log(...arguments);
+    console.log(...args);
   }
 }
 
-export function errorCB(err) {
+export function errorCB(err: {message: string}) {
   console.warn('SQL Error: ' + err.message);
 }
 
 export async function updateValue(
-  DB,
-  tableName,
-  id,
-  column,
-  value,
+  DB: Database,
+  tableName: string,
+  id: number,
+  column: string,
+  value: string | number,
   afterUpdate = () => {},
 ) {
   await runSQL(
@@ -40,9 +56,9 @@ export async function updateValue(
   ).then(afterUpdate);
 }
 
-export function createPlaceholdersFromArray(array) {
-  let values = [];
-  const thisFunc = innerArray => {
+export function createPlaceholdersFromArray(array: any[]) {
+  let values: any[] = [];
+  const thisFunc = (innerArray: any[]) => {
     let innerString = innerArray.map(() => '?').join(',');
 
     let result = `( ${innerString} )`;
@@ -53,8 +69,8 @@ export function createPlaceholdersFromArray(array) {
 
   if (Array.isArray(array[0])) {
     placeholders = array.map(thisFunc).join(',');
-    array.map(innerArray => {
-      innerArray.map(value => values.push(value));
+    array.map((innerArray: any[]) => {
+      innerArray.map((value: any) => values.push(value));
     });
   } else {
     thisFunc(array);
@@ -64,26 +80,27 @@ export function createPlaceholdersFromArray(array) {
   return {placeholders, values};
 }
 
-export function timeKeeper(message) {
+export function timeKeeper(message: string) {
   let time = new Date();
   let milliseconds = time.getMilliseconds();
   let seconds = time.getSeconds();
   console.log(message, seconds + '.' + milliseconds, 'seconds');
 }
 
-export function formatDate(date) {
-  const options = {year: '2-digit', month: 'numeric', day: 'numeric'};
+export function formatDate(date: Date) {
+  const options = {year: '2-digit', month: 'numeric', day: 'numeric'} as const;
   return date.toLocaleDateString(undefined, options);
 }
 
 /**
  * Returns an array of schedule days (which is an array of separate reading objects for the day)
  * for use in a FlatList typically
- * @param {Database} db
- * @param {string} tableName
- * @param {boolean} doesTrack
  */
-export async function loadData(DB, tableName, doesTrack) {
+export async function loadData(
+  DB: Database,
+  tableName: string,
+  doesTrack: boolean,
+) {
   if (!DB) {
     return;
   }
@@ -96,11 +113,11 @@ export async function loadData(DB, tableName, doesTrack) {
 
   var listItems = [];
 
-  var innerItems = [];
+  var innerItems: ReadingScheduleItem[] = [];
   var previousDate;
 
   for (let i = 0; i < results.rows.length; ++i) {
-    const item = {
+    const item: ReadingScheduleItem = {
       ...results.rows.item(i),
       doesTrack: doesTrack,
     };
@@ -126,7 +143,7 @@ export async function loadData(DB, tableName, doesTrack) {
   return listItems;
 }
 
-export async function appVersion(userDB) {
+export async function appVersion(userDB: Database) {
   let prevVersion;
   let currVersion = version;
 
@@ -151,7 +168,7 @@ export async function appVersion(userDB) {
  * Returns the user_version of the given database
  * @param {Database} db
  */
-export async function getVersion(DB) {
+export async function getVersion(DB: Database) {
   let result = await runSQL(DB, 'PRAGMA user_version;');
 
   return result.rows.item(0).user_version;
@@ -164,13 +181,8 @@ export async function getVersion(DB) {
  * @param {array} args
  * @returns {DBQueryResult}
  */
-export async function runSQL(DB, sql, args = []) {
-  let result;
-  await DB.executeSql(sql, args)
-    .then(([res]) => {
-      result = res;
-    })
-    .catch(errorCB);
+export async function runSQL(DB: Database, sql: string, args: any[] = []) {
+  let [result]: DBQueryResult[] = await DB.executeSql(sql, args).catch(errorCB);
 
   return result;
 }
@@ -184,7 +196,7 @@ export async function runSQL(DB, sql, args = []) {
  * @property {integer} weeklyReadingResetDay.ID
  * @property {integer} weeklyReadingResetDay.Value - The day of the week to recreate the weekly reading schedule
  */
-export async function getSettings(userDB) {
+export async function getSettings(userDB: Database) {
   let showDaily;
   let weeklyReadingResetDay;
 
@@ -213,7 +225,7 @@ export async function getSettings(userDB) {
   return {showDaily, weeklyReadingResetDay};
 }
 
-async function replaceDB(db) {
+async function replaceDB(db: Database) {
   let dbName = db.dbname;
   let DB;
 
@@ -226,12 +238,12 @@ async function replaceDB(db) {
     .catch(err => {
       console.log(err.message);
     });
-
+  //@ts-ignore
   await SQLite.openDatabase({
     name: dbName,
     createFromLocation: 1,
   })
-    .then(newDB => {
+    .then((newDB: any) => {
       log('Replaced old database with', newDB);
       DB = newDB;
     })
@@ -240,7 +252,7 @@ async function replaceDB(db) {
   return DB;
 }
 
-function setDatabaseParameters(upgradeJSON) {
+function setDatabaseParameters(upgradeJSON: any) {
   return JSON.parse(
     JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
       switch (group) {
@@ -285,7 +297,10 @@ function setDatabaseParameters(upgradeJSON) {
  * @param {Database} db
  * @param {object} upgradeJSON
  */
-export async function upgradeDB(db, upgradeJSON) {
+export async function upgradeDB(
+  db: Database,
+  upgradeJSON: {version: number; upgrades: Array<string[]>; name: any},
+) {
   let DB;
 
   log('Upgrading', db.dbname);
@@ -299,12 +314,12 @@ export async function upgradeDB(db, upgradeJSON) {
   log('upgradeVersion', upgradeVersion, 'userVersion', userVersion);
 
   if (userVersion < upgradeVersion) {
-    let statements = [];
+    let statements: any[] = [];
     let version = upgradeVersion - (upgradeVersion - userVersion) + 1;
 
     if (!upgradeJSON.upgrades) {
       log('Replacing DB:', db.dbname, '.....');
-      DB = await replaceDB(db, upgradeJSON.name);
+      DB = await replaceDB(db);
       return DB;
     }
 
@@ -338,7 +353,7 @@ export async function upgradeDB(db, upgradeJSON) {
       .then(() => {
         console.log('Populated database OK');
       })
-      .catch(error => {
+      .catch((error: {message: string}) => {
         console.log('SQL batch ERROR: ' + error.message);
       });
   }
@@ -357,11 +372,11 @@ export async function upgradeDB(db, upgradeJSON) {
  * @param {*} secondaryTargetValue
  */
 export function searchQuery(
-  query,
-  primaryKey,
-  primaryTargetValue,
-  secondaryKey,
-  secondaryTargetValue,
+  query: DBQueryResult,
+  primaryKey: string,
+  primaryTargetValue: number,
+  secondaryKey?: string,
+  secondaryTargetValue?: number,
 ) {
   var index = 0;
   var safetyCheck = 0;
@@ -388,10 +403,8 @@ export function searchQuery(
 
     let primaryValueAtIndex = query.rows.item(index)[primaryKey];
     let secondaryValueAtIndex;
-    let hasSecondaryValue = false;
     if (secondaryKey && secondaryTargetValue) {
       secondaryValueAtIndex = query.rows.item(index)[secondaryKey];
-      hasSecondaryValue = true;
     }
 
     if (primaryValueAtIndex > primaryTargetValue) {
@@ -399,7 +412,7 @@ export function searchQuery(
     } else if (primaryValueAtIndex < primaryTargetValue) {
       isHigh = false;
     } else {
-      if (hasSecondaryValue) {
+      if (secondaryKey && secondaryTargetValue) {
         if (secondaryValueAtIndex > secondaryTargetValue) {
           isHigh = true;
         } else if (secondaryValueAtIndex < secondaryTargetValue) {
