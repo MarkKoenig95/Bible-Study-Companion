@@ -78,7 +78,7 @@ export async function insertReadingPortions(
     userDB,
     `INSERT INTO ${tableName} (${valuesArray}) VALUES ${placeholders};`,
     values,
-  ).then((res) => {
+  ).then(res => {
     if (res.rowsAffected > 0) {
       log('Insert success');
     } else {
@@ -95,7 +95,7 @@ export async function insertReadingPortions(
       tableName,
       valuesArray,
       startIndex,
-    ).then((result) => {
+    ).then(result => {
       if (wasSuccessful) {
         wasSuccessful = result;
       }
@@ -165,6 +165,7 @@ export async function createScheduleTable(userDB, tableName, scheduleType) {
  * @param {number} portionsPerDay - How many portions to read each day
  * @param {Function} successCallBack
  * @param {Function} errorCallBack
+ * @property {Date} startDate - Date to start schedule generation from
  */
 export async function addSchedule(
   userDB,
@@ -183,6 +184,7 @@ export async function addSchedule(
   portionsPerDay,
   successCallBack,
   errorCallBack,
+  startDate = new Date(),
 ) {
   log(
     `______________________ New Schedule named ${scheduleName} ______________________`,
@@ -196,7 +198,7 @@ export async function addSchedule(
   //Check if a schedule with that name already exists
   await runSQL(userDB, 'SELECT 1 FROM tblSchedules WHERE ScheduleName=?;', [
     scheduleName,
-  ]).then((res) => {
+  ]).then(res => {
     scheduleNameExists = res.rows.length > 0;
   });
 
@@ -232,6 +234,7 @@ export async function addSchedule(
             HideCompleted,
             DoesTrack,
             ScheduleType,
+            StartDate,
             CreationInfo,
             IsDay0Active,
             IsDay1Active,
@@ -241,11 +244,12 @@ export async function addSchedule(
             IsDay5Active,
             IsDay6Active)
             VALUES (?, 0, ?, ?, ?,
-              ?, ?, ?, ?, ?, ?, ?);`,
+              ?, ?, ?, ?, ?, ?, ?, ?);`,
     [
       scheduleName,
       doesTrack,
       scheduleType,
+      startDate.toISOString(),
       JSON.stringify(creationInfo),
       ...activeDays,
     ],
@@ -258,7 +262,7 @@ export async function addSchedule(
     userDB,
     'SELECT ScheduleID FROM tblSchedules WHERE ScheduleName=?;',
     [scheduleName],
-  ).then((res) => {
+  ).then(res => {
     let id = res.rows.item(0).ScheduleID;
     tableName = formatScheduleTableName(id);
 
@@ -279,6 +283,7 @@ export async function addSchedule(
       bookId,
       chapter,
       verse,
+      startDate,
     );
 
     readingPortions = result.readingPortions;
@@ -290,12 +295,13 @@ export async function addSchedule(
       maxPortion,
       readingPortionDesc,
       portionsPerDay,
+      startDate,
     );
     valuesArray = customScheduleValuesArray;
   }
 
   await insertReadingPortions(userDB, readingPortions, tableName, valuesArray)
-    .then((wasSucessful) => {
+    .then(wasSucessful => {
       if (wasSucessful) {
         console.log('Every insert was successful');
         if (adjustedVerseMessage) {
@@ -307,7 +313,7 @@ export async function addSchedule(
       }
       timeKeeper('Ended at.....');
     })
-    .catch((err) => {
+    .catch(err => {
       errorCB(err);
       timeKeeper('Ended at.....');
     });
@@ -440,13 +446,13 @@ export async function createWeeklyReadingSchedule(
       tableName,
       bibleScheduleValuesArray,
     )
-      .then((wasSucessful) => {
+      .then(wasSucessful => {
         if (!wasSucessful) {
           console.log('Insert failed');
         }
         timeKeeper('Ended at.....');
       })
-      .catch((err) => {
+      .catch(err => {
         errorCB(err);
         timeKeeper('Ended at.....');
       });
@@ -456,6 +462,7 @@ export async function createWeeklyReadingSchedule(
     timeKeeper('Ended after doing nothing at.....');
   }
 }
+
 //------------------------------------- Updating schedule info -------------------------------------
 
 /**
@@ -677,7 +684,7 @@ export async function findCorrespondingIndex(
       chapter,
       verse,
     ],
-  ).then((res) => {
+  ).then(res => {
     if (res.rows.length > 0) {
       let item = res.rows.item(0);
 
@@ -712,7 +719,7 @@ export async function matchFinishedPortions(
     origScheduleFinished.rows.length - 1,
   );
 
-  let updates = finishedSpans.map(async (span) => {
+  let updates = finishedSpans.map(async span => {
     let startPortion = origScheduleFinished.rows.item(span.startIndex);
     let endPortion = origScheduleFinished.rows.item(span.endIndex);
 
@@ -758,6 +765,7 @@ export async function matchFinishedPortions(
  * @param {string} scheduleName
  * @param {object} creationInfo - Optional override values to implement in the new schedule
  * @property {boolean} creationInfo.doesTrack - Should the schedule keep track of the completion dates for reading days?
+ * @property {Date} creationInfo.startDate - Date to start schedule generation from
  * @property {Array<(0|1)>} creationInfo.activeDays - A length 7 array of 1s or 0s. For future versions where the user can choose which weekdays they would like to read on and which weekdays to skip
  * @property {number} creationInfo.duration - The length (in years) the user wants the Bible reading schedule to last
  * @property {integer} creationInfo.bookId - The number of the Bible book the user chose to start from
@@ -778,7 +786,7 @@ export async function recreateSchedule(
   let oldScheduleInfo;
   await runSQL(userDB, 'SELECT * FROM tblSchedules WHERE ScheduleName=?;', [
     scheduleName,
-  ]).then((res) => {
+  ]).then(res => {
     oldScheduleInfo = res.rows.item(0);
   });
 
@@ -798,6 +806,7 @@ export async function recreateSchedule(
     ...oldCreationInfo,
     activeDays: oldActiveDays,
     doesTrack: oldScheduleInfo.DoesTrack,
+    startDate: new Date(oldScheduleInfo.StartDate),
     ...creationInfo,
   };
 
@@ -820,6 +829,7 @@ export async function recreateSchedule(
       newCreationInfo.portionsPerDay,
       res,
       console.error,
+      newCreationInfo.startDate,
     );
   });
 
@@ -832,7 +842,7 @@ export async function recreateSchedule(
     userDB,
     'SELECT * FROM tblSchedules WHERE ScheduleName=? OR ScheduleName=?;',
     [oldScheduleName, scheduleName],
-  ).then((res) => {
+  ).then(res => {
     for (let i = 0; i < res.rows.length; i++) {
       const item = res.rows.item(i);
 

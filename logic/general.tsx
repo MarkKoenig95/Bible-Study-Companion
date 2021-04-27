@@ -1,65 +1,68 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
-import {Database, runSQL} from '../data/Database/generalTransactions';
-import {recreateSchedule} from '../data/Database/scheduleTransactions';
+import {runSQL} from '../data/Database/generalTransactions';
+import {
+  formatScheduleTableName,
+  recreateSchedule,
+} from '../data/Database/scheduleTransactions';
+import {
+  Database,
+  ReadingScheduleItem,
+  ScheduleInfo,
+} from '../data/Database/types';
 import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
-import {DBQueryResult} from './scheduleCreation';
 
 export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
 
-/** @typedef {number} integer */
+export enum Frequency {
+  Daily = 0,
+  Weekly = 1,
+  Monthly = 2,
+  Never = 3,
+}
 
-/**
- * @typedef {number} Frequency
- * @enum
- * @property {integer} [DAILY=0]
- * @property {integer} [WEEKLY=1]
- * @property {integer} [MONTHLY=2]
- * @property {integer} [NEVER=3]
- */
-
-/** @type {Frequency} */
 export const FREQS = {
-  DAILY: 0,
-  WEEKLY: 1,
-  MONTHLY: 2,
-  NEVER: 3,
+  DAILY: Frequency.Daily,
+  WEEKLY: Frequency.Weekly,
+  MONTHLY: Frequency.Monthly,
+  NEVER: Frequency.Never,
 };
 
-/**
- * @typedef  {number} VersePosition
- * @enum
- * @property {integer} [START=0] Indicates that the verse (or span of verses) includes the starting verse of the chapter
- * @property {integer} [MIDDLE=1] Indicates that the verse (or span of verses) does not include the starting or ending verse of the chapter
- * @property {integer} [END=2] Indicates that the verse (or span of verses) includes the ending verse of the chapter
- * @property {integer} [START_AND_END=3] Indicates that the verse (or span of verses) includes both the starting and ending verse of the chapter
- */
-export const VERSE_POSITION = {START: 0, MIDDLE: 1, END: 2, START_AND_END: 3};
+export enum VersePosition {
+  Start = 0,
+  Middle = 1,
+  End = 2,
+  StartAndEnd = 3,
+}
 
-/**
- * @typedef {number} ScheduleType
- * @enum
- * @property {integer} [SEQUENTIAL=0]
- * @property {integer} [CHRONOLOGICAL=1]
- * @property {integer} [THEMATIC=2]
- * @property {integer} [CUSTOM=3]
- */
+export const VERSE_POSITION = {
+  START: VersePosition.Start,
+  MIDDLE: VersePosition.Middle,
+  END: VersePosition.End,
+  START_AND_END: VersePosition.StartAndEnd,
+};
+
+export enum ScheduleType {
+  Sequential = 0,
+  Chronological = 1,
+  Thematic = 2,
+  Custom = 3,
+}
+
 export const SCHEDULE_TYPES = {
-  SEQUENTIAL: 0,
-  CHRONOLOGICAL: 1,
-  THEMATIC: 2,
-  CUSTOM: 3,
+  SEQUENTIAL: ScheduleType.Sequential,
+  CHRONOLOGICAL: ScheduleType.Chronological,
+  THEMATIC: ScheduleType.Thematic,
+  CUSTOM: ScheduleType.Custom,
 };
 
-/**
- * @typedef {object} Error
- * @property {string} Error.NAME_TAKEN
- * @enum
- */
+export enum Error {
+  NameTaken,
+}
 
-/** @type {Error} */
-export const ERROR = {NAME_TAKEN: 'NAME_TAKEN'};
+export const ERROR = {NAME_TAKEN: Error.NameTaken};
 
 export function openJWLibrary() {
   const appLink =
@@ -191,6 +194,7 @@ export function versionIsLessThan(version: string, checkVersion: string) {
   return false;
 }
 
+// !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------
 export async function legacyBugFixFor103(
   userDB: Database,
   bibleDB: Database,
@@ -198,19 +202,25 @@ export async function legacyBugFixFor103(
 ) {
   if (!versionIsLessThan(prevVersion, '1.0.3')) return;
 
-  //Recreate the schedules that have been created to fix the bug with schedule creation from earlier
-  let schedules: DBQueryResult = await runSQL(
-    userDB,
-    'SELECT * FROM tblSchedules WHERE ScheduleType=? OR ScheduleType=?',
-    [SCHEDULE_TYPES.CHRONOLOGICAL, SCHEDULE_TYPES.THEMATIC],
-  );
+  const tblSchedules = await runSQL(userDB, 'SELECT * FROM tblSchedules;');
 
-  let promises = [];
+  for (let i = 0; i < tblSchedules.rows.length; i++) {
+    const tableInfo: ScheduleInfo = tblSchedules.rows.item(i);
+    const tableName = formatScheduleTableName(tableInfo.ID);
+    let firstItem = await runSQL(
+      userDB,
+      `SELECT CompletionDate FROM ${tableName} WHERE ReadingDayID=1;`,
+    );
+    let itemInfo: ReadingScheduleItem = firstItem.rows.item(i);
+    let compDate = new Date(itemInfo.CompletionDate);
+    let compDateIsADate = !isNaN(compDate.getTime());
 
-  for (let i = 0; i < schedules.rows.length; i++) {
-    const schedule = schedules.rows.item(i);
-    promises.push(recreateSchedule(userDB, bibleDB, schedule.ScheduleName));
+    if (!compDateIsADate) {
+      compDate = new Date();
+    }
+
+    await recreateSchedule(userDB, bibleDB, tableInfo.ScheduleName, {
+      startDate: compDate,
+    });
   }
-
-  await Promise.all(promises);
 }

@@ -58,7 +58,7 @@ export function initValues(days, times) {
     }
 
     activeDays.push(days[i] ? 1 : 0);
-    activeTimes.push(times[i].toString());
+    activeTimes.push(times[i].toISOString());
   }
 
   if (closest.day !== null) {
@@ -164,7 +164,7 @@ export async function addNotification(
 
   await runSQL(userDB, SQL, [
     notificationName,
-    nextDate.toString(),
+    nextDate.toISOString(),
     isActive,
     ...activeDays,
     ...activeTimes,
@@ -223,7 +223,7 @@ export async function updateNotifications(userDB, notification) {
             'tblNotifications',
             item.ID,
             'NextNotifDate',
-            nextDate.toString(),
+            nextDate.toISOString(),
             () => {
               log('Updated notification', item.Name, 'to', nextDate);
             },

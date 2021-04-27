@@ -275,7 +275,6 @@ export async function findVerseIndex(
 }
 
 //----------------------------- Setting up values for schedule creation -----------------------------
-
 function setQryVerseIndex(scheduleType) {
   let tempQuery;
   switch (scheduleType) {
@@ -984,7 +983,7 @@ function createReadingPortionArray(
   result.push(endVerse);
 
   //CompletionDate
-  result.push(formatDate(date));
+  result.push(date.toISOString());
 
   //ReadingPortion
   result.push(description);
@@ -1338,6 +1337,7 @@ export async function generateBibleSchedule(
   bookId,
   chapter,
   verse,
+  startDate = new Date(),
 ) {
   if (
     !qryMaxVerses ||
@@ -1407,7 +1407,7 @@ export async function generateBibleSchedule(
   );
 
   let readingPortions = [];
-  let date = new Date();
+  let date = startDate;
   let versesToday = 0;
   let endCounter = 0;
 
@@ -1607,13 +1607,14 @@ export function generateCustomSchedule(
   maxPortion,
   readingPortionDesc,
   portionsPerDay,
+  startDate = new Date(),
 ) {
   log('started creating schedule');
 
   portionsPerDay = parseFloat(portionsPerDay, 10);
   maxPortion = parseFloat(maxPortion, 10);
 
-  let date = new Date();
+  let date = startDate;
   let pointer = parseFloat(startingPortion, 10);
   let readingPortion = '';
   let readingPortions = [];

@@ -36,7 +36,7 @@ export async function updateReminderDates(userDB) {
           await runSQL(
             userDB,
             'UPDATE tblReminders SET CompletionDate=?, IsFinished=? WHERE ID=?;',
-            [newCompDate.toString(), newIsFinished ? 1 : 0, reminder.ID],
+            [newCompDate.toISOString(), newIsFinished ? 1 : 0, reminder.ID],
           );
         }
       }
@@ -86,7 +86,7 @@ export async function addReminder(
     name,
     frequency,
     resetValue,
-    completionDate.toString(),
+    completionDate.toISOString(),
   ]).then(() => {
     log(name, 'reminder created successfully');
   });

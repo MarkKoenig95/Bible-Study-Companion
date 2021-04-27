@@ -23,16 +23,20 @@ const ScheduleDayButton = React.memo(props => {
   } = props;
 
   const [isDatePassed, setIsDatePassed] = useState(false);
+  const [compDate, setCompDate] = useState(
+    formatDate(new Date(completionDate)),
+  );
 
   const display = isFinished && completedHidden ? 'none' : 'flex';
   const color = !isDatePassed || isFinished ? colors.lightGray : '#f00';
   const hasTitle = title ? true : false;
 
   useEffect(() => {
-    let date = Date.parse(completionDate);
+    let date = new Date(completionDate);
     let today = new Date();
-    today = Date.parse(formatDate(today));
-    setIsDatePassed(date < today);
+    date.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    setIsDatePassed(date.getTime() < today.getTime());
   }, [completionDate, update]);
 
   return (
@@ -71,7 +75,7 @@ const ScheduleDayButton = React.memo(props => {
               color: color,
             },
           ]}>
-          {completionDate}
+          {compDate}
         </Text>
       </View>
       <Text
