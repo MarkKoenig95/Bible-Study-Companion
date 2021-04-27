@@ -4,28 +4,9 @@ import RNFS from 'react-native-fs';
 import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
 import {FREQS} from '../../logic/general';
+import {Database, DBQueryResult, ReadingScheduleItem} from './types';
 const {version}: {version: string} = require('../../package.json');
 const shouldLog = false;
-
-export interface Database {
-  dbname: any;
-  executeSql: Function;
-  sqlBatch: (arg0: any[]) => Promise<any>;
-}
-
-export interface DBQueryResult {
-  rows: {
-    length: number;
-    item: (index: number) => any;
-  };
-}
-
-export interface ReadingScheduleItem {
-  ReadingDayID: number;
-  CompletionDate: string;
-  doesTrack: boolean;
-  StartBookName?: string;
-}
 
 SQLite.enablePromise(true);
 
@@ -92,10 +73,7 @@ export function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-/**
- * Returns an array of schedule days (which is an array of separate reading objects for the day)
- * for use in a FlatList typically
- */
+/** Returns an array of schedule days (which is an array of separate reading objects for the day) for use in a FlatList typically */
 export async function loadData(
   DB: Database,
   tableName: string,
@@ -164,23 +142,14 @@ export async function appVersion(userDB: Database) {
   return {prevVersion, currVersion};
 }
 
-/**
- * Returns the user_version of the given database
- * @param {Database} db
- */
+/** Returns the user_version of the given database */
 export async function getVersion(DB: Database) {
   let result = await runSQL(DB, 'PRAGMA user_version;');
 
   return result.rows.item(0).user_version;
 }
 
-/**
- * A centralized query function to make other code cleaner, more readable, and to centralize error handling
- * @param {Database} DB
- * @param {string} sql
- * @param {array} args
- * @returns {DBQueryResult}
- */
+/** A centralized query function to make other code cleaner, more readable, and to centralize error handling */
 export async function runSQL(DB: Database, sql: string, args: any[] = []) {
   let [result]: DBQueryResult[] = await DB.executeSql(sql, args).catch(errorCB);
 
@@ -189,16 +158,12 @@ export async function runSQL(DB: Database, sql: string, args: any[] = []) {
 
 /**
  * Returns an object with the items from tblUserPrefs as the keys
- * @param {Database} userDB
- * @returns {object}
- * @property {integer} showDaily.ID
  * @property {boolean} showDaily.Value - Should the home page show the daily portion of the weekly reading
- * @property {integer} weeklyReadingResetDay.ID
  * @property {integer} weeklyReadingResetDay.Value - The day of the week to recreate the weekly reading schedule
  */
 export async function getSettings(userDB: Database) {
-  let showDaily;
-  let weeklyReadingResetDay;
+  let showDaily = {id: -1, value: false};
+  let weeklyReadingResetDay = {id: -1, value: -1};
 
   let tblUserPrefs = await runSQL(userDB, 'SELECT * FROM tblUserPrefs;');
   if (tblUserPrefs.rows.length > 0) {
@@ -258,16 +223,16 @@ function setDatabaseParameters(upgradeJSON: any) {
       switch (group) {
         case 'baseDate':
           let date = new Date(0);
-          return date;
+          return date.toISOString();
         case 'baseTime':
           let time = new Date(2020, 0, 1, 8, 0, 0);
-          return time;
+          return time.toISOString();
         case 'weeklyReadingStartDate':
           //This year we will start at August 3rd. This refers to the 30th day in the schedule
           //This way I don't have to fuss with the memorial reading and stuff
           //See below (NOTE: the middle number for month starts at 0. so august is 7)
           let weekReadDate = new Date(2020, 7, 3);
-          return weekReadDate;
+          return weekReadDate.toISOString();
         case 'weeklyReadingStartOrder':
           return 30;
         case 'dailyReading':
@@ -291,12 +256,7 @@ function setDatabaseParameters(upgradeJSON: any) {
   );
 }
 
-/**
- * Checks the user's database version and runs sql statements from the upgradeJSON to update it
- * accordingly if the version there does not match the user's
- * @param {Database} db
- * @param {object} upgradeJSON
- */
+/** Checks the user's database version and runs sql statements from the upgradeJSON to update it accordingly if the version there does not match the user's */
 export async function upgradeDB(
   db: Database,
   upgradeJSON: {version: number; upgrades: Array<string[]>; name: any},
@@ -361,16 +321,7 @@ export async function upgradeDB(
   return db;
 }
 
-/**
- * A binary search algorithm for finding a target value in a query result from the database if given
- * a secondary value and key it will search for a value that satisfies both values for my purposes I
- * only need 2 in my algorithm. So this was easier to make than a more general case.
- * @param {DBQueryResult} query
- * @param {string} primaryKey
- * @param {*} primaryTargetValue
- * @param {string} secondaryKey
- * @param {*} secondaryTargetValue
- */
+/** A binary search algorithm for finding a target value in a query result from the database if given a secondary value and key it will search for a value that satisfies both values for my purposes I only need 2 in my algorithm. So this was easier to make than a more general case. */
 export function searchQuery(
   query: DBQueryResult,
   primaryKey: string,
