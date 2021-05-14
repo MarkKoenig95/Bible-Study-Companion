@@ -164,7 +164,7 @@
     "8": "第",
     "9": "第",
     "after": false,
-    "special": {"0": 0}
+    "special": {"count": 0}
   },
   "other": "其他",
   "prompts": {
@@ -256,6 +256,7 @@
   "thisMonth": "这个月",
   "thisWeek": "这周",
   "today": "今天",
+  "updateDate": "2021-05-02T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "章", "verseAbrev": "节"},
   "warning": "请注意",
   "weekdays": {
