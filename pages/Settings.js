@@ -102,7 +102,7 @@ export default function Settings(props) {
           iconName="web"
           text={translate(pageTitle + '.about')}
           onPress={() => {
-            Linking.openURL('http://www.biblesc.com');
+            Linking.openURL('https://app.biblesc.com');
           }}
         />
         <SettingsWrapper

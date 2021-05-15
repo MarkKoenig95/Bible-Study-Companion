@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, {useCallback} from 'react';
+import {useCallback, useState} from 'react';
 import {Linking, Platform} from 'react-native';
 import {runSQL} from '../data/Database/generalTransactions';
 import {
@@ -137,6 +136,14 @@ export function useUpdate(
   return useCallback(() => {
     dispatch(setUpdatePages(updatePages));
   }, [updatePages, dispatch]);
+}
+
+export function useToggleState(initialValue: boolean): [boolean, () => void] {
+  const [value, setValue] = useState(initialValue);
+  const toggleValue = useCallback(() => {
+    setValue(!value);
+  }, [value]);
+  return [value, toggleValue];
 }
 
 export function createPickerArray(...labels: any[]) {

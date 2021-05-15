@@ -17,8 +17,13 @@ import {
   getScheduleSettings,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
-import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/general';
+import {
+  WEEKLY_READING_TABLE_NAME,
+  useUpdate,
+  useToggleState,
+} from '../logic/general';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
+import ScheduleSettingsPopup from '../components/popups/ScheduleSettingsPopup/ScheduleSettingsPopup';
 
 const pageTitle = 'schedulePage';
 let flatListRef;
@@ -44,6 +49,10 @@ function SchedulePage(props) {
   const [firstUnfinished, setFirstUnfinished] = useState();
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
+  const [
+    settingsPopupIsDisplayed,
+    toggleSettingsPopupIsDisplayed,
+  ] = useToggleState(false);
 
   const afterUpdate = useUpdate(updatePages, dispatch);
 
@@ -67,28 +76,49 @@ function SchedulePage(props) {
       headerRight: () => {
         if (tableName !== WEEKLY_READING_TABLE_NAME) {
           return (
-            <IconButton
-              testID={pageTitle + '.header.deleteButton'}
-              iconOnly
-              invertColor
-              onPress={() => {
-                let title = translate('warning');
-                let message = translate('schedulePage.deleteScheduleMessage', {
-                  scheduleName: scheduleName,
-                });
-                let onConfirm = onDeleteSchedule;
+            <View
+              testID={pageTitle + '.header'}
+              style={styles.navHeaderContainer}>
+              <IconButton
+                testID={pageTitle + '.header.deleteButton'}
+                iconOnly
+                invertColor
+                onPress={() => {
+                  let title = translate('warning');
+                  let message = translate(
+                    'schedulePage.deleteScheduleMessage',
+                    {
+                      scheduleName: scheduleName,
+                    },
+                  );
+                  let onConfirm = onDeleteSchedule;
 
-                openMessagePopup(message, title, onConfirm);
-              }}
-              name="delete"
-            />
+                  openMessagePopup(message, title, onConfirm);
+                }}
+                name="delete"
+              />
+              <IconButton
+                testID={pageTitle + '.header.settingsButton'}
+                iconOnly
+                invertColor
+                onPress={toggleSettingsPopupIsDisplayed}
+                name="settings"
+              />
+            </View>
           );
         }
       },
     });
 
     settingFirstUnfinished = false;
-  }, [onDeleteSchedule, openMessagePopup, navigation, scheduleName, tableName]);
+  }, [
+    onDeleteSchedule,
+    openMessagePopup,
+    navigation,
+    scheduleName,
+    tableName,
+    toggleSettingsPopupIsDisplayed,
+  ]);
 
   useEffect(() => {
     loadData(userDB, tableName, doesTrack).then(res => {
@@ -154,22 +184,17 @@ function SchedulePage(props) {
         onClosePress={closeMessagePopup}
         onConfirm={messagePopup.onConfirm}
       />
+      <ScheduleSettingsPopup
+        completedHidden={completedHidden}
+        onHideCompleted={() => {
+          setHideCompleted(userDB, scheduleName, !completedHidden).then(() => {
+            afterUpdate();
+          });
+        }}
+        onClosePress={toggleSettingsPopupIsDisplayed}
+      />
       <ScheduleListPopups />
       <View style={styles.header}>
-        <CheckBox
-          testID={pageTitle + '.hideCompletedButton'}
-          title={translate(pageTitle + '.hideCompleted')}
-          checked={completedHidden}
-          uncheckedColor={styles.lightText.color}
-          checkedColor={colors.darkBlue}
-          onPress={() => {
-            setHideCompleted(userDB, scheduleName, !completedHidden).then(
-              () => {
-                afterUpdate();
-              },
-            );
-          }}
-        />
         <TextButton
           testID={pageTitle + '.readingRemindersButton'}
           text={translate('readingRemindersPopup.readingReminders')}
