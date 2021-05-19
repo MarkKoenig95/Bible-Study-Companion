@@ -12,6 +12,7 @@ const ScheduleDayButton = React.memo(props => {
   const {
     completedHidden,
     completionDate,
+    doesTrack,
     isFinished,
     onLongPress,
     onPress,
@@ -75,7 +76,7 @@ const ScheduleDayButton = React.memo(props => {
               color: color,
             },
           ]}>
-          {compDate}
+          {doesTrack ? compDate : '      '}
         </Text>
       </View>
       <Text

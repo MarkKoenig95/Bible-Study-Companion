@@ -112,8 +112,9 @@ function ScheduleButton(props) {
     <ScheduleDayButton
       testID={testID + '.' + item.ReadingPortion}
       readingPortion={item.ReadingPortion}
-      completionDate={item.doesTrack && item.CompletionDate}
+      completionDate={item.CompletionDate}
       completedHidden={completedHidden}
+      doesTrack={item.doesTrack}
       isFinished={item.IsFinished ? true : false}
       title={title}
       update={update}
@@ -209,7 +210,7 @@ export default function useScheduleButtonsList(
   scheduleName,
   testID,
 ) {
-  console.log('loaded schedule page');
+  console.log('loaded schedule button list');
 
   const onUpdateReadStatus = useCallback(
     (status, readingDayID, tableName) => {
@@ -262,6 +263,7 @@ export default function useScheduleButtonsList(
               isFinished={item.isFinished}
               completionDate={item.completionDate}
               completedHidden={item.completedHidden}
+              doesTrack={item.doesTrack}
               onLongPress={item.onLongPress}
               onPress={item.onPress}
               readingPortion={item.readingPortion}
@@ -286,9 +288,10 @@ export default function useScheduleButtonsList(
         let endChapter;
         let endVerse;
         // When we go through with chronological like schedules we can determine if 2 sections have the same
-        //   book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
+        // book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
         for (let i = 0; i < items.length; i++) {
-          const item = items[i];
+          let item = items[i];
+          item.doesTrack = true;
           let tempIsFinished = item.IsFinished ? true : false;
           if (i !== 0) {
             hiddenPortions += !tempIsFinished
@@ -375,6 +378,7 @@ export default function useScheduleButtonsList(
             readingPortion={readingPortions}
             completionDate={completionDate}
             completedHidden={completedHidden}
+            doesTrack={true}
             isFinished={isFinished}
             title={title}
             update={updatePages}

@@ -15,6 +15,8 @@ import {
   deleteSchedule,
   setHideCompleted,
   getScheduleSettings,
+  renameSchedule,
+  setDoesTrack,
 } from '../data/Database/scheduleTransactions';
 import TextButton from '../components/buttons/TextButton';
 import {
@@ -43,8 +45,8 @@ function SchedulePage(props) {
 
   const [listItems, setListItems] = useState([]);
 
-  const [completedHidden, setCompletedHidden] = useState(false);
-  const [doesTrack, setDoesTrack] = useState(true);
+  const [completedHidden, setCompletedHidden] = useState();
+  const [shouldTrack, setShouldTrack] = useState();
 
   const [firstUnfinished, setFirstUnfinished] = useState();
 
@@ -91,7 +93,7 @@ function SchedulePage(props) {
                       scheduleName: scheduleName,
                     },
                   );
-                  let onConfirm = onDeleteSchedule;
+                  let onConfirm = _handleDeleteSchedule;
 
                   openMessagePopup(message, title, onConfirm);
                 }}
@@ -112,7 +114,7 @@ function SchedulePage(props) {
 
     settingFirstUnfinished = false;
   }, [
-    onDeleteSchedule,
+    _handleDeleteSchedule,
     openMessagePopup,
     navigation,
     scheduleName,
@@ -121,21 +123,35 @@ function SchedulePage(props) {
   ]);
 
   useEffect(() => {
-    loadData(userDB, tableName, doesTrack).then(res => {
+    if (
+      typeof shouldTrack === 'undefined' ||
+      typeof completedHidden === 'undefined'
+    ) {
+      getScheduleSettings(userDB, scheduleName).then(settings => {
+        const {doesTrack, hideCompleted} = settings;
+
+        setShouldTrack(doesTrack);
+        setCompletedHidden(hideCompleted);
+      });
+      return;
+    }
+
+    loadData(userDB, tableName, shouldTrack).then(res => {
       if (res) {
         setListItems(res);
       }
     });
+  }, [
+    completedHidden,
+    scheduleName,
+    shouldTrack,
+    tableName,
+    userDB,
+    updatePages,
+  ]);
 
-    getScheduleSettings(userDB, scheduleName).then(settings => {
-      const {doesTrack, hideCompleted} = settings;
-      setDoesTrack(doesTrack);
-      setCompletedHidden(hideCompleted);
-    });
-
-    console.log(flatListRef && completedHidden);
-
-    if (flatListRef && completedHidden) {
+  useEffect(() => {
+    if (listItems.length > 0 && flatListRef && completedHidden) {
       setFirstUnfinished();
       settingFirstUnfinished = false;
       flatListRef.scrollToIndex({
@@ -145,7 +161,7 @@ function SchedulePage(props) {
       });
     }
 
-    if (flatListRef && firstUnfinished) {
+    if (listItems.length > 0 && flatListRef && firstUnfinished) {
       console.log('firstUnfinished', firstUnfinished);
       flatListRef.scrollToItem({
         animated: false,
@@ -153,17 +169,26 @@ function SchedulePage(props) {
         viewPosition: 0,
       });
     }
-  }, [
-    userDB,
-    tableName,
-    updatePages,
-    doesTrack,
-    scheduleName,
-    completedHidden,
-    firstUnfinished,
-  ]);
+  }, [completedHidden, firstUnfinished, listItems]);
 
-  const onDeleteSchedule = useCallback(() => {
+  const _handleScheduleNameChange = useCallback(
+    newScheduleName => {
+      renameSchedule(userDB, scheduleName, newScheduleName).then(afterUpdate);
+    },
+    [userDB, scheduleName, afterUpdate],
+  );
+
+  const _handleSetHideCompleted = useCallback(() => {
+    setHideCompleted(userDB, scheduleName, !completedHidden).then(afterUpdate);
+    setCompletedHidden(!completedHidden);
+  }, [afterUpdate, completedHidden, scheduleName, userDB]);
+
+  const _handleSetDoesTrack = useCallback(() => {
+    setDoesTrack(userDB, scheduleName, !shouldTrack).then(afterUpdate);
+    setShouldTrack(!shouldTrack);
+  }, [afterUpdate, shouldTrack, scheduleName, userDB]);
+
+  const _handleDeleteSchedule = useCallback(() => {
     navigation.dispatch(StackActions.pop(1));
     //Wait a little while to delete the schedule so that we pop this page from the stack
     //before it tries to render a nonexistant schedule
@@ -185,13 +210,16 @@ function SchedulePage(props) {
         onConfirm={messagePopup.onConfirm}
       />
       <ScheduleSettingsPopup
+        testID={pageTitle + '.settingsPopup'}
         completedHidden={completedHidden}
-        onHideCompleted={() => {
-          setHideCompleted(userDB, scheduleName, !completedHidden).then(() => {
-            afterUpdate();
-          });
-        }}
+        displayPopup={settingsPopupIsDisplayed}
+        doesTrack={shouldTrack}
         onClosePress={toggleSettingsPopupIsDisplayed}
+        onScheduleNameChange={_handleScheduleNameChange}
+        onSetDoesTrack={_handleSetDoesTrack}
+        onSetHideCompleted={_handleSetHideCompleted}
+        scheduleName={scheduleName}
+        title={translate('settingsPage.title')}
       />
       <ScheduleListPopups />
       <View style={styles.header}>

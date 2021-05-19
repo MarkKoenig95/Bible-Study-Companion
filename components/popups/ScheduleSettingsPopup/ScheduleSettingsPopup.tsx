@@ -12,9 +12,11 @@ import {ScheduleNameInput} from './components';
 interface SettingsPopupProps {
   completedHidden: boolean;
   displayPopup: boolean;
+  doesTrack: boolean;
   onClosePress: Function;
-  onHideCompleted: Function;
   onScheduleNameChange: (name: string) => void;
+  onSetDoesTrack: Function;
+  onSetHideCompleted: Function;
   scheduleName: string;
   testID: string;
   title: string;
@@ -24,9 +26,11 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
   const {
     completedHidden,
     displayPopup,
+    doesTrack,
     onClosePress,
-    onHideCompleted,
     onScheduleNameChange,
+    onSetDoesTrack,
+    onSetHideCompleted,
     scheduleName,
     testID,
     title,
@@ -44,15 +48,15 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
         checked={completedHidden}
         uncheckedColor={styles.lightText.color}
         checkedColor={colors.darkBlue}
-        onPress={onHideCompleted}
+        onPress={onSetHideCompleted}
       />
       <CheckBox
         testID={testID + '.shouldTrackCheckBox'}
         title={translate('createSchedulePopup.shouldTrack')}
-        checked={completedHidden}
+        checked={doesTrack}
         uncheckedColor={styles.lightText.color}
         checkedColor={colors.darkBlue}
-        onPress={onHideCompleted}
+        onPress={onSetDoesTrack}
       />
       <ScheduleNameInput
         onScheduleNameChange={onScheduleNameChange}

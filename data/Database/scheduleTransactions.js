@@ -600,6 +600,22 @@ export async function setHideCompleted(userDB, scheduleName, value) {
 }
 
 /**
+ * Updates the "DoesTrack" value in the database for a schedule matching the given name
+ * @param {Database} userDB
+ * @param {string} scheduleName
+ * @param {boolean} doesTrack
+ */
+export async function setDoesTrack(userDB, scheduleName, doesTrack) {
+  let newDoesTrack = doesTrack ? 1 : 0;
+
+  await runSQL(
+    userDB,
+    'UPDATE tblSchedules SET DoesTrack=? WHERE ScheduleName=?;',
+    [newDoesTrack, scheduleName],
+  );
+}
+
+/**
  * Given a schedule query result finds spans of continuous portions marked as finished in the table
  * @param {DBQueryResult} schedule
  * @param {integer} startIndex

@@ -11,6 +11,7 @@ import {
   findCorrespondingIndex,
   getScheduleSettings,
   renameSchedule,
+  setDoesTrack,
   setHideCompleted,
   updateDates,
   updateMultipleReadStatus,
@@ -122,6 +123,21 @@ test('set Hide Completed true and then false', async () => {
   tableInfo = await getSchedules();
 
   expect(tableInfo.item(0).HideCompleted).toBe(0);
+});
+
+test('should set Does Track', async () => {
+  let tableInfo;
+  await setDoesTrack(userDB, scheduleName, true);
+
+  tableInfo = await getSchedules();
+
+  expect(tableInfo.item(0).DoesTrack).toBe(1);
+
+  await setDoesTrack(userDB, scheduleName, false);
+
+  tableInfo = await getSchedules();
+
+  expect(tableInfo.item(0).DoesTrack).toBe(0);
 });
 
 test('getScheduleSettings', async () => {
