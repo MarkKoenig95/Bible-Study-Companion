@@ -5,9 +5,8 @@ import {translate} from '../logic/localization/localization';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import IconButton from '../components/buttons/IconButton';
-import CheckBox from '../components/buttons/CheckBox';
 
-import styles, {colors} from '../styles/styles';
+import styles from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
 import {loadData} from '../data/Database/generalTransactions';
@@ -25,7 +24,7 @@ import {
   useToggleState,
 } from '../logic/general';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
-import ScheduleSettingsPopup from '../components/popups/ScheduleSettingsPopup/ScheduleSettingsPopup';
+import ScheduleSettingsPopup from '../components/popups/ScheduleSettingsPopup';
 
 const pageTitle = 'schedulePage';
 let flatListRef;
@@ -83,6 +82,7 @@ function SchedulePage(props) {
               style={styles.navHeaderContainer}>
               <IconButton
                 testID={pageTitle + '.header.deleteButton'}
+                buttonStyle={styles.navHeaderButton}
                 iconOnly
                 invertColor
                 onPress={() => {
@@ -101,6 +101,7 @@ function SchedulePage(props) {
               />
               <IconButton
                 testID={pageTitle + '.header.settingsButton'}
+                buttonStyle={styles.navHeaderButton}
                 iconOnly
                 invertColor
                 onPress={toggleSettingsPopupIsDisplayed}
