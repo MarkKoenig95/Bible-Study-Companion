@@ -1,5 +1,6 @@
 {
   "actions": {"cancel": "Cancel", "done": "Done"},
+  "advanced": "Advanced",
   "appName": "Bible Study Companion",
   "bibleBook": "Bible Book",
   "bibleBooks": {

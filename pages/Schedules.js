@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {SafeAreaView, View, FlatList, SectionList} from 'react-native';
+import {SafeAreaView, View, FlatList} from 'react-native';
 
 import TextButton from '../components/buttons/TextButton';
 
 import IconButton from '../components/buttons/IconButton';
-import CreateSchedulePopup from '../components/popups/CreateSchedulePopup';
+import CreateSchedulePopup from '../components/popups/CreateSchedulePopup/CreateSchedulePopup';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 
 import styles from '../styles/styles';

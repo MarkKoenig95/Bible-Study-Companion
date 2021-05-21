@@ -125,10 +125,16 @@ describe('create schedules', () => {
     await element(by.id(pref + 'numberOfPortionsInput')).typeText('10');
 
     // Set specified date to start the schedule from
+    await waitFor(element(by.id(pref + 'toggleAdvancedButton')))
+      .toBeVisible()
+      .whileElement(by.id(pref + 'scrollView'))
+      .scroll(50, 'down');
+    await element(by.id(pref + 'toggleAdvancedButton')).tap();
     await waitFor(element(by.id(pref + 'datePicker')))
       .toBeVisible()
       .whileElement(by.id(pref + 'scrollView'))
       .scroll(50, 'down');
+    await element(by.id(pref + 'scrollView')).scroll(100, 'down');
     let date = new Date(2021, 0, 1);
     await setDateTimePicker(pref + 'datePicker', date);
 
@@ -169,6 +175,11 @@ describe('create schedules', () => {
     await element(by.id(pref + 'numberOfPortionsInput')).typeText('10');
 
     // Unckeck the track reading dates checkbox
+    await waitFor(element(by.id(pref + 'toggleAdvancedButton')))
+      .toBeVisible()
+      .whileElement(by.id(pref + 'scrollView'))
+      .scroll(50, 'down');
+    await element(by.id(pref + 'toggleAdvancedButton')).tap();
     await waitFor(element(by.id(pref + 'doesTrackCheckbox')))
       .toBeVisible()
       .whileElement(by.id(pref + 'scrollView'))

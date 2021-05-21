@@ -2,7 +2,7 @@ import React from 'react';
 import renderer, {act} from 'react-test-renderer';
 import CreateNotificationPopup from '../../components/popups/CreateNotificationPopup';
 import CreateReminderPopup from '../../components/popups/CreateReminderPopup';
-import CreateSchedulePopup from '../../components/popups/CreateSchedulePopup';
+import CreateSchedulePopup from '../../components/popups/CreateSchedulePopup/CreateSchedulePopup';
 import LoadingPopup from '../../components/popups/LoadingPopup';
 import MessagePopup from '../../components/popups/MessagePopup';
 import Popup from '../../components/popups/Popup';
