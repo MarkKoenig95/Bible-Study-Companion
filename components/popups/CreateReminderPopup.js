@@ -3,7 +3,11 @@ import {StyleSheet, View} from 'react-native';
 
 import {setReminderCompDate} from '../../data/Database/reminderTransactions';
 import {translate} from '../../logic/localization/localization';
-import {FREQS, createPickerArray, sanitizeNumber} from '../../logic/general';
+import {
+  FREQS,
+  createPickerArray,
+  sanitizeStringNumber,
+} from '../../logic/general';
 
 import IconButton from '../buttons/IconButton';
 import {Body} from '../text/Text';
@@ -115,15 +119,9 @@ export default function CreateReminderPopup(props) {
   );
 }
 
-const RecursSection = props => {
-  const {
-    isWeekly,
-    resetStr,
-    resetValue,
-    setResetStr,
-    setResetValue,
-    testID,
-  } = props;
+const RecursSection = (props) => {
+  const {isWeekly, resetStr, resetValue, setResetStr, setResetValue, testID} =
+    props;
 
   //If it's not editing we display the text as is
   //If it is editing, then we either show a picker for a weekday or we show a numerical input
@@ -141,8 +139,8 @@ const RecursSection = props => {
           testID={testID + '.resetValueInput'}
           containerStyle={{maxWidth: 100}}
           value={resetStr}
-          onChangeText={newValue => {
-            let newStr = sanitizeNumber(resetStr, newValue, 1, 31);
+          onChangeText={(newValue) => {
+            let newStr = sanitizeStringNumber(resetStr, newValue, 1, 31);
             setResetStr(newStr);
             if (newStr) {
               setResetValue(parseInt(newStr, 10));
@@ -156,7 +154,7 @@ const RecursSection = props => {
   );
 };
 
-const FrequencySection = props => {
+const FrequencySection = (props) => {
   const {frequency, frequencyPickerValues, setFrequency, testID} = props;
   return (
     <View testID={testID} style={style.reminderContent}>
@@ -172,7 +170,7 @@ const FrequencySection = props => {
   );
 };
 
-const NameSection = props => {
+const NameSection = (props) => {
   const {name, setName, testID} = props;
   return (
     <View testID={testID} style={[style.reminderContent, {borderTopWidth: 0}]}>

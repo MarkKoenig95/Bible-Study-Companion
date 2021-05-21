@@ -12,11 +12,42 @@ import Popup from './Popup';
 
 import {translate} from '../../logic/localization/localization';
 import styles from '../../styles/styles';
-import {sanitizeNumber, SCHEDULE_TYPES} from '../../logic/general';
+import {
+  sanitizeStringNumber,
+  ScheduleType,
+  SCHEDULE_TYPES,
+} from '../../logic/general';
 
 const prefix = 'createSchedulePopup.';
 
-export default function CreateSchedulePopup(props) {
+type onAddFunc = (
+  scheduleName: string,
+  doesTrack: boolean,
+  duration: number,
+  bookId: number,
+  chapter: number,
+  verse: number,
+  startingPortion: number,
+  maxPortion: number,
+  readingPortionDesc: string,
+  portionsPerDay: number,
+  startDate?: Date,
+) => void;
+
+interface CreateSchedulePopupProps {
+  displayPopup: boolean;
+  onAdd: onAddFunc;
+  onClosePress: () => void;
+  onError: (error: string) => void;
+  testID: string;
+  type: ScheduleType;
+}
+
+type item = {id: number; name: string};
+
+let defaultSelectedItems: item[] | [] = [];
+
+export default function CreateSchedulePopup(props: CreateSchedulePopupProps) {
   const {displayPopup, onAdd, onClosePress, onError, testID, type} = props;
 
   //State and defaults for schedule info inputs
@@ -25,13 +56,13 @@ export default function CreateSchedulePopup(props) {
     scheduleDuration: '1',
     chapter: '1',
     verse: '1',
-    selectedItems: [],
+    selectedItems: defaultSelectedItems,
   };
 
-  const [readingPortionDesc, setReadingPortionDesc] = useState();
-  const [portionsPerDay, setPortionsPerDay] = useState();
+  const [readingPortionDesc, setReadingPortionDesc] = useState('');
+  const [portionsPerDay, setPortionsPerDay] = useState('');
   const [startingPortion, setStartingPortion] = useState('1');
-  const [maxPortion, setMaxPortion] = useState();
+  const [maxPortion, setMaxPortion] = useState('');
   const [scheduleName, setScheduleName] = useState(defaults.scheduleName);
   const [scheduleDuration, setScheduleDuration] = useState(
     defaults.scheduleDuration,
@@ -40,7 +71,7 @@ export default function CreateSchedulePopup(props) {
   const [startDate, setStartDate] = useState(new Date());
 
   const [readingPortionSelectedItems, setReadingPortionSelectedItems] =
-    useState([]);
+    useState(defaultSelectedItems);
 
   const [versePicker, setVersePicker] = useState({
     chapter: defaults.chapter,
@@ -48,9 +79,12 @@ export default function CreateSchedulePopup(props) {
     selectedItems: defaults.selectedItems,
   });
 
-  function onVersePickerChange(key, value) {
+  function onVersePickerChange(
+    key: 'chapter' | 'verse' | 'selectedItems',
+    value: string,
+  ) {
     if (key !== 'selectedItems') {
-      value = sanitizeNumber(versePicker[key], value, 1, 200);
+      value = sanitizeStringNumber(versePicker[key], value, 1, 200);
     }
 
     setVersePicker((prevVals) => {
@@ -58,8 +92,8 @@ export default function CreateSchedulePopup(props) {
     });
   }
 
-  function onScheduleDurationChange(text) {
-    let sanitizedState = sanitizeNumber(scheduleDuration, text, 0, 20);
+  function onScheduleDurationChange(text: string) {
+    let sanitizedState = sanitizeStringNumber(scheduleDuration, text, 0, 20);
     setScheduleDuration(sanitizedState);
   }
 
@@ -79,7 +113,7 @@ export default function CreateSchedulePopup(props) {
         portionsPerDay &&
         startingPortion &&
         maxPortion &&
-        parseFloat(portionsPerDay, 10) > 0;
+        parseFloat(portionsPerDay) > 0;
     }
 
     if (areAllRequiredFilledIn) {
@@ -92,14 +126,14 @@ export default function CreateSchedulePopup(props) {
       onAdd(
         scheduleName,
         doesTrack,
-        scheduleDuration,
+        parseFloat(scheduleDuration),
         bookId,
-        versePicker.chapter,
-        versePicker.verse,
-        startingPortion,
-        maxPortion,
+        parseFloat(versePicker.chapter),
+        parseFloat(versePicker.verse),
+        parseFloat(startingPortion),
+        parseFloat(maxPortion),
         readingPortionDesc,
-        portionsPerDay,
+        parseFloat(portionsPerDay),
         startDate,
       );
       setScheduleName(defaults.scheduleName);
@@ -109,10 +143,10 @@ export default function CreateSchedulePopup(props) {
         verse: defaults.verse,
         selectedItems: versePicker.selectedItems,
       });
-      setReadingPortionDesc();
-      setPortionsPerDay();
+      setReadingPortionDesc('');
+      setPortionsPerDay('');
       setStartingPortion('1');
-      setMaxPortion();
+      setMaxPortion('');
       setStartDate(new Date());
 
       setReadingPortionSelectedItems([]);
@@ -174,7 +208,7 @@ export default function CreateSchedulePopup(props) {
             ]}
             placeholder={translate(prefix + 'readingPortionDescPhld')}
             selectedItems={readingPortionSelectedItems}
-            setSelectedItems={(items) => {
+            setSelectedItems={(items: item[]) => {
               setReadingPortionSelectedItems(items);
               setReadingPortionDesc(items[0].name);
             }}
@@ -192,9 +226,14 @@ export default function CreateSchedulePopup(props) {
           })}
           inputStyle={style.smallInput}
           value={portionsPerDay}
-          onChangeText={(text) => {
+          onChangeText={(text: string) => {
             setPortionsPerDay(
-              sanitizeNumber(portionsPerDay, text, 0, 1000000000000000000),
+              sanitizeStringNumber(
+                portionsPerDay,
+                text,
+                0,
+                1000000000000000000,
+              ),
             );
           }}
           description={translate(prefix + 'portionsPerDayPhld', {
@@ -211,9 +250,14 @@ export default function CreateSchedulePopup(props) {
           })}
           inputStyle={style.smallInput}
           value={startingPortion}
-          onChangeText={(text) => {
+          onChangeText={(text: string) => {
             setStartingPortion(
-              sanitizeNumber(startingPortion, text, 0, 1000000000000000000),
+              sanitizeStringNumber(
+                startingPortion,
+                text,
+                0,
+                1000000000000000000,
+              ),
             );
           }}
           description={translate(prefix + 'startingPortionPhld', {
@@ -231,9 +275,9 @@ export default function CreateSchedulePopup(props) {
           })}
           inputStyle={style.smallInput}
           value={maxPortion}
-          onChangeText={(text) => {
+          onChangeText={(text: string) => {
             setMaxPortion(
-              sanitizeNumber(maxPortion, text, 0, 1000000000000000000),
+              sanitizeStringNumber(maxPortion, text, 0, 1000000000000000000),
             );
           }}
           description={translate(prefix + 'numberOfPortionsPhld', {

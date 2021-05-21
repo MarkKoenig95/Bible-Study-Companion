@@ -18,7 +18,7 @@ import {store} from '../data/Store/store.js';
 import {translate, translationExists} from '../logic/localization/localization';
 import {
   useUpdate,
-  sanitizeNumber,
+  sanitizeStringNumber,
   createPickerArray,
   FREQS,
   ERROR,
@@ -35,7 +35,7 @@ import CreateReminderPopup, {
 
 const pageTitle = 'remindersPage';
 
-const ReminderWrapper = props => {
+const ReminderWrapper = (props) => {
   const {
     completionDate,
     frequency,
@@ -213,7 +213,7 @@ const ReminderWrapper = props => {
   );
 };
 
-const ActionButtonSection = props => {
+const ActionButtonSection = (props) => {
   const {onEditCancel, onEditDone, testID} = props;
   return (
     <View testID={testID} style={style.reminderContent}>
@@ -231,7 +231,7 @@ const ActionButtonSection = props => {
   );
 };
 
-const AdjButtonSection = props => {
+const AdjButtonSection = (props) => {
   const {isEditing, onDeleteReminder, setIsEditing, testID} = props;
   return (
     <View testID={testID} style={style.buttonContainer}>
@@ -255,7 +255,7 @@ const AdjButtonSection = props => {
   );
 };
 
-const IsCompletedSection = props => {
+const IsCompletedSection = (props) => {
   const {completedDesc, isFinished, testID, toggleIsFinished} = props;
   return (
     <View testID={testID} style={style.reminderContent}>
@@ -271,7 +271,7 @@ const IsCompletedSection = props => {
   );
 };
 
-const RecursSection = props => {
+const RecursSection = (props) => {
   let {
     isEditing,
     isWeekly,
@@ -322,8 +322,8 @@ const RecursSection = props => {
           testID={testID + '.resetValueInput'}
           containerStyle={{maxWidth: 100}}
           value={resetStr}
-          onChangeText={newValue => {
-            let newStr = sanitizeNumber(resetStr, newValue, 1, 31);
+          onChangeText={(newValue) => {
+            let newStr = sanitizeStringNumber(resetStr, newValue, 1, 31);
             setResetStr(newStr);
             if (newStr) {
               setResetVal(parseInt(newStr, 10));
@@ -345,7 +345,7 @@ const RecursSection = props => {
   );
 };
 
-const FrequencySection = props => {
+const FrequencySection = (props) => {
   let {isEditing, freq, freqPickerValues, recursText, setFreq, testID} = props;
   return (
     <View testID={testID} style={style.reminderContent}>
@@ -371,7 +371,7 @@ const FrequencySection = props => {
   );
 };
 
-const NameSection = props => {
+const NameSection = (props) => {
   let {isEditing, reminderName, setReminderName, testID} = props;
   return (
     <View testID={testID} style={[style.reminderContent, {borderTopWidth: 0}]}>
@@ -436,7 +436,7 @@ export default function Reminders(props) {
   }, []);
 
   useEffect(() => {
-    loadData(userDB, 'tblReminders').then(res => {
+    loadData(userDB, 'tblReminders').then((res) => {
       setListItems(res);
     });
   }, [userDB, setListItems, updatePages]);
@@ -464,7 +464,7 @@ export default function Reminders(props) {
         reminderPopup.close();
         afterUpdate();
       })
-      .catch(err => {
+      .catch((err) => {
         hasError = err;
         console.log('Error adding reminder:', err);
         if (err === ERROR.NAME_TAKEN) {

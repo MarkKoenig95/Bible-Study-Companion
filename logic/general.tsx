@@ -90,7 +90,7 @@ export function arraysMatch(arr1: any[], arr2: any[]) {
   return true;
 }
 
-export function sanitizeNumber(
+export function sanitizeStringNumber(
   prevValue: string,
   newValue: string,
   lowerLimit: number,
