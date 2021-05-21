@@ -83,6 +83,7 @@ export default function Schedules(props) {
     maxPortion,
     readingPortionDesc,
     portionsPerDay,
+    startDate,
   ) {
     let activeDays = [1, 1, 1, 1, 1, 1, 1];
     setIsCreateSchedulePopupDisplayed(false);
@@ -111,6 +112,7 @@ export default function Schedules(props) {
         setLoadingPopup(false);
         openMessagePopup(message);
       },
+      startDate,
     );
   }
 

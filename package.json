@@ -15,8 +15,8 @@
     "pod-install": "cd ios && pod install --repo-update",
     "start": "react-native start",
     "test": "jest",
-    "e2e-ios": "detox build --configuration ios.sim.release && detox test --configuration ios.sim.release -l warn",
-    "e2e-android": "detox build --configuration android.emu.debug && detox test --configuration android.emu.debug -l warn",
+    "e2e-ios": "detox build -c ios.sim.release && detox test -c ios.sim.release -l warn",
+    "e2e-android": "detox build -c android.emu.debug && detox test -c android.emu.debug -l warn",
     "lint": "eslint .",
     "update-version": "react-native-version --never-amend"
   },

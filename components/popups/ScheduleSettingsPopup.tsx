@@ -78,10 +78,9 @@ export default function ScheduleSettingsPopup(props: SettingsPopupProps) {
       <View style={style.row}>
         <Body>{translate('createSchedulePopup.startDate')}</Body>
         <DateTimePickerButton
-          testID={testID + '.timePicker'}
+          testID={testID + '.datePicker'}
           mode={'date'}
           onChange={onStartDateChange}
-          textPrefix={translate('prompts.setNotification')}
           time={startDate}
         />
       </View>

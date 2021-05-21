@@ -8,7 +8,7 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 import {formatDate} from '../../data/Database/generalTransactions';
 
-const ScheduleDayButton = React.memo(props => {
+const ScheduleDayButton = React.memo((props) => {
   const {
     completedHidden,
     completionDate,

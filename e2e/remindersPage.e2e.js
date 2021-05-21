@@ -1,3 +1,4 @@
+/* eslint-env detox/detox, jest */
 const prefix = 'remindersPage.';
 const pref = prefix + 'reminder.Daily Text.';
 var waitTime = 1000;

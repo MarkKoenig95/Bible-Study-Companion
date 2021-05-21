@@ -1,3 +1,4 @@
+/* eslint-env detox/detox, jest */
 beforeAll(async () => {
   await device.launchApp({permissions: {notifications: 'YES'}});
   await waitFor(element(by.text('Daily Text')))

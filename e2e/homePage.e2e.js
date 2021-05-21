@@ -1,13 +1,14 @@
+/* eslint-env detox/detox, jest */
 import {scrollUntilVisible, waitForMS} from './helpers/general';
 import {
-  openReadingReminders,
-  openReadingInfoPopup,
-  completeReadingFromInfoPopup,
-  completeReadingWithLongPress,
-  completeReadingWithCheckbox,
-  openReadingButtonsPopup,
-  completeReadingInButtonPopup,
-  completeReadingInButtonPopupFromInfoPopup,
+  shouldOpenReadingReminders,
+  shouldOpenReadingInfoPopup,
+  shouldCompleteReadingFromInfoPopup,
+  shouldCompleteReadingWithLongPress,
+  shouldCompleteReadingWithCheckbox,
+  shouldOpenReadingButtonsPopup,
+  shouldCompleteReadingInButtonPopup,
+  shouldCompleteReadingInButtonPopupFromInfoPopup,
 } from './helpers/scheduleList';
 
 var waitTime = 1000;
@@ -53,37 +54,41 @@ describe('Check sections', () => {
       by.id(prefix + 'list'),
     );
     await element(by.id(prefix + 'Monthly Reminder.checkBox')).tap();
-    await completeReadingWithCheckbox(prefix, 'Monthly Reminder', waitTime);
+    await shouldCompleteReadingWithCheckbox(
+      prefix,
+      'Monthly Reminder',
+      waitTime,
+    );
     await expect(element(by.text('This Month'))).not.toBeVisible();
   });
 });
 
 it('shows the reading reminders popup', async () => {
-  await openReadingReminders(prefix);
+  await shouldOpenReadingReminders(prefix);
 });
 
 it('opens the reading info popup', async () => {
-  await openReadingInfoPopup(prefix, 'Job 1-34');
+  await shouldOpenReadingInfoPopup(prefix, 'Job 1-34');
 });
 
 it('marks a reading portion complete with the button in the reading info popup', async () => {
-  await completeReadingFromInfoPopup(prefix, 'Job 1-34', waitTime);
+  await shouldCompleteReadingFromInfoPopup(prefix, 'Job 1-34', waitTime);
 });
 
 it('marks a reading portion complete with longPress', async () => {
-  await completeReadingWithLongPress(prefix, 'Genesis 1-29', waitTime);
+  await shouldCompleteReadingWithLongPress(prefix, 'Genesis 1-29', waitTime);
 });
 
 it('marks a reading portions complete with the checkBox', async () => {
-  await completeReadingWithCheckbox(prefix, 'Genesis 1-37', waitTime);
+  await shouldCompleteReadingWithCheckbox(prefix, 'Genesis 1-37', waitTime);
 });
 
 it('opens buttons popup', async () => {
-  await openReadingButtonsPopup(prefix, 'Numbers 15:1-14');
+  await shouldOpenReadingButtonsPopup(prefix, 'Numbers 15:1-14');
 });
 
 it('marks a reading item complete in buttons popup with longPress', async () => {
-  await completeReadingInButtonPopup(
+  await shouldCompleteReadingInButtonPopup(
     prefix,
     'Numbers 15:1-14',
     'Numbers 15:15-28',
@@ -92,7 +97,7 @@ it('marks a reading item complete in buttons popup with longPress', async () => 
 });
 
 it('marks a reading item complete in buttons popup with checkBox', async () => {
-  await completeReadingInButtonPopup(
+  await shouldCompleteReadingInButtonPopup(
     prefix,
     'Numbers 15:1-14',
     'Numbers 16:2-15',
@@ -101,7 +106,7 @@ it('marks a reading item complete in buttons popup with checkBox', async () => {
 });
 
 it('marks a reading portion complete with the button in the reading info popup opened from buttons popup', async () => {
-  await completeReadingInButtonPopupFromInfoPopup(
+  await shouldCompleteReadingInButtonPopupFromInfoPopup(
     prefix,
     'Numbers 15:1-14',
     'Numbers 16:16-29',
@@ -109,12 +114,12 @@ it('marks a reading portion complete with the button in the reading info popup o
 });
 
 it('opens reading info popup from button in buttons popup', async () => {
-  await openReadingButtonsPopup(prefix, 'Numbers 15:1-14');
-  await openReadingInfoPopup(prefix, 'Numbers 15:1-14');
+  await shouldOpenReadingButtonsPopup(prefix, 'Numbers 15:1-14');
+  await shouldOpenReadingInfoPopup(prefix, 'Numbers 15:1-14');
 });
 
 it('marks a whole reading portion, made up of many sections, complete', async () => {
-  completeReadingWithCheckbox(
+  shouldCompleteReadingWithCheckbox(
     prefix,
     'multiPortionStartingWith.Numbers 15:1-14',
     waitTime,

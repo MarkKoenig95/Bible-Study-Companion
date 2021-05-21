@@ -1,3 +1,4 @@
+/* eslint-env detox/detox, jest */
 import {waitForMS} from './helpers/general';
 // * Note to tester, I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the time being

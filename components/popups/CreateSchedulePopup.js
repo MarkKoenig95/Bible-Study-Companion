@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-import CustomDropdown from '../inputs/CustomDropdown';
-import IconButton from '../buttons/IconButton';
 import CheckBox from '../buttons/CheckBox';
+import DateTimePickerButton from '../buttons/DateTimePickerButton';
+import IconButton from '../buttons/IconButton';
+import CustomDropdown from '../inputs/CustomDropdown';
 import CustomInput from '../inputs/CustomInput';
 import VersePicker from '../inputs/VersePicker';
 import Text, {Body} from '../text/Text';
@@ -36,11 +37,10 @@ export default function CreateSchedulePopup(props) {
     defaults.scheduleDuration,
   );
   const [doesTrack, setDoesTrack] = useState(true);
+  const [startDate, setStartDate] = useState(new Date());
 
-  const [
-    readingPortionSelectedItems,
-    setReadingPortionSelectedItems,
-  ] = useState([]);
+  const [readingPortionSelectedItems, setReadingPortionSelectedItems] =
+    useState([]);
 
   const [versePicker, setVersePicker] = useState({
     chapter: defaults.chapter,
@@ -53,7 +53,7 @@ export default function CreateSchedulePopup(props) {
       value = sanitizeNumber(versePicker[key], value, 1, 200);
     }
 
-    setVersePicker(prevVals => {
+    setVersePicker((prevVals) => {
       return {...prevVals, [key]: value};
     });
   }
@@ -100,6 +100,7 @@ export default function CreateSchedulePopup(props) {
         maxPortion,
         readingPortionDesc,
         portionsPerDay,
+        startDate,
       );
       setScheduleName(defaults.scheduleName);
       setScheduleDuration(defaults.scheduleDuration);
@@ -112,6 +113,7 @@ export default function CreateSchedulePopup(props) {
       setPortionsPerDay();
       setStartingPortion('1');
       setMaxPortion();
+      setStartDate(new Date());
 
       setReadingPortionSelectedItems([]);
     } else {
@@ -172,7 +174,7 @@ export default function CreateSchedulePopup(props) {
             ]}
             placeholder={translate(prefix + 'readingPortionDescPhld')}
             selectedItems={readingPortionSelectedItems}
-            setSelectedItems={items => {
+            setSelectedItems={(items) => {
               setReadingPortionSelectedItems(items);
               setReadingPortionDesc(items[0].name);
             }}
@@ -190,7 +192,7 @@ export default function CreateSchedulePopup(props) {
           })}
           inputStyle={style.smallInput}
           value={portionsPerDay}
-          onChangeText={text => {
+          onChangeText={(text) => {
             setPortionsPerDay(
               sanitizeNumber(portionsPerDay, text, 0, 1000000000000000000),
             );
@@ -209,7 +211,7 @@ export default function CreateSchedulePopup(props) {
           })}
           inputStyle={style.smallInput}
           value={startingPortion}
-          onChangeText={text => {
+          onChangeText={(text) => {
             setStartingPortion(
               sanitizeNumber(startingPortion, text, 0, 1000000000000000000),
             );
@@ -229,7 +231,7 @@ export default function CreateSchedulePopup(props) {
           })}
           inputStyle={style.smallInput}
           value={maxPortion}
-          onChangeText={text => {
+          onChangeText={(text) => {
             setMaxPortion(
               sanitizeNumber(maxPortion, text, 0, 1000000000000000000),
             );
@@ -246,6 +248,15 @@ export default function CreateSchedulePopup(props) {
           testID={testID + '.doesTrackCheckbox'}
           checked={doesTrack}
           onPress={() => setDoesTrack(!doesTrack)}
+        />
+      </View>
+      <View style={[styles.wrapperContent, {justifyContent: 'space-around'}]}>
+        <Body>{translate('createSchedulePopup.startDate')}</Body>
+        <DateTimePickerButton
+          testID={testID + '.datePicker'}
+          mode={'date'}
+          onChange={setStartDate}
+          time={startDate}
         />
       </View>
       <IconButton
