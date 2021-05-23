@@ -1,17 +1,37 @@
 import React, {useState, useCallback} from 'react';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 
 import ScheduleDayButton from './buttons/ScheduleDayButton';
 import ButtonsPopup, {useButtonsPopup} from './popups/SelectedDayButtonsPopup';
 import ReadingRemindersPopup from './popups/ReadingRemindersPopup';
 import ReadingInfoPopup, {useReadingInfoPopup} from './popups/ReadingInfoPopup';
-import {updateReadStatus} from '../data/Database/scheduleTransactions';
+import {
+  updateMultipleReadStatus,
+  updateReadStatus,
+} from '../data/Database/scheduleTransactions';
 import {checkReadingPortion, checkStartVerse} from '../logic/scheduleCreation';
 import {
   arraysMatch,
   VERSE_POSITION,
   WEEKLY_READING_TABLE_NAME,
 } from '../logic/general';
+import {translate} from '../logic/localization/localization';
+import {log} from '../data/Database/generalTransactions';
+
+function onAfterFirstUnfinishedClick(onOkPress, onCancelPress = () => {}) {
+  Alert.alert(
+    translate('prompts.markCompleted'),
+    translate('prompts.markPreviousRead'),
+    [
+      {
+        text: translate('actions.cancel'),
+        onPress: onCancelPress,
+        style: 'cancel',
+      },
+      {text: translate('actions.ok'), onPress: onOkPress},
+    ],
+  );
+}
 
 function condenseReadingPortion(item, prevBookNum) {
   let startBook = item.StartBookName;
@@ -70,6 +90,7 @@ function ScheduleButton(props) {
   const {
     closeReadingPopup,
     completedHidden,
+    firstUnfinishedID,
     item,
     onUpdateReadStatus,
     openReadingPopup,
@@ -79,11 +100,18 @@ function ScheduleButton(props) {
     update,
   } = props;
 
+  const isAfterFirstUnfinished = item.ReadingDayID > firstUnfinishedID;
+
   const onLongPress = () => {
-    onUpdateReadStatus(item.IsFinished, item.ReadingDayID, tableName);
+    onUpdateReadStatus(
+      item.IsFinished,
+      item.ReadingDayID,
+      tableName,
+      isAfterFirstUnfinished,
+    );
   };
 
-  let onPress = null;
+  let onPress = onLongPress;
 
   if (item.StartBookNumber) {
     onPress = () => {
@@ -104,8 +132,6 @@ function ScheduleButton(props) {
         tableName,
       );
     };
-  } else {
-    onPress = onLongPress;
   }
 
   return (
@@ -127,26 +153,22 @@ function ScheduleButton(props) {
 function useScheduleListPopups(onUpdateReadStatus, testID) {
   const {buttonsPopup, openButtonsPopup, closeButtonsPopup} = useButtonsPopup();
 
-  const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] = useState(
-    false,
-  );
+  const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] =
+    useState(false);
 
   const openRemindersPopup = () => {
     setIsRemindersPopupDisplayed(true);
   };
 
-  const {
-    readingPopup,
-    openReadingPopup,
-    closeReadingPopup,
-  } = useReadingInfoPopup();
+  const {readingPopup, openReadingPopup, closeReadingPopup} =
+    useReadingInfoPopup();
 
   const openReadingInfoPopup = (...args) => {
     closeButtonsPopup();
     openReadingPopup(...args);
   };
 
-  const ScheduleListPopups = props => {
+  const ScheduleListPopups = (props) => {
     return (
       <View style={{width: '100%'}}>
         <ReadingInfoPopup
@@ -157,14 +179,7 @@ function useScheduleListPopups(onUpdateReadStatus, testID) {
             message: readingPopup.message,
             onClosePress: closeReadingPopup,
           }}
-          onConfirm={() => {
-            onUpdateReadStatus(
-              readingPopup.isFinished,
-              readingPopup.readingDayID,
-              readingPopup.tableName,
-            );
-            closeReadingPopup();
-          }}
+          onConfirm={readingPopup.cb}
           startBookNumber={readingPopup.startBookNumber}
           startChapter={readingPopup.startChapter}
           startVerse={readingPopup.startVerse}
@@ -210,13 +225,28 @@ export default function useScheduleButtonsList(
   scheduleName,
   testID,
 ) {
-  console.log('loaded schedule button list');
+  log('loaded schedule button list');
 
   const onUpdateReadStatus = useCallback(
-    (status, readingDayID, tableName) => {
+    (status, readingDayID, tableName, isAfterFirstUnfinished) => {
       readingDayID = readingDayID || readingPopup.readingDayID;
 
-      updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
+      const updateOne = () => {
+        updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
+      };
+
+      const updateMultiple = () => {
+        updateMultipleReadStatus(userDB, tableName, readingDayID).then(
+          afterUpdate,
+        );
+      };
+
+      if (isAfterFirstUnfinished && !status) {
+        onAfterFirstUnfinishedClick(updateMultiple, updateOne);
+        return;
+      }
+
+      updateOne();
     },
     [readingPopup, userDB, afterUpdate],
   );
@@ -232,7 +262,7 @@ export default function useScheduleButtonsList(
   } = useScheduleListPopups(onUpdateReadStatus, testID);
 
   const setScheduleButtons = useCallback(
-    (items, index) => {
+    (items, index, firstUnfinishedID = Infinity) => {
       let result;
       let thisTableName;
       let title;
@@ -247,6 +277,7 @@ export default function useScheduleButtonsList(
             <ScheduleButton
               testID={testID}
               item={item}
+              firstUnfinishedID={firstUnfinishedID}
               tableName={thisTableName}
               title={title}
               completedHidden={completedHidden}
@@ -357,6 +388,7 @@ export default function useScheduleButtonsList(
               update={updatePages}
               onUpdateReadStatus={onUpdateReadStatus}
               openReadingPopup={openReadingPopup}
+              closeReadingPopup={closeReadingPopup}
             />,
           );
         }
@@ -382,7 +414,7 @@ export default function useScheduleButtonsList(
             isFinished={isFinished}
             title={title}
             update={updatePages}
-            onLongPress={cb => {
+            onLongPress={(cb) => {
               for (let i = 0; i < readingDayIDs.length; i++) {
                 onUpdateReadStatus(isFinished, readingDayIDs[i], thisTableName);
               }

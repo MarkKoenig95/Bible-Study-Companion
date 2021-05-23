@@ -10,7 +10,7 @@ import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import styles from '../styles/styles';
 
 import {store} from '../data/Store/store';
-import {loadData} from '../data/Database/generalTransactions';
+import {loadData, log} from '../data/Database/generalTransactions';
 import {
   addSchedule,
   formatScheduleTableName,
@@ -24,7 +24,7 @@ let scheduleType;
 const pageTitle = 'schedulesPage';
 
 export default function Schedules(props) {
-  console.log('loaded schedules page');
+  log('loaded schedules page');
   const navigation = props.navigation;
   const globalState = useContext(store);
 

@@ -10,7 +10,7 @@ import {translate} from '../logic/localization/localization';
 
 import {store} from '../data/Store/store.js';
 
-import {errorCB, updateValue} from '../data/Database/generalTransactions';
+import {errorCB, log, updateValue} from '../data/Database/generalTransactions';
 import {useUpdate} from '../logic/general';
 import TimePickerButton from '../components/buttons/DateTimePickerButton';
 import {deleteNotification} from '../data/Database/notificationTransactions';
@@ -71,7 +71,7 @@ const WeekdayWrapper = React.memo((props) => {
 export default function Notification(props) {
   const {navigation, route} = props;
 
-  console.log('loaded notification page');
+  log('loaded notification page');
   const globalState = useContext(store);
   const {dispatch} = globalState;
   const {userDB, updatePages, notification} = globalState.state;

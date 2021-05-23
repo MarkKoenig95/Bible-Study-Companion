@@ -223,3 +223,92 @@ describe('bible schedule page', () => {
     await expect(element(by.id(prefix + 'New Schedule'))).not.toBeVisible();
   });
 });
+
+describe('mark all earlier reading portions on complete', async () => {
+  beforeEach(async () => {
+    await device.launchApp({
+      delete: true,
+      newInstance: true,
+      permissions: {notifications: 'YES'},
+    });
+
+    await waitForMS(3 * waitTime);
+
+    await element(by.id('tabs.schedulesPage')).tap();
+
+    await element(by.id('schedulesPage.Base Seq')).tap();
+
+    await waitFor(element(by.id('schedulePage')))
+      .toBeVisible()
+      .withTimeout(2 * waitTime);
+
+    await element(by.id(prefix + 'header.settingsButton')).tap();
+
+    await waitFor(element(by.id(prefix + 'settingsPopup')))
+      .toBeVisible()
+      .withTimeout(2 * waitTime);
+
+    await element(by.id(prefix + 'settingsPopup.hideCompletedCheckBox')).tap();
+
+    await element(by.id(prefix + 'settingsPopup.closeButton')).tap();
+
+    await element(by.id(prefix + 'buttonList')).scrollTo('bottom');
+  });
+
+  it('should mark all reading portions earlier than a selected portion complete using the checkbox', async () => {
+    await element(by.id(prefix + 'Hebrews 10-Revelation 17.checkBox')).tap();
+
+    await element(by.text('OK')).tap();
+
+    await expect(
+      element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
+    ).not.toBeVisible();
+
+    await expect(
+      element(by.id(prefix + 'Hebrews 10-Revelation 17')),
+    ).not.toBeVisible();
+
+    await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();
+  });
+
+  it('should mark all reading portions earlier than a selected portion complete using the reading info popup', async () => {
+    await element(by.id(prefix + 'Ephesians 5-Hebrews 9')).tap();
+
+    await waitFor(element(by.id(prefix + 'readingInfoPopup.confirmButton')))
+      .toBeVisible()
+      .whileElement(by.id(prefix + 'readingInfoPopup.scrollView'))
+      .scroll(50, 'down');
+
+    await element(by.id(prefix + 'readingInfoPopup.confirmButton')).tap();
+
+    await element(by.text('OK')).tap();
+
+    await expect(
+      element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
+    ).not.toBeVisible();
+
+    await expect(
+      element(by.id(prefix + 'Hebrews 10-Revelation 17')),
+    ).toBeVisible();
+
+    await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();
+  });
+
+  it('should not mark all reading portions earlier than a selected portion complete', async () => {
+    await element(by.id(prefix + 'Hebrews 10-Revelation 17.checkBox')).tap();
+
+    await element(by.text('Cancel')).tap();
+
+    await element(by.id(prefix + 'buttonList')).scrollTo('bottom');
+
+    await expect(
+      element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
+    ).toBeVisible();
+
+    await expect(
+      element(by.id(prefix + 'Hebrews 10-Revelation 17')),
+    ).not.toBeVisible();
+
+    await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();
+  });
+});

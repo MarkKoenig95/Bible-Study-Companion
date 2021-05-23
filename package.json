@@ -1,6 +1,6 @@
 {
   "name": "bible-study-companion",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -12,7 +12,8 @@
     "clean": "react-native clean-project-auto && rm -rf ios/Podfile.lock && rm -rf ios/Build && rm -rf yarn.lock && yarn install && yarn pod-install",
     "clean-android": "cd android && ./gradlew clean",
     "ios": "react-native run-ios",
-    "pod-install": "cd ios && pod install --repo-update",
+    "pod-install": "cd ios && pod install",
+    "pod-install-update": "cd ios && pod install --repo-update",
     "start": "react-native start",
     "test": "jest",
     "e2e-ios": "detox build -c ios.sim.release && detox test -c ios.sim.release -l warn",

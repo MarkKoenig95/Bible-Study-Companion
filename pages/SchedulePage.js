@@ -8,7 +8,7 @@ import IconButton from '../components/buttons/IconButton';
 import styles from '../styles/styles';
 
 import {store} from '../data/Store/store.js';
-import {loadData} from '../data/Database/generalTransactions';
+import {loadData, log} from '../data/Database/generalTransactions';
 import {
   deleteSchedule,
   setHideCompleted,
@@ -30,10 +30,10 @@ import LoadingPopup from '../components/popups/LoadingPopup';
 
 const pageTitle = 'schedulePage';
 let flatListRef;
-let settingFirstUnfinished = false;
+let firstUnfinishedID = Infinity;
 
 function SchedulePage(props) {
-  console.log('loaded schedule page');
+  log('loaded schedule page');
 
   const {navigation, route} = props;
 
@@ -161,8 +161,6 @@ function SchedulePage(props) {
         }
       },
     });
-
-    settingFirstUnfinished = false;
   }, [
     _handleDeleteSchedule,
     openMessagePopup,
@@ -173,6 +171,7 @@ function SchedulePage(props) {
   ]);
 
   useEffect(() => {
+    firstUnfinishedID = Infinity;
     if (
       typeof shouldTrack === 'undefined' ||
       typeof completedHidden === 'undefined'
@@ -204,7 +203,6 @@ function SchedulePage(props) {
   useEffect(() => {
     if (listItems.length > 0 && flatListRef && completedHidden) {
       setFirstUnfinished();
-      settingFirstUnfinished = false;
       flatListRef.scrollToIndex({
         animated: false,
         index: 0,
@@ -273,15 +271,19 @@ function SchedulePage(props) {
           })}
           renderItem={({item, index}) => {
             if (
-              !settingFirstUnfinished &&
-              !completedHidden &&
-              !firstUnfinished &&
+              item[0].ReadingDayID === firstUnfinishedID &&
+              !!item[0].IsFinished
+            ) {
+              firstUnfinishedID = Infinity;
+            }
+            if (
+              item[0].ReadingDayID < firstUnfinishedID &&
               !item[0].IsFinished
             ) {
-              settingFirstUnfinished = true;
-              setFirstUnfinished(item);
+              firstUnfinishedID = item[0].ReadingDayID;
+              setFirstUnfinished(item[0]);
             }
-            return setScheduleButtons(item, index);
+            return setScheduleButtons(item, index, firstUnfinishedID);
           }}
         />
       </View>

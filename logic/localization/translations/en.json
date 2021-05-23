@@ -1,5 +1,5 @@
 {
-  "actions": {"cancel": "Cancel", "done": "Done"},
+  "actions": {"cancel": "Cancel", "done": "Done", "ok": "OK"},
   "advanced": "Advanced",
   "appName": "Bible Study Companion",
   "bibleBook": "Bible Book",
@@ -174,8 +174,10 @@
   },
   "other": "Other",
   "prompts": {
-    "setNotification": "Set notification for: ",
-    "nameTaken": "Please select a name you haven't used"
+    "markCompleted": "Mark Completed",
+    "markPreviousRead": "The reading you requested was marked complete. Would you like to mark all readings previous to it complete as well?",
+    "nameTaken": "Please select a name you haven't used",
+    "setNotification": "Set notification for: "
   },
   "readingRemindersPopup": {
     "readingReminders": "Reading Reminders",

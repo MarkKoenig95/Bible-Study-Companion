@@ -37,7 +37,7 @@ const pageTitle = 'notificationsPage';
 
 const days = [];
 
-const NotificationsWrapper = React.memo(props => {
+const NotificationsWrapper = React.memo((props) => {
   const {days, itemID, onPress, onUpdateIsActive, testID, text} = props;
   const isActiveProp = props.isActive;
 
@@ -72,7 +72,7 @@ const NotificationsWrapper = React.memo(props => {
           />
         </View>
         <View style={styles.wrapperContent}>
-          {days.map(day => {
+          {days.map((day) => {
             return (
               <DayMarker
                 testID={testID + '.dayMarker.' + day.abrev}
@@ -126,7 +126,7 @@ function DayMarker(props) {
 
 export default function Notifications(props) {
   const {navigation} = props;
-  console.log('loaded notifications page');
+  log('loaded notifications page');
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
@@ -156,7 +156,7 @@ export default function Notifications(props) {
   }, [navigation, notificationPopup.open]);
 
   useEffect(() => {
-    loadData(userDB, 'tblNotifications').then(res => {
+    loadData(userDB, 'tblNotifications').then((res) => {
       setListItems(res);
     });
   }, [userDB, setListItems, updatePages]);
@@ -173,7 +173,7 @@ export default function Notifications(props) {
     );
     let notificationID;
 
-    let times = days.map(day => time);
+    let times = days.map(() => time);
 
     let hasError = false;
 
@@ -183,7 +183,7 @@ export default function Notifications(props) {
       notificationName,
       days,
       times,
-    ).catch(err => {
+    ).catch((err) => {
       hasError = err;
       console.log('Error adding notification:', err);
       if (err === ERROR.NAME_TAKEN) {

@@ -10,7 +10,7 @@ import {store} from '../data/Store/store';
 import {useUpdate} from '../logic/general';
 import SettingsWrapper from '../components/SettingsWrapper';
 import WeekdayPicker from '../components/inputs/WeekdayPicker';
-import {updateValue} from '../data/Database/generalTransactions';
+import {log, updateValue} from '../data/Database/generalTransactions';
 import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions';
 
 const pageTitle = 'settingsPage';
@@ -18,7 +18,7 @@ const pageTitle = 'settingsPage';
 export default function Settings(props) {
   const {navigation} = props;
 
-  console.log('loaded Settings page');
+  log('loaded Settings page');
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
@@ -117,13 +117,8 @@ export default function Settings(props) {
 }
 
 function WeeklyReadingSettings(props) {
-  const {
-    isShown,
-    toggleIsShown,
-    readingResetDay,
-    setReadingResetDay,
-    testID,
-  } = props;
+  const {isShown, toggleIsShown, readingResetDay, setReadingResetDay, testID} =
+    props;
 
   const activeColor = colors.darkBlue;
 

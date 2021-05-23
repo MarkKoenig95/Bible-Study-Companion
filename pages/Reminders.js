@@ -28,7 +28,7 @@ import {
   addReminder,
   deleteReminder,
 } from '../data/Database/reminderTransactions';
-import {loadData, updateValue} from '../data/Database/generalTransactions';
+import {loadData, log, updateValue} from '../data/Database/generalTransactions';
 import CreateReminderPopup, {
   useCreateReminderPopup,
 } from '../components/popups/CreateReminderPopup';
@@ -402,7 +402,7 @@ const NameSection = (props) => {
 export default function Reminders(props) {
   const {navigation} = props;
 
-  console.log('loaded reminders page');
+  log('loaded reminders page');
   const globalState = useContext(store);
 
   const {dispatch} = globalState;

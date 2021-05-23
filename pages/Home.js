@@ -157,7 +157,7 @@ export async function populateScheduleButtons(
          WHERE IsFinished=0
          ORDER BY ReadingDayID ASC
          LIMIT 1;`,
-    ).then(res => {
+    ).then((res) => {
       if (res.rows.length > 0) {
         completionDate = res.rows.item(0).CompletionDate;
       }
@@ -281,7 +281,7 @@ export async function populateHomeList(
     openMessagePopup,
     afterUpdate,
     updatePages,
-  ).then(res => {
+  ).then((res) => {
     if (res.length > 0) {
       for (let i = 0; i < res.length; i++) {
         log('daily reminder', i, 'is', res[i]);
@@ -295,8 +295,8 @@ export async function populateHomeList(
     shouldShowDaily,
     true,
     updatePages,
-  ).then(results => {
-    results.map(res => {
+  ).then((results) => {
+    results.map((res) => {
       if (res.length > 0) {
         log('schedule buttons are', res);
         todayListItems.push(res);
@@ -318,8 +318,8 @@ export async function populateHomeList(
     bibleDB,
     weeklyReadingReset,
     updatePages,
-  ).then(results => {
-    results.map(res => {
+  ).then((results) => {
+    results.map((res) => {
       log('weekly reading is', res);
       thisWeekListItems.push(res);
     });
@@ -331,7 +331,7 @@ export async function populateHomeList(
     openMessagePopup,
     afterUpdate,
     updatePages,
-  ).then(res => {
+  ).then((res) => {
     if (res.length > 0) {
       for (let i = 0; i < res.length; i++) {
         log('weekly reminder', i, 'is', res[i]);
@@ -354,7 +354,7 @@ export async function populateHomeList(
     openMessagePopup,
     afterUpdate,
     updatePages,
-  ).then(res => {
+  ).then((res) => {
     if (res.length > 0) {
       for (let i = 0; i < res.length; i++) {
         log('monthly reminder', i, 'is', res[i]);
@@ -377,8 +377,8 @@ export async function populateHomeList(
     shouldShowDaily,
     false,
     updatePages,
-  ).then(results => {
-    results.map(res => {
+  ).then((results) => {
+    results.map((res) => {
       if (res.length > 0) {
         log('schedule buttons are', res);
         otherListItems.push(res);
@@ -387,7 +387,7 @@ export async function populateHomeList(
   });
 
   await populateReminders(userDB, FREQS.NEVER, afterUpdate, updatePages).then(
-    res => {
+    (res) => {
       if (res.length > 0) {
         for (let i = 0; i < res.length; i++) {
           log('other reminder', i, 'is', res[i]);
@@ -408,18 +408,13 @@ export async function populateHomeList(
 }
 
 export default function Home(props) {
-  console.log('loaded home page');
+  log('loaded home page');
   const navigation = props.navigation;
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {
-    userDB,
-    bibleDB,
-    updatePages,
-    weeklyReadingResetDay,
-    showDaily,
-  } = globalState.state;
+  const {userDB, bibleDB, updatePages, weeklyReadingResetDay, showDaily} =
+    globalState.state;
   const [scheduleListItems, setScheduleListItems] = useState([]);
   const [weeklyReadingReset, setweeklyReadingReset] = useState();
   const [shouldShowDaily, setShouldShowDaily] = useState();
@@ -429,19 +424,16 @@ export default function Home(props) {
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
-  const {
-    ScheduleListPopups,
-    setScheduleButtons,
-    openRemindersPopup,
-  } = useScheduleButtonsList(
-    userDB,
-    afterUpdate,
-    completedHidden,
-    updatePages,
-    null,
-    null,
-    pageTitle,
-  );
+  const {ScheduleListPopups, setScheduleButtons, openRemindersPopup} =
+    useScheduleButtonsList(
+      userDB,
+      afterUpdate,
+      completedHidden,
+      updatePages,
+      null,
+      null,
+      pageTitle,
+    );
 
   //Set add and settings button in nav bar with appropriate onPress attribute
   useEffect(() => {
@@ -509,7 +501,7 @@ export default function Home(props) {
           openMessagePopup,
           afterUpdate,
           updatePages,
-        ).then(res => {
+        ).then((res) => {
           setScheduleListItems(res);
           populatingHomeList = false;
         });
