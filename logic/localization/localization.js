@@ -72,7 +72,7 @@ export function linkFormulator(type) {
 
   //Remove type argument and leave all others meant for link
   args.shift();
-  args.map(item => {
+  args.map((item) => {
     if (item !== 'nwtsty' && item !== 'study-bible') {
       let trans = translate(linkPrefix + item);
 

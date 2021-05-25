@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
-import {SafeAreaView, View, FlatList} from 'react-native';
+import {SafeAreaView, View, FlatList, Alert} from 'react-native';
 import {translate} from '../logic/localization/localization';
 
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
@@ -113,6 +113,11 @@ function SchedulePage(props) {
           ).then(() => {
             afterUpdate();
             pageBack(navigation);
+
+            Alert.alert(
+              translate('prompts.scheduleRecreatedTitle'),
+              translate('prompts.scheduleRecreatedMessage'),
+            );
           });
         },
       );

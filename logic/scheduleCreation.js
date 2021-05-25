@@ -1,9 +1,4 @@
-import {
-  log,
-  searchQuery,
-  formatDate,
-  runSQL,
-} from '../data/Database/generalTransactions';
+import {log, searchQuery, runSQL} from '../data/Database/generalTransactions';
 import {translate} from './localization/localization';
 import {SCHEDULE_TYPES, VERSE_POSITION} from './general';
 
@@ -53,7 +48,7 @@ let qryThematicLeastIndices;
  *  returns the corresponding value from the tblVerseIndex table
  */
 function createQryOrderIndex(query) {
-  const item = i => {
+  const item = (i) => {
     const index = query.rows.item(i).VerseID - 1;
     const result = tblVerseIndex.rows.item(index);
 
@@ -211,7 +206,7 @@ export async function findVerseIndex(
          FROM tblVerseIndex 
          WHERE BibleBook=? AND Chapter=? AND Verse=?;`,
     [bookId, chapter, verse],
-  ).then(res => {
+  ).then((res) => {
     if (res.rows.length > 0) {
       //The verse searched for exists
       found = true;
@@ -266,7 +261,7 @@ export async function findVerseIndex(
     }
     await runSQL(bibleDB, `SELECT * FROM ${queryOrView} WHERE VerseID=?;`, [
       index,
-    ]).then(res => {
+    ]).then((res) => {
       index = res.rows.item(0)[indexKey] - 1;
     });
   }
@@ -395,7 +390,7 @@ export async function setTrackers(
 
     await runSQL(bibleDB, 'SELECT * FROM qryThematicOrder WHERE VerseID=?;', [
       requestedIndex + 1,
-    ]).then(res => {
+    ]).then((res) => {
       startKey = res.rows.item(0).ThematicOrder - 1;
     });
 
@@ -568,7 +563,7 @@ export function checkAnyVerseBuffer(
     }
   };
 
-  let checker = endValue => {
+  let checker = (endValue) => {
     let isSame = false;
     let tracker;
     let adj = 0;
@@ -998,7 +993,7 @@ function createCustomReadingPortionArray(date, description) {
   let result = [];
 
   //CompletionDate
-  result.push(formatDate(date));
+  result.push(date.toISOString());
 
   //ReadingPortion
   result.push(description);
@@ -1194,7 +1189,7 @@ export function createReadingPortions(
       dayEndIndex,
     );
 
-    portionsToSort.sort(function(a, b) {
+    portionsToSort.sort(function (a, b) {
       return a.endVerseID - b.startVerseID;
     });
   } else {
@@ -1210,10 +1205,10 @@ export function createReadingPortions(
       dayEndIndex,
     );
 
-    portionsToSort1.sort(function(a, b) {
+    portionsToSort1.sort(function (a, b) {
       return a.endVerseID - b.startVerseID;
     });
-    portionsToSort2.sort(function(a, b) {
+    portionsToSort2.sort(function (a, b) {
       return a.endVerseID - b.startVerseID;
     });
 
@@ -1231,14 +1226,15 @@ export function createReadingPortions(
     );
     portions.push(portion);
   } else {
-    const sortPortionsByChronoOrder = portions => {
-      let prevBibleBook = qryVerseIndex.rows.item(portions[0].startIndex)
-        .BibleBook;
+    const sortPortionsByChronoOrder = (portions) => {
+      let prevBibleBook = qryVerseIndex.rows.item(
+        portions[0].startIndex,
+      ).BibleBook;
       let portionArrays = [[]];
       let innerIndex = 0;
 
       //Setup portions array to contain arrays of portions with the same bible book
-      portions.forEach(portion => {
+      portions.forEach((portion) => {
         if (
           prevBibleBook ===
           qryVerseIndex.rows.item(portion.startIndex).BibleBook
@@ -1255,7 +1251,7 @@ export function createReadingPortions(
 
       //Now that the portions array is initialized and we have compartmentalized portions by their
       //bible books, we can sort the individual arrays by each portion's Chronological order again
-      portionArrays.forEach(portionArray => {
+      portionArrays.forEach((portionArray) => {
         portionArray.sort(
           (a, b) =>
             qryVerseIndex.rows.item(a.startIndex).ChronologicalOrder -
@@ -1271,7 +1267,7 @@ export function createReadingPortions(
       );
       //Finally, we extract all of the items into a single dimensional array as we recieved it
       let result = [];
-      portionArrays.forEach(array => {
+      portionArrays.forEach((array) => {
         result = [...result, ...array];
       });
 
@@ -1286,7 +1282,7 @@ export function createReadingPortions(
     let arrayToCompare;
     let tempPortions = [];
 
-    portionsToSort.map(sortedPortion => {
+    portionsToSort.map((sortedPortion) => {
       if (arrayToCompare) {
         if (arrayToCompare.endVerseID === sortedPortion.startVerseID - 1) {
           arrayToCompare.endVerseID = sortedPortion.endVerseID;
@@ -1304,7 +1300,7 @@ export function createReadingPortions(
     tempPortions.push(arrayToCompare);
 
     //Use condensed array of portions to create final reading portions for input
-    tempPortions.map(condensedPortion => {
+    tempPortions.map((condensedPortion) => {
       let portion = createReadingPortion(
         qryVerseIndex,
         condensedPortion.startIndex,
@@ -1356,14 +1352,8 @@ export async function generateBibleSchedule(
   const bibleBookPrefix = 'bibleBooks.';
   const bibleBookSuffix = '.name';
 
-  const {
-    keys,
-    duration,
-    leastIndex,
-    maxIndex,
-    versesPerDay,
-    buffer,
-  } = setScheduleParameters(dur, qryVerseIndex, scheduleType);
+  const {keys, duration, leastIndex, maxIndex, versesPerDay, buffer} =
+    setScheduleParameters(dur, qryVerseIndex, scheduleType);
 
   log('Starting schedule generation');
 
@@ -1386,7 +1376,7 @@ export async function generateBibleSchedule(
     keys,
     leastIndex,
     maxIndex,
-  ).then(res => {
+  ).then((res) => {
     pointer = res.pointer;
     keyIndex = res.keyIndex;
     endIndex = res.endIndex;

@@ -16,7 +16,7 @@ import {
   useUpdate,
   FREQS,
   WEEKLY_READING_TABLE_NAME,
-  legacyBugFixFor103,
+  legacyBugFixFor110,
 } from '../logic/general';
 import {translate} from '../logic/localization/localization';
 import {store} from '../data/Store/store.js';
@@ -28,6 +28,7 @@ import {SubHeading} from '../components/text/Text';
 import useScheduleButtonsList from '../components/ScheduleButtonsList';
 import SectionListHeader from '../components/SectionListHeader';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
+import LoadingPopup from '../components/popups/LoadingPopup';
 
 import styles from '../styles/styles';
 import {setAppVersion} from '../data/Store/actions';
@@ -418,6 +419,7 @@ export default function Home(props) {
   const [scheduleListItems, setScheduleListItems] = useState([]);
   const [weeklyReadingReset, setweeklyReadingReset] = useState();
   const [shouldShowDaily, setShouldShowDaily] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const completedHidden = true;
 
   const afterUpdate = useUpdate(updatePages, dispatch);
@@ -463,13 +465,14 @@ export default function Home(props) {
     });
 
     if (userDB && bibleDB) {
-      appVersion(userDB).then(({prevVersion, currVersion}) => {
+      appVersion(userDB).then(async ({prevVersion, currVersion}) => {
         dispatch(setAppVersion(currVersion));
         if (!prevVersion) {
           navToSchedules();
         }
-
-        legacyBugFixFor103(userDB, bibleDB, prevVersion);
+        setIsLoading(true);
+        await legacyBugFixFor110(userDB, bibleDB, prevVersion);
+        setIsLoading(false);
       });
     }
   }, [bibleDB, dispatch, navigation, userDB]);
@@ -521,6 +524,10 @@ export default function Home(props) {
 
   return (
     <SafeAreaView style={styles.container} testID={pageTitle}>
+      <LoadingPopup
+        testID={pageTitle + '.loadingPopup'}
+        displayPopup={isLoading}
+      />
       <MessagePopup
         testID={pageTitle + '.messagePopup'}
         displayPopup={messagePopup.isDisplayed}

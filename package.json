@@ -17,7 +17,7 @@
     "start": "react-native start",
     "test": "jest",
     "e2e-ios": "detox build -c ios.sim.release && detox test -c ios.sim.release -l warn",
-    "e2e-android": "detox build -c android.emu.debug && detox test -c android.emu.debug -l warn",
+    "e2e-android": "detox build -c android.emu.release && detox test -c android.emu.release -l warn",
     "lint": "eslint .",
     "update-version": "react-native-version --never-amend"
   },
@@ -39,7 +39,7 @@
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.6.0",
     "react-native-localize": "^1.4.0",
-    "react-native-push-notification": "^5.0.1",
+    "react-native-push-notification": "^7.3.1",
     "react-native-reanimated": "^1.7.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.2.0",
@@ -94,6 +94,9 @@
     "transform": {
       "\\.js$": "babel-jest",
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/fileTransformer.js"
-    }
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native(-.*)?|@react-native(-community)?)/)"
+    ]
   }
 }

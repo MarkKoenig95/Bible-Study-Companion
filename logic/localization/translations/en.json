@@ -177,6 +177,8 @@
     "markCompleted": "Mark Completed",
     "markPreviousRead": "The reading you requested was marked complete. Would you like to mark all readings previous to it complete as well?",
     "nameTaken": "Please select a name you haven't used",
+    "scheduleRecreatedMessage": "Your schedule was recreated. Please compare the new schedule with the original schedule (Old) to make sure no information was lost and then delete the old schedule.",
+    "scheduleRecreatedTitle": "Schedule Recreated",
     "setNotification": "Set notification for: "
   },
   "readingRemindersPopup": {

@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {Linking, Platform} from 'react-native';
+import {Alert, Linking, Platform} from 'react-native';
 import {StackActions, StackActionType} from '@react-navigation/native';
 import {runSQL} from '../data/Database/generalTransactions';
 import {
@@ -209,23 +209,25 @@ export function pageBack(navigation: {
 }
 
 // !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------
-export async function legacyBugFixFor103(
+export async function legacyBugFixFor110(
   userDB: Database,
   bibleDB: Database,
   prevVersion: string,
 ) {
-  if (!versionIsLessThan(prevVersion, '1.0.3')) return;
+  if (!versionIsLessThan(prevVersion, '1.1.0')) return;
 
   const tblSchedules = await runSQL(userDB, 'SELECT * FROM tblSchedules;');
 
   for (let i = 0; i < tblSchedules.rows.length; i++) {
     const tableInfo: ScheduleInfo = tblSchedules.rows.item(i);
-    const tableName = formatScheduleTableName(tableInfo.ID);
+
+    const tableName = formatScheduleTableName(tableInfo.ScheduleID);
+
     let firstItem = await runSQL(
       userDB,
       `SELECT CompletionDate FROM ${tableName} WHERE ReadingDayID=1;`,
     );
-    let itemInfo: ReadingScheduleItem = firstItem.rows.item(i);
+    let itemInfo: ReadingScheduleItem = firstItem.rows.item(0);
     let compDate = new Date(itemInfo.CompletionDate);
     let compDateIsADate = !isNaN(compDate.getTime());
 
@@ -237,4 +239,9 @@ export async function legacyBugFixFor103(
       startDate: compDate,
     });
   }
+
+  Alert.alert(
+    translate('prompts.scheduleRecreatedTitle'),
+    translate('prompts.scheduleRecreatedMessage'),
+  );
 }

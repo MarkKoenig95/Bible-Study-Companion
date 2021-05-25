@@ -128,7 +128,7 @@ export async function appVersion(userDB: Database) {
   await runSQL(
     userDB,
     'SELECT Description FROM tblUserPrefs WHERE Name="AppVersion";',
-  ).then(res => {
+  ).then((res) => {
     prevVersion = res.rows.item(0).Description;
   });
 
@@ -200,7 +200,7 @@ async function replaceDB(db: Database) {
     .then(() => {
       console.log('FILE DELETED');
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err.message);
     });
   //@ts-ignore
