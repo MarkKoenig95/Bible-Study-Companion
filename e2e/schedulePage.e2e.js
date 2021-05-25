@@ -24,7 +24,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await device.reloadReactNative();
+  await device.launchApp({newInstance: true});
   await waitForMS(3 * waitTime);
   await element(by.id('tabs.schedulesPage')).tap();
 });
@@ -72,6 +72,8 @@ describe('basic schedule page functions', () => {
       .toBeVisible()
       .withTimeout(10 * waitTime);
 
+    await element(by.text('OK')).tap();
+
     await element(by.id('schedulesPage.Base Seq')).tap();
 
     await waitFor(element(by.id('schedulePage')))
@@ -109,6 +111,8 @@ describe('basic schedule page functions', () => {
 
 describe('bible schedule page', () => {
   beforeAll(async () => {
+    await element(by.id('tabs.schedulesPage')).tap();
+
     await element(by.id('schedulesPage.Base Chrono')).tap();
 
     await waitFor(element(by.id('schedulePage')))
@@ -142,8 +146,9 @@ describe('bible schedule page', () => {
   it('marks a reading portion complete with longPress', async () => {
     await shouldCompleteReadingWithLongPress(
       prefix,
-      'Leviticus 10:1-Numbers 5:1',
+      'Leviticus 10-Numbers 4',
       waitTime,
+      'Cancel',
     );
   });
 
@@ -152,40 +157,43 @@ describe('bible schedule page', () => {
       prefix,
       'Exodus 23-Leviticus 9',
       waitTime,
+      'Cancel',
     );
   });
 
   it('opens buttons popup', async () => {
-    await shouldOpenReadingButtonsPopup(prefix, 'Exodus 1-22');
+    await shouldOpenReadingButtonsPopup(prefix, 'Job 35-42');
   });
 
   it('marks a reading item complete in buttons popup with longPress', async () => {
     await shouldCompleteReadingInButtonPopup(
       prefix,
-      'Exodus 1-22',
       'Job 35-42',
+      'Exodus 1-22',
       'longPress',
+      'Cancel',
     );
   });
 
   it('marks a reading item complete in buttons popup with checkBox', async () => {
     await shouldCompleteReadingInButtonPopup(
       prefix,
-      'Exodus 1-22',
+      'Job 35-42',
       '1 Chronicles 6:1-3',
       'checkBox',
+      'Cancel',
     );
   });
 
   it('opens reading info popup from button in buttons popup', async () => {
-    await shouldOpenReadingButtonsPopup(prefix, 'Exodus 1-22');
-    await shouldOpenReadingInfoPopup(prefix, 'Exodus 1-22');
+    await shouldOpenReadingButtonsPopup(prefix, 'Job 35-42');
+    await shouldOpenReadingInfoPopup(prefix, 'Job 35-42');
   });
 
   it('marks a reading portion complete with the button in the reading info popup opened from buttons popup', async () => {
-    await shouldOpenReadingButtonsPopup(prefix, 'Exodus 1-22');
+    await shouldOpenReadingButtonsPopup(prefix, 'Job 35-42');
 
-    await shouldOpenReadingInfoPopup(prefix, 'Exodus 1-22');
+    await shouldOpenReadingInfoPopup(prefix, 'Job 35-42');
 
     await waitFor(element(by.id(prefix + 'readingInfoPopup.confirmButton')))
       .toBeVisible()
@@ -195,14 +203,14 @@ describe('bible schedule page', () => {
     await element(by.id(prefix + 'readingInfoPopup.confirmButton')).tap();
 
     await expect(
-      element(by.id(prefix + 'multiPortionStartingWith.Exodus 1-22')),
+      element(by.id(prefix + 'multiPortionStartingWith.Job 35-42')),
     ).not.toBeVisible();
   });
 
   it('marks a whole reading portion, made up of many sections, complete', async () => {
     shouldCompleteReadingWithCheckbox(
       prefix,
-      'multiPortionStartingWith.Numbers 5:2-29:1',
+      'multiPortionStartingWith.Numbers 5-28',
       waitTime,
     );
   });

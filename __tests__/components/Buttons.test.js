@@ -5,7 +5,7 @@ import CustomButton from '../../components/buttons/CustomButton';
 import IconButton from '../../components/buttons/IconButton';
 import ScheduleDayButton from '../../components/buttons/ScheduleDayButton';
 import TextButton from '../../components/buttons/TextButton';
-import TimePickerButton from '../../components/buttons/DateTimePickerButton';
+import DateTimePickerButton from '../../components/buttons/DateTimePickerButton';
 
 describe('testing if buttons render', () => {
   it('renders CheckBox correctly', async () => {
@@ -35,7 +35,12 @@ describe('testing if buttons render', () => {
   });
   it('renders TimePickerButton correctly', async () => {
     await act(async () => {
-      renderer.create(<TimePickerButton />);
+      renderer.create(<DateTimePickerButton mode={'time'} time={new Date()} />);
+    });
+  });
+  it('renders DatePickerButton correctly', async () => {
+    await act(async () => {
+      renderer.create(<DateTimePickerButton mode={'date'} time={new Date()} />);
     });
   });
 });

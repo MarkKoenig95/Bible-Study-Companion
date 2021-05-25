@@ -21,7 +21,7 @@ export interface ReadingScheduleItem {
 }
 
 export interface ScheduleInfo {
-  ID: number;
+  ScheduleID: number;
   ScheduleName: string;
   ScheduleType: ScheduleType;
   StartDate: string;

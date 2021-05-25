@@ -150,7 +150,7 @@ function ScheduleButton(props) {
   );
 }
 
-function useScheduleListPopups(onUpdateReadStatus, testID) {
+function useScheduleListPopups(testID) {
   const {buttonsPopup, openButtonsPopup, closeButtonsPopup} = useButtonsPopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] =
@@ -251,6 +251,19 @@ export default function useScheduleButtonsList(
     [readingPopup, userDB, afterUpdate],
   );
 
+  const updateButtonReadings = useCallback(
+    (startID, lastID, isFinished) => {
+      updateMultipleReadStatus(
+        userDB,
+        tableName,
+        lastID,
+        startID,
+        !isFinished,
+      ).then(afterUpdate);
+    },
+    [afterUpdate, tableName, userDB],
+  );
+
   const {
     ScheduleListPopups,
     buttonsPopup,
@@ -259,7 +272,7 @@ export default function useScheduleButtonsList(
     openReadingPopup,
     closeReadingPopup,
     openRemindersPopup,
-  } = useScheduleListPopups(onUpdateReadStatus, testID);
+  } = useScheduleListPopups(testID);
 
   const setScheduleButtons = useCallback(
     (items, index, firstUnfinishedID = Infinity) => {
@@ -381,6 +394,7 @@ export default function useScheduleButtonsList(
             <ScheduleButton
               testID={testID}
               key={JSON.stringify(item)}
+              firstUnfinishedID={firstUnfinishedID}
               item={item}
               tableName={thisTableName}
               title={title}
@@ -415,9 +429,23 @@ export default function useScheduleButtonsList(
             title={title}
             update={updatePages}
             onLongPress={(cb) => {
-              for (let i = 0; i < readingDayIDs.length; i++) {
-                onUpdateReadStatus(isFinished, readingDayIDs[i], thisTableName);
+              let firstID = readingDayIDs[0];
+              let lastID = readingDayIDs[readingDayIDs.length - 1];
+              let isAfterFirstUnfinished = firstID > firstUnfinishedID;
+
+              if (isAfterFirstUnfinished && !isFinished) {
+                onAfterFirstUnfinishedClick(
+                  () => {
+                    updateButtonReadings(1, lastID, isFinished);
+                  },
+                  () => {
+                    updateButtonReadings(firstID, lastID, isFinished);
+                  },
+                );
+                return;
               }
+
+              updateButtonReadings(firstID, lastID, isFinished);
             }}
             onPress={() => {
               openButtonsPopup(
@@ -446,6 +474,7 @@ export default function useScheduleButtonsList(
       buttonsPopup.areButtonsFinished,
       buttonsPopup.readingDayIDs,
       openButtonsPopup,
+      updateButtonReadings,
     ],
   );
 

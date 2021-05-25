@@ -153,6 +153,7 @@ export default function Schedules(props) {
       />
       <View style={styles.content}>
         <FlatList
+          testID={pageTitle + '.list'}
           data={listItems}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => {

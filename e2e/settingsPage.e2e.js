@@ -40,7 +40,7 @@ describe('Weekly reading settings', () => {
 
     // TODO: Get rid of these bits of code
     // Not working as intended for now. Putting in this temporary workaround for the moment
-    await device.reloadReactNative();
+    await device.launchApp({newInstance: true});
     await waitForMS(3 * waitTime);
     await waitFor(element(by.text('Daily Text')))
       .toBeVisible()
@@ -55,7 +55,7 @@ describe('Weekly reading settings', () => {
 
     // TODO: Get rid of these bits of code
     // Not working as intended for now. Putting in this temporary workaround for the moment
-    await device.reloadReactNative();
+    await device.launchApp({newInstance: true});
     await waitForMS(3 * waitTime);
     await waitFor(element(by.text('Daily Text')))
       .toBeVisible()

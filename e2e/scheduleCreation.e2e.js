@@ -1,6 +1,10 @@
 /* eslint-env detox/detox, jest */
 import {getProps} from 'detox-getprops';
-import {setDateTimePicker, waitForMS} from './helpers/general';
+import {
+  scrollUntilVisible,
+  setDateTimePicker,
+  waitForMS,
+} from './helpers/general';
 
 const prefix = 'schedulesPage.';
 var waitTime = 1000;
@@ -18,7 +22,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await device.reloadReactNative();
+  await device.launchApp({newInstance: true});
   await waitFor(element(by.text('Daily Text')))
     .toBeVisible()
     .withTimeout(waitTime * 8);
@@ -62,7 +66,7 @@ describe('create schedules', () => {
   beforeEach(async () => {
     await element(by.id('schedulesPage.header.addButton')).tap();
     // Need to keep waiting until the Bible info DB loads completely
-    await waitForMS(1 * waitTime);
+    await waitForMS(2 * waitTime);
   });
 
   it('should create a custom schedule', async () => {
@@ -96,9 +100,10 @@ describe('create schedules', () => {
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitFor(element(by.id(prefix + 'Cust')))
-      .toBeVisible()
-      .withTimeout(60 * waitTime);
+    await waitForMS(2 * waitTime);
+
+    await scrollUntilVisible(by.id(prefix + 'Cust'), by.id(prefix + 'list'));
+
     await expect(element(by.id(prefix + 'Cust'))).toBeVisible();
   });
 
@@ -146,9 +151,10 @@ describe('create schedules', () => {
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitFor(element(by.id(prefix + 'Spec')))
-      .toBeVisible()
-      .withTimeout(60 * waitTime);
+    await waitForMS(2 * waitTime);
+
+    await scrollUntilVisible(by.id(prefix + 'Spec'), by.id(prefix + 'list'));
+
     await expect(element(by.id(prefix + 'Spec'))).toBeVisible();
   });
 
@@ -194,9 +200,13 @@ describe('create schedules', () => {
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitFor(element(by.id(prefix + 'Doesnt Track')))
-      .toBeVisible()
-      .withTimeout(60 * waitTime);
+    await waitForMS(2 * waitTime);
+
+    await scrollUntilVisible(
+      by.id(prefix + 'Doesnt Track'),
+      by.id(prefix + 'list'),
+    );
+
     await expect(element(by.id(prefix + 'Doesnt Track'))).toBeVisible();
   });
 
@@ -232,9 +242,10 @@ describe('create schedules', () => {
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitFor(element(by.id(prefix + 'Seq')))
-      .toBeVisible()
-      .withTimeout(waitTime * 8);
+    await waitForMS(2 * waitTime);
+
+    await scrollUntilVisible(by.id(prefix + 'Seq'), by.id(prefix + 'list'));
+
     await expect(element(by.id(prefix + 'Seq'))).toBeVisible();
   });
 
@@ -272,9 +283,10 @@ describe('create schedules', () => {
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitFor(element(by.id(prefix + 'Chrono')))
-      .toBeVisible()
-      .withTimeout(waitTime * 8);
+    await waitForMS(2 * waitTime);
+
+    await scrollUntilVisible(by.id(prefix + 'Chrono'), by.id(prefix + 'list'));
+
     await expect(element(by.id(prefix + 'Chrono'))).toBeVisible();
   });
 
@@ -307,15 +319,17 @@ describe('create schedules', () => {
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitFor(element(by.id(prefix + 'Thema')))
-      .toBeVisible()
-      .withTimeout(waitTime * 8);
+    await waitForMS(2 * waitTime);
+
+    await scrollUntilVisible(by.id(prefix + 'Thema'), by.id(prefix + 'list'));
+
     await expect(element(by.id(prefix + 'Thema'))).toBeVisible();
   });
 });
 
 describe('check created schedules', () => {
   it('checks that the basic custom schedule was created correctly', async () => {
+    await scrollUntilVisible(by.id(prefix + 'Cust'), by.id(prefix + 'list'));
     await element(by.id(prefix + 'Cust')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -324,6 +338,7 @@ describe('check created schedules', () => {
   });
 
   it('checks that the custom schedule with a specific date was created correctly', async () => {
+    await scrollUntilVisible(by.id(prefix + 'Spec'), by.id(prefix + 'list'));
     await element(by.id(prefix + 'Spec')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -335,6 +350,10 @@ describe('check created schedules', () => {
   });
 
   it('checks that custom schedule which doesnt track dates was created correctly', async () => {
+    await scrollUntilVisible(
+      by.id(prefix + 'Doesnt Track'),
+      by.id(prefix + 'list'),
+    );
     await element(by.id(prefix + 'Doesnt Track')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -346,6 +365,7 @@ describe('check created schedules', () => {
   });
 
   it('checks that sequential schedule was created correctly', async () => {
+    await scrollUntilVisible(by.id(prefix + 'Seq'), by.id(prefix + 'list'));
     await element(by.id(prefix + 'Seq')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -354,6 +374,7 @@ describe('check created schedules', () => {
   });
 
   it('checks that chronological schedule was created correctly', async () => {
+    await scrollUntilVisible(by.id(prefix + 'Chrono'), by.id(prefix + 'list'));
     await element(by.id(prefix + 'Chrono')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -362,6 +383,7 @@ describe('check created schedules', () => {
   });
 
   it('checks that thematic was created correctly', async () => {
+    await scrollUntilVisible(by.id(prefix + 'Thema'), by.id(prefix + 'list'));
     await element(by.id(prefix + 'Thema')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()

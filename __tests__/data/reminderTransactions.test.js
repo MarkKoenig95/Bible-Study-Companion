@@ -375,14 +375,16 @@ describe('addReminder', () => {
       userDB,
       'SELECT * FROM tblReminders WHERE Name=?',
       dailyName,
-    ).then(res => {
+    ).then((res) => {
       reminder = res.rows.item(0);
     });
+
+    let reminderCompDate = new Date(reminder.CompletionDate);
 
     expect(reminder.ResetValue).toBe(1);
     expect(reminder.Name).toBe(dailyName);
     expect(reminder.Frequency).toBe(FREQS.DAILY);
-    expect(reminder.CompletionDate).toBe(baseDate.toString());
+    expect(reminderCompDate.toString()).toBe(baseDate.toString());
   });
 
   test('WEEKLY frequency', async () => {
@@ -393,14 +395,16 @@ describe('addReminder', () => {
       userDB,
       'SELECT * FROM tblReminders WHERE Name=?',
       weeklyName,
-    ).then(res => {
+    ).then((res) => {
       reminder = res.rows.item(0);
     });
+
+    let reminderCompDate = new Date(reminder.CompletionDate);
 
     expect(reminder.ResetValue).toBe(2);
     expect(reminder.Name).toBe(weeklyName);
     expect(reminder.Frequency).toBe(FREQS.WEEKLY);
-    expect(reminder.CompletionDate).toBe(baseDate.toString());
+    expect(reminderCompDate.toString()).toBe(baseDate.toString());
   });
 
   test('MONTHLY frequency', async () => {
@@ -411,14 +415,16 @@ describe('addReminder', () => {
       userDB,
       'SELECT * FROM tblReminders WHERE Name=?',
       monthlyName,
-    ).then(res => {
+    ).then((res) => {
       reminder = res.rows.item(0);
     });
+
+    let reminderCompDate = new Date(reminder.CompletionDate);
 
     expect(reminder.ResetValue).toBe(31);
     expect(reminder.Name).toBe(monthlyName);
     expect(reminder.Frequency).toBe(FREQS.MONTHLY);
-    expect(reminder.CompletionDate).toBe(baseDate.toString());
+    expect(reminderCompDate.toString()).toBe(baseDate.toString());
   });
 });
 
@@ -494,7 +500,7 @@ test('updateReminderDates', async () => {
 test('deleteReminder', async () => {
   let initialLength;
 
-  await getTblReminders().then(res => {
+  await getTblReminders().then((res) => {
     initialLength = res.rows.length;
   });
 
@@ -502,7 +508,7 @@ test('deleteReminder', async () => {
 
   let finalLength;
 
-  await getTblReminders().then(res => {
+  await getTblReminders().then((res) => {
     finalLength = res.rows.length;
   });
 

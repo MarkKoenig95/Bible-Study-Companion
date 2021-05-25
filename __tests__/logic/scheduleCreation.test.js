@@ -1,5 +1,4 @@
 import SQLite from 'react-native-sqlite-storage';
-import {formatDate} from '../../data/Database/generalTransactions';
 import {
   createScheduleTable,
   insertReadingPortions,
@@ -53,59 +52,59 @@ const customScheduleValuesArray = ['CompletionDate', 'ReadingPortion'];
 
 const thematicScheduleParametersResult = {
   buffer: {
-    '1': 28,
-    '2': 33,
-    '3': 12,
-    '4': 11,
-    '5': 28,
-    '6': 23,
-    '7': 13,
+    1: 28,
+    2: 33,
+    3: 12,
+    4: 11,
+    5: 28,
+    6: 23,
+    7: 13,
   },
   duration: 372,
   keys: [1, 2, 3, 4, 5, 6, 7],
   leastIndex: {
-    '1': 0,
-    '2': 5852,
-    '3': 12870,
-    '4': 15331,
-    '5': 17655,
-    '6': 23549,
-    '7': 28311,
+    1: 0,
+    2: 5852,
+    3: 12870,
+    4: 15331,
+    5: 17655,
+    6: 23549,
+    7: 28311,
   },
   maxIndex: {
-    '1': 5851,
-    '2': 12869,
-    '3': 15330,
-    '4': 17654,
-    '5': 23548,
-    '6': 28310,
-    '7': 31077,
+    1: 5851,
+    2: 12869,
+    3: 15330,
+    4: 17654,
+    5: 23548,
+    6: 28310,
+    7: 31077,
   },
   versesPerDay: {
-    '1': 111,
-    '2': 133,
-    '3': 46,
-    '4': 44,
-    '5': 111,
-    '6': 90,
-    '7': 52,
+    1: 111,
+    2: 133,
+    3: 46,
+    4: 44,
+    5: 111,
+    6: 90,
+    7: 52,
   },
 };
 
 const otherScheduleParametersResult = {
   buffer: {
-    '1': 21,
+    1: 21,
   },
   duration: 372,
   keys: ['1'],
   leastIndex: {
-    '1': 0,
+    1: 0,
   },
   maxIndex: {
-    '1': 31077,
+    1: 31077,
   },
   versesPerDay: {
-    '1': 83.54301075268818,
+    1: 83.54301075268818,
   },
 };
 
@@ -127,7 +126,7 @@ beforeAll(async () => {
 
   getUserDB();
 
-  await runQueries(bibleDB).then(res => {
+  await runQueries(bibleDB).then((res) => {
     tblVerseIndex = res.tblVerseIndex;
     qryChronologicalIndex = res.qryChronologicalIndex;
     qryThematicIndex = res.qryThematicIndex;
@@ -185,7 +184,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       1,
       SCHEDULE_TYPES.SEQUENTIAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(0);
@@ -200,7 +199,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       19,
       SCHEDULE_TYPES.SEQUENTIAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(15019);
@@ -215,7 +214,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       21,
       SCHEDULE_TYPES.SEQUENTIAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(31077);
@@ -230,7 +229,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       1,
       SCHEDULE_TYPES.SEQUENTIAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(1533);
@@ -245,7 +244,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       200,
       SCHEDULE_TYPES.SEQUENTIAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(31);
@@ -260,7 +259,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       200,
       SCHEDULE_TYPES.SEQUENTIAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(22511);
@@ -275,7 +274,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       1,
       SCHEDULE_TYPES.CHRONOLOGICAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(0);
@@ -290,7 +289,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       16,
       SCHEDULE_TYPES.CHRONOLOGICAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(15001);
@@ -305,7 +304,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       21,
       SCHEDULE_TYPES.CHRONOLOGICAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(31077);
@@ -320,7 +319,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       1,
       SCHEDULE_TYPES.CHRONOLOGICAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(28584);
@@ -335,7 +334,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       200,
       SCHEDULE_TYPES.CHRONOLOGICAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(13679);
@@ -350,7 +349,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       200,
       SCHEDULE_TYPES.CHRONOLOGICAL,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(30222);
@@ -359,7 +358,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
   test('an expected min verse for the type Thematic', async () => {
     let index;
     await findVerseIndex(bibleDB, 1, 1, 1, SCHEDULE_TYPES.THEMATIC, true).then(
-      res => {
+      (res) => {
         index = res;
       },
     );
@@ -375,7 +374,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       176,
       SCHEDULE_TYPES.THEMATIC,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(15004);
@@ -390,7 +389,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       25,
       SCHEDULE_TYPES.THEMATIC,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(31077);
@@ -405,7 +404,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       1,
       SCHEDULE_TYPES.THEMATIC,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(4893);
@@ -420,7 +419,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       200,
       SCHEDULE_TYPES.THEMATIC,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(22532);
@@ -435,7 +434,7 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
       200,
       SCHEDULE_TYPES.THEMATIC,
       true,
-    ).then(res => {
+    ).then((res) => {
       index = res;
     });
     expect(index).toBe(22788);
@@ -468,25 +467,25 @@ describe('given a duration, query object, and a schedule type returns parameters
     let comparisonResult = {...thematicScheduleParametersResult};
 
     comparisonResult.buffer = {
-      '1': 555821,
-      '2': 666567,
-      '3': 233745,
-      '4': 220733,
-      '5': 559810,
-      '6': 452293,
-      '7': 262809,
+      1: 555821,
+      2: 666567,
+      3: 233745,
+      4: 220733,
+      5: 559810,
+      6: 452293,
+      7: 262809,
     };
 
     comparisonResult.duration = 0.018600000000000002;
 
     comparisonResult.versesPerDay = {
-      '1': 2223283,
-      '2': 2666268,
-      '3': 934979,
-      '4': 882930,
-      '5': 2239240,
-      '6': 1809172,
-      '7': 1051234,
+      1: 2223283,
+      2: 2666268,
+      3: 934979,
+      4: 882930,
+      5: 2239240,
+      6: 1809172,
+      7: 1051234,
     };
 
     let result = setScheduleParameters(
@@ -501,25 +500,25 @@ describe('given a duration, query object, and a schedule type returns parameters
   test('A large whole number duration for a Thematic Schedule', () => {
     let comparisonResult = {...thematicScheduleParametersResult};
     comparisonResult.buffer = {
-      '1': 1,
-      '2': 1,
-      '3': 0,
-      '4': 0,
-      '5': 1,
-      '6': 1,
-      '7': 1,
+      1: 1,
+      2: 1,
+      3: 0,
+      4: 0,
+      5: 1,
+      6: 1,
+      7: 1,
     };
 
     comparisonResult.duration = 9300;
 
     comparisonResult.versesPerDay = {
-      '1': 4,
-      '2': 5,
-      '3': 1,
-      '4': 1,
-      '5': 4,
-      '6': 3,
-      '7': 2,
+      1: 4,
+      2: 5,
+      3: 1,
+      4: 1,
+      5: 4,
+      6: 3,
+      7: 2,
     };
 
     let result = setScheduleParameters(
@@ -534,25 +533,25 @@ describe('given a duration, query object, and a schedule type returns parameters
   test('A large decimal duration for a Thematic Schedule', () => {
     let comparisonResult = {...thematicScheduleParametersResult};
     comparisonResult.buffer = {
-      '1': 1,
-      '2': 1,
-      '3': 0,
-      '4': 0,
-      '5': 1,
-      '6': 1,
-      '7': 1,
+      1: 1,
+      2: 1,
+      3: 0,
+      4: 0,
+      5: 1,
+      6: 1,
+      7: 1,
     };
 
     comparisonResult.duration = 9139.255125923399;
 
     comparisonResult.versesPerDay = {
-      '1': 4,
-      '2': 5,
-      '3': 1,
-      '4': 1,
-      '5': 4,
-      '6': 3,
-      '7': 2,
+      1: 4,
+      2: 5,
+      3: 1,
+      4: 1,
+      5: 4,
+      6: 3,
+      7: 2,
     };
 
     let result = setScheduleParameters(
@@ -580,13 +579,13 @@ describe('given a duration, query object, and a schedule type returns parameters
     let comparisonResult = {...otherScheduleParametersResult};
 
     comparisonResult.buffer = {
-      '1': 417715,
+      1: 417715,
     };
 
     comparisonResult.duration = 0.018600000000000002;
 
     comparisonResult.versesPerDay = {
-      '1': 1670860.2150537632,
+      1: 1670860.2150537632,
     };
 
     let result = setScheduleParameters(
@@ -601,11 +600,11 @@ describe('given a duration, query object, and a schedule type returns parameters
   test('A large whole number duration for a Non-Thematic Schedule', () => {
     let comparisonResult = {...otherScheduleParametersResult};
 
-    comparisonResult.buffer = {'1': 1};
+    comparisonResult.buffer = {1: 1};
 
     comparisonResult.duration = 9300;
 
-    comparisonResult.versesPerDay = {'1': 3.341720430107527};
+    comparisonResult.versesPerDay = {1: 3.341720430107527};
 
     let result = setScheduleParameters(
       25,
@@ -620,13 +619,13 @@ describe('given a duration, query object, and a schedule type returns parameters
     let comparisonResult = {...otherScheduleParametersResult};
 
     comparisonResult.buffer = {
-      '1': 1,
+      1: 1,
     };
 
     comparisonResult.duration = 9139.255125923399;
 
     comparisonResult.versesPerDay = {
-      '1': 3.400495945435158,
+      1: 3.400495945435158,
     };
 
     let result = setScheduleParameters(
@@ -653,20 +652,20 @@ describe('given a query object, a start index and preprocessed schedule paramete
 
     expect(result).toStrictEqual({
       endIndex: {
-        '1': -1,
+        1: -1,
       },
       hasLooped: {
-        '1': false,
+        1: false,
       },
       isEnd: {
-        '1': false,
+        1: false,
       },
       keyIndex: 0,
       pointer: {
-        '1': 0,
+        1: 0,
       },
       verseOverflow: {
-        '1': 0,
+        1: 0,
       },
     });
   });
@@ -683,50 +682,50 @@ describe('given a query object, a start index and preprocessed schedule paramete
 
     expect(result).toStrictEqual({
       endIndex: {
-        '1': -1,
-        '2': 5851,
-        '3': 12869,
-        '4': 15330,
-        '5': 17654,
-        '6': 23548,
-        '7': 28310,
+        1: -1,
+        2: 5851,
+        3: 12869,
+        4: 15330,
+        5: 17654,
+        6: 23548,
+        7: 28310,
       },
       hasLooped: {
-        '1': false,
-        '2': false,
-        '3': false,
-        '4': false,
-        '5': false,
-        '6': false,
-        '7': false,
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+        6: false,
+        7: false,
       },
       isEnd: {
-        '1': false,
-        '2': false,
-        '3': false,
-        '4': false,
-        '5': false,
-        '6': false,
-        '7': false,
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+        6: false,
+        7: false,
       },
       keyIndex: 0,
       pointer: {
-        '1': 0,
-        '2': 5852,
-        '3': 12870,
-        '4': 15331,
-        '5': 17655,
-        '6': 23549,
-        '7': 28311,
+        1: 0,
+        2: 5852,
+        3: 12870,
+        4: 15331,
+        5: 17655,
+        6: 23549,
+        7: 28311,
       },
       verseOverflow: {
-        '1': 0,
-        '2': 0,
-        '3': 0,
-        '4': 0,
-        '5': 0,
-        '6': 0,
-        '7': 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
       },
     });
   });
@@ -1583,7 +1582,7 @@ describe('test checkEnd for THEMATIC schedule given tracking indicators for sche
 });
 
 describe('createReadingPortions', () => {
-  let newDate = formatDate(date);
+  let newDate = date.toISOString();
 
   let simpleResultArray = [
     'Genesis',
@@ -1720,7 +1719,7 @@ describe('createReadingPortions', () => {
       19,
       33,
       22,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       'Psalms 33',
       3,
     ];
@@ -1734,7 +1733,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       14,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:1-14',
       0,
     ];
@@ -1748,7 +1747,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       25,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:24-25',
       1,
     ];
@@ -1762,7 +1761,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       19,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:17-19',
       1,
     ];
@@ -1776,7 +1775,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       28,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:26-28',
       2,
     ];
@@ -1790,7 +1789,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       22,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 10:22',
       1,
     ];
@@ -1804,7 +1803,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       1,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 10:1',
       0,
     ];
@@ -1818,7 +1817,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       3,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 7:11-8:3',
       1,
     ];
@@ -1832,7 +1831,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       16,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 8:11-16',
       1,
     ];
@@ -1846,7 +1845,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       6,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 8:4-6',
       1,
     ];
@@ -1860,7 +1859,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       18,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 8:17-18',
       2,
     ];
@@ -1874,7 +1873,7 @@ describe('createReadingPortions', () => {
       14,
       9,
       21,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 9:21',
       1,
     ];
@@ -1917,7 +1916,7 @@ describe('createReadingPortions', () => {
       19,
       33,
       22,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       'Psalms 33',
       3,
     ];
@@ -1931,7 +1930,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       14,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:1-14',
       0,
     ];
@@ -1945,7 +1944,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       25,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:24-25',
       1,
     ];
@@ -1959,7 +1958,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       19,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:17-19',
       1,
     ];
@@ -1973,7 +1972,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       28,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 9:26-28',
       2,
     ];
@@ -1987,7 +1986,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       22,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 10:22',
       1,
     ];
@@ -2001,7 +2000,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       13,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '1 Kings 10:1-13',
       0,
     ];
@@ -2015,7 +2014,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       3,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 7:11-8:3',
       1,
     ];
@@ -2029,7 +2028,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       16,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 8:11-16',
       1,
     ];
@@ -2043,7 +2042,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       6,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 8:4-6',
       1,
     ];
@@ -2057,7 +2056,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       18,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 8:17-18',
       2,
     ];
@@ -2071,7 +2070,7 @@ describe('createReadingPortions', () => {
       14,
       9,
       21,
-      '2/1/21',
+      '2021-01-31T16:00:00.000Z',
       '2 Chronicles 9:21',
       1,
     ];
@@ -2162,7 +2161,7 @@ describe('createReadingPortions', () => {
 });
 
 test('insertReadingPortions', async () => {
-  let newDate = formatDate(date);
+  let newDate = date.toISOString();
 
   let portion1 = [
     'Malachi',
@@ -2267,16 +2266,22 @@ describe('create bible reading schedule', () => {
       1,
     );
 
+    let thisDate = new Date(readingPortions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     expect(readingPortions.length).toBe(38);
 
     expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1-29');
-    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
 
     today.setDate(today.getDate() + 37);
+    let thatDate = new Date(readingPortions[37][indices.CompletionDate]);
+    thatDate.setHours(0, 0, 0, 0);
     expect(readingPortions[37][indices.ReadingPortion]).toBe(
       'Revelation 18-22',
     );
-    expect(readingPortions[37][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thatDate.toString()).toBe(today.toString());
   });
 
   test('Sequential schedule with a maximum duration and a non-existant verse', async () => {
@@ -2294,22 +2299,28 @@ describe('create bible reading schedule', () => {
       100,
     );
 
+    let thisDate = new Date(readingPortions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     expect(readingPortions.length).toBe(4447);
 
     expect(readingPortions[0][indices.ReadingPortion]).toBe('Matthew 1:1-5');
-    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
 
     expect(readingPortions[4446][indices.ReadingPortion]).toBe(
       'Malachi 3:17-4:6',
     );
+
+    let thatDate = new Date(readingPortions[4446][indices.CompletionDate]);
+    thatDate.setHours(0, 0, 0, 0);
     today.setDate(today.getDate() + 4446);
-    expect(readingPortions[4446][indices.CompletionDate]).toBe(
-      formatDate(today),
-    );
+    expect(thatDate.toString()).toBe(today.toString());
   });
 
   test('Chronological schedule with a minimum duration and a non-existant verse', async () => {
     let scheduleType = SCHEDULE_TYPES.CHRONOLOGICAL;
+    let today = new Date();
 
     await setScheduleTable(scheduleType);
 
@@ -2322,17 +2333,20 @@ describe('create bible reading schedule', () => {
       100,
     );
 
-    let today = new Date();
+    let thisDate = new Date(readingPortions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     expect(readingPortions.length).toBe(570);
 
     expect(readingPortions[0][indices.ReadingPortion]).toBe('Jonah 1-4');
-    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
 
+    let thatDate = new Date(readingPortions[569][indices.CompletionDate]);
+    thatDate.setHours(0, 0, 0, 0);
     today.setDate(today.getDate() + 36); //Chronological schedules have multiple schedules per day
+    expect(thatDate.toString()).toBe(today.toString());
     expect(readingPortions[569][indices.ReadingPortion]).toBe('Hosea 1-5');
-    expect(readingPortions[569][indices.CompletionDate]).toBe(
-      formatDate(today),
-    );
   });
 
   test('Chronological schedule with a maximum duration and an existing verse', async () => {
@@ -2350,17 +2364,21 @@ describe('create bible reading schedule', () => {
     );
 
     let today = new Date();
+    let thisDate = new Date(readingPortions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     expect(readingPortions.length).toBe(5059);
 
     expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1:1-5');
-    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
 
+    let thatDate = new Date(readingPortions[5058][indices.CompletionDate]);
+    thatDate.setHours(0, 0, 0, 0);
     today.setDate(today.getDate() + 4447); //Chronological schedules have multiple schedules per day
+    expect(thatDate.toString()).toBe(today.toString());
     expect(readingPortions[5058][indices.ReadingPortion]).toBe(
       'Revelation 22:20-21',
-    );
-    expect(readingPortions[5058][indices.CompletionDate]).toBe(
-      formatDate(today),
     );
   });
 
@@ -2379,14 +2397,23 @@ describe('create bible reading schedule', () => {
     );
 
     let today = new Date();
+    let thisDate = new Date(readingPortions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     expect(readingPortions.length).toBe(44);
 
     expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1-37');
-    expect(readingPortions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
 
     expect(readingPortions[43][indices.ReadingPortion]).toBe('1 John 2-Jude 1');
+
     today.setDate(today.getDate() + 41);
-    expect(readingPortions[43][indices.CompletionDate]).toBe(formatDate(today));
+
+    let thatDate = new Date(readingPortions[43][indices.CompletionDate]);
+    thatDate.setHours(0, 0, 0, 0);
+
+    expect(thatDate.toString()).toBe(today.toString());
   });
 
   test('Thematic schedule with a maximum duration and a non-existant verse', async () => {
@@ -2405,18 +2432,22 @@ describe('create bible reading schedule', () => {
 
     await userDB.executeSql('SELECT * FROM tblTest', []).then(([res]) => {
       let today = new Date();
+      let thisDate = new Date(readingPortions[0][indices.CompletionDate]);
+      thisDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
       expect(readingPortions.length).toBe(6436);
 
       expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1:1-6');
-      expect(readingPortions[0][indices.CompletionDate]).toBe(
-        formatDate(today),
-      );
+      expect(thisDate.toString()).toBe(today.toString());
 
       expect(readingPortions[6435][indices.ReadingPortion]).toBe('Esther 10');
       today.setDate(today.getDate() + 6433);
-      expect(readingPortions[6435][indices.CompletionDate]).toBe(
-        formatDate(today),
-      );
+
+      let thatDate = new Date(readingPortions[6435][indices.CompletionDate]);
+      thatDate.setHours(0, 0, 0, 0);
+
+      expect(thatDate.toString()).toBe(today.toString());
     });
   });
 });
@@ -2462,25 +2493,33 @@ describe('create custom reading schedule', () => {
     let portions = generateCustomSchedule(1, 1, 'Portion', 1000000000000000);
 
     let today = new Date();
+    let thisDate = new Date(portions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
     expect(portions.length).toBe(1);
 
     expect(portions[0][indices.ReadingPortion]).toBe('Portion 1');
-    expect(portions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
   });
 
   test('a large max portion and a small portions per day', async () => {
     let portions = generateCustomSchedule(0, 1000, 'Portion', 0.1);
 
     let today = new Date();
+    let thisDate = new Date(portions[0][indices.CompletionDate]);
+    thisDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
     expect(portions.length).toBe(10001);
 
     expect(portions[0][indices.ReadingPortion]).toBe('Portion 0-0.1');
-    expect(portions[0][indices.CompletionDate]).toBe(formatDate(today));
+    expect(thisDate.toString()).toBe(today.toString());
 
     expect(portions[10000][indices.ReadingPortion]).toBe('Portion 1000');
     today.setDate(today.getDate() + 10000);
-    expect(portions[10000][indices.CompletionDate]).toBe(formatDate(today));
+    let thatDate = new Date(portions[10000][indices.CompletionDate]);
+    thatDate.setHours(0, 0, 0, 0);
+    expect(thatDate.toString()).toBe(today.toString());
   });
 });

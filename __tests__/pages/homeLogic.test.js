@@ -112,7 +112,7 @@ test('populateWeeklyReading', async () => {
   expect(item.EndChapter).toBe(9);
   expect(item.EndVerse).toBe(9);
   expect(item.VersePosition).toBe(VERSE_POSITION.START);
-  expect(item.CompletionDate).toBe('3/4/21');
+  expect(item.CompletionDate).toBe('2021-03-03T16:00:00.000Z');
   expect(item.ReadingPortion).toBe('Numbers 9:1-9');
   expect(item.IsFinished).toBe(0);
   expect(item.title).toBe('Weekly Reading');
@@ -122,7 +122,7 @@ test('populateWeeklyReading', async () => {
   let finalItem = result[0][6];
 
   expect(finalItem.ReadingDayID).toBe(7);
-  expect(finalItem.CompletionDate).toBe('3/10/21');
+  expect(finalItem.CompletionDate).toBe('2021-03-09T16:00:00.000Z');
   expect(finalItem.ReadingPortion).toBe('Numbers 10:32-36');
 });
 

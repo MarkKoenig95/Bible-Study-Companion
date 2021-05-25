@@ -39,7 +39,7 @@ async function getNotification() {
 
   await runSQL(userDB, 'SELECT * FROM tblNotifications WHERE Name=?', [
     notificationName,
-  ]).then(res => {
+  ]).then((res) => {
     notif = res.rows.item(0);
   });
 
@@ -50,8 +50,8 @@ describe('initValues', () => {
   test('Everything active', () => {
     let time = new Date(); // Sunday, March 7th 2021 at 9:00am
     time.setHours(8);
-    const times = baseArray.map(item => time);
-    const days = baseArray.map(item => true);
+    const times = baseArray.map(() => time);
+    const days = baseArray.map(() => true);
 
     let {activeDays, activeTimes, nextDate} = initValues(days, times);
     let tempDate = new Date(time); // Sunday, March 7th 2021 at 8:00am
@@ -60,15 +60,16 @@ describe('initValues', () => {
     expect(nextDate).toStrictEqual(tempDate);
 
     for (let i = 0; i < 7; i++) {
+      let activeTime = new Date(activeTimes[i]);
       expect(activeDays[i]).toBe(1);
-      expect(activeTimes[i]).toBe(time.toString());
+      expect(activeTime.toString()).toBe(time.toString());
     }
   });
 
   test('Only farthest date from today active', () => {
     let time = new Date();
     time.setHours(8);
-    const times = baseArray.map(item => time);
+    const times = baseArray.map(() => time);
     const days = [...baseArray];
 
     days[6] = true;
@@ -79,11 +80,11 @@ describe('initValues', () => {
 
     expect(nextDate).toStrictEqual(tempDate);
     expect(activeDays[6]).toBe(1);
-    expect(activeTimes[6]).toBe(time.toString());
+    expect(new Date(activeTimes[6]).toString()).toBe(time.toString());
 
     for (let i = 0; i < 6; i++) {
       expect(activeDays[i]).toBe(0);
-      expect(activeTimes[i]).toBe(time.toString());
+      expect(new Date(activeTimes[i]).toString()).toBe(time.toString());
     }
   });
 });
@@ -109,14 +110,14 @@ test('addNotification', async () => {
   //--------------------- Checks ---------------------
   for (let i = 0; i < 6; i++) {
     expect(notif[`IsDay${i}Active`]).toBe(1);
-    expect(notif[`Day${i}Time`]).toBe(time.toString());
+    expect(new Date(notif[`Day${i}Time`]).toString()).toBe(time.toString());
   }
 
   expect(notif.Name).toBe(notificationName);
   expect(notif.IsNotificationActive).toBe(1);
 
   time.setDate(8);
-  expect(notif.NextNotifDate).toBe(time.toString());
+  expect(new Date(notif.NextNotifDate).toString()).toBe(time.toString());
 });
 
 test('getValueArraysFromItem', () => {
@@ -163,7 +164,7 @@ test('updateNotifications', async () => {
 
   const notif = await getNotification();
 
-  expect(notif.NextNotifDate).toBe(time.toString());
+  expect(new Date(notif.NextNotifDate).toString()).toBe(time.toString());
 });
 
 test('deleteNotification', async () => {

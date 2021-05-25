@@ -19,6 +19,7 @@ export async function shouldCompleteReadingFromInfoPopup(
   parentID,
   portion,
   waitTime,
+  cancelOrOK,
 ) {
   await shouldOpenReadingInfoPopup(parentID, portion);
 
@@ -28,6 +29,10 @@ export async function shouldCompleteReadingFromInfoPopup(
     .scroll(50, 'down');
 
   await element(by.id(parentID + 'readingInfoPopup.confirmButton')).tap();
+
+  if (cancelOrOK) {
+    await element(by.text(cancelOrOK)).tap();
+  }
 
   await expect(element(by.id(parentID + 'readingInfoPopup'))).not.toBeVisible();
 
@@ -42,8 +47,13 @@ export async function shouldCompleteReadingWithLongPress(
   parentID,
   portion,
   waitTime,
+  cancelOrOK,
 ) {
   await element(by.id(parentID + portion)).longPress();
+
+  if (cancelOrOK) {
+    await element(by.text(cancelOrOK)).tap();
+  }
 
   await waitFor(element(by.id(parentID + portion)))
     .not.toBeVisible()
@@ -56,8 +66,13 @@ export async function shouldCompleteReadingWithCheckbox(
   parentID,
   portion,
   waitTime,
+  cancelOrOK,
 ) {
   await element(by.id(parentID + portion + '.checkBox')).tap();
+
+  if (cancelOrOK) {
+    await element(by.text(cancelOrOK)).tap();
+  }
 
   await waitFor(element(by.id(parentID + portion)))
     .not.toBeVisible()
@@ -86,6 +101,7 @@ export async function shouldCompleteReadingInButtonPopup(
   startPortion,
   portionToComp,
   completionMethod = 'checkBox',
+  cancelOrOK,
 ) {
   const completionFunctions = {
     longPress: async () => {
@@ -98,6 +114,10 @@ export async function shouldCompleteReadingInButtonPopup(
   await shouldOpenReadingButtonsPopup(parentID, startPortion);
 
   await completionFunctions[completionMethod]();
+
+  if (cancelOrOK) {
+    await element(by.text(cancelOrOK)).tap();
+  }
 
   // TODO: Make it so that checked off items in buttons popup disappear immediately (at least for weekly readings). Then get rid of these bits of code once bug is fixed
   // ! --------------------------------------------------------------------
@@ -116,6 +136,7 @@ export async function shouldCompleteReadingInButtonPopupFromInfoPopup(
   parentID,
   multiPortionStart,
   portionToComplete,
+  cancelOrOK,
 ) {
   await shouldOpenReadingButtonsPopup(parentID, multiPortionStart);
 
@@ -127,6 +148,10 @@ export async function shouldCompleteReadingInButtonPopupFromInfoPopup(
     .scroll(50, 'down');
 
   await element(by.id(parentID + 'readingInfoPopup.confirmButton')).tap();
+
+  if (cancelOrOK) {
+    await element(by.text(cancelOrOK)).tap();
+  }
 
   await shouldOpenReadingButtonsPopup(parentID, multiPortionStart);
 

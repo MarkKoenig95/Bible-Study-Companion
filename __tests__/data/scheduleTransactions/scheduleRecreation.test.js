@@ -501,12 +501,31 @@ describe('match finished portions between SIMILAR, BASIC schedules starting at t
 
     let scheduleLength = newScheduleFinished.rows.length;
 
+    let newScheduleFinishedFirstItem = {...newScheduleFinished.rows.item(0)};
+    let oldScheduleFinishedFirstItem = {...newScheduleFinished.rows.item(0)};
+    let newScheduleFinishedLastItem = {
+      ...newScheduleFinished.rows.item(scheduleLength - 1),
+    };
+    let oldScheduleFinishedLastItem = {
+      ...newScheduleFinished.rows.item(scheduleLength - 1),
+    };
+
+    //Chop off the miliseconds
+    newScheduleFinishedFirstItem.CompletionDate =
+      newScheduleFinishedFirstItem.CompletionDate.slice(0, -5);
+    oldScheduleFinishedFirstItem.CompletionDate =
+      oldScheduleFinishedFirstItem.CompletionDate.slice(0, -5);
+    newScheduleFinishedLastItem.CompletionDate =
+      newScheduleFinishedLastItem.CompletionDate.slice(0, -5);
+    oldScheduleFinishedLastItem.CompletionDate =
+      oldScheduleFinishedLastItem.CompletionDate.slice(0, -5);
+
     expect(scheduleLength).toBe(origScheduleFinished.rows.length);
-    expect(newScheduleFinished.rows.item(0)).toStrictEqual(
-      origScheduleFinished.rows.item(0),
+    expect(newScheduleFinishedFirstItem).toStrictEqual(
+      oldScheduleFinishedFirstItem,
     );
-    expect(newScheduleFinished.rows.item(scheduleLength)).toStrictEqual(
-      origScheduleFinished.rows.item(scheduleLength),
+    expect(newScheduleFinishedLastItem).toStrictEqual(
+      oldScheduleFinishedLastItem,
     );
   });
 
@@ -526,12 +545,31 @@ describe('match finished portions between SIMILAR, BASIC schedules starting at t
 
     let scheduleLength = newScheduleFinished.rows.length;
 
+    let newScheduleFinishedFirstItem = {...newScheduleFinished.rows.item(0)};
+    let oldScheduleFinishedFirstItem = {...newScheduleFinished.rows.item(0)};
+    let newScheduleFinishedLastItem = {
+      ...newScheduleFinished.rows.item(scheduleLength - 1),
+    };
+    let oldScheduleFinishedLastItem = {
+      ...newScheduleFinished.rows.item(scheduleLength - 1),
+    };
+
+    //Chop off the miliseconds
+    newScheduleFinishedFirstItem.CompletionDate =
+      newScheduleFinishedFirstItem.CompletionDate.slice(0, -5);
+    oldScheduleFinishedFirstItem.CompletionDate =
+      oldScheduleFinishedFirstItem.CompletionDate.slice(0, -5);
+    newScheduleFinishedLastItem.CompletionDate =
+      newScheduleFinishedLastItem.CompletionDate.slice(0, -5);
+    oldScheduleFinishedLastItem.CompletionDate =
+      oldScheduleFinishedLastItem.CompletionDate.slice(0, -5);
+
     expect(scheduleLength).toBe(origScheduleFinished.rows.length);
-    expect(newScheduleFinished.rows.item(0)).toStrictEqual(
-      origScheduleFinished.rows.item(0),
+    expect(newScheduleFinishedFirstItem).toStrictEqual(
+      oldScheduleFinishedFirstItem,
     );
-    expect(newScheduleFinished.rows.item(scheduleLength)).toStrictEqual(
-      origScheduleFinished.rows.item(scheduleLength),
+    expect(newScheduleFinishedLastItem).toStrictEqual(
+      oldScheduleFinishedLastItem,
     );
   });
 

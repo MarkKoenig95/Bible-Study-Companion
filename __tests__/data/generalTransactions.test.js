@@ -31,11 +31,11 @@ test('Upgrade User DB and check version', async () => {
   await runSQL(
     userDB,
     'SELECT * FROM tblUserPrefs WHERE Name="WeeklyReadingResetDay";',
-  ).then(res => {
+  ).then((res) => {
     resetDay = res.rows.item(0).Value;
   });
 
-  expect(version).toBe(2);
+  expect(version).toBe(3);
   expect(resetDay).toBe(4);
 });
 
@@ -50,14 +50,14 @@ test('appVersion run 1', async () => {
   let {prevVersion, currVersion} = await appVersion(userDB);
 
   expect(prevVersion).toBe('');
-  expect(currVersion).toBe('1.0.2');
+  expect(currVersion).toBe('1.1.0');
 });
 
 test('appVersion run 2', async () => {
   let {prevVersion, currVersion} = await appVersion(userDB);
 
-  expect(prevVersion).toBe('1.0.2');
-  expect(currVersion).toBe('1.0.2');
+  expect(prevVersion).toBe('1.1.0');
+  expect(currVersion).toBe('1.1.0');
 });
 
 test('updateValue', async () => {

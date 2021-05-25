@@ -1,11 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  Platform,
-  StyleSheet,
-  TextStyle,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, TextStyle, TouchableOpacity, View} from 'react-native';
 import {Body} from '../text/Text';
 import DateTimePicker from '../inputs/DateTimePicker';
 
@@ -46,12 +40,6 @@ export default function DateTimePickerButton(props: {
     let tempDisplayText = getDisplayText(mode, time, textPrefix);
     setDisplayText(tempDisplayText);
   }, [mode, textPrefix, time]);
-
-  useEffect(() => {
-    if (isTimePickerVisible && Platform.OS === 'android') {
-      setIsTimePickerVisible(false);
-    }
-  }, [isTimePickerVisible]);
 
   return (
     <View

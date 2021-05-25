@@ -11,7 +11,7 @@
       }
     },
     "ios.sim.debug": {
-      "binaryPath": "ios//Build/Products/Debug-iphonesimulator/BibleStudyCompanion.app",
+      "binaryPath": "ios/Build/Products/Debug-iphonesimulator/BibleStudyCompanion.app",
       "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=0F61AED1-28BF-4E53-858E-8634260ED47E",
       "type": "ios.simulator",
       "device": {
@@ -19,7 +19,7 @@
       }
     },
     "ios.none": {
-      "binaryPath": "ios//Build/Products/Debug-iphoneos/BibleStudyCompanion.app",
+      "binaryPath": "ios/Build/Products/Debug-iphoneos/BibleStudyCompanion.app",
       "build": "RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion ",
       "type": "ios.none",
       "device": {
@@ -35,7 +35,7 @@
       "build": "cd android && RN_SRC_EXT=e2e.js ./gradlew app:assembleDebug  app:assembleAndroidTest -DtestBuildType=debug && cd ..",
       "type": "android.emulator",
       "device": {
-        "avdName": "Nexus_5X_API_29_x86"
+        "avdName": "Pixel_3a_API_29"
       }
     },
     "android.emu.release": {
@@ -43,7 +43,7 @@
       "build": "cd android && RN_SRC_EXT=e2e.js ./gradlew  app:assembleRelease  app:assembleAndroidTest -DtestBuildType=release && cd ..",
       "type": "android.emulator",
       "device": {
-        "avdName": "Nexus_5X_API_29_x86"
+        "avdName": "Pixel_3a_API_29"
       }
     }
   }

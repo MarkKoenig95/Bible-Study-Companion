@@ -27,21 +27,45 @@ const useDateTimePicker = (props: {
   };
 
   const onPickerChange = (e: Event, newTime: Date | undefined) => {
-    if (newTime) {
-      setTempTime(newTime);
+    const isAndroid = Platform.OS === 'android';
 
-      if (Platform.OS === 'android') {
-        if (e.type === 'set') {
-          onChange(newTime);
-        } else if (e.type === 'dismissed') {
-          onEditCancel();
-        } else {
-          onChange(newTime);
-        }
+    if (isAndroid) {
+      hideTimePicker();
+      if (e.type === 'dismissed') {
+        onEditCancel();
+        return;
       }
     }
+
+    if (!newTime) return;
+
+    setTempTime(newTime);
+
+    onChange(newTime);
   };
   return {onEditCancel, onEditDone, onPickerChange, tempTime};
+};
+
+const ActionButtons = (props: {
+  onEditCancel: () => void;
+  onEditDone: () => void;
+  testID: string;
+}) => {
+  const {onEditCancel, onEditDone, testID} = props;
+  return (
+    <View style={styles.row}>
+      <TextButton
+        testID={testID + '.cancelButton'}
+        onPress={onEditCancel}
+        text={translate('actions.cancel')}
+      />
+      <TextButton
+        testID={testID + '.doneButton'}
+        onPress={onEditDone}
+        text={translate('actions.done')}
+      />
+    </View>
+  );
 };
 
 const DateTimePicker = (props: {
@@ -76,18 +100,13 @@ const DateTimePicker = (props: {
           onChange={onPickerChange}
         />
       </View>
-      <View style={styles.row}>
-        <TextButton
-          testID={testID + '.cancelButton'}
-          onPress={onEditCancel}
-          text={translate('actions.cancel')}
+      {Platform.OS === 'ios' && (
+        <ActionButtons
+          onEditCancel={onEditCancel}
+          onEditDone={onEditDone}
+          testID={testID}
         />
-        <TextButton
-          testID={testID + '.doneButton'}
-          onPress={onEditDone}
-          text={translate('actions.done')}
-        />
-      </View>
+      )}
     </View>
   );
 };
