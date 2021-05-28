@@ -331,11 +331,12 @@ export default function useScheduleButtonsList(
         let endBook;
         let endChapter;
         let endVerse;
+        let doesTrack;
         // When we go through with chronological like schedules we can determine if 2 sections have the same
         // book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
         for (let i = 0; i < items.length; i++) {
           let item = items[i];
-          item.doesTrack = true;
+          doesTrack = item.doesTrack;
           let tempIsFinished = item.IsFinished ? true : false;
           if (i !== 0) {
             hiddenPortions += !tempIsFinished
@@ -424,7 +425,7 @@ export default function useScheduleButtonsList(
             readingPortion={readingPortions}
             completionDate={completionDate}
             completedHidden={completedHidden}
-            doesTrack={true}
+            doesTrack={doesTrack}
             isFinished={isFinished}
             title={title}
             update={updatePages}

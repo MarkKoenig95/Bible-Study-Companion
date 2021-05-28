@@ -118,7 +118,10 @@ export async function runQueries(bibleDB) {
  * @param {integer} bookId
  * @returns {integer}
  */
-export function findMaxChapter(bookId) {
+export async function findMaxChapter(bookId, bibleDB) {
+  if (!qryMaxChapters) {
+    qryMaxChapters = await runSQL(bibleDB, 'SELECT * FROM qryMaxChapters;');
+  }
   let index = searchQuery(qryMaxChapters, 'BibleBook', bookId);
 
   return qryMaxChapters.rows.item(index).MaxChapter;
@@ -952,6 +955,7 @@ function createReadingPortionArray(
   versePosition,
 ) {
   let result = [];
+  date.setHours(0, 0, 0, 0);
 
   //StartBookName
   result.push(startBookName);
@@ -991,6 +995,7 @@ function createReadingPortionArray(
 
 function createCustomReadingPortionArray(date, description) {
   let result = [];
+  date.setHours(0, 0, 0, 0);
 
   //CompletionDate
   result.push(date.toISOString());

@@ -121,9 +121,8 @@ export async function populateScheduleButtons(
   updatePages,
 ) {
   let homeListItems = [];
-  let date = new Date();
-  let todayFormatted = formatDate(date);
-  let today = Date.parse(todayFormatted);
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   //Get the user's list of reading schedules
 
@@ -176,8 +175,9 @@ export async function populateScheduleButtons(
 
     for (let j = 0; j < table.rows.length; j++) {
       const item = table.rows.item(j);
+      let itemDate = Date.parse(item.CompletionDate);
 
-      if (Date.parse(item.CompletionDate) <= today) {
+      if (itemDate <= today) {
         //Add reading portion info to the list
         innerHomeListItems.push({
           ...item,

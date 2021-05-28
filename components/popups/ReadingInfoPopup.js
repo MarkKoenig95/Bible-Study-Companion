@@ -19,7 +19,7 @@ import {
   dateFormulator,
 } from '../../logic/localization/localization';
 
-import {errorCB} from '../../data/Database/generalTransactions';
+import {errorCB, runSQL} from '../../data/Database/generalTransactions';
 import {findMaxChapter} from '../../logic/scheduleCreation';
 import {store} from '../../data/Store/store.js';
 
@@ -66,17 +66,17 @@ async function loadData(bibleDB, tableName = 'tblBibleBooks') {
 
 async function queryMaxInfo(bibleDB, bookNumber) {
   //Set maxChapter
-  let maxChapter = findMaxChapter(bookNumber);
+  let maxChapter = await findMaxChapter(bookNumber, bibleDB);
 
   let maxVerse;
 
   //Use maxChapter to find maxVerse
-  await bibleDB
-    .executeSql(
-      'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?;',
-      [bookNumber, maxChapter],
-    )
-    .then(([res]) => {
+  await runSQL(
+    bibleDB,
+    'SELECT MaxVerse FROM qryMaxVerses WHERE BibleBook=? AND Chapter=?;',
+    [bookNumber, maxChapter],
+  )
+    .then((res) => {
       maxVerse = res.rows.item(0).MaxVerse;
     })
     .catch(errorCB);
@@ -93,9 +93,9 @@ function formatDate(start, startApproxDesc, end, endApproxDesc, bibleBookID) {
 
   if (
     startApproxDesc &&
-    (startApproxDesc !== 'about' &&
-      startApproxDesc !== 'after' &&
-      startApproxDesc !== 'before')
+    startApproxDesc !== 'about' &&
+    startApproxDesc !== 'after' &&
+    startApproxDesc !== 'before'
   ) {
     let startYear = dateFormulator(start);
     let endYear = dateFormulator(end, endApproxDesc);
@@ -343,7 +343,7 @@ export default function ReadingInfoPopup(props) {
         props.endBookNumber,
         props.endChapter,
         props.endVerse,
-      ).then(res => {
+      ).then((res) => {
         if (mountedRef.current) {
           setReadingSections(res);
         }
@@ -362,7 +362,7 @@ export default function ReadingInfoPopup(props) {
       {...popupProps}
       testID={testID}
       title={translate(prefix + 'readingInfo')}>
-      {readingSections.map(section => {
+      {readingSections.map((section) => {
         return (
           <ReadingInfoSection
             testID={testID + '.' + section.key}
@@ -395,7 +395,7 @@ export function useReadingInfoPopup() {
   });
 
   const closeReadingPopup = useCallback(() => {
-    setReadingPopup(prevValue => {
+    setReadingPopup((prevValue) => {
       return {...prevValue, isDisplayed: false};
     });
   }, []);
