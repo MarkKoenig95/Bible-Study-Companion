@@ -1,20 +1,17 @@
+import {setPicker} from './helpers/general';
+
 /* eslint-env detox/detox, jest */
 const prefix = 'remindersPage.';
 const pref = prefix + 'reminder.Daily Text.';
 var waitTime = 1000;
+let OS;
 
 beforeAll(async () => {
-  if (device.getPlatform() !== 'ios') {
-    waitTime *= 5;
-  }
-
-  await device.launchApp({permissions: {notifications: 'YES'}});
+  OS = device.getPlatform();
 });
 
 beforeEach(async () => {
-  await device.uninstallApp();
-  await device.installApp();
-  await device.launchApp({permissions: {notifications: 'YES'}});
+  await device.launchApp({delete: true, permissions: {notifications: 'YES'}});
 
   await waitFor(element(by.text('Daily Text')))
     .toBeVisible()
@@ -43,12 +40,11 @@ it('Creates a custom reminder', async () => {
   ).replaceText('Remmy');
 
   // Set the repeat frequency
-  await element(
-    by.id(prefix + 'createRemindersPopup.frequencySection.picker.showButton'),
-  ).tap();
-  await element(
-    by.id(prefix + 'createRemindersPopup.frequencySection.picker'),
-  ).setColumnToValue(0, 'Monthly');
+  await setPicker(
+    prefix + 'createRemindersPopup.frequencySection.picker',
+    'Monthly',
+    OS,
+  );
 
   // Set the reset frequency
   await element(
@@ -89,11 +85,7 @@ describe('Edit reminder', () => {
   });
 
   it('repeat frequency', async () => {
-    await element(by.id(pref + 'frequencySection.picker.showButton')).tap();
-    await element(by.id(pref + 'frequencySection.picker')).setColumnToValue(
-      0,
-      'Weekly',
-    );
+    await setPicker(pref + 'frequencySection.picker', 'Weekly', OS);
 
     await element(by.id(pref + 'actionButtons.done')).tap();
 
@@ -103,11 +95,7 @@ describe('Edit reminder', () => {
   });
 
   it('repeat value for weekly', async () => {
-    await element(by.id(pref + 'frequencySection.picker.showButton')).tap();
-    await element(by.id(pref + 'frequencySection.picker')).setColumnToValue(
-      0,
-      'Weekly',
-    );
+    await setPicker(pref + 'frequencySection.picker', 'Weekly', OS);
 
     await element(by.id(pref + 'actionButtons.done')).tap();
 
@@ -115,11 +103,7 @@ describe('Edit reminder', () => {
   });
 
   it('repeat value for monthly', async () => {
-    await element(by.id(pref + 'frequencySection.picker.showButton')).tap();
-    await element(by.id(pref + 'frequencySection.picker')).setColumnToValue(
-      0,
-      'Monthly',
-    );
+    await setPicker(pref + 'frequencySection.picker', 'Monthly', OS);
 
     await element(by.id(pref + 'actionButtons.done')).tap();
 

@@ -37,6 +37,7 @@ const ScheduleDayButton = React.memo((props) => {
     let today = new Date();
     date.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
+    setCompDate(formatDate(date));
     setIsDatePassed(date.getTime() < today.getTime());
   }, [completionDate, update]);
 

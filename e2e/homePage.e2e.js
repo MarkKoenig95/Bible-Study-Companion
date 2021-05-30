@@ -12,20 +12,22 @@ import {
 } from './helpers/scheduleList';
 
 var waitTime = 1000;
+var OS;
 const prefix = 'homePage.';
 
 beforeAll(async () => {
-  if (device.getPlatform() !== 'ios') {
-    waitTime *= 5;
-  }
+  OS = device.getPlatform();
 });
 
 beforeEach(async () => {
-  await device.launchApp({permissions: {notifications: 'YES'}});
+  await device.launchApp({
+    newInstance: true,
+    permissions: {notifications: 'YES'},
+  });
 
   await waitFor(element(by.text('Daily Text')))
     .toBeVisible()
-    .withTimeout(8 * waitTime);
+    .withTimeout(4 * waitTime);
 });
 
 describe('Check sections', () => {
@@ -34,17 +36,17 @@ describe('Check sections', () => {
   });
 
   it('This Week', async () => {
-    await scrollUntilVisible(by.text('This Week'), by.id(prefix + 'list'));
+    await scrollUntilVisible(by.text('This Week'), by.id(prefix + 'list'), OS);
     await expect(element(by.text('This Week'))).toBeVisible();
   });
 
   it('This Month', async () => {
-    await scrollUntilVisible(by.text('This Month'), by.id(prefix + 'list'));
+    await scrollUntilVisible(by.text('This Month'), by.id(prefix + 'list'), OS);
     await expect(element(by.text('This Month'))).toBeVisible();
   });
 
   it('Other', async () => {
-    await scrollUntilVisible(by.text('Other'), by.id(prefix + 'list'));
+    await scrollUntilVisible(by.text('Other'), by.id(prefix + 'list'), OS);
     await expect(element(by.text('Other'))).toBeVisible();
   });
 
@@ -52,6 +54,7 @@ describe('Check sections', () => {
     await scrollUntilVisible(
       by.id(prefix + 'Monthly Reminder'),
       by.id(prefix + 'list'),
+      OS,
     );
     await element(by.id(prefix + 'Monthly Reminder.checkBox')).tap();
     await shouldCompleteReadingWithCheckbox(
@@ -72,7 +75,7 @@ it('opens the reading info popup', async () => {
 });
 
 it('marks a reading portion complete with the button in the reading info popup', async () => {
-  await shouldCompleteReadingFromInfoPopup(prefix, 'Job 1-34', waitTime);
+  await shouldCompleteReadingFromInfoPopup(prefix, 'Job 1-34', waitTime, OS);
 });
 
 it('marks a reading portion complete with longPress', async () => {
@@ -84,10 +87,12 @@ it('marks a reading portions complete with the checkBox', async () => {
 });
 
 it('opens buttons popup', async () => {
+  await element(by.id(prefix + 'list')).scroll(75, 'down');
   await shouldOpenReadingButtonsPopup(prefix, 'Numbers 15:1-14');
 });
 
 it('marks a reading item complete in buttons popup with longPress', async () => {
+  await element(by.id(prefix + 'list')).scroll(75, 'down');
   await shouldCompleteReadingInButtonPopup(
     prefix,
     'Numbers 15:1-14',
@@ -97,6 +102,7 @@ it('marks a reading item complete in buttons popup with longPress', async () => 
 });
 
 it('marks a reading item complete in buttons popup with checkBox', async () => {
+  await element(by.id(prefix + 'list')).scroll(75, 'down');
   await shouldCompleteReadingInButtonPopup(
     prefix,
     'Numbers 15:1-14',
@@ -106,6 +112,7 @@ it('marks a reading item complete in buttons popup with checkBox', async () => {
 });
 
 it('marks a reading portion complete with the button in the reading info popup opened from buttons popup', async () => {
+  await element(by.id(prefix + 'list')).scroll(75, 'down');
   await shouldCompleteReadingInButtonPopupFromInfoPopup(
     prefix,
     'Numbers 15:1-14',
@@ -114,6 +121,7 @@ it('marks a reading portion complete with the button in the reading info popup o
 });
 
 it('opens reading info popup from button in buttons popup', async () => {
+  await element(by.id(prefix + 'list')).scroll(75, 'down');
   await shouldOpenReadingButtonsPopup(prefix, 'Numbers 15:1-14');
   await shouldOpenReadingInfoPopup(prefix, 'Numbers 15:1-14');
 });
@@ -126,12 +134,36 @@ it('marks a whole reading portion, made up of many sections, complete', async ()
   );
 });
 
+it('Completes a reminder with longPress', async () => {
+  await scrollUntilVisible(
+    by.id(prefix + 'Midweek Meeting Study'),
+    by.id(prefix + 'list'),
+    OS,
+    75,
+  );
+
+  await element(by.id(prefix + 'Midweek Meeting Study.checkBox')).tap();
+  await waitForMS(2000);
+  await element(by.id(prefix + 'Midweek Meeting Study')).longPress();
+
+  await waitFor(element(by.id(prefix + 'Midweek Meeting Study')))
+    .not.toBeVisible()
+    .withTimeout(waitTime * 2);
+
+  await expect(
+    element(by.id(prefix + 'Midweek Meeting Study')),
+  ).not.toBeVisible();
+});
+
 it('Completes a reminder from the confirmation popup', async () => {
   await scrollUntilVisible(
     by.id(prefix + 'Weekend Meeting Study'),
     by.id(prefix + 'list'),
+    OS,
+    75,
   );
   await element(by.id(prefix + 'Weekend Meeting Study.checkBox')).tap();
+  await waitForMS(2000);
   await element(by.id(prefix + 'Weekend Meeting Study')).tap();
   await element(by.id(prefix + 'messagePopup.confirmButton')).tap();
 
@@ -141,19 +173,5 @@ it('Completes a reminder from the confirmation popup', async () => {
 
   await expect(
     element(by.id(prefix + 'Weekend Meeting Study')),
-  ).not.toBeVisible();
-});
-
-it('Completes a reminder with longPress', async () => {
-  await scrollUntilVisible(
-    by.id(prefix + 'Midweek Meeting Study'),
-    by.id(prefix + 'list'),
-  );
-
-  await element(by.id(prefix + 'Midweek Meeting Study.checkBox')).tap();
-  await element(by.id(prefix + 'Midweek Meeting Study')).longPress();
-
-  await expect(
-    element(by.id(prefix + 'Midweek Meeting Study')),
   ).not.toBeVisible();
 });

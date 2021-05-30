@@ -1,5 +1,5 @@
 /* eslint-env detox/detox, jest */
-import {waitForMS} from './helpers/general';
+import {setPicker, waitForMS} from './helpers/general';
 // * Note to tester, I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the time being
 // * this test will be based on that date.
@@ -7,11 +7,10 @@ import {waitForMS} from './helpers/general';
 
 const prefix = 'settingsPage.';
 var waitTime = 1000;
+let OS;
 
 beforeAll(async () => {
-  if (device.getPlatform() !== 'ios') {
-    waitTime *= 5;
-  }
+  OS = device.getPlatform();
 
   await device.launchApp({permissions: {notifications: 'YES'}});
 
@@ -66,12 +65,7 @@ describe('Weekly reading settings', () => {
   });
 
   it('changes weekly reading reset day', async () => {
-    await element(
-      by.id(prefix + 'weeklyReading.weekdayPicker.showButton'),
-    ).tap();
-    await element(
-      by.id(prefix + 'weeklyReading.weekdayPicker'),
-    ).setColumnToValue(0, 'Wednesday');
+    await setPicker(prefix + 'weeklyReading.weekdayPicker', 'Wednesday', OS);
 
     await element(by.id('tabs.homePage')).tap();
 

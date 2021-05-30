@@ -1,6 +1,11 @@
 /* eslint-env detox/detox, jest */
 import {getProps} from 'detox-getprops';
-import {setDateTimePicker, waitForMS} from './helpers/general';
+import {
+  pressAlertAction,
+  scrollUntilVisible,
+  setDateTimePicker,
+  waitForMS,
+} from './helpers/general';
 import {
   shouldOpenReadingReminders,
   shouldOpenReadingInfoPopup,
@@ -13,12 +18,11 @@ import {
 } from './helpers/scheduleList';
 
 var waitTime = 1000;
+var OS;
 const prefix = 'schedulePage.';
 
 beforeAll(async () => {
-  if (device.getPlatform() !== 'ios') {
-    waitTime *= 5;
-  }
+  OS = device.getPlatform();
 
   await device.launchApp({permissions: {notifications: 'YES'}});
 });
@@ -30,8 +34,9 @@ beforeEach(async () => {
 });
 
 describe('basic schedule page functions', () => {
+  const thisScheduleName = 'Base Seq';
   beforeEach(async () => {
-    await element(by.id('schedulesPage.Base Seq')).tap();
+    await element(by.id('schedulesPage.' + thisScheduleName)).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
       .withTimeout(2 * waitTime);
@@ -56,7 +61,8 @@ describe('basic schedule page functions', () => {
   });
 
   it('should set a new date for the schedule', async () => {
-    const date = new Date(2021, 4, 1, 10, 0, 0, 0);
+    const date = new Date(2021, 2, 1, 10, 0, 0, 0);
+    const dateText = OS === 'ios' ? '3/1/21' : '03/01/21';
 
     await element(by.id(prefix + 'header.settingsButton')).tap();
 
@@ -64,17 +70,22 @@ describe('basic schedule page functions', () => {
       .toBeVisible()
       .withTimeout(2 * waitTime);
 
-    await setDateTimePicker(prefix + 'settingsPopup.datePicker', date);
+    await setDateTimePicker(
+      prefix + 'settingsPopup.datePicker',
+      date,
+      'date',
+      OS,
+    );
 
     await element(by.id(prefix + 'messagePopup.confirmButton')).tap();
 
-    await waitFor(element(by.id('schedulesPage')))
-      .toBeVisible()
-      .withTimeout(10 * waitTime);
+    await waitFor(element(by.id(prefix + 'loadingPopup')))
+      .not.toBeVisible()
+      .withTimeout(60 * waitTime);
 
-    await element(by.text('OK')).tap();
+    await pressAlertAction('OK');
 
-    await element(by.id('schedulesPage.Base Seq')).tap();
+    await element(by.id('schedulesPage.' + thisScheduleName)).tap();
 
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -82,7 +93,7 @@ describe('basic schedule page functions', () => {
 
     await expect(
       element(by.id(prefix + 'Genesis 1-29.completionDate')),
-    ).toHaveText('5/1/21');
+    ).toHaveText(dateText);
   });
 
   it('should set schedule to not track reading dates', async () => {
@@ -107,6 +118,22 @@ describe('basic schedule page functions', () => {
 
     await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();
   });
+
+  it('should delete a schedule', async () => {
+    await element(by.id(prefix + 'header.deleteButton')).tap();
+
+    await element(by.id(prefix + 'messagePopup.confirmButton')).tap();
+
+    await waitFor(element(by.id('schedulesPage')))
+      .toBeVisible()
+      .withTimeout(2 * waitTime);
+
+    await waitFor(element(by.id(prefix + thisScheduleName)))
+      .not.toBeVisible()
+      .withTimeout(2 * waitTime);
+
+    await expect(element(by.id(prefix + thisScheduleName))).not.toBeVisible();
+  });
 });
 
 describe('bible schedule page', () => {
@@ -129,6 +156,11 @@ describe('bible schedule page', () => {
   });
   beforeEach(async () => {
     await element(by.id('schedulesPage.Base Chrono')).tap();
+    await waitFor(
+      element(by.id(prefix + 'multiPortionStartingWith.Numbers 5-28')),
+    )
+      .toBeVisible()
+      .withTimeout(waitTime * 10);
   });
 
   it('opens the reading info popup', async () => {
@@ -136,7 +168,7 @@ describe('bible schedule page', () => {
   });
 
   it('marks a reading portion complete with the button in the reading info popup', async () => {
-    await shouldCompleteReadingFromInfoPopup(prefix, 'Job 1-34', waitTime);
+    await shouldCompleteReadingFromInfoPopup(prefix, 'Job 1-34', waitTime, OS);
   });
 
   it('checks the hide completed button functionality', async () => {
@@ -214,22 +246,6 @@ describe('bible schedule page', () => {
       waitTime,
     );
   });
-
-  it('deletes the schedule', async () => {
-    await element(by.id(prefix + 'header.deleteButton')).tap();
-
-    await element(by.id(prefix + 'messagePopup.confirmButton')).tap();
-
-    await waitFor(element(by.id('schedulesPage')))
-      .toBeVisible()
-      .withTimeout(2 * waitTime);
-
-    await waitFor(element(by.id(prefix + 'New Schedule')))
-      .not.toBeVisible()
-      .withTimeout(2 * waitTime);
-
-    await expect(element(by.id(prefix + 'New Schedule'))).not.toBeVisible();
-  });
 });
 
 describe('mark all earlier reading portions on complete', async () => {
@@ -266,7 +282,7 @@ describe('mark all earlier reading portions on complete', async () => {
   it('should mark all reading portions earlier than a selected portion complete using the checkbox', async () => {
     await element(by.id(prefix + 'Hebrews 10-Revelation 17.checkBox')).tap();
 
-    await element(by.text('OK')).tap();
+    await pressAlertAction('OK');
 
     await expect(
       element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
@@ -282,14 +298,16 @@ describe('mark all earlier reading portions on complete', async () => {
   it('should mark all reading portions earlier than a selected portion complete using the reading info popup', async () => {
     await element(by.id(prefix + 'Ephesians 5-Hebrews 9')).tap();
 
-    await waitFor(element(by.id(prefix + 'readingInfoPopup.confirmButton')))
-      .toBeVisible()
-      .whileElement(by.id(prefix + 'readingInfoPopup.scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(prefix + 'readingInfoPopup.confirmButton'),
+      by.id(prefix + 'readingInfoPopup.scrollView'),
+      OS,
+      150,
+    );
 
     await element(by.id(prefix + 'readingInfoPopup.confirmButton')).tap();
 
-    await element(by.text('OK')).tap();
+    await pressAlertAction('OK');
 
     await expect(
       element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
@@ -305,7 +323,7 @@ describe('mark all earlier reading portions on complete', async () => {
   it('should not mark all reading portions earlier than a selected portion complete', async () => {
     await element(by.id(prefix + 'Hebrews 10-Revelation 17.checkBox')).tap();
 
-    await element(by.text('Cancel')).tap();
+    await pressAlertAction('Cancel');
 
     await element(by.id(prefix + 'buttonList')).scrollTo('bottom');
 

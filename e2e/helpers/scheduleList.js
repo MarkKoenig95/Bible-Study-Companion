@@ -1,5 +1,5 @@
 /* eslint-env detox/detox, jest */
-import {waitForMS} from './general';
+import {scrollUntilVisible, waitForMS} from './general';
 
 export async function shouldOpenReadingReminders(parentID) {
   await element(by.id(parentID + 'readingRemindersButton')).tap();
@@ -10,6 +10,9 @@ export async function shouldOpenReadingReminders(parentID) {
 }
 
 export async function shouldOpenReadingInfoPopup(parentID, portion) {
+  await waitFor(element(by.id(parentID + portion)))
+    .toBeVisible()
+    .withTimeout(5000);
   await element(by.id(parentID + portion)).tap();
 
   await expect(element(by.id(parentID + 'readingInfoPopup'))).toBeVisible();
@@ -19,14 +22,16 @@ export async function shouldCompleteReadingFromInfoPopup(
   parentID,
   portion,
   waitTime,
+  OS,
   cancelOrOK,
 ) {
   await shouldOpenReadingInfoPopup(parentID, portion);
 
-  await waitFor(element(by.id(parentID + 'readingInfoPopup.confirmButton')))
-    .toBeVisible()
-    .whileElement(by.id(parentID + 'readingInfoPopup.scrollView'))
-    .scroll(50, 'down');
+  await scrollUntilVisible(
+    by.id(parentID + 'readingInfoPopup.confirmButton'),
+    by.id(parentID + 'readingInfoPopup.scrollView'),
+    OS,
+  );
 
   await element(by.id(parentID + 'readingInfoPopup.confirmButton')).tap();
 
@@ -34,11 +39,9 @@ export async function shouldCompleteReadingFromInfoPopup(
     await element(by.text(cancelOrOK)).tap();
   }
 
-  await expect(element(by.id(parentID + 'readingInfoPopup'))).not.toBeVisible();
-
   await waitFor(element(by.id(parentID + portion)))
     .not.toBeVisible()
-    .withTimeout(waitTime);
+    .withTimeout(waitTime * 3);
 
   await expect(element(by.id(parentID + portion))).not.toBeVisible();
 }
@@ -49,6 +52,9 @@ export async function shouldCompleteReadingWithLongPress(
   waitTime,
   cancelOrOK,
 ) {
+  await waitFor(element(by.id(parentID + portion)))
+    .toBeVisible()
+    .withTimeout(5000);
   await element(by.id(parentID + portion)).longPress();
 
   if (cancelOrOK) {
@@ -68,6 +74,9 @@ export async function shouldCompleteReadingWithCheckbox(
   waitTime,
   cancelOrOK,
 ) {
+  await waitFor(element(by.id(parentID + portion)))
+    .toBeVisible()
+    .withTimeout(5000);
   await element(by.id(parentID + portion + '.checkBox')).tap();
 
   if (cancelOrOK) {
@@ -82,9 +91,18 @@ export async function shouldCompleteReadingWithCheckbox(
 }
 
 export async function shouldOpenReadingButtonsPopup(parentID, startPortion) {
+  await waitFor(
+    element(by.id(parentID + 'multiPortionStartingWith.' + startPortion)),
+  )
+    .toBeVisible()
+    .withTimeout(5000);
   await element(
     by.id(parentID + 'multiPortionStartingWith.' + startPortion),
   ).tap();
+
+  await waitFor(element(by.id(parentID + 'buttonsPopup')))
+    .toBeVisible()
+    .withTimeout(5000);
 
   await expect(element(by.id(parentID + 'buttonsPopup'))).toBeVisible();
 }
@@ -125,7 +143,7 @@ export async function shouldCompleteReadingInButtonPopup(
   await element(by.id(parentID + 'buttonsPopup.closeButton')).tap();
   await waitFor(element(by.id(parentID + 'buttonsPopup')))
     .not.toBeVisible()
-    .withTimeout(2000);
+    .withTimeout(20000);
   await shouldOpenReadingButtonsPopup(parentID, startPortion);
   // ! --------------------------------------------------------------------
 

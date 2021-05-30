@@ -8,17 +8,12 @@ import {
 
 const prefix = 'schedulesPage.';
 var waitTime = 1000;
+var OS;
 
 beforeAll(async () => {
-  if (device.getPlatform() !== 'ios') {
-    waitTime *= 5;
-  }
+  OS = device.getPlatform();
 
   await device.launchApp({permissions: {notifications: 'YES'}});
-
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(waitTime * 8);
 });
 
 beforeEach(async () => {
@@ -86,23 +81,23 @@ describe('create schedules', () => {
     );
     await element(by.text('Article')).tap();
     await element(by.id(pref + 'portionsPerDayInput')).typeText('1');
-    await waitFor(element(by.id(pref + 'numberOfPortionsInput')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'numberOfPortionsInput'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
+    await element(by.id(pref + 'numberOfPortionsInput')).tap();
     await element(by.id(pref + 'numberOfPortionsInput')).typeText('10');
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
     await waitForMS(2 * waitTime);
-
-    await scrollUntilVisible(by.id(prefix + 'Cust'), by.id(prefix + 'list'));
 
     await expect(element(by.id(prefix + 'Cust'))).toBeVisible();
   });
@@ -123,37 +118,39 @@ describe('create schedules', () => {
       'Section',
     );
     await element(by.id(pref + 'portionsPerDayInput')).typeText('1');
-    await waitFor(element(by.id(pref + 'numberOfPortionsInput')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'numberOfPortionsInput'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'numberOfPortionsInput')).typeText('10');
 
     // Set specified date to start the schedule from
-    await waitFor(element(by.id(pref + 'toggleAdvancedButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'toggleAdvancedButton'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'toggleAdvancedButton')).tap();
-    await waitFor(element(by.id(pref + 'datePicker')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'datePicker'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'scrollView')).scroll(100, 'down');
-    let date = new Date(2021, 0, 1);
-    await setDateTimePicker(pref + 'datePicker', date);
+    let date = new Date(2021, 2, 1);
+    await setDateTimePicker(pref + 'datePicker', date, 'date', OS);
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
     await waitForMS(2 * waitTime);
-
-    await scrollUntilVisible(by.id(prefix + 'Spec'), by.id(prefix + 'list'));
 
     await expect(element(by.id(prefix + 'Spec'))).toBeVisible();
   });
@@ -174,38 +171,39 @@ describe('create schedules', () => {
       'Section',
     );
     await element(by.id(pref + 'portionsPerDayInput')).typeText('1');
-    await waitFor(element(by.id(pref + 'numberOfPortionsInput')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'numberOfPortionsInput'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'numberOfPortionsInput')).typeText('10');
 
     // Unckeck the track reading dates checkbox
-    await waitFor(element(by.id(pref + 'toggleAdvancedButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'toggleAdvancedButton'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'toggleAdvancedButton')).tap();
-    await waitFor(element(by.id(pref + 'doesTrackCheckbox')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+
+    await scrollUntilVisible(
+      by.id(pref + 'doesTrackCheckbox'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'doesTrackCheckbox')).tap();
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
     await waitForMS(2 * waitTime);
-
-    await scrollUntilVisible(
-      by.id(prefix + 'Doesnt Track'),
-      by.id(prefix + 'list'),
-    );
 
     await expect(element(by.id(prefix + 'Doesnt Track'))).toBeVisible();
   });
@@ -220,12 +218,17 @@ describe('create schedules', () => {
     // Input vaules for the schedule creation
     await element(by.id(pref + 'scheduleNameInput')).typeText('Seq');
     await element(by.id(pref + 'scheduleDurationInput')).replaceText('0.1');
-    await waitFor(
-      element(by.id(pref + 'scheduleVerseInput.bibleBookPicker.input')),
-    )
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
+
+    await scrollUntilVisible(
+      by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(
       by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
     ).typeText('Gen');
@@ -235,21 +238,21 @@ describe('create schedules', () => {
     await element(by.text('Genesis')).tap();
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitForMS(2 * waitTime);
-
-    await scrollUntilVisible(by.id(prefix + 'Seq'), by.id(prefix + 'list'));
+    await waitFor(element(by.id(prefix + 'loadingPopup')))
+      .not.toBeVisible()
+      .withTimeout(60 * waitTime);
 
     await expect(element(by.id(prefix + 'Seq'))).toBeVisible();
   });
 
-  it('should creates a chronological bible schedule', async () => {
+  it('should create a chronological bible schedule', async () => {
     // Open the create schedule popup for a chronological schedule
     await element(
       by.id(prefix + 'scheduleTypePopup.chronologicalButton'),
@@ -261,31 +264,36 @@ describe('create schedules', () => {
     // Input vaules for the schedule creation
     await element(by.id(pref + 'scheduleNameInput')).typeText('Chrono');
     await element(by.id(pref + 'scheduleDurationInput')).replaceText('0.1');
-    await waitFor(
-      element(by.id(pref + 'scheduleVerseInput.bibleBookPicker.input')),
-    )
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+
+    await scrollUntilVisible(
+      by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(
       by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
     ).typeText('Jo');
-    await waitFor(element(by.text('Job')))
-      .toBeVisible()
-      .withTimeout(2 * waitTime);
+    await scrollUntilVisible(by.text('Job'), by.id(pref + 'scrollView'), OS);
     await element(by.text('Job')).tap();
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+      'ios',
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitForMS(2 * waitTime);
+    await waitFor(element(by.id(prefix + 'loadingPopup')))
+      .not.toBeVisible()
+      .withTimeout(60 * waitTime);
 
-    await scrollUntilVisible(by.id(prefix + 'Chrono'), by.id(prefix + 'list'));
+    await scrollUntilVisible(
+      by.id(prefix + 'Chrono'),
+      by.id(prefix + 'list'),
+      OS,
+    );
 
     await expect(element(by.id(prefix + 'Chrono'))).toBeVisible();
   });
@@ -300,28 +308,35 @@ describe('create schedules', () => {
     // Input vaules for the schedule creation
     await element(by.id(pref + 'scheduleNameInput')).typeText('Thema');
     await element(by.id(pref + 'scheduleDurationInput')).replaceText('0.1');
-    await waitFor(
-      element(by.id(pref + 'scheduleVerseInput.bibleBookPicker.input')),
-    )
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(
       by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
     ).typeText('Jo');
+    await scrollUntilVisible(by.text('Job'), by.id(pref + 'scrollView'), OS);
     await element(by.text('Job')).tap();
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+      'ios',
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
-    await waitForMS(2 * waitTime);
+    await waitFor(element(by.id(prefix + 'loadingPopup')))
+      .not.toBeVisible()
+      .withTimeout(60 * waitTime);
 
-    await scrollUntilVisible(by.id(prefix + 'Thema'), by.id(prefix + 'list'));
+    await scrollUntilVisible(
+      by.id(prefix + 'Thema'),
+      by.id(prefix + 'list'),
+      OS,
+    );
 
     await expect(element(by.id(prefix + 'Thema'))).toBeVisible();
   });
@@ -329,7 +344,11 @@ describe('create schedules', () => {
 
 describe('check created schedules', () => {
   it('checks that the basic custom schedule was created correctly', async () => {
-    await scrollUntilVisible(by.id(prefix + 'Cust'), by.id(prefix + 'list'));
+    await scrollUntilVisible(
+      by.id(prefix + 'Cust'),
+      by.id(prefix + 'list'),
+      OS,
+    );
     await element(by.id(prefix + 'Cust')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -338,7 +357,12 @@ describe('check created schedules', () => {
   });
 
   it('checks that the custom schedule with a specific date was created correctly', async () => {
-    await scrollUntilVisible(by.id(prefix + 'Spec'), by.id(prefix + 'list'));
+    let dateText = OS === 'ios' ? '3/1/21' : '03/01/21';
+    await scrollUntilVisible(
+      by.id(prefix + 'Spec'),
+      by.id(prefix + 'list'),
+      OS,
+    );
     await element(by.id(prefix + 'Spec')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -346,13 +370,14 @@ describe('check created schedules', () => {
     await expect(element(by.id('schedulePage.Section 1'))).toBeVisible();
     await expect(
       element(by.id('schedulePage.Section 1.completionDate')),
-    ).toHaveText('1/1/21');
+    ).toHaveText(dateText);
   });
 
   it('checks that custom schedule which doesnt track dates was created correctly', async () => {
     await scrollUntilVisible(
       by.id(prefix + 'Doesnt Track'),
       by.id(prefix + 'list'),
+      OS,
     );
     await element(by.id(prefix + 'Doesnt Track')).tap();
     await waitFor(element(by.id('schedulePage')))
@@ -365,7 +390,7 @@ describe('check created schedules', () => {
   });
 
   it('checks that sequential schedule was created correctly', async () => {
-    await scrollUntilVisible(by.id(prefix + 'Seq'), by.id(prefix + 'list'));
+    await scrollUntilVisible(by.id(prefix + 'Seq'), by.id(prefix + 'list'), OS);
     await element(by.id(prefix + 'Seq')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
@@ -374,21 +399,37 @@ describe('check created schedules', () => {
   });
 
   it('checks that chronological schedule was created correctly', async () => {
-    await scrollUntilVisible(by.id(prefix + 'Chrono'), by.id(prefix + 'list'));
+    await scrollUntilVisible(
+      by.id(prefix + 'Chrono'),
+      by.id(prefix + 'list'),
+      OS,
+    );
     await element(by.id(prefix + 'Chrono')).tap();
     await waitFor(element(by.id('schedulePage')))
+      .toBeVisible()
+      .withTimeout(waitTime * 8);
+
+    await waitFor(element(by.id('schedulePage.Job 1-34')))
       .toBeVisible()
       .withTimeout(waitTime * 8);
     await expect(element(by.id('schedulePage.Job 1-34'))).toBeVisible();
   });
 
   it('checks that thematic was created correctly', async () => {
-    await scrollUntilVisible(by.id(prefix + 'Thema'), by.id(prefix + 'list'));
+    await scrollUntilVisible(
+      by.id(prefix + 'Thema'),
+      by.id(prefix + 'list'),
+      OS,
+    );
     await element(by.id(prefix + 'Thema')).tap();
     await waitFor(element(by.id('schedulePage')))
       .toBeVisible()
       .withTimeout(waitTime * 8);
-    await expect(element(by.id('schedulePage.Joshua 1-Ruth 3'))).toBeVisible();
+
+    await waitFor(element(by.id('schedulePage.Psalms 1-34')))
+      .toBeVisible()
+      .withTimeout(waitTime * 8);
+    await expect(element(by.id('schedulePage.Psalms 1-34'))).toBeVisible();
   });
 });
 
@@ -401,10 +442,10 @@ describe('warning popups', () => {
 
   it('should show please fill all inputs warning popup', async () => {
     await element(by.id(prefix + 'scheduleTypePopup.sequentialButton')).tap();
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+    );
     await element(by.id(pref + 'addButton')).tap();
     await expect(element(by.id(prefix + 'messagePopup'))).toBeVisible();
   });
@@ -429,14 +470,15 @@ describe('warning popups', () => {
     await waitFor(element(by.id(pref + 'numberOfPortionsInput')))
       .toBeVisible()
       .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+      .scroll(70, 'down');
     await element(by.id(pref + 'numberOfPortionsInput')).typeText('10');
 
     // Scroll to bottom of screen and press add button to create schedule
-    await waitFor(element(by.id(pref + 'addButton')))
-      .toBeVisible()
-      .whileElement(by.id(pref + 'scrollView'))
-      .scroll(50, 'down');
+    await scrollUntilVisible(
+      by.id(pref + 'addButton'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
     await element(by.id(pref + 'addButton')).tap();
 
     await expect(element(by.id(prefix + 'messagePopup'))).toBeVisible();

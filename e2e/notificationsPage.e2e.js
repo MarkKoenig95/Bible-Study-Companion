@@ -1,7 +1,8 @@
 /* eslint-env detox/detox, jest */
-import {setDateTimePicker} from './helpers/general';
+import {goBack, setDateTimePicker} from './helpers/general';
 const prefix = 'notificationsPage.';
 var waitTime = 1000;
+var OS;
 
 async function toggleSwitch(parentID, expectedValue) {
   await element(by.id(parentID + '.switch')).tap();
@@ -10,14 +11,8 @@ async function toggleSwitch(parentID, expectedValue) {
   );
 }
 
-async function goBack() {
-  await element(by.id('header-back')).atIndex(0).tap();
-}
-
 beforeAll(async () => {
-  if (device.getPlatform() !== 'ios') {
-    waitTime *= 5;
-  }
+  OS = device.getPlatform();
 });
 
 beforeEach(async () => {
@@ -39,7 +34,12 @@ it('Creates a notification', async () => {
   await element(by.id(prefix + 'header.addButton')).tap();
   await element(by.id(notifPopupID + 'nameInput')).typeText('New');
   await element(by.id(notifPopupID + 'weekdayCheckbox.We')).tap();
-  await setDateTimePicker(prefix + 'createNotificationPopup.timePicker', time);
+  await setDateTimePicker(
+    prefix + 'createNotificationPopup.timePicker',
+    time,
+    'time',
+    OS,
+  );
   await element(by.id(notifPopupID + 'addButton')).tap();
 
   // Make sure Wednesday notifications are turned off
@@ -122,7 +122,7 @@ describe('Notification page', () => {
 
   it('Changes the time for a notification day', async () => {
     const time = new Date(2021, 2, 31, 10, 0, 0, 0);
-    await setDateTimePicker(pref + 'Monday.timePicker', time);
+    await setDateTimePicker(pref + 'Monday.timePicker', time, 'time', OS);
     await expect(
       element(by.id('notificationPage.Monday.timePicker.display')),
     ).toHaveText('10:00 AM');
