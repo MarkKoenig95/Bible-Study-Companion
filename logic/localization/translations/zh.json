@@ -1,5 +1,5 @@
 {
-  "actions": {"cancel": "取消", "done": "完成"},
+  "actions": {"cancel": "取消", "done": "完成", "ok": "OK"},
   "appName": "圣经工具",
   "bibleBook": "书卷",
   "bibleBooks": {
@@ -21,7 +21,7 @@
     "16": {"name": "尼希米记", "whereWritten": "耶路撒冷"},
     "17": {"name": "以斯帖记", "whereWritten": "埃兰的书珊"},
     "18": {"name": "约伯记", "whereWritten": "旷野"},
-    "19": {"name": "诗篇", "whereWritten": ""},
+    "19": {"name": "诗篇", "whereWritten": "-"},
     "20": {"name": "箴言", "whereWritten": "耶路撒冷"},
     "21": {"name": "传道书", "whereWritten": "耶路撒冷"},
     "22": {"name": "雅歌", "whereWritten": "耶路撒冷"},
@@ -33,8 +33,8 @@
     "28": {"name": "何西阿书", "whereWritten": "撒马利亚地区"},
     "29": {"name": "约珥书", "whereWritten": "犹大地区"},
     "30": {"name": "阿摩司书", "whereWritten": "犹大地区"},
-    "31": {"name": "俄巴底亚书", "whereWritten": ""},
-    "32": {"name": "约拿书", "whereWritten": ""},
+    "31": {"name": "俄巴底亚书", "whereWritten": "-"},
+    "32": {"name": "约拿书", "whereWritten": "-"},
     "33": {"name": "弥迦书", "whereWritten": "犹大地区"},
     "34": {"name": "那鸿书", "whereWritten": "犹大地区"},
     "35": {"name": "哈巴谷书", "whereWritten": "犹大地区"},
@@ -92,7 +92,8 @@
     "startingPortion": "开始{{portionDesc}}",
     "startingPortionPhld": "你想从哪一{{portionDesc}}开始",
     "startingVerse": "开始经文",
-    "unfinished": "请正确的填写所有必填字段以及安排的时间表"
+    "unfinished": "请正确的填写所有必填字段以及安排的时间表",
+    "startDate": "Start date"
   },
   "date": {
     "approxDesc": {
@@ -169,7 +170,11 @@
   "other": "其他",
   "prompts": {
     "setNotification": "定提醒的时间：",
-    "nameTaken": "这个进度表题目已经使用了，请选择还没用的"
+    "nameTaken": "这个进度表题目已经使用了，请选择还没用的",
+    "markCompleted": "Mark Completed",
+    "markPreviousRead": "The reading you requested was marked complete. Would you like to mark all readings previous to it complete as well?",
+    "scheduleRecreatedMessage": "Your schedule was recreated. Please compare the new schedule with the original schedule (Old) to make sure no information was lost and then delete the old schedule.",
+    "scheduleRecreatedTitle": "Schedule Recreated"
   },
   "readingRemindersPopup": {
     "readingReminders": "阅读前提醒",
@@ -230,7 +235,8 @@
   "schedules": "进度表",
   "schedulePage": {
     "deleteScheduleMessage": "请确认你想删除叫 “{{scheduleName}}” 的进度表?",
-    "hideCompleted": "隐藏完成的"
+    "hideCompleted": "隐藏完成的",
+    "recreateScheduleWarning": "Doing this will require recreating this schedule. Are you sure you want to recreate this schedule?"
   },
   "scheduleTransactions": {
     "adjustedVersePrompt": "”你请求的经文超过了范围“ {{initialBibleBook}} {{initialChapter}}:{{initialVerse}}” 被改到最进的经文 “{{startBibleBook}} {{startChapter}}:{{startVerse}}”"
@@ -256,7 +262,7 @@
   "thisMonth": "这个月",
   "thisWeek": "这周",
   "today": "今天",
-  "updateDate": "2021-05-02T11:41:37.377Z",
+  "updateDate": "2021-05-31T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "章", "verseAbrev": "节"},
   "warning": "请注意",
   "weekdays": {
@@ -267,5 +273,7 @@
     "4": {"abrev": "四", "name": "周四"},
     "5": {"abrev": "五", "name": "周五"},
     "6": {"abrev": "六", "name": "周六"}
-  }
+  },
+  "advanced": "Advanced",
+  "old": "Old"
 }
