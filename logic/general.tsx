@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Alert, Linking, Platform} from 'react-native';
 import {StackActions, StackActionType} from '@react-navigation/native';
 import {runSQL} from '../data/Database/generalTransactions';
@@ -213,8 +213,11 @@ export async function legacyBugFixFor110(
   userDB: Database,
   bibleDB: Database,
   prevVersion: string,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   if (!versionIsLessThan(prevVersion, '1.1.0')) return;
+
+  setIsLoading(true);
 
   const tblSchedules = await runSQL(userDB, 'SELECT * FROM tblSchedules;');
 
@@ -239,6 +242,8 @@ export async function legacyBugFixFor110(
       startDate: compDate,
     });
   }
+
+  setIsLoading(false);
 
   Alert.alert(
     translate('prompts.scheduleRecreatedTitle'),

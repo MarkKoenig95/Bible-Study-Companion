@@ -470,9 +470,8 @@ export default function Home(props) {
         if (!prevVersion) {
           navToSchedules();
         }
-        setIsLoading(true);
-        await legacyBugFixFor110(userDB, bibleDB, prevVersion);
-        setIsLoading(false);
+
+        await legacyBugFixFor110(userDB, bibleDB, prevVersion, setIsLoading);
       });
     }
   }, [bibleDB, dispatch, navigation, userDB]);

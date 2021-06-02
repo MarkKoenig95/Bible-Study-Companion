@@ -732,6 +732,39 @@ export async function findCorrespondingIndex(
   return correspondingIndex;
 }
 
+async function getIndicesForBibleSchedule(
+  startPortion,
+  endPortion,
+  userDB,
+  newTableName,
+) {
+  // Since there might be changes between the two bible schedules and their implementations, and how many
+  // verses they span, then this function is slightly more complicated than that of a custom schedule
+  let startIndex = await findCorrespondingIndex(
+    userDB,
+    newTableName,
+    startPortion.StartBookNumber,
+    startPortion.StartChapter,
+    startPortion.StartVerse,
+  );
+
+  let endIndex = await findCorrespondingIndex(
+    userDB,
+    newTableName,
+    endPortion.EndBookNumber,
+    endPortion.EndChapter,
+    endPortion.EndVerse,
+  );
+  return {startIndex, endIndex};
+}
+
+async function getIndicesForCustomSchedule(startPortion, endPortion) {
+  let startIndex = startPortion.ReadingDayID;
+  let endIndex = endPortion.ReadingDayID;
+
+  return {startIndex, endIndex};
+}
+
 /**
  * Given the name of an original table and a table to match with it will update the new table's corresponding IsFinished markers for the correct reading days
  * @param {Database} userDB
@@ -742,6 +775,7 @@ export async function matchFinishedPortions(
   userDB,
   origTableName,
   newTableName,
+  scheduleType,
 ) {
   let origScheduleFinished = await runSQL(
     userDB,
@@ -760,20 +794,17 @@ export async function matchFinishedPortions(
     let startPortion = origScheduleFinished.rows.item(span.startIndex);
     let endPortion = origScheduleFinished.rows.item(span.endIndex);
 
-    let startIndex = await findCorrespondingIndex(
-      userDB,
-      newTableName,
-      startPortion.StartBookNumber,
-      startPortion.StartChapter,
-      startPortion.StartVerse,
-    );
+    let getIndices = getIndicesForBibleSchedule;
 
-    let endIndex = await findCorrespondingIndex(
+    if (scheduleType === SCHEDULE_TYPES.CUSTOM) {
+      getIndices = getIndicesForCustomSchedule;
+    }
+
+    let {startIndex, endIndex} = await getIndices(
+      startPortion,
+      endPortion,
       userDB,
       newTableName,
-      endPortion.EndBookNumber,
-      endPortion.EndChapter,
-      endPortion.EndVerse,
     );
 
     // In order to make sure we don't somehow accidentally mark every item as read because of feeding
@@ -874,13 +905,14 @@ export async function recreateSchedule(
     startDate: new Date(oldScheduleInfo.StartDate),
     ...creationInfo,
   };
+  let scheduleType = parseInt(oldScheduleInfo.ScheduleType, 10);
 
   //Create new schedule with the original name
   let createSchedule = new Promise((res, rej) => {
     addSchedule(
       userDB,
       bibleDB,
-      parseInt(oldScheduleInfo.ScheduleType, 10),
+      scheduleType,
       scheduleName,
       newCreationInfo.doesTrack,
       newCreationInfo.activeDays,
@@ -925,5 +957,5 @@ export async function recreateSchedule(
   });
 
   //Then we match to sync finished reading portions with old schedule
-  await matchFinishedPortions(userDB, oldTableName, newTableName);
+  await matchFinishedPortions(userDB, oldTableName, newTableName, scheduleType);
 }
