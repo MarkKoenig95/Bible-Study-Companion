@@ -231,6 +231,7 @@ export async function populateWeeklyReading(
         //Add reading portion info to the list
         innerListItems.push({
           ...item,
+          doesTrack: true,
           title: title,
           tableName: tableName,
           update: update,

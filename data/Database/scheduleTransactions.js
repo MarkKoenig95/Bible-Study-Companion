@@ -595,7 +595,13 @@ export async function getScheduleSettings(userDB, scheduleName) {
       let dayIsActive = scheduleInfo[`IsDay${i}Active`] ? true : false;
       activeDays.push(dayIsActive);
     }
-    creationInfo = JSON.parse(scheduleInfo.CreationInfo);
+
+    creationInfo = scheduleInfo.CreationInfo;
+
+    if (typeof creationInfo === 'object') {
+      creationInfo = JSON.parse(creationInfo);
+    }
+
     doesTrack = scheduleInfo.DoesTrack ? true : false;
     hideCompleted = scheduleInfo.HideCompleted ? true : false;
     startDate = new Date(scheduleInfo.StartDate);

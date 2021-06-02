@@ -216,7 +216,6 @@ function SchedulePage(props) {
     }
 
     if (listItems.length > 0 && flatListRef && firstUnfinished) {
-      console.log('firstUnfinished', firstUnfinished);
       flatListRef.scrollToItem({
         animated: false,
         item: firstUnfinished,
