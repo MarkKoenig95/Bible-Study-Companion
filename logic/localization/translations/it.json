@@ -1,5 +1,5 @@
 {
-  "actions": {"cancel": "Anulla", "done": "Fatto"},
+  "actions": {"cancel": "Cancella", "done": "Fatto", "ok": "D'accordo "},
   "appName": "Bibbia Aiuto per lo Studio",
   "bibleBook": "Libri della Bibbia",
   "bibleBooks": {
@@ -21,7 +21,7 @@
     "16": {"name": "Neemia", "whereWritten": "Gerusalemme"},
     "17": {"name": "Ester", "whereWritten": "Shushan, Elam"},
     "18": {"name": "Giobbe", "whereWritten": "Deserto"},
-    "19": {"name": "Salmi", "whereWritten": "-"},
+    "19": {"name": "Salmi", "whereWritten": "Descrizione "},
     "20": {"name": "Proverbi", "whereWritten": "Gerusalemme"},
     "21": {"name": "Ecclesiaste", "whereWritten": "Gerusalemme"},
     "22": {"name": "Cantico dei cantici", "whereWritten": "Gerusalemme"},
@@ -33,8 +33,8 @@
     "28": {"name": "Osea", "whereWritten": "Samaria (Distretto)"},
     "29": {"name": "Gioele", "whereWritten": "Giuda"},
     "30": {"name": "Amos", "whereWritten": "Giuda"},
-    "31": {"name": "Abdia", "whereWritten": "-"},
-    "32": {"name": "Giona", "whereWritten": "-"},
+    "31": {"name": "Abdia", "whereWritten": "Descrizione "},
+    "32": {"name": "Giona", "whereWritten": "Descrizione "},
     "33": {"name": "Michea", "whereWritten": "Giuda"},
     "34": {"name": "Naum", "whereWritten": "Giuda"},
     "35": {"name": "Abacuc", "whereWritten": "Giuda"},
@@ -93,7 +93,7 @@
     "startingPortionPhld": "{{portionDesc}} da cui vorresti iniziare",
     "startingVerse": "Versetto iniziale",
     "unfinished": "Si prega di compilare tutti i campi obbligatori con valori validi per creare un programma",
-    "startDate": "Start date"
+    "startDate": "Data d'inizio "
   },
   "date": {
     "approxDesc": {
@@ -105,7 +105,7 @@
     "ancientDate": "{{year}}o{{bceOrCe}}",
     "bce": "A.E.V",
     "ce": "E.V",
-    "dateSpan": "{{startDate}} - {{endDate}}",
+    "dateSpan": "{{startDate}}  -  {{endDate}}",
     "specialCases": {
       "1": "\"In principio\" fino {{endYear}}",
       "3": "1 Mese al {{endYear}}",
@@ -118,10 +118,10 @@
     }
   },
   "frequencies": {
-    "daily": "quotidiano",
+    "daily": "Quotidiano",
     "weekly": "settimanalmente",
-    "monthly": "mensile",
-    "never": "mai"
+    "monthly": "Mensile",
+    "never": "Mai"
   },
   "homePage": {
     "emptyList": "Non hai più letture per la giornata",
@@ -180,14 +180,14 @@
       "count": 8
     }
   },
-  "other": "altro",
+  "other": "Altro",
   "prompts": {
     "setNotification": "Imposta notifica per: ",
     "nameTaken": "Seleziona un nome che non hai usato",
-    "markCompleted": "Mark Completed",
-    "markPreviousRead": "The reading you requested was marked complete. Would you like to mark all readings previous to it complete as well?",
-    "scheduleRecreatedMessage": "Your schedule was recreated. Please compare the new schedule with the original schedule (Old) to make sure no information was lost and then delete the old schedule.",
-    "scheduleRecreatedTitle": "Schedule Recreated"
+    "markCompleted": "Segna Completato ",
+    "markPreviousRead": "La lettura richiesta è stata contrassegnata completata. Vorresti contrassegnare tutte le letture precedentemente completate ?",
+    "scheduleRecreatedMessage": "Il tuo programma è stato ricreato. Si prega di confrontare il nuovo programma con il programma originale (vecchio) per assicurarsi che nessuna informazione sia stata persa e dopo eliminare il vecchio programma.",
+    "scheduleRecreatedTitle": "Programma Ricreato "
   },
   "readingRemindersPopup": {
     "readingReminders": "Promemoria di lettura",
@@ -217,76 +217,76 @@
   },
   "readingInfoPopup": {
     "readingInfo": "informazioni sulla lettura",
-    "readingPortion": "brano",
+    "readingPortion": "Porzione da leggere ",
     "timeCovered": "tempo impiegato",
-    "whereWritten": "dov'è scritto",
-    "whenWritten": "quando è stato scritto",
+    "whereWritten": "Dov'è scritto",
+    "whenWritten": "Quando è stato scritto",
     "writers": "Scrittore /(i)"
   },
-  "readingSchedules": "orari di lettura",
+  "readingSchedules": "Orari di lettura",
   "reminders": {
-    "completeReminderMessage": "  desideri contraseggnarlo come completato?{{reminderName}} ",
-    "dailyReading": "lettura quotidiana",
-    "dailyText": "testo quotidiano",
-    "midweekMeetingStudy": "studio delle riunioni infrasettimanali",
+    "completeReminderMessage": "  Desideri contraseggnarlo come completato?{{reminderName}} ",
+    "dailyReading": "Lettura quotidiana",
+    "dailyText": "Testo quotidiano",
+    "midweekMeetingStudy": "Studio delle riunioni infrasettimanali",
     "reminder": "Promemoria",
-    "weekendMeetingStudy": "studio delle riunioni del fine settimana",
+    "weekendMeetingStudy": "Studio delle riunioni del fine settimana",
     "weeklyReading": {
-      "title": "lettura settimanale",
-      "showDaily": "mostra la porzione giornaliera della lettura settimanale"
+      "title": "Lettura settimanale",
+      "showDaily": "Mostra la porzione giornaliera della lettura settimanale"
     }
   },
   "remindersPage": {
-    "completed": "completato{{desc}}",
-    "deleteReminderMessage": " sei sicuro di voler eliminare il promemoria? {{reminderName}}",
-    "every": "ogni: ",
-    "name": "nome: ",
-    "reminderPopupTitle": "crea nuovo promemoria",
-    "repeats": "si ripete: ",
-    "title": "promemoria"
+    "completed": "Completato{{desc}}",
+    "deleteReminderMessage": " Sei sicuro di voler eliminare il promemoria? {{reminderName}}",
+    "every": "Ogni: ",
+    "name": "Nome: ",
+    "reminderPopupTitle": "Crea nuovo promemoria",
+    "repeats": "Ripetere:",
+    "title": "Promemoria"
   },
-  "schedules": "orari",
+  "schedules": "Programmi",
   "schedulePage": {
-    "deleteScheduleMessage": "sei sicuro di voler eliminare il programma? {{scheduleName}}",
-    "hideCompleted": "nascondi giorni completati",
-    "recreateScheduleWarning": "Doing this will require recreating this schedule. Are you sure you want to recreate this schedule?"
+    "deleteScheduleMessage": "Sei sicuro di voler eliminare il programma? {{scheduleName}}",
+    "hideCompleted": "Nascondi giorni completati",
+    "recreateScheduleWarning": "Fare ciò richiederà ricreare questo programma. Sei sicuro di voler ricreare questo programma??"
   },
   "scheduleTransactions": {
     "adjustedVersePrompt": "verso iniziale modificato da \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}perché la richiesta iniziale non era corretta."
   },
   "scheduleTypePopup": {
-    "scheduleType": "tipo di programma",
-    "sequential": "sequenziale",
+    "scheduleType": "Tipo di programma",
+    "sequential": "Sequenziale",
     "sequentialDescription": "Leggi la Bibbia dalla Genesi al libro di Rivelazione",
     "chronological": "Cronologico",
     "chronologicalDescription": "Leggi la Bibbia nell'ordine in cui si sono verificati gli eventi. (SPERIMENTALE: se trovi una discrepanza contattami)",
-    "thematic": "tematico",
-    "thematicDescription": "ogni giorno, leggi da una sezione diversa della Bibbia in un ciclo settimanale: giorno 1 - la legge, 2 - storia, 3 - salmi, 4 - poesia, 5 - profezia, 6 - vangeli, 7 - lettere",
-    "custom": "personalizzato",
-    "customDescription": "crea un programma personalizzato per una pubblicazione"
+    "thematic": "Tematico",
+    "thematicDescription": "Ogni giorno, leggi da una sezione diversa della Bibbia in un ciclo settimanale: giorno 1 - la legge, 2 - storia, 3 - salmi, 4 - poesia, 5 - profezia, 6 - vangeli, 7 - lettere",
+    "custom": "Personalizzato",
+    "customDescription": "Crea un programma personalizzato per una pubblicazione"
   },
   "settingsPage": {
-    "about": "di",
-    "contact": "contatti",
+    "about": "Di",
+    "contact": "Contatti",
     "title": "impostazioni",
-    "version": "versione",
-    "weeklyReadingResetDay": "giorno per ripristinare la lettura settimanale:"
+    "version": "Versione",
+    "weeklyReadingResetDay": "Giorno per ripristinare la lettura settimanale:"
   },
-  "thisMonth": "questo mese",
-  "thisWeek": "questa settimana",
-  "today": "oggi",
+  "thisMonth": "Questo mese",
+  "thisWeek": "Questa settimana",
+  "today": "Oggi",
   "updateDate": "2021-05-31T11:41:37.377Z",
-  "versePicker": {"chapterAbrev": "cap", "verseAbrev": "vers"},
-  "warning": "avvertimento",
+  "versePicker": {"chapterAbrev": "Cap", "verseAbrev": "Vers"},
+  "warning": "Attenzione ",
   "weekdays": {
-    "0": {"abrev": "Dom", "name": "domenica"},
-    "1": {"abrev": "lu", "name": "lunedì"},
-    "2": {"abrev": "ma", "name": "martedì"},
-    "3": {"abrev": "me", "name": "mercoledì"},
-    "4": {"abrev": "gio", "name": "giovedì"},
-    "5": {"abrev": "ve", "name": "venerdì"},
-    "6": {"abrev": "sa", "name": "sabato"}
+    "0": {"abrev": "Dom", "name": "Domenica"},
+    "1": {"abrev": "Lu", "name": "Lunedì"},
+    "2": {"abrev": "Ma", "name": "Martedì"},
+    "3": {"abrev": "Me", "name": "Mercoledì"},
+    "4": {"abrev": "Gio", "name": "Giovedì"},
+    "5": {"abrev": "Ve", "name": "Venerdì"},
+    "6": {"abrev": "Sa", "name": "Sabato"}
   },
-  "old": "Old",
-  "advanced": "Advanced"
+  "old": "Vecchio ",
+  "advanced": "Avanzato"
 }

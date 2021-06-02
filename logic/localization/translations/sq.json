@@ -1,6 +1,6 @@
 {
-  "actions": {"cancel": "Fshi", "done": "U krye", "ok": "OK"},
-  "appName": "Bibla ndihmës për studim",
+  "actions": {"cancel": "Fshi ", "done": "U krye", "ok": "Në rregull"},
+  "appName": "Bibla Pragram Ndihmës për Studim",
   "bibleBook": "Libri i Biblës",
   "bibleBooks": {
     "1": {"name": "Zanafilla", "whereWritten": "Shkretëtirë"},
@@ -96,7 +96,7 @@
     "startingPortionPhld": "{{portionDesc}}Do të pëlqente të filloje nga ",
     "startingVerse": "Fillo vargun nga",
     "unfinished": "Ju lutem plotësoni të gjitha fushat e kërkuara me vlera të vlefshme për të krijuar një program",
-    "startDate": "Start date"
+    "startDate": "Data e fillimit"
   },
   "date": {
     "approxDesc": {
@@ -105,10 +105,10 @@
       "after": "Pas",
       "before": "Para"
     },
-    "ancientDate": "{{year}} {{bceOrCe}}",
+    "ancientDate": "{{year}}  {{bceOrCe}}",
     "bce": "P.E.S",
     "ce": "E.S",
-    "dateSpan": "{{startDate}} - {{endDate}}",
+    "dateSpan": "{{startDate}}  -  {{endDate}}",
     "specialCases": {
       "1": "“Në fillim të” deri {{endYear}}",
       "3": "1 Muaj në {{endYear}}",
@@ -174,10 +174,10 @@
   "prompts": {
     "setNotification": "Përshkrim: ",
     "nameTaken": "Të lutem përdor një titull të ri",
-    "markCompleted": "Mark Completed",
-    "markPreviousRead": "The reading you requested was marked complete. Would you like to mark all readings previous to it complete as well?",
-    "scheduleRecreatedMessage": "Your schedule was recreated. Please compare the new schedule with the original schedule (Old) to make sure no information was lost and then delete the old schedule.",
-    "scheduleRecreatedTitle": "Schedule Recreated"
+    "markCompleted": "Shëno të përfunduarat",
+    "markPreviousRead": "Leximi që keni kërkuar u shënua i plotë. Dëshiron të shënoni të gjitha leximet e mëparshme për të përfunduar gjithashtu?  ",
+    "scheduleRecreatedMessage": "Skeda juaj u rikrijua. Ju lutemi krahasoni skedën e re me skedën origjinale (të vjetër) për të siguruar që asnjë informacion të mos humbasë, dhe pastaj fshini orarin e vjetër. ",
+    "scheduleRecreatedTitle": "Skeda u  Rifreskua"
   },
   "readingRemindersPopup": {
     "readingReminders": "Kujtesa e leximit",
@@ -215,7 +215,7 @@
   },
   "readingSchedules": "Programet",
   "reminders": {
-    "completeReminderMessage": "Are you sure you want to mark reminder \"{{reminderName}}\" complete?",
+    "completeReminderMessage": "Jeni i sigurt që dëshironi të shënoni kujtesë \"{{reminderName}}\" përfunduar?",
     "dailyReading": "Leximi i ditës",
     "dailyText": "Shkrimi i ditës",
     "midweekMeetingStudy": "Studimi i mbledhjes së meajavës ",
@@ -239,7 +239,7 @@
   "schedulePage": {
     "deleteScheduleMessage": "A je i bindur se dëshiron ta fshish” \"{{scheduleName}}\" programi?",
     "hideCompleted": "Fshi atë që është e kryer",
-    "recreateScheduleWarning": "Doing this will require recreating this schedule. Are you sure you want to recreate this schedule?"
+    "recreateScheduleWarning": "Të bësh këtë do të kërkojë rikrijimin e kësaj skede. Jeni i sigurt që dëshironi të rikrijoni këtë skedë?"
   },
   "scheduleTransactions": {
     "adjustedVersePrompt": "Fillo vargun nga “{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" deri \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\"sepse kërkesa fillestare ishte jashtë kufijve."
@@ -277,6 +277,6 @@
     "5": {"abrev": "Prt", "name": "E premte"},
     "6": {"abrev": "Sht", "name": "E shtunë"}
   },
-  "old": "Old",
-  "advanced": "Advanced"
+  "old": "e vjetër ",
+  "advanced": "Shtesë "
 }

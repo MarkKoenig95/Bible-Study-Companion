@@ -18,7 +18,6 @@ import {
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
 import {log, getSettings} from './data/Database/generalTransactions';
-import {runQueries} from './data/Database/scheduleTransactions';
 import {updateNotifications} from './data/Database/notificationTransactions';
 import {updateReminderDates} from './data/Database/reminderTransactions';
 
@@ -35,6 +34,7 @@ import {colors} from './styles/styles';
 import {useNotifications} from './logic/notifications/NotifService';
 
 import {useLocalization, translate} from './logic/localization/localization';
+import {runQueries} from './logic/scheduleCreation';
 
 const Stack = createStackNavigator();
 const navigationOptions = {
@@ -157,7 +157,6 @@ export default function AppContainer() {
 
   useEffect(() => {
     initializeData().then((data) => {
-      console.log('data is', data);
       log('Setting context values');
       dispatch(setUserDB(data.userDB));
       dispatch(setBibleDB(data.bibleDB));
