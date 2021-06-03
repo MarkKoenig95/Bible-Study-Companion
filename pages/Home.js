@@ -466,13 +466,13 @@ export default function Home(props) {
     });
 
     if (userDB && bibleDB) {
-      appVersion(userDB).then(async ({prevVersion, currVersion}) => {
+      appVersion(userDB).then(({prevVersion, currVersion}) => {
         dispatch(setAppVersion(currVersion));
         if (!prevVersion) {
           navToSchedules();
         }
 
-        await legacyBugFixFor110(userDB, bibleDB, prevVersion, setIsLoading);
+        legacyBugFixFor110(userDB, bibleDB, prevVersion, setIsLoading);
       });
     }
   }, [bibleDB, dispatch, navigation, userDB]);

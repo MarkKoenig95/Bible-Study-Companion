@@ -208,23 +208,15 @@ export function pageBack(navigation: {
   navigation.dispatch(StackActions.pop(1));
 }
 
-// !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------
-export async function legacyBugFixFor110(
-  userDB: Database,
-  bibleDB: Database,
-  prevVersion: string,
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-) {
-  if (!versionIsLessThan(prevVersion, '1.1.0')) return;
-
-  setIsLoading(true);
-
+async function recreateAllUserSchedules(userDB: Database, bibleDB: Database) {
   const tblSchedules = await runSQL(userDB, 'SELECT * FROM tblSchedules;');
 
   for (let i = 0; i < tblSchedules.rows.length; i++) {
     const tableInfo: ScheduleInfo = tblSchedules.rows.item(i);
-
+    const creationInfo = tableInfo.CreationInfo;
     const tableName = formatScheduleTableName(tableInfo.ScheduleID);
+
+    if (creationInfo === WEEKLY_READING_TABLE_NAME || !creationInfo) continue;
 
     let firstItem = await runSQL(
       userDB,
@@ -242,6 +234,20 @@ export async function legacyBugFixFor110(
       startDate: compDate,
     });
   }
+}
+
+// !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------
+export async function legacyBugFixFor110(
+  userDB: Database,
+  bibleDB: Database,
+  prevVersion: string,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+) {
+  if (!versionIsLessThan(prevVersion, '1.1.0')) return;
+
+  setIsLoading(true);
+
+  await recreateAllUserSchedules(userDB, bibleDB);
 
   setIsLoading(false);
 
