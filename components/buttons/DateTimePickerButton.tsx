@@ -1,10 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, TextStyle, TouchableOpacity, View} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Body} from '../text/Text';
 import DateTimePicker from '../inputs/DateTimePicker';
 
 import {colors} from '../../styles/styles';
 import moment from 'moment';
+import {versionIsLessThan} from '../../logic/general';
 
 const getDisplayText = (
   mode: 'time' | 'date',
@@ -36,6 +43,12 @@ export default function DateTimePickerButton(props: {
 
   const [displayText, setDisplayText] = useState('');
 
+  let minWidthStyle = {};
+
+  if (Platform.OS === 'ios' && versionIsLessThan(Platform.Version, '13')) {
+    minWidthStyle = {minWidth: 200};
+  }
+
   useEffect(() => {
     let tempDisplayText = getDisplayText(mode, time, textPrefix);
     setDisplayText(tempDisplayText);
@@ -46,6 +59,7 @@ export default function DateTimePickerButton(props: {
       testID={testID}
       style={{
         ...style.selectTimeButton,
+        ...minWidthStyle,
         backgroundColor: backgroundColor,
       }}>
       {!isTimePickerVisible ? (
@@ -78,6 +92,5 @@ const style = StyleSheet.create({
     borderRadius: 10,
     flex: 1,
     margin: 10,
-    minWidth: 150,
   },
 });

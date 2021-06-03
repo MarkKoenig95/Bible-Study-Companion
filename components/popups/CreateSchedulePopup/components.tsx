@@ -275,5 +275,6 @@ const style = StyleSheet.create({
   settingWrapper: {
     ...styles.wrapperContent,
     justifyContent: 'space-around',
+    flexWrap: 'wrap',
   },
 });

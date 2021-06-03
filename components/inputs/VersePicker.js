@@ -40,7 +40,7 @@ export default function VersePicker(props) {
 
   const globalState = useContext(store);
   const {bibleDB} = globalState.state;
-  const setSelectedItems = sItems => onChange('selectedItems', sItems);
+  const setSelectedItems = (sItems) => onChange('selectedItems', sItems);
   const [bookName, setBookName] = useState('');
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function VersePicker(props) {
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
           text={bookName}
-          onTextChange={text => setBookName}
+          onTextChange={() => setBookName}
           width={145}
         />
 
@@ -67,7 +67,7 @@ export default function VersePicker(props) {
           testID={testID + '.chapterInput'}
           style={style.input}
           containerStyle={style.inputContainer}
-          onChangeText={text => onChange('chapter', text)}
+          onChangeText={(text) => onChange('chapter', text)}
           textAlign="center"
           value={chapterValue}
           defaultValue={defaultChapterValue}
@@ -81,7 +81,7 @@ export default function VersePicker(props) {
           testID={testID + '.verseInput'}
           style={style.input}
           containerStyle={style.inputContainer}
-          onChangeText={text => onChange('verse', text)}
+          onChangeText={(text) => onChange('verse', text)}
           textAlign="center"
           value={verseValue}
           defaultValue={defaultVerseValue}
@@ -100,6 +100,8 @@ const style = StyleSheet.create({
   },
   input: {
     ...styles.input,
+    height: 45,
+    padding: 5,
     width: 50,
   },
   inputContainer: {
