@@ -1,14 +1,16 @@
 import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {SafeAreaView, View, FlatList, Alert} from 'react-native';
-import {translate} from '../logic/localization/localization';
+import {translate} from '../../logic/localization/localization';
 
-import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
-import IconButton from '../components/buttons/IconButton';
+import MessagePopup, {
+  useMessagePopup,
+} from '../../components/popups/MessagePopup';
+import IconButton from '../../components/buttons/IconButton';
 
-import styles from '../styles/styles';
+import styles from '../../styles/styles';
 
-import {store} from '../data/Store/store.js';
-import {loadData, log} from '../data/Database/generalTransactions';
+import {store} from '../../data/Store/store.js';
+import {loadData, log} from '../../data/Database/generalTransactions';
 import {
   deleteSchedule,
   setHideCompleted,
@@ -16,17 +18,17 @@ import {
   renameSchedule,
   setDoesTrack,
   updateScheduleStartDate,
-} from '../data/Database/scheduleTransactions';
-import TextButton from '../components/buttons/TextButton';
+} from '../../data/Database/scheduleTransactions';
+import TextButton from '../../components/buttons/TextButton';
 import {
   WEEKLY_READING_TABLE_NAME,
   useUpdate,
   useToggleState,
   pageBack,
-} from '../logic/general';
-import useScheduleButtonsList from '../components/ScheduleButtonsList';
-import ScheduleSettingsPopup from '../components/popups/ScheduleSettingsPopup';
-import LoadingPopup from '../components/popups/LoadingPopup';
+} from '../../logic/general';
+import useScheduleButtonsList from '../../components/ScheduleButtonsList';
+import ScheduleSettingsPopup from '../../components/popups/ScheduleSettingsPopup';
+import LoadingPopup from '../../components/popups/LoadingPopup';
 
 const pageTitle = 'schedulePage';
 let flatListRef;

@@ -4,7 +4,7 @@ import Home from '../pages/Home';
 import Notification from '../pages/Notification';
 import Notifications from '../pages/Notifications';
 import Reminders from '../pages/Reminders';
-import SchedulePage from '../pages/SchedulePage';
+import SchedulePage from '../pages/SchedulePage/SchedulePage';
 import Schedules from '../pages/Schedules';
 import Settings from '../pages/Settings';
 
