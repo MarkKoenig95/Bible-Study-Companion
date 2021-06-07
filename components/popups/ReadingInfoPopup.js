@@ -21,7 +21,7 @@ import {
 
 import {errorCB, runSQL} from '../../data/Database/generalTransactions';
 import {findMaxChapter} from '../../logic/scheduleCreation';
-import {store} from '../../data/Store/store.js';
+import {store} from '../../data/Store/store';
 
 const blankInfo = {
   id: 0,

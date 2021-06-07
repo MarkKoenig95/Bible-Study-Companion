@@ -7,7 +7,7 @@ import CustomInput from './CustomInput';
 import Text from '../text/Text';
 
 import styles from '../../styles/styles';
-import {store} from '../../data/Store/store.js';
+import {store} from '../../data/Store/store';
 import CustomDropdown from './CustomDropdown';
 
 const items = [];

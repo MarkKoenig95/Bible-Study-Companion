@@ -19,7 +19,7 @@ import {
   legacyBugFixFor110,
 } from '../logic/general';
 import {translate} from '../logic/localization/localization';
-import {store} from '../data/Store/store.js';
+import {store} from '../data/Store/store';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';

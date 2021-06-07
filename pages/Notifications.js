@@ -16,7 +16,7 @@ import styles, {colors} from '../styles/styles';
 
 import {translate} from '../logic/localization/localization';
 
-import {store} from '../data/Store/store.js';
+import {store} from '../data/Store/store';
 
 import {
   errorCB,

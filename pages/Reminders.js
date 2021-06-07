@@ -13,7 +13,7 @@ import WeekdayPicker from '../components/inputs/WeekdayPicker';
 
 import styles, {colors} from '../styles/styles';
 
-import {store} from '../data/Store/store.js';
+import {store} from '../data/Store/store';
 
 import {translate, translationExists} from '../logic/localization/localization';
 import {
