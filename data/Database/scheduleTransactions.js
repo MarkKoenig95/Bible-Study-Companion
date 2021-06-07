@@ -572,7 +572,7 @@ export async function updateDates(userDB, date, name, afterUpdate = () => {}) {
  * Given a schedule name, returns the settings associated with it
  * @param {Database} userDB
  * @param {string} scheduleName
- * @returns {object}
+ * @returns {Promise<any>}
  * @property {boolean} hideCompleted - True if user wants previously read reading portions to not be shown
  * @property {boolean} doesTrack - False if user wants completion dates of reading portions to not be shown
  */

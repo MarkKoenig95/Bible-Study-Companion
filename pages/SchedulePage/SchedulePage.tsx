@@ -29,12 +29,34 @@ import {
 import useScheduleButtonsList from '../../components/ScheduleButtonsList';
 import ScheduleSettingsPopup from '../../components/popups/ScheduleSettingsPopup';
 import LoadingPopup from '../../components/popups/LoadingPopup';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RouteProp} from '@react-navigation/core';
+import {ReadingScheduleItem} from '../../data/Database/types';
 
 const pageTitle = 'schedulePage';
-let flatListRef;
+let flatListRef: any;
 let firstUnfinishedID = Infinity;
+let firstUnfinished: ReadingScheduleItem | undefined;
+const baseListItems: ReadingScheduleItem[][] = [];
 
-function SchedulePage(props) {
+type RootStackParamList = {
+  Home: undefined;
+  Schedules: undefined;
+  Schedule: {table: string; name: string};
+  Settings: undefined;
+  Notifications: undefined;
+  Notification: undefined;
+  Reminders: undefined;
+};
+
+type ScheduleScreenRouteProp = RouteProp<RootStackParamList, 'Schedule'>;
+
+type Props = {
+  navigation: StackNavigationProp<RootStackParamList, 'Schedule'>;
+  route: ScheduleScreenRouteProp;
+};
+
+function SchedulePage(props: Props) {
   log('loaded schedule page');
 
   const {navigation, route} = props;
@@ -46,11 +68,10 @@ function SchedulePage(props) {
   const scheduleName = route.params.name;
   const tableName = route.params.table;
 
-  const [listItems, setListItems] = useState([]);
-  const [completedHidden, setCompletedHidden] = useState();
-  const [shouldTrack, setShouldTrack] = useState();
+  const [listItems, setListItems] = useState(baseListItems);
+  const [completedHidden, setCompletedHidden] = useState(false);
+  const [shouldTrack, setShouldTrack] = useState(true);
   const [startDate, setStartDate] = useState(new Date());
-  const [firstUnfinished, setFirstUnfinished] = useState();
   const [isLoading, setLoadingPopup] = useState(false);
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
@@ -183,17 +204,23 @@ function SchedulePage(props) {
       typeof shouldTrack === 'undefined' ||
       typeof completedHidden === 'undefined'
     ) {
-      getScheduleSettings(userDB, scheduleName).then((settings) => {
-        const {startDate, doesTrack, hideCompleted} = settings;
+      getScheduleSettings(userDB, scheduleName).then(
+        (settings: {
+          startDate: Date;
+          doesTrack: boolean;
+          hideCompleted: boolean;
+        }) => {
+          const {startDate, doesTrack, hideCompleted} = settings;
 
-        setShouldTrack(doesTrack);
-        setCompletedHidden(hideCompleted);
-        setStartDate(startDate);
-      });
+          setShouldTrack(doesTrack);
+          setCompletedHidden(hideCompleted);
+          setStartDate(startDate);
+        },
+      );
       return;
     }
 
-    loadData(userDB, tableName, shouldTrack).then((res) => {
+    loadData(userDB, tableName, shouldTrack).then((res?: any[]) => {
       if (res) {
         setListItems(res);
       }
@@ -209,7 +236,7 @@ function SchedulePage(props) {
 
   useEffect(() => {
     if (listItems.length > 0 && flatListRef && completedHidden) {
-      setFirstUnfinished();
+      firstUnfinished = undefined;
       flatListRef.scrollToIndex({
         animated: false,
         index: 0,
@@ -224,7 +251,7 @@ function SchedulePage(props) {
         viewPosition: 0,
       });
     }
-  }, [completedHidden, firstUnfinished, listItems]);
+  }, [completedHidden, listItems]);
 
   return (
     <SafeAreaView testID={pageTitle} style={styles.container}>
@@ -275,7 +302,13 @@ function SchedulePage(props) {
             offset: 85 * index,
             index,
           })}
-          renderItem={({item, index}) => {
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: ReadingScheduleItem[];
+            index: number;
+          }) => {
             if (
               item[0].ReadingDayID === firstUnfinishedID &&
               !!item[0].IsFinished
@@ -287,7 +320,7 @@ function SchedulePage(props) {
               !item[0].IsFinished
             ) {
               firstUnfinishedID = item[0].ReadingDayID;
-              setFirstUnfinished(item[0]);
+              firstUnfinished = item[0];
             }
             return setScheduleButtons(item, index, firstUnfinishedID);
           }}

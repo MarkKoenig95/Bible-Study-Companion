@@ -14,6 +14,7 @@ export interface DBQueryResult {
 }
 
 export interface ReadingScheduleItem {
+  IsFinished: 0 | 1;
   ReadingDayID: number;
   CompletionDate: string;
   doesTrack: boolean;
