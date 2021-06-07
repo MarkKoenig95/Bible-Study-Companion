@@ -33,6 +33,11 @@ beforeEach(async () => {
   await element(by.id('tabs.schedulesPage')).tap();
 });
 
+it('should automatically focus on the first unfinished element in the list', async () => {
+  await element(by.id('schedulesPage.' + 'Base Thema')).tap();
+  await expect(element(by.id(prefix + 'Revelation 14-16'))).toBeVisible();
+});
+
 describe('basic schedule page functions', () => {
   const thisScheduleName = 'Base Seq';
   beforeEach(async () => {
