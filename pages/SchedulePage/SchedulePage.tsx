@@ -13,6 +13,7 @@ import LoadingPopup from '../../components/popups/LoadingPopup';
 import {ReadingScheduleItem} from '../../data/Database/types';
 import useSchedulePage from './logic';
 import {SchedulePageProps} from './types';
+import {SCHEDULE_TYPES} from '../../logic/general';
 
 let flatListRef: any;
 
@@ -34,6 +35,7 @@ function SchedulePage(props: SchedulePageProps) {
     messagePopup,
     openRemindersPopup,
     pageTitle,
+    scheduleType,
     settingsPopupIsDisplayed,
     shouldTrack,
     ScheduleListPopups,
@@ -59,9 +61,9 @@ function SchedulePage(props: SchedulePageProps) {
       />
       <ScheduleSettingsPopup
         testID={pageTitle + '.settingsPopup'}
-        completedHidden={completedHidden}
+        completedHidden={!!completedHidden}
         displayPopup={settingsPopupIsDisplayed}
-        doesTrack={shouldTrack}
+        doesTrack={!!shouldTrack}
         onClosePress={toggleSettingsPopupIsDisplayed}
         onScheduleNameChange={_handleScheduleNameChange}
         onSetDoesTrack={_handleSetDoesTrack}
@@ -87,11 +89,20 @@ function SchedulePage(props: SchedulePageProps) {
           ref={(ref) => {
             flatListRef = ref;
           }}
-          getItemLayout={(data, index) => ({
-            length: 85,
-            offset: 85 * index,
-            index,
-          })}
+          getItemLayout={(data, index) => {
+            let length = 85;
+
+            if (scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL) {
+              let avgReadingsPerDay = 1.5;
+              length = Math.round(length * avgReadingsPerDay);
+            }
+
+            return {
+              length: length,
+              offset: length * index,
+              index,
+            };
+          }}
           renderItem={({
             item,
             index,

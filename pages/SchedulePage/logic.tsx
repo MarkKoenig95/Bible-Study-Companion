@@ -22,6 +22,8 @@ import {
   useUpdate,
   useToggleState,
   pageBack,
+  ScheduleType,
+  SCHEDULE_TYPES,
 } from '../../logic/general';
 import useScheduleButtonsList from '../../components/ScheduleButtonsList';
 
@@ -31,6 +33,8 @@ import {SchedulePageProps} from './types';
 const pageTitle = 'schedulePage';
 const baseItem: ReadingScheduleItem | undefined = undefined;
 const baseListItems: ReadingScheduleItem[][] = [];
+const baseScheduleType: ScheduleType | undefined = undefined;
+const baseBooleanState: boolean | undefined = undefined;
 
 export default function useSchedulePage(
   props: SchedulePageProps,
@@ -46,8 +50,9 @@ export default function useSchedulePage(
   const tableName = route.params.table;
 
   const [listItems, setListItems] = useState(baseListItems);
-  const [completedHidden, setCompletedHidden] = useState(false);
-  const [shouldTrack, setShouldTrack] = useState(true);
+  const [completedHidden, setCompletedHidden] = useState(baseBooleanState);
+  const [scheduleType, setScheduleType] = useState(baseScheduleType);
+  const [shouldTrack, setShouldTrack] = useState(baseBooleanState);
   const [startDate, setStartDate] = useState(new Date());
   const [isLoading, setLoadingPopup] = useState(false);
   const [firstUnfinished, setFirstUnfinished] = useState(baseItem);
@@ -192,25 +197,29 @@ export default function useSchedulePage(
     ) {
       getScheduleSettings(userDB, scheduleName).then(
         (settings: {
-          startDate: Date;
           doesTrack: boolean;
           hideCompleted: boolean;
+          scheduleType: ScheduleType;
+          startDate: Date;
         }) => {
-          const {startDate, doesTrack, hideCompleted} = settings;
+          const {doesTrack, hideCompleted, scheduleType, startDate} = settings;
 
           setShouldTrack(doesTrack);
           setCompletedHidden(hideCompleted);
+          setScheduleType(scheduleType);
           setStartDate(startDate);
         },
       );
       return;
     }
 
-    loadData(userDB, tableName, shouldTrack).then((res?: any[]) => {
-      if (res) {
-        setListItems(res);
-      }
-    });
+    loadData(userDB, tableName, shouldTrack, completedHidden).then(
+      (res?: any[]) => {
+        if (res) {
+          setListItems(res);
+        }
+      },
+    );
   }, [
     completedHidden,
     scheduleName,
@@ -221,14 +230,29 @@ export default function useSchedulePage(
   ]);
 
   useEffect(() => {
-    if (listItems.length > 0 && flatListRef && firstUnfinished) {
-      flatListRef.scrollToItem({
-        animated: false,
-        item: firstUnfinished,
-        viewPosition: 0,
-      });
+    if (
+      listItems.length > 0 &&
+      flatListRef &&
+      firstUnfinished &&
+      typeof scheduleType !== 'undefined' &&
+      !completedHidden
+    ) {
+      setTimeout(() => {
+        let ID = firstUnfinished.ReadingDayID;
+        let index =
+          scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL
+            ? ID
+            : Math.floor(ID / 3);
+
+        flatListRef.scrollToIndex({
+          animated: false,
+          index: index,
+          viewOffset: 0,
+          viewPosition: 0.2,
+        });
+      }, 500);
     }
-  }, [completedHidden, firstUnfinished, flatListRef, listItems]);
+  }, [completedHidden, firstUnfinished, flatListRef, listItems, scheduleType]);
 
   return {
     _handleScheduleNameChange,
@@ -243,6 +267,7 @@ export default function useSchedulePage(
     messagePopup,
     openRemindersPopup,
     pageTitle,
+    scheduleType,
     settingsPopupIsDisplayed,
     shouldTrack,
     ScheduleListPopups,

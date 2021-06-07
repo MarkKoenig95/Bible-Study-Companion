@@ -78,6 +78,7 @@ export async function loadData(
   DB: Database,
   tableName: string,
   doesTrack: boolean,
+  completedHidden?: boolean,
 ) {
   if (!DB) {
     return;
@@ -99,6 +100,8 @@ export async function loadData(
       ...results.rows.item(i),
       doesTrack: doesTrack,
     };
+    if (completedHidden && item.IsFinished) continue;
+
     if (item.ReadingDayID) {
       if (item.CompletionDate === previousDate) {
         innerItems.push(item);

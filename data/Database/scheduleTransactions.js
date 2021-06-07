@@ -581,6 +581,7 @@ export async function getScheduleSettings(userDB, scheduleName) {
   let creationInfo;
   let doesTrack;
   let hideCompleted;
+  let scheduleType;
   let startDate;
 
   let {rows} = await runSQL(
@@ -604,10 +605,18 @@ export async function getScheduleSettings(userDB, scheduleName) {
 
     doesTrack = scheduleInfo.DoesTrack ? true : false;
     hideCompleted = scheduleInfo.HideCompleted ? true : false;
+    scheduleType = parseInt(scheduleInfo.ScheduleType, 10);
     startDate = new Date(scheduleInfo.StartDate);
   }
 
-  return {activeDays, creationInfo, doesTrack, hideCompleted, startDate};
+  return {
+    activeDays,
+    creationInfo,
+    doesTrack,
+    hideCompleted,
+    scheduleType,
+    startDate,
+  };
 }
 
 /**
