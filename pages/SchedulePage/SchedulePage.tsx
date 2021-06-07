@@ -90,9 +90,18 @@ function SchedulePage(props: SchedulePageProps) {
             flatListRef = ref;
           }}
           getItemLayout={(data, index) => {
+            let isChrono = scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL;
             let length = 85;
 
-            if (scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL) {
+            if (isChrono) {
+              if (completedHidden) {
+                return {
+                  length: 0,
+                  offset: 0,
+                  index,
+                };
+              }
+
               let avgReadingsPerDay = 1.5;
               length = Math.round(length * avgReadingsPerDay);
             }
