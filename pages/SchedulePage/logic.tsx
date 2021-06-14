@@ -25,7 +25,7 @@ import {
   ScheduleType,
   SCHEDULE_TYPES,
 } from '../../logic/general';
-import useScheduleButtonsList from '../../components/ScheduleButtonsList';
+import useScheduleButtonsList from '../../components/ScheduleButtonsList/ScheduleButtonsList';
 
 import {ReadingScheduleItem} from '../../data/Database/types';
 import {SchedulePageProps} from './types';

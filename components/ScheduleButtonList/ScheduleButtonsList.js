@@ -1,22 +1,27 @@
 import React, {useState, useCallback} from 'react';
 import {Alert, View} from 'react-native';
 
-import ScheduleDayButton from './buttons/ScheduleDayButton';
-import ButtonsPopup, {useButtonsPopup} from './popups/SelectedDayButtonsPopup';
-import ReadingRemindersPopup from './popups/ReadingRemindersPopup';
-import ReadingInfoPopup, {useReadingInfoPopup} from './popups/ReadingInfoPopup';
+import ScheduleDayButton from '../buttons/ScheduleDayButton';
+import ButtonsPopup, {useButtonsPopup} from '../popups/SelectedDayButtonsPopup';
+import ReadingRemindersPopup from '../popups/ReadingRemindersPopup';
+import ReadingInfoPopup, {
+  useReadingInfoPopup,
+} from '../popups/ReadingInfoPopup';
 import {
   updateMultipleReadStatus,
   updateReadStatus,
-} from '../data/Database/scheduleTransactions';
-import {checkReadingPortion, checkStartVerse} from '../logic/scheduleCreation';
+} from '../../data/Database/scheduleTransactions';
+import {
+  checkReadingPortion,
+  checkStartVerse,
+} from '../../logic/scheduleCreation';
 import {
   arraysMatch,
   VERSE_POSITION,
   WEEKLY_READING_TABLE_NAME,
-} from '../logic/general';
-import {translate} from '../logic/localization/localization';
-import {log} from '../data/Database/generalTransactions';
+} from '../../logic/general';
+import {translate} from '../../logic/localization/localization';
+import {log} from '../../data/Database/generalTransactions';
 
 function onAfterFirstUnfinishedClick(onOkPress, onCancelPress = () => {}) {
   Alert.alert(
