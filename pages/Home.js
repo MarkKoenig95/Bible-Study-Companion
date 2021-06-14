@@ -25,7 +25,7 @@ import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
 import JWLibButton from '../components/buttons/JWLibButton';
 import {SubHeading} from '../components/text/Text';
-import useScheduleButtonsList from '../components/ScheduleButtonsList/ScheduleButtonsList';
+import useScheduleButtonsList from '../components/ScheduleButtonsList/useScheduleButtonsList';
 import SectionListHeader from '../components/SectionListHeader';
 import MessagePopup, {useMessagePopup} from '../components/popups/MessagePopup';
 import LoadingPopup from '../components/popups/LoadingPopup';
