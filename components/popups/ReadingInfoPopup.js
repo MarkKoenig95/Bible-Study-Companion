@@ -395,13 +395,13 @@ export function useReadingInfoPopup() {
     title: '',
     message: '',
     cb: () => {},
-    readingDayID: null,
-    startBookNumber: null,
-    startChapter: null,
-    startVerse: null,
-    endBookNumber: null,
-    endChapter: null,
-    endVerse: null,
+    readingDayID: undefined,
+    startBookNumber: undefined,
+    startChapter: undefined,
+    startVerse: undefined,
+    endBookNumber: undefined,
+    endChapter: undefined,
+    endVerse: undefined,
   });
 
   const closeReadingPopup = useCallback(() => {
