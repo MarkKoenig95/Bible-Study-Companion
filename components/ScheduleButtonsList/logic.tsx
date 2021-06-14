@@ -48,6 +48,7 @@ interface setMultipleButtonsArgs extends setScheduleButtonsArguments {
     readingDayIDs: number[],
   ) => void;
   updateButtonReadings: (
+    tableName: string,
     firstID: number,
     lastID: number,
     isFinished: boolean,
@@ -194,7 +195,6 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
     tableName,
     testID,
     updateButtonReadings,
-
     updatePages,
   } = args;
   let buttons: Element[] = [];
@@ -235,7 +235,7 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
       readingPortions = item.readingPortion;
       firstPortion = item.readingPortion;
       hiddenPortions = !tempIsFinished ? item.readingPortion : '';
-      completionDate = item.doesTrack ? completionDate : item.completionDate;
+      completionDate = item.completionDate;
     }
     prevBookNum =
       item.startBookNumber === item.endBookNumber ? item.endBookNumber : 0;
@@ -306,7 +306,7 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
     <ScheduleDayButton
       testID={testID + '.multiPortionStartingWith.' + firstPortion}
       readingPortion={readingPortions}
-      completionDate={new Date(completionDate)}
+      completionDate={completionDate}
       completedHidden={completedHidden}
       doesTrack={doesTrack}
       isFinished={isFinished}
@@ -320,16 +320,16 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
         if (isAfterFirstUnfinished && !isFinished) {
           onAfterFirstUnfinishedClick(
             () => {
-              updateButtonReadings(1, lastID, isFinished);
+              updateButtonReadings(thisTableName, 1, lastID, isFinished);
             },
             () => {
-              updateButtonReadings(firstID, lastID, isFinished);
+              updateButtonReadings(thisTableName, firstID, lastID, isFinished);
             },
           );
           return;
         }
 
-        updateButtonReadings(firstID, lastID, isFinished);
+        updateButtonReadings(thisTableName, firstID, lastID, isFinished);
       }}
       onPress={() => {
         openButtonsPopup(index, buttons, areButtonsFinished, readingDayIDs);

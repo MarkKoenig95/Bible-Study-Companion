@@ -132,7 +132,7 @@ export async function loadData(
   var listItems = [];
 
   var innerItems: (ReadingItem | BibleReadingItem)[] = [];
-  var previousDate;
+  var previousDate = new Date(0);
 
   for (let i = 0; i < results.rows.length; ++i) {
     const item: DBReadingItem | DBBibleReadingItem = results.rows.item(i);
@@ -141,7 +141,7 @@ export async function loadData(
     if (item.ReadingDayID) {
       const newItem = convertDBItemToJSItem(item, doesTrack);
 
-      if (newItem.completionDate === previousDate) {
+      if (newItem.completionDate.getTime() === previousDate.getTime()) {
         innerItems.push(newItem);
       } else {
         if (innerItems.length > 0) {

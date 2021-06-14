@@ -59,7 +59,7 @@ export default function useScheduleButtonsList(
   );
 
   const updateButtonReadings = useCallback(
-    (startID, lastID, isFinished) => {
+    (tableName, startID, lastID, isFinished) => {
       updateMultipleReadStatus(
         userDB,
         tableName,
@@ -68,7 +68,7 @@ export default function useScheduleButtonsList(
         !isFinished,
       ).then(afterUpdate);
     },
-    [afterUpdate, tableName, userDB],
+    [afterUpdate, userDB],
   );
 
   const setScheduleButtons = useCallback(
