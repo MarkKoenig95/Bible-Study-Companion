@@ -7,6 +7,7 @@ import {
   log,
   runSQL,
   appVersion,
+  convertDBItemToJSItem,
 } from '../data/Database/generalTransactions';
 import {
   formatScheduleTableName,
@@ -175,14 +176,14 @@ export async function populateScheduleButtons(
 
     for (let j = 0; j < table.rows.length; j++) {
       const item = table.rows.item(j);
-      let itemDate = Date.parse(item.CompletionDate);
+      const newItem = convertDBItemToJSItem(item, doesTrack);
+      let itemDate = newItem.completionDate;
 
       if (itemDate <= today) {
         //Add reading portion info to the list
         innerHomeListItems.push({
-          ...item,
+          ...newItem,
           title: scheduleName,
-          doesTrack: doesTrack,
           tableName: tableName,
           update: updatePages,
         });
@@ -226,12 +227,12 @@ export async function populateWeeklyReading(
   if (table.rows.length > 0) {
     for (let j = 0; j < table.rows.length; j++) {
       const item = table.rows.item(j);
+      const newItem = convertDBItemToJSItem(item, true);
 
-      if (!item.IsFinished) {
+      if (!newItem.isFinished) {
         //Add reading portion info to the list
         innerListItems.push({
-          ...item,
-          doesTrack: true,
+          ...newItem,
           title: title,
           tableName: tableName,
           update: update,
