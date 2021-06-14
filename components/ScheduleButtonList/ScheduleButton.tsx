@@ -3,19 +3,14 @@ import React from 'react';
 import ScheduleDayButton from '../buttons/ScheduleDayButton';
 
 import {BibleReadingItem} from '../../data/Database/types';
-import {OpenReadingInfoPopup} from './types';
+import {OnUpdateReadStatus, OpenReadingInfoPopup} from './types';
 
 interface ScheduleButtonProps {
   closeReadingPopup: () => void;
   completedHidden: boolean;
   firstUnfinishedID: number;
   item: BibleReadingItem;
-  onUpdateReadStatus: (
-    status: boolean,
-    readingDayID: number,
-    tableName: string,
-    isAfterFirstUnfinished: boolean,
-  ) => void;
+  onUpdateReadStatus: OnUpdateReadStatus;
   openReadingPopup: OpenReadingInfoPopup;
   tableName: string;
   testID: string;
@@ -37,12 +32,12 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
     update,
   } = props;
 
-  const isAfterFirstUnfinished = item.ReadingDayID > firstUnfinishedID;
+  const isAfterFirstUnfinished = item.readingDayID > firstUnfinishedID;
 
   const onLongPress = () => {
     onUpdateReadStatus(
-      !!item.IsFinished,
-      item.ReadingDayID,
+      item.isFinished,
+      item.readingDayID,
       tableName,
       isAfterFirstUnfinished,
     );
@@ -50,18 +45,18 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
 
   let onPress = onLongPress;
 
-  if (item.StartBookNumber) {
+  if (item.startBookNumber) {
     onPress = () => {
       openReadingPopup(
-        item.StartBookNumber,
-        item.StartChapter,
-        item.StartVerse,
-        item.EndBookNumber,
-        item.EndChapter,
-        item.EndVerse,
-        item.ReadingPortion,
-        !!item.IsFinished,
-        item.ReadingDayID,
+        item.startBookNumber,
+        item.startChapter,
+        item.startVerse,
+        item.endBookNumber,
+        item.endChapter,
+        item.endVerse,
+        item.readingPortion,
+        item.isFinished,
+        item.readingDayID,
         () => {
           onLongPress();
           closeReadingPopup();
@@ -73,12 +68,12 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
 
   return (
     <ScheduleDayButton
-      testID={testID + '.' + item.ReadingPortion}
-      readingPortion={item.ReadingPortion}
-      completionDate={new Date(item.CompletionDate)}
+      testID={testID + '.' + item.readingPortion}
+      readingPortion={item.readingPortion}
+      completionDate={item.completionDate}
       completedHidden={completedHidden}
       doesTrack={item.doesTrack}
-      isFinished={item.IsFinished ? true : false}
+      isFinished={item.isFinished ? true : false}
       title={title}
       update={update}
       onLongPress={onLongPress}

@@ -4,7 +4,14 @@ import RNFS from 'react-native-fs';
 import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
 import {FREQS} from '../../logic/general';
-import {Database, DBQueryResult, ReadingItem} from './types';
+import {
+  BibleReadingItem,
+  Database,
+  DBBibleReadingItem,
+  DBQueryResult,
+  DBReadingItem,
+  ReadingItem,
+} from './types';
 const {version}: {version: string} = require('../../package.json');
 const shouldLog = false;
 
@@ -73,6 +80,42 @@ export function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, options);
 }
 
+function convertDBItemToJSItem(
+  item: DBReadingItem | DBBibleReadingItem,
+  doesTrack: boolean,
+): ReadingItem | BibleReadingItem {
+  let convertedItem: ReadingItem | BibleReadingItem = {
+    completedHidden: false,
+    completionDate: new Date(item.CompletionDate),
+    doesTrack,
+    isFinished: !!item.IsFinished,
+    readingDayID: item.ReadingDayID,
+    onLongPress: () => {},
+    onPress: () => {},
+    tableName: '',
+    title: '',
+    readingPortion: item.ReadingPortion,
+    updateValue: 0,
+  };
+  const bibleItem = item as DBBibleReadingItem;
+  if (!bibleItem.StartBookNumber) return convertedItem;
+
+  convertedItem = {
+    ...convertedItem,
+    endBookName: bibleItem.EndBookName,
+    endBookNumber: bibleItem.EndBookNumber,
+    endChapter: bibleItem.EndChapter,
+    endVerse: bibleItem.EndVerse,
+    startBookName: bibleItem.StartBookName,
+    startBookNumber: bibleItem.StartBookNumber,
+    startChapter: bibleItem.StartChapter,
+    startVerse: bibleItem.StartVerse,
+    versePosition: bibleItem.VersePosition,
+  };
+
+  return convertedItem;
+}
+
 /** Returns an array of schedule days (which is an array of separate reading objects for the day) for use in a FlatList typically */
 export async function loadData(
   DB: Database,
@@ -86,37 +129,34 @@ export async function loadData(
 
   let results = await runSQL(DB, `SELECT * FROM ${tableName};`);
 
-  if (!results) {
-    return;
-  }
+  if (!results) return;
 
   var listItems = [];
 
-  var innerItems: ReadingItem[] = [];
+  var innerItems: (ReadingItem | BibleReadingItem)[] = [];
   var previousDate;
 
   for (let i = 0; i < results.rows.length; ++i) {
-    const item: ReadingItem = {
-      ...results.rows.item(i),
-      doesTrack: doesTrack,
-    };
+    const item: DBReadingItem | DBBibleReadingItem = results.rows.item(i);
     if (completedHidden && item.IsFinished) continue;
 
     if (item.ReadingDayID) {
-      if (item.CompletionDate === previousDate) {
-        innerItems.push(item);
+      const newItem = convertDBItemToJSItem(item, doesTrack);
+      if (newItem.completionDate === previousDate) {
+        innerItems.push(newItem);
       } else {
         if (innerItems.length > 0) {
           listItems.push(innerItems);
         }
-        innerItems = [item];
-        previousDate = item.CompletionDate;
+        innerItems = [newItem];
+        previousDate = newItem.completionDate;
       }
 
       if (i >= results.rows.length - 1) {
         listItems.push(innerItems);
       }
     } else {
+      //This is not a reading schedule item
       listItems.push(item);
     }
   }

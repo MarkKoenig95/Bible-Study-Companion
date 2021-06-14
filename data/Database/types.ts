@@ -14,9 +14,8 @@ export interface DBQueryResult {
 }
 
 export interface DBReadingItem {
-  CompletedHidden: boolean;
-  CompletionDate: Date;
-  IsFinished: boolean;
+  CompletionDate: string;
+  IsFinished: 0 | 1;
   ReadingDayID: number;
   ReadingPortion: string;
 }

@@ -25,7 +25,7 @@ import {
   ScheduleType,
   SCHEDULE_TYPES,
 } from '../../logic/general';
-import useScheduleButtonsList from '../../components/ScheduleButtonsList/useScheduleButtonsList';
+import useScheduleButtonsList from '../../components/ScheduleButtonList/useScheduleButtonsList';
 
 import {ReadingItem} from '../../data/Database/types';
 import {SchedulePageProps} from './types';
@@ -50,7 +50,7 @@ export default function useSchedulePage(
   const tableName = route.params.table;
 
   const [listItems, setListItems] = useState(baseListItems);
-  const [completedHidden, setCompletedHidden] = useState(baseBooleanState);
+  const [completedHidden, setCompletedHidden] = useState(false);
   const [scheduleType, setScheduleType] = useState(baseScheduleType);
   const [shouldTrack, setShouldTrack] = useState(baseBooleanState);
   const [startDate, setStartDate] = useState(new Date());
@@ -238,7 +238,7 @@ export default function useSchedulePage(
       !completedHidden
     ) {
       setTimeout(() => {
-        let ID = firstUnfinished.ReadingDayID;
+        let ID = firstUnfinished.readingDayID;
         let index =
           scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL
             ? ID

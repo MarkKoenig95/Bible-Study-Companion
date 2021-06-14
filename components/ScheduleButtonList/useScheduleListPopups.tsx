@@ -13,7 +13,7 @@ import {
   ReadingPopupState,
 } from './types';
 
-interface ScheduleButtonListPopupsProps {
+interface ScheduleButtonsListPopupsProps {
   buttonsPopup: ButtonsPopupState;
   closeButtonsPopup: () => void;
   closeReadingPopup: () => void;
@@ -23,7 +23,7 @@ interface ScheduleButtonListPopupsProps {
   testID: string;
 }
 
-function ScheduleButtonListPopups(props: ScheduleButtonListPopupsProps) {
+function ScheduleButtonsListPopups(props: ScheduleButtonsListPopupsProps) {
   const {
     buttonsPopup,
     closeButtonsPopup,
@@ -90,7 +90,7 @@ export default function useScheduleListPopups(pageTitle: string) {
 
   const ScheduleListPopups = () => {
     return (
-      <ScheduleButtonListPopups
+      <ScheduleButtonsListPopups
         buttonsPopup={buttonsPopup}
         closeButtonsPopup={closeButtonsPopup}
         closeReadingPopup={closeReadingPopup}
