@@ -22,8 +22,12 @@ import {
 } from '../../logic/general';
 import {translate} from '../../logic/localization/localization';
 import {log} from '../../data/Database/generalTransactions';
+import {BibleReadingScheduleItem, Database} from '../../data/Database/types';
 
-function onAfterFirstUnfinishedClick(onOkPress, onCancelPress = () => {}) {
+function onAfterFirstUnfinishedClick(
+  onOkPress: () => void,
+  onCancelPress = () => {},
+) {
   Alert.alert(
     translate('prompts.markCompleted'),
     translate('prompts.markPreviousRead'),
@@ -38,7 +42,10 @@ function onAfterFirstUnfinishedClick(onOkPress, onCancelPress = () => {}) {
   );
 }
 
-function condenseReadingPortion(item, prevBookNum) {
+function condenseReadingPortion(
+  item: BibleReadingScheduleItem,
+  prevBookNum: number,
+) {
   let startBook = item.StartBookName;
   let startChapter = item.StartChapter;
   let startVerse = item.StartVerse;
@@ -91,7 +98,39 @@ function condenseReadingPortion(item, prevBookNum) {
   return portionPrefix + description;
 }
 
-function ScheduleButton(props) {
+type OpenReadingInfoPopup = (
+  startBookNumber: number,
+  startChapter: number,
+  startVerse: number,
+  endBookNumber: number,
+  endChapter: number,
+  endVerse: number,
+  readingPortion: string,
+  isFinished: boolean,
+  readingDayID: number,
+  callback: () => void,
+  tableName: string,
+) => void;
+
+interface ScheduleButtonProps {
+  closeReadingPopup: () => void;
+  completedHidden: boolean;
+  firstUnfinishedID: number;
+  item: BibleReadingScheduleItem;
+  onUpdateReadStatus: (
+    status: boolean,
+    readingDayID: number,
+    tableName: string,
+    isAfterFirstUnfinished: boolean,
+  ) => void;
+  openReadingPopup: OpenReadingInfoPopup;
+  tableName: string;
+  testID: string;
+  title: string;
+  update: number;
+}
+
+function ScheduleButton(props: ScheduleButtonProps) {
   const {
     closeReadingPopup,
     completedHidden,
@@ -109,7 +148,7 @@ function ScheduleButton(props) {
 
   const onLongPress = () => {
     onUpdateReadStatus(
-      item.IsFinished,
+      !!item.IsFinished,
       item.ReadingDayID,
       tableName,
       isAfterFirstUnfinished,
@@ -128,7 +167,7 @@ function ScheduleButton(props) {
         item.EndChapter,
         item.EndVerse,
         item.ReadingPortion,
-        item.IsFinished,
+        !!item.IsFinished,
         item.ReadingDayID,
         () => {
           onLongPress();
@@ -143,7 +182,7 @@ function ScheduleButton(props) {
     <ScheduleDayButton
       testID={testID + '.' + item.ReadingPortion}
       readingPortion={item.ReadingPortion}
-      completionDate={item.CompletionDate}
+      completionDate={new Date(item.CompletionDate)}
       completedHidden={completedHidden}
       doesTrack={item.doesTrack}
       isFinished={item.IsFinished ? true : false}
@@ -155,7 +194,7 @@ function ScheduleButton(props) {
   );
 }
 
-function useScheduleListPopups(testID) {
+function useScheduleListPopups(testID: string) {
   const {buttonsPopup, openButtonsPopup, closeButtonsPopup} = useButtonsPopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] =
@@ -168,12 +207,12 @@ function useScheduleListPopups(testID) {
   const {readingPopup, openReadingPopup, closeReadingPopup} =
     useReadingInfoPopup();
 
-  const openReadingInfoPopup = (...args) => {
+  const openReadingInfoPopup: OpenReadingInfoPopup = (...args) => {
     closeButtonsPopup();
     openReadingPopup(...args);
   };
 
-  const ScheduleListPopups = (props) => {
+  const ScheduleListPopups = () => {
     return (
       <View style={{width: '100%'}}>
         <ReadingInfoPopup
@@ -222,15 +261,25 @@ function useScheduleListPopups(testID) {
 }
 
 export default function useScheduleButtonsList(
-  userDB,
-  afterUpdate,
-  completedHidden,
-  updatePages,
-  tableName,
-  scheduleName,
-  testID,
+  userDB: Database,
+  afterUpdate: () => void,
+  completedHidden: boolean,
+  updatePages: number,
+  tableName: string,
+  scheduleName: string,
+  testID: string,
 ) {
   log('loaded schedule button list');
+
+  const {
+    ScheduleListPopups,
+    buttonsPopup,
+    openButtonsPopup,
+    readingPopup,
+    openReadingPopup,
+    closeReadingPopup,
+    openRemindersPopup,
+  } = useScheduleListPopups(testID);
 
   const onUpdateReadStatus = useCallback(
     (status, readingDayID, tableName, isAfterFirstUnfinished) => {
@@ -269,23 +318,13 @@ export default function useScheduleButtonsList(
     [afterUpdate, tableName, userDB],
   );
 
-  const {
-    ScheduleListPopups,
-    buttonsPopup,
-    openButtonsPopup,
-    readingPopup,
-    openReadingPopup,
-    closeReadingPopup,
-    openRemindersPopup,
-  } = useScheduleListPopups(testID);
-
   const setScheduleButtons = useCallback(
     (items, index, firstUnfinishedID = Infinity) => {
       let result;
       let thisTableName;
       let title;
-      let readingDayIDs = [];
-      let areButtonsFinished = [];
+      let readingDayIDs: number[] = [];
+      let areButtonsFinished: boolean[] = [];
       if (items.length === 1) {
         let item = items[0];
         if (!item.onPress) {
@@ -322,12 +361,12 @@ export default function useScheduleButtonsList(
           );
         }
       } else {
-        let buttons = [];
+        let buttons: Element[] = [];
         let firstPortion;
         let readingPortions;
         let hiddenPortions;
         let completionDate;
-        let isFinished;
+        let isFinished = false;
         let prevBookNum = 0;
         let startBook;
         let startChapter;
@@ -380,7 +419,7 @@ export default function useScheduleButtonsList(
                 startBook,
                 startChapter,
                 startVerse,
-                isStart,
+                !!isStart,
                 endBook,
                 endChapter,
                 endVerse,
@@ -434,7 +473,7 @@ export default function useScheduleButtonsList(
             isFinished={isFinished}
             title={title}
             update={updatePages}
-            onLongPress={(cb) => {
+            onLongPress={() => {
               let firstID = readingDayIDs[0];
               let lastID = readingDayIDs[readingDayIDs.length - 1];
               let isAfterFirstUnfinished = firstID > firstUnfinishedID;

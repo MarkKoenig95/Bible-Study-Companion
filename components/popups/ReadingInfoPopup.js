@@ -392,6 +392,16 @@ export function useReadingInfoPopup() {
     chapter: 0,
     verse: 0,
     readingPortion: '',
+    title: '',
+    message: '',
+    cb: () => {},
+    readingDayID: null,
+    startBookNumber: null,
+    startChapter: null,
+    startVerse: null,
+    endBookNumber: null,
+    endChapter: null,
+    endVerse: null,
   });
 
   const closeReadingPopup = useCallback(() => {

@@ -730,7 +730,7 @@ export function checkResultPosition(isStart, isEnd) {
  * @param {string} startBook - The name of the start book
  * @param {string} endBook - The name of the end book
  *
- * @returns {object} keys = {description, position}
+ * @returns {{description, position}}
  * @property {string} description - Details the span of verses to be read
  * @property {VersePosition} position - An identifier detaling the location of the entire reading relative to the chapter
  *

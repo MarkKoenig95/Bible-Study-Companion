@@ -1,4 +1,4 @@
-import {ScheduleType} from '../../logic/general';
+import {ScheduleType, VersePosition} from '../../logic/general';
 
 export interface Database {
   dbname: any;
@@ -18,7 +18,19 @@ export interface ReadingScheduleItem {
   ReadingDayID: number;
   CompletionDate: string;
   doesTrack: boolean;
-  StartBookName?: string;
+}
+
+export interface BibleReadingScheduleItem extends ReadingScheduleItem {
+  StartBookNumber: number;
+  StartBookName: string;
+  StartChapter: number;
+  StartVerse: number;
+  EndBookNumber: number;
+  EndBookName: string;
+  EndChapter: number;
+  EndVerse: number;
+  ReadingPortion: string;
+  VersePosition: VersePosition;
 }
 
 export interface ScheduleInfo {

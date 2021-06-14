@@ -9,13 +9,14 @@ export default function ButtonsPopup(props) {
   const {buttons} = props;
   return (
     <Popup {...props} title={translate('buttonsPopup.title')}>
-      <View style={{width: '95%'}}>{buttons.map(btn => btn)}</View>
+      <View style={{width: '95%'}}>{buttons.map((btn) => btn)}</View>
     </Popup>
   );
 }
 
 export function useButtonsPopup() {
   const [buttonsPopup, setButtonsPopup] = useState({
+    id: null,
     isDisplayed: false,
     areButtonsFinished: [],
     buttons: [],
@@ -23,7 +24,7 @@ export function useButtonsPopup() {
   });
 
   const closeButtonsPopup = useCallback(() => {
-    setButtonsPopup(prevValue => {
+    setButtonsPopup((prevValue) => {
       return {...prevValue, isDisplayed: false};
     });
   }, []);

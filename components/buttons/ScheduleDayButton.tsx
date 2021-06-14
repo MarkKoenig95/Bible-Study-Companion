@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TextStyle, View} from 'react-native';
 
 import CheckBox from './CheckBox';
 import CustomButton from './CustomButton';
@@ -8,7 +8,21 @@ import Text from '../text/Text';
 import styles, {colors} from '../../styles/styles';
 import {formatDate} from '../../data/Database/generalTransactions';
 
-const ScheduleDayButton = React.memo((props) => {
+interface ScheduleDayButtonProps {
+  completedHidden: boolean;
+  completionDate: Date;
+  doesTrack: boolean;
+  isFinished: boolean;
+  onLongPress: () => void;
+  onPress: () => void;
+  readingPortion: string;
+  testID: string;
+  textStyle?: TextStyle;
+  title: string;
+  update: number;
+}
+
+const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
   const {
     completedHidden,
     completionDate,
