@@ -13,24 +13,50 @@ export interface DBQueryResult {
   };
 }
 
-export interface ReadingScheduleItem {
-  IsFinished: 0 | 1;
+export interface DBReadingItem {
+  CompletedHidden: boolean;
+  CompletionDate: Date;
+  IsFinished: boolean;
   ReadingDayID: number;
-  CompletionDate: string;
-  doesTrack: boolean;
+  ReadingPortion: string;
 }
 
-export interface BibleReadingScheduleItem extends ReadingScheduleItem {
-  StartBookNumber: number;
-  StartBookName: string;
-  StartChapter: number;
-  StartVerse: number;
+export interface DBBibleReadingItem extends DBReadingItem {
   EndBookNumber: number;
   EndBookName: string;
   EndChapter: number;
   EndVerse: number;
-  ReadingPortion: string;
+  StartBookNumber: number;
+  StartBookName: string;
+  StartChapter: number;
+  StartVerse: number;
   VersePosition: VersePosition;
+}
+
+export interface ReadingItem {
+  completedHidden: boolean;
+  completionDate: Date;
+  doesTrack: boolean;
+  isFinished: boolean;
+  readingDayID: number;
+  onLongPress: () => void;
+  onPress: () => void;
+  tableName: string;
+  title: string;
+  readingPortion: string;
+  updateValue: number;
+}
+
+export interface BibleReadingItem extends ReadingItem {
+  endBookNumber: number;
+  endBookName: string;
+  endChapter: number;
+  endVerse: number;
+  startBookNumber: number;
+  startBookName: string;
+  startChapter: number;
+  startVerse: number;
+  versePosition: VersePosition;
 }
 
 export interface ScheduleInfo {

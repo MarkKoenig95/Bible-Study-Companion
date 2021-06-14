@@ -16,7 +16,7 @@ export default function ButtonsPopup(props) {
 
 export function useButtonsPopup() {
   const [buttonsPopup, setButtonsPopup] = useState({
-    id: null,
+    id: undefined,
     isDisplayed: false,
     areButtonsFinished: [],
     buttons: [],

@@ -4,7 +4,7 @@ import RNFS from 'react-native-fs';
 import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
 import {FREQS} from '../../logic/general';
-import {Database, DBQueryResult, ReadingScheduleItem} from './types';
+import {Database, DBQueryResult, ReadingItem} from './types';
 const {version}: {version: string} = require('../../package.json');
 const shouldLog = false;
 
@@ -92,11 +92,11 @@ export async function loadData(
 
   var listItems = [];
 
-  var innerItems: ReadingScheduleItem[] = [];
+  var innerItems: ReadingItem[] = [];
   var previousDate;
 
   for (let i = 0; i < results.rows.length; ++i) {
-    const item: ReadingScheduleItem = {
+    const item: ReadingItem = {
       ...results.rows.item(i),
       doesTrack: doesTrack,
     };

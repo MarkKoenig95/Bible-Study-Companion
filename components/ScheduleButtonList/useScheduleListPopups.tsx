@@ -7,33 +7,18 @@ import ReadingInfoPopup, {
   useReadingInfoPopup,
 } from '../popups/ReadingInfoPopup';
 
-import {OpenReadingInfoPopup} from './types';
-
-interface ReadingPopup {
-  cb: () => void;
-  endBookNumber?: number;
-  endChapter?: number;
-  endVerse?: number;
-  isDisplayed: boolean;
-  message: string;
-  startBookNumber?: number;
-  startChapter?: number;
-  startVerse?: number;
-  readingPortion: string;
-  title: string;
-}
-
-interface ButtonsPopup {
-  buttons: Element[];
-  isDisplayed: boolean;
-}
+import {
+  ButtonsPopupState,
+  OpenReadingInfoPopup,
+  ReadingPopupState,
+} from './types';
 
 interface ScheduleButtonListPopupsProps {
-  buttonsPopup: ButtonsPopup;
+  buttonsPopup: ButtonsPopupState;
   closeButtonsPopup: () => void;
   closeReadingPopup: () => void;
   isRemindersPopupDisplayed: boolean;
-  readingPopup: ReadingPopup;
+  readingPopup: ReadingPopupState;
   setIsRemindersPopupDisplayed: (bool: boolean) => void;
   testID: string;
 }

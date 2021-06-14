@@ -2,14 +2,14 @@ import React from 'react';
 
 import ScheduleDayButton from '../buttons/ScheduleDayButton';
 
-import {BibleReadingScheduleItem} from '../../data/Database/types';
+import {BibleReadingItem} from '../../data/Database/types';
 import {OpenReadingInfoPopup} from './types';
 
 interface ScheduleButtonProps {
   closeReadingPopup: () => void;
   completedHidden: boolean;
   firstUnfinishedID: number;
-  item: BibleReadingScheduleItem;
+  item: BibleReadingItem;
   onUpdateReadStatus: (
     status: boolean,
     readingDayID: number,

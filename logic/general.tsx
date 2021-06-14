@@ -6,11 +6,7 @@ import {
   formatScheduleTableName,
   recreateSchedule,
 } from '../data/Database/scheduleTransactions';
-import {
-  Database,
-  ReadingScheduleItem,
-  ScheduleInfo,
-} from '../data/Database/types';
+import {Database, ReadingItem, ScheduleInfo} from '../data/Database/types';
 import {setUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
 
@@ -222,7 +218,7 @@ async function recreateAllUserSchedules(userDB: Database, bibleDB: Database) {
       userDB,
       `SELECT CompletionDate FROM ${tableName} WHERE ReadingDayID=1;`,
     );
-    let itemInfo: ReadingScheduleItem = firstItem.rows.item(0);
+    let itemInfo: ReadingItem = firstItem.rows.item(0);
     let compDate = new Date(itemInfo.CompletionDate);
     let compDateIsADate = !isNaN(compDate.getTime());
 

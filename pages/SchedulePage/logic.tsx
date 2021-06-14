@@ -27,12 +27,12 @@ import {
 } from '../../logic/general';
 import useScheduleButtonsList from '../../components/ScheduleButtonsList/useScheduleButtonsList';
 
-import {ReadingScheduleItem} from '../../data/Database/types';
+import {ReadingItem} from '../../data/Database/types';
 import {SchedulePageProps} from './types';
 
 const pageTitle = 'schedulePage';
-const baseItem: ReadingScheduleItem | undefined = undefined;
-const baseListItems: ReadingScheduleItem[][] = [];
+const baseItem: ReadingItem | undefined = undefined;
+const baseListItems: ReadingItem[][] = [];
 const baseScheduleType: ScheduleType | undefined = undefined;
 const baseBooleanState: boolean | undefined = undefined;
 

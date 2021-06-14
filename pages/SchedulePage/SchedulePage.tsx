@@ -10,7 +10,7 @@ import {log} from '../../data/Database/generalTransactions';
 import TextButton from '../../components/buttons/TextButton';
 import ScheduleSettingsPopup from '../../components/popups/ScheduleSettingsPopup';
 import LoadingPopup from '../../components/popups/LoadingPopup';
-import {ReadingScheduleItem} from '../../data/Database/types';
+import {ReadingItem} from '../../data/Database/types';
 import useSchedulePage from './logic';
 import {SchedulePageProps} from './types';
 import {SCHEDULE_TYPES} from '../../logic/general';
@@ -112,13 +112,7 @@ function SchedulePage(props: SchedulePageProps) {
               index,
             };
           }}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: ReadingScheduleItem[];
-            index: number;
-          }) => {
+          renderItem={({item, index}: {item: ReadingItem[]; index: number}) => {
             let firstUnfinishedID = firstUnfinished
               ? firstUnfinished.ReadingDayID
               : Infinity;
