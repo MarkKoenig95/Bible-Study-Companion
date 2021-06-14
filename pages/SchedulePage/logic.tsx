@@ -27,11 +27,11 @@ import {
 } from '../../logic/general';
 import useScheduleButtonsList from '../../components/ScheduleButtonsList/useScheduleButtonsList';
 
-import {ReadingItem} from '../../data/Database/types';
+import {DBReadingItem, ReadingItem} from '../../data/Database/types';
 import {SchedulePageProps} from './types';
 
 const pageTitle = 'schedulePage';
-const baseItem: ReadingItem | undefined = undefined;
+const baseItem: DBReadingItem | undefined = undefined;
 const baseListItems: ReadingItem[][] = [];
 const baseScheduleType: ScheduleType | undefined = undefined;
 const baseBooleanState: boolean | undefined = undefined;
@@ -238,7 +238,7 @@ export default function useSchedulePage(
       !completedHidden
     ) {
       setTimeout(() => {
-        let ID = firstUnfinished.readingDayID;
+        let ID = firstUnfinished.ReadingDayID;
         let index =
           scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL
             ? ID

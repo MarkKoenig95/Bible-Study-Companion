@@ -80,7 +80,7 @@ export function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-function convertDBItemToJSItem(
+export function convertDBItemToJSItem(
   item: DBReadingItem | DBBibleReadingItem,
   doesTrack: boolean,
 ): ReadingItem | BibleReadingItem {
@@ -123,9 +123,7 @@ export async function loadData(
   doesTrack: boolean,
   completedHidden?: boolean,
 ) {
-  if (!DB) {
-    return;
-  }
+  if (!DB) return;
 
   let results = await runSQL(DB, `SELECT * FROM ${tableName};`);
 
@@ -142,6 +140,7 @@ export async function loadData(
 
     if (item.ReadingDayID) {
       const newItem = convertDBItemToJSItem(item, doesTrack);
+
       if (newItem.completionDate === previousDate) {
         innerItems.push(newItem);
       } else {
