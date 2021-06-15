@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, TextStyle, View} from 'react-native';
 
 import CheckBox from './CheckBox';
@@ -21,6 +21,7 @@ interface ScheduleDayButtonProps {
   title: string;
   update: number;
 }
+let isFinishedStateIsSet = false;
 
 const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
   const {
@@ -39,9 +40,10 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
 
   const [isDatePassed, setIsDatePassed] = useState(false);
   const [compDate, setCompDate] = useState(formatDate(completionDate));
+  const [isFinishedState, setIsFinishedState] = useState(isFinished);
 
-  const display = isFinished && completedHidden ? 'none' : 'flex';
-  const color = !isDatePassed || isFinished ? colors.lightGray : '#f00';
+  const display = isFinishedState && completedHidden ? 'none' : 'flex';
+  const color = !isDatePassed || isFinishedState ? colors.lightGray : '#f00';
   const hasTitle = title ? true : false;
 
   useEffect(() => {
@@ -51,19 +53,37 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     today.setHours(0, 0, 0, 0);
     setCompDate(formatDate(date));
     setIsDatePassed(date.getTime() < today.getTime());
-  }, [completionDate, update]);
+    if (isFinishedStateIsSet && isFinished === isFinishedState) {
+      isFinishedStateIsSet = false;
+    }
+    if (!isFinishedStateIsSet) {
+      setIsFinishedState(isFinished);
+    }
+  }, [completionDate, isFinished, isFinishedState, update]);
+
+  const _handlePress = useCallback(() => {
+    setIsFinishedState(!isFinishedState);
+    isFinishedStateIsSet = true;
+    onPress();
+  }, [isFinishedState, onPress]);
+
+  const _handleLongPress = useCallback(() => {
+    setIsFinishedState(!isFinishedState);
+    isFinishedStateIsSet = true;
+    onLongPress();
+  }, [isFinishedState, onLongPress]);
 
   return (
     <CustomButton
       testID={testID}
       style={[style.columnContainer, style, {display: display}]}
-      onPress={onPress}
-      onLongPress={onLongPress}>
+      onPress={_handlePress}
+      onLongPress={_handleLongPress}>
       <View style={{...style.rowContainer}}>
         <CheckBox
           testID={testID + '.checkBox'}
-          checked={isFinished}
-          onPress={onLongPress}
+          checked={isFinishedState}
+          onPress={_handleLongPress}
           checkedColor={colors.lightGray}
           uncheckedColor={colors.lightGray}
         />
@@ -99,8 +119,8 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
           style.readingPortion,
           textStyle,
           {
-            color: !isFinished ? colors.darkGray : colors.lightGray,
-            textDecorationLine: !isFinished ? 'none' : 'line-through',
+            color: !isFinishedState ? colors.darkGray : colors.lightGray,
+            textDecorationLine: !isFinishedState ? 'none' : 'line-through',
           },
         ]}>
         {readingPortion}
