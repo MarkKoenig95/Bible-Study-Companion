@@ -21,29 +21,33 @@ import {
   OpenReadingInfoPopup,
 } from './types';
 
-interface setScheduleButtonsArguments {
+interface SetScheduleButtonsArgs {
   closeReadingPopup: () => void;
   completedHidden: boolean;
   firstUnfinishedID: number;
   onUpdateReadStatus: OnUpdateReadStatus;
   openReadingPopup: OpenReadingInfoPopup;
+  scheduleName: string;
   tableName: string;
   testID: string;
   updatePages: number;
 }
 
-interface setOneButtonArgs extends setScheduleButtonsArguments {
+interface SetOneButtonArgs extends SetScheduleButtonsArgs {
   item: ReadingItem | BibleReadingItem;
-  scheduleName: string;
 }
 
-interface setMultipleButtonsArgs extends setScheduleButtonsArguments {
+interface CreateButtonListArgs extends SetScheduleButtonsArgs {
+  items: BibleReadingItem[];
+}
+
+interface SetMultipleButtonsArgs extends SetScheduleButtonsArgs {
   buttonsPopup: ButtonsPopupState;
   index: number;
   items: BibleReadingItem[];
   openButtonsPopup: (
-    index: number,
     buttons: Element[],
+    tableName: string,
     areButtonsFinished: boolean[],
     readingDayIDs: number[],
   ) => void;
@@ -129,7 +133,7 @@ export function condenseReadingPortion(
   return portionPrefix + description;
 }
 
-export function setOneScheduleButton(args: setOneButtonArgs) {
+export function setOneScheduleButton(args: SetOneButtonArgs) {
   const {
     closeReadingPopup,
     completedHidden,
@@ -181,93 +185,73 @@ export function setOneScheduleButton(args: setOneButtonArgs) {
   );
 }
 
-export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
+const checkIfButtonsPopupIsCurrent = (
+  readingDayIDs: number[],
+  buttonsPopup: ButtonsPopupState,
+  tableName: string,
+) => {
+  let buttonsPopupIsCurrent = false;
+
+  for (let i = 0; i < readingDayIDs.length; i++) {
+    let id = readingDayIDs[i];
+
+    for (let j = 0; j < buttonsPopup.readingDayIDs.length; j++) {
+      let popupID = buttonsPopup.readingDayIDs[j];
+
+      if (id === popupID && tableName === buttonsPopup.tableName) {
+        buttonsPopupIsCurrent = true;
+      }
+    }
+  }
+
+  return buttonsPopupIsCurrent;
+};
+
+function createButtonList(args: CreateButtonListArgs) {
   const {
-    buttonsPopup,
     closeReadingPopup,
     completedHidden,
     firstUnfinishedID,
-    index,
     items,
     onUpdateReadStatus,
-    openButtonsPopup,
     openReadingPopup,
+    scheduleName,
     tableName,
     testID,
-    updateButtonReadings,
     updatePages,
   } = args;
+
+  const firstItem = items[0];
+  const thisTableName = tableName || firstItem.tableName;
+  const title = scheduleName || firstItem.title;
+
+  let isFinished = firstItem.isFinished;
+  let readingPortions = firstItem.readingPortion;
+  let hiddenPortions = !firstItem.isFinished ? firstItem.readingPortion : '';
+  let completionDate = firstItem.completionDate;
+
   let buttons: Element[] = [];
-  let firstPortion;
-  let readingPortions;
-  let hiddenPortions;
-  let completionDate = new Date();
-  let isFinished = false;
-  let prevBookNum = 0;
-  let startBook = '';
-  let startChapter;
-  let startVerse;
-  let isStart;
-  let endBook;
-  let endChapter;
-  let endVerse;
-  let doesTrack = false;
-  let thisTableName = '';
-  let title = '';
-  let scheduleName;
   let readingDayIDs: number[] = [];
   let areButtonsFinished: boolean[] = [];
-  // When we go through with chronological like schedules we can determine if 2 sections have the same
-  // book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
+  let prevBookNum = 0;
+  let doesTrack = false;
+
   for (let i = 0; i < items.length; i++) {
     let item = items[i];
+    let tempIsFinished = item.isFinished;
     doesTrack = item.doesTrack;
-    let tempIsFinished = item.isFinished ? true : false;
+
     if (i !== 0) {
+      // When we go through with chronological like schedules we can determine if 2 sections have the same
+      // book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
       hiddenPortions += !tempIsFinished
         ? condenseReadingPortion(item, prevBookNum)
         : '';
       readingPortions += condenseReadingPortion(item, prevBookNum);
-    } else {
-      thisTableName = tableName || item.tableName;
-      isFinished = tempIsFinished;
-      title = scheduleName || item.title;
-      readingPortions = item.readingPortion;
-      firstPortion = item.readingPortion;
-      hiddenPortions = !tempIsFinished ? item.readingPortion : '';
-      completionDate = item.completionDate;
     }
     prevBookNum =
       item.startBookNumber === item.endBookNumber ? item.endBookNumber : 0;
 
-    if (item.tableName === WEEKLY_READING_TABLE_NAME) {
-      if (i === 0) {
-        startBook = item.startBookName;
-        startChapter = item.startChapter;
-        startVerse = item.startVerse;
-        isStart = checkStartVerse(startBook, startChapter, startVerse);
-        firstPortion = item.readingPortion;
-      }
-      if (i === items.length - 1) {
-        endBook = item.endBookName;
-        endChapter = item.endChapter;
-        endVerse = item.endVerse;
-        completionDate = item.completionDate;
-
-        let {description} = checkReadingPortion(
-          startBook,
-          startChapter,
-          startVerse,
-          !!isStart,
-          endBook,
-          endChapter,
-          endVerse,
-          true,
-        );
-        readingPortions = description;
-        hiddenPortions = description;
-      }
-    }
     readingDayIDs.push(item.readingDayID);
 
     isFinished = tempIsFinished && isFinished;
@@ -276,7 +260,7 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
 
     buttons.push(
       <ScheduleButton
-        testID={testID}
+        testID={testID + item.readingPortion}
         key={JSON.stringify(item)}
         firstUnfinishedID={firstUnfinishedID}
         item={item}
@@ -291,16 +275,100 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
     );
   }
 
-  if (
-    buttonsPopup.id === index &&
-    buttonsPopup.isDisplayed &&
-    !arraysMatch(areButtonsFinished, buttonsPopup.areButtonsFinished) &&
-    arraysMatch(readingDayIDs, buttonsPopup.readingDayIDs)
-  ) {
-    openButtonsPopup(index, buttons, areButtonsFinished, readingDayIDs);
+  if (firstItem.tableName === WEEKLY_READING_TABLE_NAME) {
+    let lastItem = items[items.length - 1];
+    let {startBookName} = firstItem;
+    let {startChapter} = firstItem;
+    let {startVerse} = firstItem;
+    let isStart = checkStartVerse(startBookName, startChapter, startVerse);
+
+    let {description} = checkReadingPortion(
+      startBookName,
+      startChapter,
+      startVerse,
+      isStart,
+      lastItem.endBookName,
+      lastItem.endChapter,
+      lastItem.endVerse,
+      true,
+    );
+
+    readingPortions = description;
+    hiddenPortions = description;
+    completionDate = lastItem.completionDate;
   }
 
   readingPortions = isFinished ? readingPortions : hiddenPortions;
+
+  return {
+    areButtonsFinished,
+    buttons,
+    completionDate,
+    doesTrack,
+    isFinished,
+    readingDayIDs,
+    readingPortions,
+    thisTableName,
+    title,
+  };
+}
+
+export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
+  const {
+    buttonsPopup,
+    closeReadingPopup,
+    completedHidden,
+    firstUnfinishedID,
+    items,
+    onUpdateReadStatus,
+    openButtonsPopup,
+    openReadingPopup,
+    scheduleName,
+    tableName,
+    testID,
+    updateButtonReadings,
+    updatePages,
+  } = args;
+
+  const {
+    areButtonsFinished,
+    buttons,
+    completionDate,
+    doesTrack,
+    isFinished,
+    readingDayIDs,
+    readingPortions,
+    thisTableName,
+    title,
+  } = createButtonList({
+    closeReadingPopup,
+    completedHidden,
+    firstUnfinishedID,
+    items,
+    onUpdateReadStatus,
+    openReadingPopup,
+    scheduleName,
+    tableName,
+    testID,
+    updatePages,
+  });
+
+  const firstPortion = items[0].readingPortion;
+
+  const buttonsPopupIsCurrent = checkIfButtonsPopupIsCurrent(
+    readingDayIDs,
+    buttonsPopup,
+    thisTableName,
+  );
+
+  //Check whether to refresh buttons popup
+  if (
+    buttonsPopupIsCurrent &&
+    buttonsPopup.isDisplayed &&
+    !arraysMatch(areButtonsFinished, buttonsPopup.areButtonsFinished)
+  ) {
+    openButtonsPopup(buttons, thisTableName, areButtonsFinished, readingDayIDs);
+  }
 
   return (
     <ScheduleDayButton
@@ -332,7 +400,12 @@ export function setMultipleScheduleButtons(args: setMultipleButtonsArgs) {
         updateButtonReadings(thisTableName, firstID, lastID, isFinished);
       }}
       onPress={() => {
-        openButtonsPopup(index, buttons, areButtonsFinished, readingDayIDs);
+        openButtonsPopup(
+          buttons,
+          thisTableName,
+          areButtonsFinished,
+          readingDayIDs,
+        );
       }}
     />
   );

@@ -238,7 +238,7 @@ export default function useSchedulePage(
       !completedHidden
     ) {
       setTimeout(() => {
-        let ID = firstUnfinished.ReadingDayID;
+        let ID = firstUnfinished.ReadingDayID - 1;
         let index =
           scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL
             ? ID

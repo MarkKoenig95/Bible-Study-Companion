@@ -16,11 +16,11 @@ export default function ButtonsPopup(props) {
 
 export function useButtonsPopup() {
   const [buttonsPopup, setButtonsPopup] = useState({
-    id: undefined,
-    isDisplayed: false,
     areButtonsFinished: [],
     buttons: [],
+    isDisplayed: false,
     readingDayIDs: [],
+    tableName: '',
   });
 
   const closeButtonsPopup = useCallback(() => {
@@ -30,21 +30,21 @@ export function useButtonsPopup() {
   }, []);
 
   const openButtonsPopup = useCallback(
-    (id, buttons, areButtonsFinished = [], readingDayIDs = []) => {
+    (buttons, tableName, areButtonsFinished = [], readingDayIDs = []) => {
       setButtonsPopup({
-        id: id,
+        areButtonsFinished,
+        buttons,
         isDisplayed: true,
-        buttons: buttons,
-        areButtonsFinished: areButtonsFinished,
-        readingDayIDs: readingDayIDs,
+        readingDayIDs,
+        tableName,
       });
     },
     [],
   );
 
   return {
-    openButtonsPopup: openButtonsPopup,
-    closeButtonsPopup: closeButtonsPopup,
-    buttonsPopup: buttonsPopup,
+    openButtonsPopup,
+    closeButtonsPopup,
+    buttonsPopup,
   };
 }

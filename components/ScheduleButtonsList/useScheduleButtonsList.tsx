@@ -27,11 +27,11 @@ export default function useScheduleButtonsList(
   const {
     ScheduleListPopups,
     buttonsPopup,
-    openButtonsPopup,
-    readingPopup,
-    openReadingPopup,
     closeReadingPopup,
+    openButtonsPopup,
+    openReadingPopup,
     openRemindersPopup,
+    readingPopup,
   } = useScheduleListPopups(testID);
 
   const onUpdateReadStatus = useCallback(
@@ -55,7 +55,7 @@ export default function useScheduleButtonsList(
 
       updateOne();
     },
-    [readingPopup, userDB, afterUpdate],
+    [readingPopup.readingDayID, afterUpdate, userDB],
   );
 
   const updateButtonReadings = useCallback(
@@ -81,6 +81,7 @@ export default function useScheduleButtonsList(
         openReadingPopup,
         tableName,
         testID,
+        scheduleName,
         updatePages,
       };
 
@@ -88,7 +89,6 @@ export default function useScheduleButtonsList(
         return setOneScheduleButton({
           ...commonArguments,
           item: items[0],
-          scheduleName,
         });
       }
 

@@ -36,7 +36,7 @@ export interface ReadingPopupState {
 export interface ButtonsPopupState {
   areButtonsFinished: boolean[];
   buttons: Element[];
-  id: number | undefined;
   isDisplayed: boolean;
   readingDayIDs: number[];
+  tableName: string;
 }
