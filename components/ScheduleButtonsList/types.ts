@@ -1,3 +1,5 @@
+import {ScheduleButtonProps} from './ScheduleButton';
+
 export type OpenReadingInfoPopup = (
   startBookNumber: number,
   startChapter: number,
@@ -35,7 +37,7 @@ export interface ReadingPopupState {
 
 export interface ButtonsPopupState {
   areButtonsFinished: boolean[];
-  buttons: Element[];
+  buttons: ScheduleButtonProps[];
   isDisplayed: boolean;
   readingDayIDs: number[];
   tableName: string;

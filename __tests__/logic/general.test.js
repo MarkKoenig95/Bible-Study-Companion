@@ -7,6 +7,7 @@ import {
   getWeeksBetween,
   versionIsLessThan,
   VERSE_POSITION,
+  removeElementFromArrayAtIndex,
 } from '../../logic/general';
 
 beforeAll(() => {
@@ -225,4 +226,11 @@ describe('versionIsLessThan checker', () => {
     let result = versionIsLessThan('1.0.0', '1.0.0.0');
     expect(result).toBe(false);
   });
+});
+
+test('should return a new array with an element at a given index removed', () => {
+  let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let newArray = removeElementFromArrayAtIndex(array, 4);
+  let expectedResult = [0, 1, 2, 3, 5, 6, 7, 8, 9];
+  expect(newArray).toStrictEqual(expectedResult);
 });

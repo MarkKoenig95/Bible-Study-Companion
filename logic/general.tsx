@@ -237,6 +237,15 @@ async function recreateAllUserSchedules(userDB: Database, bibleDB: Database) {
   }
 }
 
+/** Given an array and an index will return a new array with the element at that index removed */
+export function removeElementFromArrayAtIndex(array: any[], index: number) {
+  let firstHalf = array.slice(0, index);
+  let lastHalf = array.slice(index + 1, array.length);
+
+  let newArray = [...firstHalf, ...lastHalf];
+  return newArray;
+}
+
 // !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------
 export async function legacyBugFixFor110(
   userDB: Database,

@@ -56,6 +56,7 @@ function ScheduleButtonsListPopups(props: ScheduleButtonsListPopupsProps) {
       <ButtonsPopup
         testID={testID + '.buttonsPopup'}
         buttonsPopupState={buttonsPopup}
+        displayPopup={buttonsPopup.isDisplayed}
         onClosePress={closeButtonsPopup}
       />
       <ReadingRemindersPopup
@@ -70,7 +71,12 @@ function ScheduleButtonsListPopups(props: ScheduleButtonsListPopupsProps) {
 }
 
 export default function useScheduleListPopups(pageTitle: string) {
-  const {buttonsPopup, openButtonsPopup, closeButtonsPopup} = useButtonsPopup();
+  const {
+    buttonsPopup,
+    closeButtonsPopup,
+    markButtonInPopupComplete,
+    openButtonsPopup,
+  } = useButtonsPopup();
 
   const [isRemindersPopupDisplayed, setIsRemindersPopupDisplayed] =
     useState(false);
@@ -106,6 +112,7 @@ export default function useScheduleListPopups(pageTitle: string) {
     buttonsPopup,
     closeReadingPopup,
     isRemindersPopupDisplayed,
+    markButtonInPopupComplete,
     openButtonsPopup,
     openReadingPopup: openReadingInfoPopup,
     openRemindersPopup,

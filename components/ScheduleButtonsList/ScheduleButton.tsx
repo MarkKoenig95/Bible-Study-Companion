@@ -5,7 +5,7 @@ import ScheduleDayButton from '../buttons/ScheduleDayButton';
 import {BibleReadingItem} from '../../data/Database/types';
 import {OnUpdateReadStatus, OpenReadingInfoPopup} from './types';
 
-interface ScheduleButtonProps {
+export interface ScheduleButtonProps {
   closeReadingPopup: () => void;
   completedHidden: boolean;
   firstUnfinishedID: number;

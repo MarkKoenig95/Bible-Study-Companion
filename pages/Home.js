@@ -93,7 +93,7 @@ export async function populateReminders(
 
       result.push({
         isFinished: isFinished,
-        completionDate: formatDate(completionDate),
+        completionDate: completionDate,
         completedHidden: true,
         doesTrack: true,
         onLongPress: onLongPress,
@@ -179,7 +179,7 @@ export async function populateScheduleButtons(
       const newItem = convertDBItemToJSItem(item, doesTrack);
       let itemDate = newItem.completionDate;
 
-      if (itemDate <= today) {
+      if (itemDate.getTime() <= today.getTime()) {
         //Add reading portion info to the list
         innerHomeListItems.push({
           ...newItem,

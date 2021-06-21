@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, TextStyle, View} from 'react-native';
 
 import CheckBox from './CheckBox';
@@ -12,6 +12,7 @@ interface ScheduleDayButtonProps {
   completedHidden: boolean;
   completionDate: Date;
   doesTrack: boolean;
+  isDelayed?: boolean;
   isFinished: boolean;
   onLongPress: () => void;
   onPress: () => void;
@@ -21,7 +22,6 @@ interface ScheduleDayButtonProps {
   title: string;
   update: number;
 }
-let isFinishedStateIsSet = false;
 
 const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
   const {
@@ -29,6 +29,7 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     completionDate,
     doesTrack,
     isFinished,
+    isDelayed,
     onLongPress,
     onPress,
     readingPortion,
@@ -41,6 +42,7 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
   const [isDatePassed, setIsDatePassed] = useState(false);
   const [compDate, setCompDate] = useState(formatDate(completionDate));
   const [isFinishedState, setIsFinishedState] = useState(isFinished);
+  const isIsFinishedStateSet = useRef(false);
 
   const display = isFinishedState && completedHidden ? 'none' : 'flex';
   const color = !isDatePassed || isFinishedState ? colors.lightGray : '#f00';
@@ -53,28 +55,39 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     today.setHours(0, 0, 0, 0);
     setCompDate(formatDate(date));
     setIsDatePassed(date.getTime() < today.getTime());
-    if (isFinishedStateIsSet && isFinished === isFinishedState) {
-      isFinishedStateIsSet = false;
+    if (isIsFinishedStateSet.current && isFinished === isFinishedState) {
+      isIsFinishedStateSet.current = false;
     }
-    if (!isFinishedStateIsSet) {
+
+    if (!isIsFinishedStateSet.current && isFinished !== isFinishedState) {
       setIsFinishedState(isFinished);
     }
-  }, [completionDate, isFinished, isFinishedState, update]);
+  }, [
+    completionDate,
+    isFinished,
+    isFinishedState,
+    isIsFinishedStateSet,
+    update,
+  ]);
 
   const _handlePress = useCallback(() => {
-    setIsFinishedState(!isFinishedState);
-    isFinishedStateIsSet = true;
     onPress();
-  }, [isFinishedState, onPress]);
+
+    if (isDelayed) return;
+
+    setIsFinishedState(!isFinishedState);
+    isIsFinishedStateSet.current = true;
+  }, [isDelayed, isFinishedState, onPress]);
 
   const _handleLongPress = useCallback(() => {
     setIsFinishedState(!isFinishedState);
-    isFinishedStateIsSet = true;
+    isIsFinishedStateSet.current = true;
     onLongPress();
-  }, [isFinishedState, onLongPress]);
+  }, [isFinishedState, isIsFinishedStateSet, onLongPress]);
 
   return (
     <CustomButton
+      key={testID}
       testID={testID}
       style={[style.columnContainer, style, {display: display}]}
       onPress={_handlePress}
