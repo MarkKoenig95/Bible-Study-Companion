@@ -4,12 +4,20 @@ import Popup from './Popup';
 
 import {translate} from '../../logic/localization/localization';
 import {View} from 'react-native';
+import {ButtonsPopupState} from '../ScheduleButtonsList/types';
 
-export default function ButtonsPopup(props) {
-  const {buttons} = props;
+interface ButtonsPopupProps {
+  buttonsPopupState: ButtonsPopupState;
+  onClosePress: () => void;
+  testID: string;
+}
+
+export default function ButtonsPopup(props: ButtonsPopupProps) {
+  const {buttonsPopupState} = props;
+  const {buttons} = buttonsPopupState;
   return (
     <Popup {...props} title={translate('buttonsPopup.title')}>
-      <View style={{width: '95%'}}>{buttons.map((btn) => btn)}</View>
+      <View style={{width: '95%'}}>{buttons.map((btn: Element) => btn)}</View>
     </Popup>
   );
 }

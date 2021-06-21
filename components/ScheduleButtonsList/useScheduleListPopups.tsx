@@ -55,8 +55,7 @@ function ScheduleButtonsListPopups(props: ScheduleButtonsListPopupsProps) {
       />
       <ButtonsPopup
         testID={testID + '.buttonsPopup'}
-        displayPopup={buttonsPopup.isDisplayed}
-        buttons={buttonsPopup.buttons}
+        buttonsPopupState={buttonsPopup}
         onClosePress={closeButtonsPopup}
       />
       <ReadingRemindersPopup
