@@ -95,7 +95,7 @@ export function condenseReadingPortion(
     startBook = '';
     endBook = '';
   } else {
-    portionPrefix = '\r\n';
+    portionPrefix = prevBookNum === 0 ? '' : '\r\n';
     startBook = item.startBookName;
     endBook = item.endBookName;
   }
@@ -183,7 +183,7 @@ export function setOneScheduleButton(args: SetOneButtonArgs) {
   );
 }
 
-function createButtonList(args: CreateButtonListArgs) {
+export function createButtonList(args: CreateButtonListArgs) {
   const {
     closeReadingPopup,
     completedHidden,
@@ -203,13 +203,14 @@ function createButtonList(args: CreateButtonListArgs) {
   const title = scheduleName || firstItem.title;
 
   let isFinished = firstItem.isFinished;
-  let readingPortions = firstItem.readingPortion;
-  let hiddenPortions = !firstItem.isFinished ? firstItem.readingPortion : '';
+  let readingPortions = '';
+  let hiddenPortions = '';
   let completionDate = firstItem.completionDate;
 
   let buttons: Element[] = [];
   let readingDayIDs: number[] = [];
   let areButtonsFinished: boolean[] = [];
+  let prevUnhiddenBookNumber = 0;
   let prevBookNum = 0;
   let doesTrack = false;
 
@@ -218,16 +219,17 @@ function createButtonList(args: CreateButtonListArgs) {
     let tempIsFinished = item.isFinished;
     doesTrack = item.doesTrack;
 
-    if (i !== 0) {
-      // When we go through with chronological like schedules we can determine if 2 sections have the same
-      // book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
-      hiddenPortions += !tempIsFinished
-        ? condenseReadingPortion(item, prevBookNum)
-        : '';
-      readingPortions += condenseReadingPortion(item, prevBookNum);
-    }
+    readingPortions += condenseReadingPortion(item, prevBookNum);
+
     prevBookNum =
       item.startBookNumber === item.endBookNumber ? item.endBookNumber : 0;
+
+    // When we go through with chronological like schedules we can determine if 2 sections have the same
+    // book and then set the second one to a ; symbol. otherwise we set it to a new line plus the book name
+    if (!tempIsFinished) {
+      hiddenPortions += condenseReadingPortion(item, prevUnhiddenBookNumber);
+      prevUnhiddenBookNumber = prevBookNum;
+    }
 
     readingDayIDs.push(item.readingDayID);
 
