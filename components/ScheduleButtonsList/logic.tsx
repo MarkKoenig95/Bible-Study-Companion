@@ -35,20 +35,14 @@ interface SetOneButtonArgs extends SetScheduleButtonsArgs {
 
 interface CreateButtonListArgs extends SetScheduleButtonsArgs {
   items: BibleReadingItem[];
-  markButtonInPopupComplete: (
-    readingDayID: number,
-    completedHidden: boolean,
-  ) => void;
+  markButtonInPopupComplete: (readingDayID: number) => void;
 }
 
 interface SetMultipleButtonsArgs extends SetScheduleButtonsArgs {
   buttonsPopup: ButtonsPopupState;
   index: number;
   items: BibleReadingItem[];
-  markButtonInPopupComplete: (
-    readingDayID: number,
-    completedHidden: boolean,
-  ) => void;
+  markButtonInPopupComplete: (readingDayID: number) => void;
   openButtonsPopup: (
     buttons: Element[],
     tableName: string,
@@ -250,7 +244,7 @@ function createButtonList(args: CreateButtonListArgs) {
       ]
     ) => {
       onUpdateReadStatus(...args);
-      markButtonInPopupComplete(item.readingDayID, completedHidden);
+      markButtonInPopupComplete(item.readingDayID);
     };
 
     buttons.push({

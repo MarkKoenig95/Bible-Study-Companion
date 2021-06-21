@@ -7,7 +7,6 @@ import ScheduleButton, {
 } from '../ScheduleButtonsList/ScheduleButton';
 
 import {translate} from '../../logic/localization/localization';
-import {removeElementFromArrayAtIndex} from '../../logic/general';
 import {ButtonsPopupState} from '../ScheduleButtonsList/types';
 
 interface ButtonsPopupProps {
@@ -30,6 +29,32 @@ export default function ButtonsPopup(props: ButtonsPopupProps) {
     </Popup>
   );
 }
+
+const toggleButtonFinishedState = (
+  currentState: ButtonsPopupState,
+  index: number,
+) => {
+  let buttonStateItem = currentState.buttons[index].item;
+  currentState.buttons[index].item = {
+    ...buttonStateItem,
+    isFinished: !buttonStateItem.isFinished,
+  };
+  currentState.areButtonsFinished[index] = true;
+  return currentState;
+};
+
+const modifyButtonsPopupStateForScheduleDay = (
+  prevButtonsPopupState: ButtonsPopupState,
+  readingDayID: number,
+) => {
+  const {readingDayIDs} = prevButtonsPopupState;
+
+  let indexOfID = readingDayIDs.findIndex((id: number) => id === readingDayID);
+
+  let returnState = prevButtonsPopupState;
+
+  return toggleButtonFinishedState(returnState, indexOfID);
+};
 
 const baseState: ButtonsPopupState = {
   areButtonsFinished: [],
@@ -61,43 +86,11 @@ export function useButtonsPopup() {
     [],
   );
 
-  const markButtonInPopupComplete = useCallback(
-    (readingDayID: number, completedHidden: boolean) => {
-      setButtonsPopup((prevButtonsPopupState) => {
-        const {areButtonsFinished, buttons, readingDayIDs} =
-          prevButtonsPopupState;
-
-        let indexOfID = readingDayIDs.findIndex(
-          (id: number) => id === readingDayID,
-        );
-
-        let returnState = prevButtonsPopupState;
-
-        if (!completedHidden) {
-          let buttonStateItem = returnState.buttons[indexOfID].item;
-          returnState.buttons[indexOfID].item = {
-            ...buttonStateItem,
-            isFinished: !buttonStateItem.isFinished,
-          };
-          returnState.areButtonsFinished[indexOfID] = true;
-          return returnState;
-        }
-
-        returnState.areButtonsFinished = removeElementFromArrayAtIndex(
-          areButtonsFinished,
-          indexOfID,
-        );
-        returnState.buttons = removeElementFromArrayAtIndex(buttons, indexOfID);
-        returnState.readingDayIDs = removeElementFromArrayAtIndex(
-          readingDayIDs,
-          indexOfID,
-        );
-
-        return returnState;
-      });
-    },
-    [],
-  );
+  const markButtonInPopupComplete = useCallback((readingDayID: number) => {
+    setButtonsPopup((prevValue) => {
+      return modifyButtonsPopupStateForScheduleDay(prevValue, readingDayID);
+    });
+  }, []);
 
   return {
     buttonsPopup,
