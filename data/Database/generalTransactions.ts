@@ -83,6 +83,7 @@ export function formatDate(date: Date) {
 export function convertDBItemToJSItem(
   item: DBReadingItem | DBBibleReadingItem,
   doesTrack: boolean,
+  type?: string,
 ): ReadingItem | BibleReadingItem {
   let convertedItem: ReadingItem | BibleReadingItem = {
     completedHidden: false,
@@ -94,9 +95,11 @@ export function convertDBItemToJSItem(
     onPress: () => {},
     tableName: '',
     title: '',
+    type,
     readingPortion: item.ReadingPortion,
     updateValue: 0,
   };
+
   const bibleItem = item as DBBibleReadingItem;
   if (!bibleItem.StartBookNumber) return convertedItem;
 

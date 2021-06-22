@@ -1,8 +1,7 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {SafeAreaView, SectionList, View} from 'react-native';
 
 import {
-  formatDate,
   updateValue,
   log,
   runSQL,
@@ -35,7 +34,6 @@ import styles from '../styles/styles';
 import {setAppVersion} from '../data/Store/actions';
 
 const pageTitle = 'homePage';
-let populatingHomeList = false;
 
 /**
  * Returns an array of objects with information about unfinished reminders matching the given frequency
@@ -100,6 +98,7 @@ export async function populateReminders(
         onPress: onPress,
         readingPortion: readingPortion,
         title: title,
+        type: 'Reminder',
         update: update,
       });
     }
@@ -126,18 +125,18 @@ export async function populateScheduleButtons(
   today.setHours(0, 0, 0, 0);
 
   //Get the user's list of reading schedules
-
-  let result = await runSQL(
+  let schedules = await runSQL(
     userDB,
     'SELECT * FROM tblSchedules WHERE DoesTrack=?;',
     [doesTrack ? 1 : 0],
   );
 
   //Loop through the list and select the first reading portion that is not completed
-  for (let i = 0; i < result.rows.length; i++) {
-    const id = result.rows.item(i).ScheduleID;
-    const scheduleName = result.rows.item(i).ScheduleName;
-    const creationInfo = result.rows.item(i).CreationInfo;
+  for (let i = 0; i < schedules.rows.length; i++) {
+    const schedule = schedules.rows.item(i);
+    const id = schedule.ScheduleID;
+    const scheduleName = schedule.ScheduleName;
+    const creationInfo = schedule.CreationInfo;
     let tableName;
     if (creationInfo !== WEEKLY_READING_TABLE_NAME && creationInfo) {
       tableName = formatScheduleTableName(id);
@@ -422,9 +421,10 @@ export default function Home(props) {
   const [weeklyReadingReset, setweeklyReadingReset] = useState();
   const [shouldShowDaily, setShouldShowDaily] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const populatingHomeList = useRef(false);
   const completedHidden = true;
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
@@ -495,8 +495,8 @@ export default function Home(props) {
       weeklyReadingReset !== undefined &&
       shouldShowDaily !== undefined
     ) {
-      if (!populatingHomeList) {
-        populatingHomeList = true;
+      if (!populatingHomeList.current) {
+        populatingHomeList.current = true;
         populateHomeList(
           userDB,
           bibleDB,
@@ -507,7 +507,7 @@ export default function Home(props) {
           updatePages,
         ).then((res) => {
           setScheduleListItems(res);
-          populatingHomeList = false;
+          populatingHomeList.current = false;
         });
       }
     }

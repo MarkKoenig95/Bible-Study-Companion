@@ -146,15 +146,14 @@ export function setOneScheduleButton(args: SetOneButtonArgs) {
   } = args;
   let thisTableName;
   let title;
-  let bibleItem = item as BibleReadingItem;
 
-  if (bibleItem.startBookNumber) {
+  if (item.type !== 'Reminder') {
     thisTableName = tableName || item.tableName;
     title = scheduleName || item.title;
     return (
       <ScheduleButton
         testID={testID}
-        item={bibleItem}
+        item={item}
         firstUnfinishedID={firstUnfinishedID}
         tableName={thisTableName}
         title={title}

@@ -2,14 +2,14 @@ import React from 'react';
 
 import ScheduleDayButton from '../buttons/ScheduleDayButton';
 
-import {BibleReadingItem} from '../../data/Database/types';
+import {BibleReadingItem, ReadingItem} from '../../data/Database/types';
 import {OnUpdateReadStatus, OpenReadingInfoPopup} from './types';
 
 export interface ScheduleButtonProps {
   closeReadingPopup: () => void;
   completedHidden: boolean;
   firstUnfinishedID: number;
-  item: BibleReadingItem;
+  item: BibleReadingItem | ReadingItem;
   onUpdateReadStatus: OnUpdateReadStatus;
   openReadingPopup: OpenReadingInfoPopup;
   tableName: string;
@@ -32,6 +32,8 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
     update,
   } = props;
 
+  let isDelayed = false;
+
   const isAfterFirstUnfinished = item.readingDayID > firstUnfinishedID;
 
   const onLongPress = () => {
@@ -45,18 +47,20 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
 
   let onPress = onLongPress;
 
-  if (item.startBookNumber) {
+  const bibleItem = item as BibleReadingItem;
+  if (bibleItem.startBookNumber) {
+    isDelayed = true;
     onPress = () => {
       openReadingPopup(
-        item.startBookNumber,
-        item.startChapter,
-        item.startVerse,
-        item.endBookNumber,
-        item.endChapter,
-        item.endVerse,
-        item.readingPortion,
-        item.isFinished,
-        item.readingDayID,
+        bibleItem.startBookNumber,
+        bibleItem.startChapter,
+        bibleItem.startVerse,
+        bibleItem.endBookNumber,
+        bibleItem.endChapter,
+        bibleItem.endVerse,
+        bibleItem.readingPortion,
+        bibleItem.isFinished,
+        bibleItem.readingDayID,
         () => {
           onLongPress();
           closeReadingPopup();
@@ -73,6 +77,7 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
       completionDate={item.completionDate}
       completedHidden={completedHidden}
       doesTrack={item.doesTrack}
+      isDelayed={isDelayed}
       isFinished={item.isFinished ? true : false}
       title={title}
       update={update}

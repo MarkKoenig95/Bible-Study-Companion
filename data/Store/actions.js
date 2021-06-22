@@ -1,7 +1,20 @@
 export const UPDATE_VALUE = 'UPDATE_VALUE';
+export const INCREMENT_VALUE = 'INCREMENT_VALUE';
+
+function updateValue(key, value) {
+  return {type: UPDATE_VALUE, key: key, value: value};
+}
+
+function incrementValue(key) {
+  return {type: INCREMENT_VALUE, key: key};
+}
 
 export function setFirstRender(bool) {
   return updateValue('isFirstRender', bool);
+}
+
+export function incrementUpdatePages() {
+  return incrementValue('updatePages');
 }
 
 export function setUpdatePages(prevValue) {
@@ -30,7 +43,4 @@ export function setAppVersion(appVersion) {
 
 export function setWeeklyReadingResetDay(weeklyReadingResetDay) {
   return updateValue('weeklyReadingResetDay', weeklyReadingResetDay);
-}
-function updateValue(key, value) {
-  return {type: UPDATE_VALUE, key: key, value: value};
 }

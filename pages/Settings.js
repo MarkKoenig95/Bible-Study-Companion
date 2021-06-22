@@ -22,16 +22,10 @@ export default function Settings(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {
-    appVersion,
-    bibleDB,
-    userDB,
-    updatePages,
-    showDaily,
-    weeklyReadingResetDay,
-  } = globalState.state;
+  const {appVersion, bibleDB, userDB, showDaily, weeklyReadingResetDay} =
+    globalState.state;
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   function toggleIsShown() {
     updateValue(

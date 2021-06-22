@@ -42,6 +42,7 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
   const [isDatePassed, setIsDatePassed] = useState(false);
   const [compDate, setCompDate] = useState(formatDate(completionDate));
   const [isFinishedState, setIsFinishedState] = useState(isFinished);
+  const [testIDState, setTestIDState] = useState(testID);
   const isIsFinishedStateSet = useRef(false);
 
   const display = isFinishedState && completedHidden ? 'none' : 'flex';
@@ -55,8 +56,13 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     today.setHours(0, 0, 0, 0);
     setCompDate(formatDate(date));
     setIsDatePassed(date.getTime() < today.getTime());
-    if (isIsFinishedStateSet.current && isFinished === isFinishedState) {
+
+    if (
+      (isIsFinishedStateSet.current && isFinished === isFinishedState) ||
+      testID !== testIDState
+    ) {
       isIsFinishedStateSet.current = false;
+      setTestIDState(testID);
     }
 
     if (!isIsFinishedStateSet.current && isFinished !== isFinishedState) {
@@ -67,6 +73,8 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     isFinished,
     isFinishedState,
     isIsFinishedStateSet,
+    testID,
+    testIDState,
     update,
   ]);
 
@@ -92,7 +100,7 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
       style={[style.columnContainer, style, {display: display}]}
       onPress={_handlePress}
       onLongPress={_handleLongPress}>
-      <View style={{...style.rowContainer}}>
+      <View style={style.rowContainer}>
         <CheckBox
           testID={testID + '.checkBox'}
           checked={isFinishedState}

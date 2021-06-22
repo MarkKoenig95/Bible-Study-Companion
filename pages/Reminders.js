@@ -413,7 +413,7 @@ export default function Reminders(props) {
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
   const {reminderPopup} = useCreateReminderPopup();
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   //Set up keyboard listeners
   const _keyboardDidShow = () => {

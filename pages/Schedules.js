@@ -70,7 +70,7 @@ export default function Schedules(props) {
     });
   }, [userDB, setListItems, updatePages]);
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   function onAddSchedule(
     scheduleName,

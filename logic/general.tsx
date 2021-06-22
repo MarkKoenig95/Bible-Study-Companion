@@ -12,7 +12,7 @@ import {
   DBReadingItem,
   ScheduleInfo,
 } from '../data/Database/types';
-import {setUpdatePages} from '../data/Store/actions';
+import {incrementUpdatePages} from '../data/Store/actions';
 import {translate} from './localization/localization';
 
 export const WEEKLY_READING_TABLE_NAME = 'tblWeeklyReading';
@@ -131,13 +131,10 @@ export function getWeeksBetween(date1: string, date2: string) {
   return weeksBetween;
 }
 
-export function useUpdate(
-  updatePages: number,
-  dispatch: (event: object) => {},
-) {
+export function useUpdate(dispatch: (event: object) => {}) {
   return useCallback(() => {
-    dispatch(setUpdatePages(updatePages));
-  }, [updatePages, dispatch]);
+    dispatch(incrementUpdatePages());
+  }, [dispatch]);
 }
 
 export function useToggleState(initialValue: boolean): [boolean, () => void] {

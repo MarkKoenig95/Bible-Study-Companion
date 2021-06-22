@@ -42,6 +42,7 @@ export interface ReadingItem {
   onPress: () => void;
   tableName: string;
   title: string;
+  type?: string;
   readingPortion: string;
   updateValue: number;
 }

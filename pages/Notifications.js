@@ -132,7 +132,7 @@ export default function Notifications(props) {
   const {dispatch} = globalState;
   const {userDB, updatePages, notification} = globalState.state;
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   const [listItems, setListItems] = useState([]);
 

@@ -61,7 +61,7 @@ export default function useSchedulePage(
   const [settingsPopupIsDisplayed, toggleSettingsPopupIsDisplayed] =
     useToggleState(false);
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   const {ScheduleListPopups, setScheduleButtons, openRemindersPopup} =
     useScheduleButtonsList(

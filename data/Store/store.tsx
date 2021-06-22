@@ -1,5 +1,5 @@
 import React, {createContext, useReducer} from 'react';
-import {UPDATE_VALUE} from './actions';
+import {INCREMENT_VALUE, UPDATE_VALUE} from './actions';
 
 let initialState: any = {
   bibleDB: null,
@@ -18,6 +18,8 @@ function StateProvider({children}: {children: any}) {
       switch (type) {
         case UPDATE_VALUE:
           return {...state, [key]: value};
+        case INCREMENT_VALUE:
+          return {...state, [key]: state[key] + 1};
         default:
           throw new Error();
       }

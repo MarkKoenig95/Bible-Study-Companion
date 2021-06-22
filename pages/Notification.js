@@ -83,7 +83,7 @@ export default function Notification(props) {
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
-  const afterUpdate = useUpdate(updatePages, dispatch);
+  const afterUpdate = useUpdate(dispatch);
 
   async function updateWeekday(id, isNotifActive, day, isActive, time) {
     let isActiveBool = isActive ? 1 : 0;
@@ -131,9 +131,7 @@ export default function Notification(props) {
 
   function onDeleteNotification() {
     navigation.dispatch(StackActions.pop(1));
-    deleteNotification(userDB, notificationID, notification).then(() => {
-      afterUpdate();
-    });
+    deleteNotification(userDB, notificationID, notification).then(afterUpdate);
   }
 
   //Set delete button in nav bar with appropriate onPress attribute
