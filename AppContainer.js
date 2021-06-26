@@ -15,6 +15,7 @@ import {
   setNotification,
   setShowDaily,
   setWeeklyReadingResetDay,
+  incrementUpdatePages,
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
 import {log, getSettings} from './data/Database/generalTransactions';
@@ -168,9 +169,7 @@ export default function AppContainer() {
   }, []);
 
   const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-
-  const [refresh, setRefresh] = useState(updatePages);
+  const [, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
     AppState.addEventListener('change', _handleAppStateChange);
@@ -181,17 +180,7 @@ export default function AppContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //Fixes bug with app state change update
   useEffect(() => {
-    if (updatePages !== refresh) {
-      dispatch(setUpdatePages(refresh));
-    }
-  }, [dispatch, updatePages, refresh]);
-
-  useEffect(() => {
-    setRefresh((prev) => {
-      return prev + 1;
-    });
     if (isFirstRender) {
       dispatch(setFirstRender(false));
       dispatch(setUpdatePages(0));
@@ -207,14 +196,15 @@ export default function AppContainer() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isFirstRender, setRefresh, updatePages, userDB]);
+  }, [isFirstRender, updatePages, userDB]);
 
   const _handleAppStateChange = (nextAppState) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      dispatch(setUpdatePages(updatePages));
+      console.log('setting update pages');
+      dispatch(incrementUpdatePages());
     }
 
     appState.current = nextAppState;

@@ -42,12 +42,17 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
   const [isDatePassed, setIsDatePassed] = useState(false);
   const [compDate, setCompDate] = useState(formatDate(completionDate));
   const [isFinishedState, setIsFinishedState] = useState(isFinished);
-  const [testIDState, setTestIDState] = useState(testID);
+  const [key, setKey] = useState(testID + completionDate);
   const isIsFinishedStateSet = useRef(false);
 
   const display = isFinishedState && completedHidden ? 'none' : 'flex';
   const color = !isDatePassed || isFinishedState ? colors.lightGray : '#f00';
   const hasTitle = title ? true : false;
+
+  useEffect(() => {
+    setKey(testID + completionDate);
+    isIsFinishedStateSet.current = false;
+  }, [completionDate, testID]);
 
   useEffect(() => {
     let date = completionDate;
@@ -57,12 +62,8 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     setCompDate(formatDate(date));
     setIsDatePassed(date.getTime() < today.getTime());
 
-    if (
-      (isIsFinishedStateSet.current && isFinished === isFinishedState) ||
-      testID !== testIDState
-    ) {
+    if (isIsFinishedStateSet.current && isFinished === isFinishedState) {
       isIsFinishedStateSet.current = false;
-      setTestIDState(testID);
     }
 
     if (!isIsFinishedStateSet.current && isFinished !== isFinishedState) {
@@ -74,7 +75,6 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     isFinishedState,
     isIsFinishedStateSet,
     testID,
-    testIDState,
     update,
   ]);
 
@@ -95,7 +95,7 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
 
   return (
     <CustomButton
-      key={testID}
+      key={key}
       testID={testID}
       style={[style.columnContainer, style, {display: display}]}
       onPress={_handlePress}
