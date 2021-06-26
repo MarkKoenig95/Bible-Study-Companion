@@ -55,7 +55,9 @@ export async function scrollUntilVisible(
     .scroll(scrollAmount, scrollDirection);
 
   if (OS !== 'ios') {
-    await element(elementToScroll).scroll(scrollAmount, scrollDirection);
+    try {
+      await element(elementToScroll).scroll(scrollAmount, scrollDirection);
+    } catch {}
   }
 }
 
@@ -141,9 +143,6 @@ async function setDateTimePickerIOS(parentID, time, mode) {
     ISOString,
     'ISO8601',
   );
-  if (mode === 'date') {
-    await element(by.id(parentID + '.picker')).tapAtPoint({x: 5, y: 5});
-  }
   //Sometimes a popup shows up after changing the time. in this case the done button will not show and will cause the test to fail
   try {
     await element(by.id(parentID + '.picker.doneButton')).tap();

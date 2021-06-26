@@ -1,5 +1,5 @@
 /* eslint-env detox/detox, jest */
-import {setPicker, waitForMS} from './helpers/general';
+import {scrollUntilVisible, setPicker, waitForMS} from './helpers/general';
 // * Note to tester, I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the time being
 // * this test will be based on that date.
@@ -11,6 +11,10 @@ let OS;
 
 beforeAll(async () => {
   OS = device.getPlatform();
+
+  if (OS !== 'ios') {
+    waitTime *= 5;
+  }
 
   await device.launchApp({permissions: {notifications: 'YES'}});
 
@@ -46,6 +50,12 @@ describe('Weekly reading settings', () => {
       .withTimeout(40000);
     // ------------------------------------------------------------------------------------
 
+    await scrollUntilVisible(
+      by.id('homePage.Numbers 15:1-14'),
+      by.id('homePage.list'),
+      OS,
+    );
+
     await expect(element(by.id('homePage.Numbers 15:1-14'))).toBeVisible();
 
     // Go back to the settings page, flip the switch back and expect the reading not to be there
@@ -66,8 +76,19 @@ describe('Weekly reading settings', () => {
 
   it('changes weekly reading reset day', async () => {
     await setPicker(prefix + 'weeklyReading.weekdayPicker', 'Wednesday', OS);
+    await waitForMS(3 * waitTime);
 
     await element(by.id('tabs.homePage')).tap();
+
+    await waitFor(element(by.text('Daily Text')))
+      .toBeVisible()
+      .withTimeout(4 * waitTime);
+
+    await scrollUntilVisible(
+      by.id('homePage.multiPortionStartingWith.Numbers 17:1-10'),
+      by.id('homePage.list'),
+      OS,
+    );
 
     await expect(
       element(by.id('homePage.multiPortionStartingWith.Numbers 17:1-10')),

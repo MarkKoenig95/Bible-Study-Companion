@@ -17,6 +17,9 @@ const prefix = 'homePage.';
 
 beforeAll(async () => {
   OS = device.getPlatform();
+  if (OS !== 'ios') {
+    waitTime *= 5;
+  }
 });
 
 beforeEach(async () => {
@@ -165,6 +168,10 @@ it('Completes a reminder from the confirmation popup', async () => {
   await element(by.id(prefix + 'Weekend Meeting Study.checkBox')).tap();
   await waitForMS(2000);
   await element(by.id(prefix + 'Weekend Meeting Study')).tap();
+
+  await waitFor(element(by.id(prefix + 'messagePopup.confirmButton')))
+    .toBeVisible()
+    .withTimeout(waitTime * 2);
   await element(by.id(prefix + 'messagePopup.confirmButton')).tap();
 
   await waitFor(element(by.id(prefix + 'Weekend Meeting Study')))

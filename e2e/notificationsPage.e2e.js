@@ -13,6 +13,9 @@ async function toggleSwitch(parentID, expectedValue) {
 
 beforeAll(async () => {
   OS = device.getPlatform();
+  if (OS !== 'ios') {
+    waitTime *= 5;
+  }
 });
 
 beforeEach(async () => {

@@ -72,7 +72,7 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
 
   return (
     <ScheduleDayButton
-      testID={testID + '.' + item.readingPortion}
+      testID={testID}
       readingPortion={item.readingPortion}
       completionDate={item.completionDate}
       completedHidden={completedHidden}

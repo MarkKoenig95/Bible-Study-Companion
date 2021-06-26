@@ -12,7 +12,7 @@ export async function shouldOpenReadingReminders(parentID) {
 export async function shouldOpenReadingInfoPopup(parentID, portion) {
   await waitFor(element(by.id(parentID + portion)))
     .toBeVisible()
-    .withTimeout(5000);
+    .withTimeout(10000);
   await element(by.id(parentID + portion)).tap();
 
   await expect(element(by.id(parentID + 'readingInfoPopup'))).toBeVisible();
@@ -54,8 +54,8 @@ export async function shouldCompleteReadingWithLongPress(
 ) {
   await waitFor(element(by.id(parentID + portion)))
     .toBeVisible()
-    .withTimeout(5000);
-  await element(by.id(parentID + portion)).longPress();
+    .withTimeout(10000);
+  await element(by.id(parentID + portion)).longPress(1500);
 
   if (cancelOrOK) {
     await element(by.text(cancelOrOK)).tap();
@@ -76,7 +76,7 @@ export async function shouldCompleteReadingWithCheckbox(
 ) {
   await waitFor(element(by.id(parentID + portion)))
     .toBeVisible()
-    .withTimeout(5000);
+    .withTimeout(10000);
   await element(by.id(parentID + portion + '.checkBox')).tap();
 
   if (cancelOrOK) {
@@ -95,14 +95,14 @@ export async function shouldOpenReadingButtonsPopup(parentID, startPortion) {
     element(by.id(parentID + 'multiPortionStartingWith.' + startPortion)),
   )
     .toBeVisible()
-    .withTimeout(5000);
+    .withTimeout(10000);
   await element(
     by.id(parentID + 'multiPortionStartingWith.' + startPortion),
   ).tap();
 
   await waitFor(element(by.id(parentID + 'buttonsPopup')))
     .toBeVisible()
-    .withTimeout(5000);
+    .withTimeout(10000);
 
   await expect(element(by.id(parentID + 'buttonsPopup'))).toBeVisible();
 }
@@ -136,16 +136,6 @@ export async function shouldCompleteReadingInButtonPopup(
   if (cancelOrOK) {
     await element(by.text(cancelOrOK)).tap();
   }
-
-  // TODO: Make it so that checked off items in buttons popup disappear immediately (at least for weekly readings). Then get rid of these bits of code once bug is fixed
-  // ! --------------------------------------------------------------------
-  await waitForMS(2000);
-  await element(by.id(parentID + 'buttonsPopup.closeButton')).tap();
-  await waitFor(element(by.id(parentID + 'buttonsPopup')))
-    .not.toBeVisible()
-    .withTimeout(20000);
-  await shouldOpenReadingButtonsPopup(parentID, startPortion);
-  // ! --------------------------------------------------------------------
 
   await expect(element(by.id(parentID + portionToComp))).not.toBeVisible();
 }

@@ -71,7 +71,7 @@ beforeAll(async () => {
     'Base Thema',
     true,
     [1, 1, 1, 1, 1, 1, 1],
-    2,
+    0.1,
     1,
     1,
     1,
@@ -82,9 +82,6 @@ beforeAll(async () => {
     () => {},
     () => {},
   );
-
-  // Mark all but the last reading portion complete in this table
-  await updateMultipleReadStatus(userDB, 'tblSchedule3', 720);
 
   await addSchedule(
     userDB,
@@ -104,6 +101,9 @@ beforeAll(async () => {
     () => {},
     () => {},
   );
+
+  // Mark all but the last reading portion complete in this table
+  await updateMultipleReadStatus(userDB, 'tblSchedule4', 499);
 
   await addReminder(userDB, 'Monthly Reminder', FREQS.MONTHLY, 1, new Date(0));
 });

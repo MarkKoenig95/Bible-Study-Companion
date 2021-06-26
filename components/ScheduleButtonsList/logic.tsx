@@ -152,7 +152,7 @@ export function setOneScheduleButton(args: SetOneButtonArgs) {
     title = scheduleName || item.title;
     return (
       <ScheduleButton
-        testID={testID}
+        testID={testID + '.' + item.readingPortion}
         item={item}
         firstUnfinishedID={firstUnfinishedID}
         tableName={thisTableName}
@@ -249,7 +249,7 @@ export function createButtonList(args: CreateButtonListArgs) {
     };
 
     buttons.push({
-      testID: testID + item.readingPortion,
+      testID: testID + '.' + item.readingPortion,
       key: JSON.stringify(item),
       firstUnfinishedID: firstUnfinishedID,
       item: item,

@@ -1,5 +1,4 @@
 /* eslint-env detox/detox, jest */
-import {getProps} from 'detox-getprops';
 import {
   scrollUntilVisible,
   setDateTimePicker,
@@ -13,6 +12,10 @@ var OS;
 beforeAll(async () => {
   OS = device.getPlatform();
 
+  if (OS !== 'ios') {
+    waitTime *= 5;
+  }
+
   await device.launchApp({permissions: {notifications: 'YES'}});
 });
 
@@ -22,6 +25,9 @@ beforeEach(async () => {
     .toBeVisible()
     .withTimeout(waitTime * 8);
   await element(by.id('tabs.schedulesPage')).tap();
+  await waitFor(element(by.id(prefix + 'list')))
+    .toBeVisible()
+    .withTimeout(waitTime * 8);
 });
 
 it('should show schedule types popup', async () => {
@@ -61,7 +67,7 @@ describe('create schedules', () => {
   beforeEach(async () => {
     await element(by.id('schedulesPage.header.addButton')).tap();
     // Need to keep waiting until the Bible info DB loads completely
-    await waitForMS(2 * waitTime);
+    await waitForMS(3 * waitTime);
   });
 
   it('should create a custom schedule', async () => {
@@ -93,6 +99,7 @@ describe('create schedules', () => {
     await scrollUntilVisible(
       by.id(pref + 'addButton'),
       by.id(pref + 'scrollView'),
+      OS,
     );
     await element(by.id(pref + 'addButton')).tap();
 
@@ -141,12 +148,8 @@ describe('create schedules', () => {
     let date = new Date(2021, 2, 1);
     await setDateTimePicker(pref + 'datePicker', date, 'date', OS);
 
-    // Scroll to bottom of screen and press add button to create schedule
-    await scrollUntilVisible(
-      by.id(pref + 'addButton'),
-      by.id(pref + 'scrollView'),
-      OS,
-    );
+    // Scroll to bottom of popup and press add button to create schedule
+    await element(by.id(pref + 'scrollView')).scrollTo('bottom');
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
@@ -193,13 +196,8 @@ describe('create schedules', () => {
     );
     await element(by.id(pref + 'doesTrackCheckbox')).tap();
 
-    // Scroll to bottom of screen and press add button to create schedule
-
-    await scrollUntilVisible(
-      by.id(pref + 'addButton'),
-      by.id(pref + 'scrollView'),
-      OS,
-    );
+    // Scroll to bottom of popup and press add button to create schedule
+    await element(by.id(pref + 'scrollView')).scrollTo('bottom');
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
@@ -229,12 +227,17 @@ describe('create schedules', () => {
       by.id(pref + 'scrollView'),
       OS,
     );
+
     await element(
       by.id(pref + 'scheduleVerseInput.bibleBookPicker.input'),
     ).typeText('Gen');
-    await waitFor(element(by.text('Genesis')))
-      .toBeVisible()
-      .withTimeout(2 * waitTime);
+
+    await scrollUntilVisible(
+      by.text('Genesis'),
+      by.id(pref + 'scrollView'),
+      OS,
+    );
+
     await element(by.text('Genesis')).tap();
 
     // Scroll to bottom of screen and press add button to create schedule
@@ -242,6 +245,7 @@ describe('create schedules', () => {
       by.id(pref + 'addButton'),
       by.id(pref + 'scrollView'),
     );
+
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
@@ -280,8 +284,8 @@ describe('create schedules', () => {
     await scrollUntilVisible(
       by.id(pref + 'addButton'),
       by.id(pref + 'scrollView'),
-      'ios',
     );
+
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
@@ -323,8 +327,8 @@ describe('create schedules', () => {
     await scrollUntilVisible(
       by.id(pref + 'addButton'),
       by.id(pref + 'scrollView'),
-      'ios',
     );
+
     await element(by.id(pref + 'addButton')).tap();
 
     // Check that new schedule was created
@@ -445,8 +449,12 @@ describe('warning popups', () => {
     await scrollUntilVisible(
       by.id(pref + 'addButton'),
       by.id(pref + 'scrollView'),
+      OS,
     );
     await element(by.id(pref + 'addButton')).tap();
+    await waitFor(element(by.id(prefix + 'messagePopup')))
+      .toBeVisible()
+      .withTimeout(2 * waitTime);
     await expect(element(by.id(prefix + 'messagePopup'))).toBeVisible();
   });
 
