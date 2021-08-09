@@ -117,6 +117,9 @@
       "43": "序言后：{{startYear}}-{{endYear}}"
     }
   },
+  "donatePage": {
+    "title": "捐款"
+  },
   "frequencies": {
     "daily": "每天",
     "weekly": "每周",
@@ -138,7 +141,12 @@
     "wol": {"lp-e": "lp-chs", "r1": "r23"}
   },
   "missingTranslation": "还没翻译好",
-  "morePage": {"title": "更多"},
+  "morePage": {
+    "about": "关于",
+    "contact": "联系",
+    "title": "更多",
+    "version": "版本"
+  },
   "notification": {
     "baseTitle": "今天的阅读",
     "bigText": "看一看今天有什么要做的",
@@ -253,10 +261,7 @@
     "customDescription": "创建一本出版物的自定义进度表"
   },
   "settingsPage": {
-    "about": "关于",
-    "contact": "联系",
     "title": "设定",
-    "version": "版本",
     "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文"
   },
   "thisMonth": "这个月",

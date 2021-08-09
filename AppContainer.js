@@ -28,6 +28,7 @@ import SchedulePage from './pages/SchedulePage/SchedulePage';
 import Notifications from './pages/Notifications';
 import Notification from './pages/Notification';
 import Reminders from './pages/Reminders';
+import More from './pages/More';
 import Settings from './pages/Settings';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -76,13 +77,13 @@ function SchedulesStack() {
   );
 }
 
-function SettingsStack() {
+function MoreStack() {
   return (
     <Stack.Navigator screenOptions={navigationOptions}>
       <Stack.Screen
-        name="Settings"
-        component={Settings}
-        options={{title: translate('settingsPage.title')}}
+        name="More"
+        component={More}
+        options={{title: translate('morePage.title')}}
       />
       <Stack.Screen
         name="Notifications"
@@ -96,11 +97,15 @@ function SettingsStack() {
           title: route.params.name,
         })}
       />
-
       <Stack.Screen
         name="Reminders"
         component={Reminders}
         options={{title: translate('remindersPage.title')}}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={Settings}
+        options={{title: translate('settingsPage.title')}}
       />
     </Stack.Navigator>
   );
@@ -259,16 +264,16 @@ export default function AppContainer() {
           }}
         />
         <Tabs.Screen
-          name="SettingsStack"
-          component={SettingsStack}
+          name="MoreStack"
+          component={MoreStack}
           options={{
-            tabBarTestID: 'tabs.settingsPage',
-            tabBarLabel: translate('settingsPage.title'),
+            tabBarTestID: 'tabs.morePage',
+            tabBarLabel: translate('morePage.title'),
             tabBarIcon: ({color, size}) => (
               <Icon
                 style={{marginTop: 5}}
                 color={color}
-                name="settings"
+                name="more-horiz"
                 size={size * 1.3}
               />
             ),

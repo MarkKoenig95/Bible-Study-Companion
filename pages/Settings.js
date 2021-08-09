@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Linking, SafeAreaView, ScrollView, Switch, View} from 'react-native';
+import {SafeAreaView, ScrollView, Switch, View} from 'react-native';
 
 import {Body} from '../components/text/Text';
 
@@ -16,14 +16,11 @@ import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions
 const pageTitle = 'settingsPage';
 
 export default function Settings(props) {
-  const {navigation} = props;
-
   log('loaded Settings page');
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {appVersion, bibleDB, userDB, showDaily, weeklyReadingResetDay} =
-    globalState.state;
+  const {bibleDB, userDB, showDaily, weeklyReadingResetDay} = globalState.state;
 
   const afterUpdate = useUpdate(dispatch);
 
@@ -70,40 +67,6 @@ export default function Settings(props) {
           readingResetDay={weeklyReadingResetDay.value}
           setReadingResetDay={updateWeeklyReadingResetDay}
           toggleIsShown={toggleIsShown}
-        />
-        <SettingsWrapper
-          testID={pageTitle + '.notifications'}
-          iconName="alarm"
-          onPress={() => navigation.navigate('Notifications', {})}
-          text={translate('notificationsPage.title')}
-        />
-        <SettingsWrapper
-          testID={pageTitle + '.reminders'}
-          iconName="check-box"
-          onPress={() => navigation.navigate('Reminders', {})}
-          text={translate('remindersPage.title')}
-        />
-        <SettingsWrapper
-          testID={pageTitle + '.contact'}
-          iconName="mail-outline"
-          text={translate(pageTitle + '.contact')}
-          onPress={() => {
-            Linking.openURL('mailto:humanappmaker@gmail.com');
-          }}
-        />
-        <SettingsWrapper
-          testID={pageTitle + '.about'}
-          iconName="web"
-          text={translate(pageTitle + '.about')}
-          onPress={() => {
-            Linking.openURL('https://app.biblesc.com');
-          }}
-        />
-        <SettingsWrapper
-          testID={pageTitle + '.version'}
-          noArrow
-          iconName="settings"
-          text={translate(pageTitle + '.version') + ':   ' + appVersion}
         />
       </ScrollView>
     </SafeAreaView>

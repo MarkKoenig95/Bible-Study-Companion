@@ -118,6 +118,9 @@
       "43": "After prologue, {{startYear}} to {{endYear}}"
     }
   },
+  "donatePage": {
+    "title": "Donate"
+  },
   "frequencies": {
     "daily": "Daily",
     "weekly": "Weekly",
@@ -142,7 +145,12 @@
     "wol": {"lp-e": "lp-e", "r1": "r1"}
   },
   "missingTranslation": "Translation doesn't exist",
-  "morePage": {"title": "More"},
+  "morePage": {
+    "about": "About",
+    "contact": "Contact",
+    "title": "More",
+    "version": "Version"
+  },
   "notification": {
     "baseTitle": "Daily Reading",
     "bigText": "Let's see what you have left to do today",
@@ -258,10 +266,7 @@
     "customDescription": "Create a custom schedule for a publication"
   },
   "settingsPage": {
-    "about": "About",
-    "contact": "Contact",
     "title": "Settings",
-    "version": "Version",
     "weeklyReadingResetDay": "Day to reset weekly reading:"
   },
   "thisMonth": "This Month",

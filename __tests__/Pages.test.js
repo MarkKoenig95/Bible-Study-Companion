@@ -6,7 +6,7 @@ import Notifications from '../pages/Notifications';
 import Reminders from '../pages/Reminders';
 import SchedulePage from '../pages/SchedulePage/SchedulePage';
 import Schedules from '../pages/Schedules';
-import Settings from '../pages/Settings';
+import More from '../pages/More';
 
 // Note: test renderer must be required after react-native.
 import renderer, {act} from 'react-test-renderer';
@@ -76,11 +76,11 @@ describe('testing if pages render', () => {
     });
   });
 
-  it('renders Settings page correctly', async () => {
+  it('renders More page correctly', async () => {
     await act(async () => {
       renderer.create(
         <StateProvider>
-          <Settings navigation={navigation} route={route} />
+          <More navigation={navigation} route={route} />
         </StateProvider>,
       );
     });

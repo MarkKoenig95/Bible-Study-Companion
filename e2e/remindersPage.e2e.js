@@ -20,8 +20,8 @@ beforeEach(async () => {
     .toBeVisible()
     .withTimeout(waitTime * 8);
 
-  await element(by.id('tabs.settingsPage')).tap();
-  await element(by.id('settingsPage.reminders')).tap();
+  await element(by.id('tabs.morePage')).tap();
+  await element(by.id('morePage.reminders')).tap();
 });
 
 it('Creates a basic reminder', async () => {

@@ -120,6 +120,9 @@
       "43": "Pas hyrjes {{startYear}} deri {{endYear}}"
     }
   },
+  "donatePage": {
+    "title": "Dhuroj"
+  },
   "frequencies": {
     "daily": "Ditor",
     "weekly": "Javor",
@@ -141,7 +144,12 @@
     "wol": {"lp-e": "lp-al", "r1": "r41"}
   },
   "missingTranslation": "Përkthimi nuk ekziston",
-  "morePage": {"title": "Më tepër"},
+  "morePage": {
+    "about": "Rreth",
+    "contact": "Kontakto",
+    "title": "Më tepër",
+    "version": "Versioni"
+  },
   "notification": {
     "baseTitle": "Leximi i ditës",
     "bigText": "Le të shohim se çfarë ke për të kryer akoma sot",
@@ -256,10 +264,7 @@
     "customDescription": "Krijoni një program të personalizuar për një botim"
   },
   "settingsPage": {
-    "about": "Rreth",
-    "contact": "Kontakto",
     "title": "Cilësimet",
-    "version": "Versioni",
     "weeklyReadingResetDay": "Dita për të rivendosur leximin javor:"
   },
   "thisMonth": "Këtë muaj",

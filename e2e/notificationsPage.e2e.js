@@ -27,8 +27,8 @@ beforeEach(async () => {
     .toBeVisible()
     .withTimeout(waitTime * 8);
 
-  await element(by.id('tabs.settingsPage')).tap();
-  await element(by.id('settingsPage.notifications')).tap();
+  await element(by.id('tabs.morePage')).tap();
+  await element(by.id('morePage.notifications')).tap();
 });
 
 it('Creates a notification', async () => {

@@ -117,6 +117,9 @@
       "43": "Dopo l’introduzione {{startYear}} al {{endYear}}"
     }
   },
+  "donatePage": {
+    "title": "Donare"
+  },
   "frequencies": {
     "daily": "Quotidiano",
     "weekly": "settimanalmente",
@@ -141,7 +144,12 @@
     "wol": {"lp-e": "lp-i", "r1": "r6"}
   },
   "missingTranslation": "La traduzione non esiste",
-  "morePage": {"title": "di più"},
+  "morePage": {
+    "about": "Di",
+    "contact": "Contatti",
+    "title": "Di Più",
+    "version": "Versione"
+  },
   "notification": {
     "baseTitle": "lettura quotidiana",
     "bigText": "Vediamo cosa ti resta da fare oggi",
@@ -266,10 +274,7 @@
     "customDescription": "Crea un programma personalizzato per una pubblicazione"
   },
   "settingsPage": {
-    "about": "Di",
-    "contact": "Contatti",
-    "title": "impostazioni",
-    "version": "Versione",
+    "title": "Impostazioni",
     "weeklyReadingResetDay": "Giorno per ripristinare la lettura settimanale:"
   },
   "thisMonth": "Questo mese",

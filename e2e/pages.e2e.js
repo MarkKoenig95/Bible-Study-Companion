@@ -17,7 +17,7 @@ describe('opening pages', () => {
   });
 
   it('should show settings page', async () => {
-    await element(by.id('tabs.settingsPage')).tap();
-    await expect(element(by.id('settingsPage'))).toBeVisible();
+    await element(by.id('tabs.morePage')).tap();
+    await expect(element(by.id('morePage'))).toBeVisible();
   });
 });
