@@ -21,20 +21,6 @@ export type OnUpdateReadStatus = (
   isAfterFirstUnfinished: boolean,
 ) => void;
 
-export interface ReadingPopupState {
-  cb: () => void;
-  endBookNumber?: number;
-  endChapter?: number;
-  endVerse?: number;
-  isDisplayed: boolean;
-  message: string;
-  startBookNumber?: number;
-  startChapter?: number;
-  startVerse?: number;
-  readingPortion: string;
-  title: string;
-}
-
 export interface ButtonsPopupState {
   areButtonsFinished: boolean[];
   buttons: ScheduleButtonProps[];

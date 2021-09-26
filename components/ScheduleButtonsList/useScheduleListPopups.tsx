@@ -3,15 +3,11 @@ import {View} from 'react-native';
 
 import ButtonsPopup, {useButtonsPopup} from '../popups/SelectedDayButtonsPopup';
 import ReadingRemindersPopup from '../popups/ReadingRemindersPopup';
-import ReadingInfoPopup, {
-  useReadingInfoPopup,
-} from '../popups/ReadingInfoPopup';
+import ReadingInfoPopup from '../popups/ReadingInfoPopup/ReadingInfoPopup';
+import {useReadingInfoPopup} from '../popups/ReadingInfoPopup/logic/generalLogic';
 
-import {
-  ButtonsPopupState,
-  OpenReadingInfoPopup,
-  ReadingPopupState,
-} from './types';
+import {ButtonsPopupState, OpenReadingInfoPopup} from './types';
+import {ReadingPopupState} from '../popups/ReadingInfoPopup/types';
 
 interface ScheduleButtonsListPopupsProps {
   buttonsPopup: ButtonsPopupState;
@@ -51,7 +47,6 @@ function ScheduleButtonsListPopups(props: ScheduleButtonsListPopupsProps) {
         endBookNumber={readingPopup.endBookNumber}
         endChapter={readingPopup.endChapter}
         endVerse={readingPopup.endVerse}
-        readingPortion={readingPopup.readingPortion}
       />
       <ButtonsPopup
         testID={testID + '.buttonsPopup'}

@@ -6,7 +6,7 @@ import CreateSchedulePopup from '../../components/popups/CreateSchedulePopup/Cre
 import LoadingPopup from '../../components/popups/LoadingPopup';
 import MessagePopup from '../../components/popups/MessagePopup';
 import Popup from '../../components/popups/Popup';
-import ReadingInfoPopup from '../../components/popups/ReadingInfoPopup';
+import ReadingInfoPopup from '../../components/popups/ReadingInfoPopup/ReadingInfoPopup';
 import ReadingRemindersPopup from '../../components/popups/ReadingRemindersPopup';
 import ScheduleTypeSelectionPopup from '../../components/popups/ScheduleTypeSelectionPopup';
 import SelectedDayButtonsPopup from '../../components/popups/SelectedDayButtonsPopup';
