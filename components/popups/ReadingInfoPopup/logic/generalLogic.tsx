@@ -18,8 +18,6 @@ export async function loadData(bibleDB: Database, tableName = 'tblBibleBooks') {
   for (let i = 0; i < results.rows.length; ++i) {
     let item = results.rows.item(i);
 
-    console.log('item is', item);
-
     let bibleBooksPrefix = 'bibleBooks.' + item.BibleBookID;
     items.push({
       id: item.BibleBookID,
@@ -40,8 +38,6 @@ export async function loadData(bibleDB: Database, tableName = 'tblBibleBooks') {
         item.BibleBookID,
       ),
     });
-    console.log(items[i]);
-    console.log('');
   }
 
   return items;

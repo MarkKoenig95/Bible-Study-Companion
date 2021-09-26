@@ -58,7 +58,6 @@ export function ReadingInfoSection(props: {
   );
 
   const info = items[bookNumber];
-  console.log('info is', info);
 
   return (
     <View testID={testID} style={{alignSelf: 'flex-start', margin: 15}}>
