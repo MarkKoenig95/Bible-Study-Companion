@@ -266,9 +266,10 @@ export function createButtonList(args: CreateButtonListArgs) {
   if (firstItem.tableName === WEEKLY_READING_TABLE_NAME) {
     let lastItem = items[items.length - 1];
     let {startBookName} = firstItem;
+    let {startBookNumber} = firstItem;
     let {startChapter} = firstItem;
     let {startVerse} = firstItem;
-    let isStart = checkStartVerse(startBookName, startChapter, startVerse);
+    let isStart = checkStartVerse(startBookNumber, startChapter, startVerse);
 
     let {description} = checkReadingPortion(
       startBookName,

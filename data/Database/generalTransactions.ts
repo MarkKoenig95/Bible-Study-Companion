@@ -3,7 +3,7 @@ import RNFS from 'react-native-fs';
 //@ts-ignore
 import {LocalDBPath} from '../fileSystem';
 import {translate} from '../../logic/localization/localization';
-import {FREQS} from '../../logic/general';
+import {FREQS, VERSE_POSITION} from '../../logic/general';
 import {
   BibleReadingItem,
   Database,
@@ -12,6 +12,7 @@ import {
   DBReadingItem,
   ReadingItem,
 } from './types';
+import {checkReadingPortion} from '../../logic/scheduleCreation';
 const {version}: {version: string} = require('../../package.json');
 const shouldLog = false;
 
@@ -103,13 +104,35 @@ export function convertDBItemToJSItem(
   const bibleItem = item as DBBibleReadingItem;
   if (!bibleItem.StartBookNumber) return convertedItem;
 
+  let startBookName = translate(
+    'bibleBooks.' + bibleItem.StartBookNumber + '.name',
+  );
+
+  let endBookName = translate(
+    'bibleBooks.' + bibleItem.EndBookNumber + '.name',
+  );
+
+  let {description} = checkReadingPortion(
+    startBookName,
+    bibleItem.StartChapter,
+    bibleItem.StartVerse,
+    bibleItem.VersePosition === VERSE_POSITION.START ||
+      bibleItem.VersePosition === VERSE_POSITION.START_AND_END,
+    endBookName,
+    bibleItem.EndChapter,
+    bibleItem.EndVerse,
+    bibleItem.VersePosition === VERSE_POSITION.END ||
+      bibleItem.VersePosition === VERSE_POSITION.START_AND_END,
+  );
+
   convertedItem = {
     ...convertedItem,
-    endBookName: bibleItem.EndBookName,
+    endBookName: endBookName,
     endBookNumber: bibleItem.EndBookNumber,
     endChapter: bibleItem.EndChapter,
     endVerse: bibleItem.EndVerse,
-    startBookName: bibleItem.StartBookName,
+    readingPortion: description,
+    startBookName: startBookName,
     startBookNumber: bibleItem.StartBookNumber,
     startChapter: bibleItem.StartChapter,
     startVerse: bibleItem.StartVerse,

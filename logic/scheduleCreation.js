@@ -8,7 +8,7 @@ const prefix = 'scheduleTransactions.';
  * The result from a query to the database
  * @typedef {object} DBQueryResult
  * @property {object} DBQueryResult.rows - The rows returned containing data matching the query
- * @property {integer} DBQueryResult.rows.length - The number of rows in the result
+ * @property {number} DBQueryResult.rows.length - The number of rows in the result
  * @property {Function} DBQueryResult.rows.item - Accepts an index and returns the item at that index
  */
 
@@ -115,8 +115,8 @@ export async function runQueries(bibleDB) {
 //------------------------------ Searching for indexes based on values ------------------------------
 /**
  * Given a Bible book returns the largest chapter for it
- * @param {integer} bookId
- * @returns {integer}
+ * @param {number} bookId
+ * @returns {number}
  */
 export async function findMaxChapter(bookId, bibleDB) {
   if (!qryMaxChapters) {
@@ -129,9 +129,9 @@ export async function findMaxChapter(bookId, bibleDB) {
 
 /**
  * Given a Bible book and chapter returns the largest verse for it
- * @param {integer} bookId
- * @param {integer} chapter
- * @returns {integer}
+ * @param {number} bookId
+ * @param {number} chapter
+ * @returns {number}
  */
 export function findMaxVerse(bookId, chapter) {
   let index = searchQuery(
@@ -147,10 +147,10 @@ export function findMaxVerse(bookId, chapter) {
 
 /**
  * Given a Bible book, chapter, and verse returns the information for the closest matching result in the Bible
- * @param {integer} bookId
- * @param {integer} chapter
- * @param {integer} verse
- * @returns {Array<integer>} [bookId, chapter, verse]
+ * @param {number} bookId
+ * @param {number} chapter
+ * @param {number} verse
+ * @returns {Array<number>} [bookId, chapter, verse]
  */
 export function findNearestVerse(bookId, chapter, verse) {
   let index = 0;
@@ -185,9 +185,9 @@ export function findNearestVerse(bookId, chapter, verse) {
 /**
  * Given the information for a verse returns the index for the correlative item in the database
  * @param {Database} bibleDB
- * @param {integer} bookId
- * @param {integer} chapter
- * @param {integer} verse
+ * @param {number} bookId
+ * @param {number} chapter
+ * @param {number} verse
  * @param {ScheduleType} scheduleType
  * @param {boolean} [isFirstTime=false]
  */
@@ -359,7 +359,7 @@ export function setScheduleParameters(dur, qryVerseIndex, scheduleType) {
  * Initializes mutable objects and arrays which will be used in schedule creation
  * @param {Database} bibleDB
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} requestedIndex - The index which the user has selected, or which has been adjusted to the nearest existing value to it
+ * @param {number} requestedIndex - The index which the user has selected, or which has been adjusted to the nearest existing value to it
  * @param {Array} keys - An array of keys corresponding to each section of a schedule
  * @param {object} leastIndex - An object with keys corresponding to the smallest index for each section of a schedule
  * @param {object} maxIndex - An object with keys corresponding to the largest index for each section of a schedule
@@ -453,10 +453,10 @@ export async function setTrackers(
  * @param {DBQueryResult} qryVerseIndex
  * @param {string} bibleBookPrefix - The first part of the key relating to the location of the translation string for a book name
  * @param {string} bibleBookSuffix - The last part of the key relating to the location of the translation string for a book name
- * @param {integer} bookId
- * @param {integer} chapter
- * @param {integer} verse
- * @param {integer} pointer - The index which our create bible schedule algorithm decided on
+ * @param {number} bookId
+ * @param {number} chapter
+ * @param {number} verse
+ * @param {number} pointer - The index which our create bible schedule algorithm decided on
  * @returns {(undefined|string)}
  */
 export function setAdjustedMessage(
@@ -505,9 +505,9 @@ export function setAdjustedMessage(
  * (ex. the end of a chapter) within a range +- the given buffer if one is found, otherwise returns zero
  * @requires qryVerseIndex to be a sequential table reference
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} checkIndex - The current index in the query to check against
- * @param {integer} buffer - An acceptable range of verses + or - the index to check against
- * @returns {integer} the adjustment, which when added to the original index gives the new index
+ * @param {number} checkIndex - The current index in the query to check against
+ * @param {number} buffer - An acceptable range of verses + or - the index to check against
+ * @returns {number} the adjustment, which when added to the original index gives the new index
  */
 export function checkOrderedVerseBuffer(qryVerseIndex, checkIndex, buffer) {
   let endPortion = qryVerseIndex.rows.item(checkIndex);
@@ -532,11 +532,11 @@ export function checkOrderedVerseBuffer(qryVerseIndex, checkIndex, buffer) {
  * Returns an index adjustment for a value in the given query which marks a clean demarcation for a reading
  * (ex. the end of a chapter) within a range +- the given buffer if one is found, otherwise returns zero
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} checkIndex - The current index in the query to check against
- * @param {integer} buffer - An acceptable range of verses + or - the index to check against
- * @param {integer} maxIndex - The largest index for the current portion of the schedule
- * @param {integer} leastIndex - The smallest index for the current portion of the schedule
- * @returns {integer} the adjustment, which when added to the original index gives the new index
+ * @param {number} checkIndex - The current index in the query to check against
+ * @param {number} buffer - An acceptable range of verses + or - the index to check against
+ * @param {number} maxIndex - The largest index for the current portion of the schedule
+ * @param {number} leastIndex - The smallest index for the current portion of the schedule
+ * @returns {number} the adjustment, which when added to the original index gives the new index
  */
 export function checkAnyVerseBuffer(
   qryVerseIndex,
@@ -643,9 +643,9 @@ export function checkAnyVerseBuffer(
 
 /**
  * Given information for a verse returns whether or not the given verse is the start of its chapter
- * @param {integer} bookId
- * @param {integer} chapter
- * @param {integer} verse
+ * @param {number} bookId
+ * @param {number} chapter
+ * @param {number} verse
  * @returns {boolean}
  */
 export function checkStartVerse(bookId, chapter, verse) {
@@ -663,8 +663,8 @@ export function checkStartVerse(bookId, chapter, verse) {
 /**
  * Given a start index and an end index returns whether they are the start and end of their verse span
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} startIndex - First index for a verse span
- * @param {integer} endIndex - Last index for a verse span
+ * @param {number} startIndex - First index for a verse span
+ * @param {number} endIndex - Last index for a verse span
  * @returns {object} Keys = {startPosition, endPosition}
  * @property {VersePosition} startPosition
  * @property {VersePosition} endPosition
@@ -734,11 +734,11 @@ export function checkResultPosition(isStart, isEnd) {
  * @property {string} description - Details the span of verses to be read
  * @property {VersePosition} position - An identifier detaling the location of the entire reading relative to the chapter
  *
- * @param {integer} startChapter
- * @param {integer} startVerse
+ * @param {number} startChapter
+ * @param {number} startVerse
  * @param {boolean} isStart
- * @param {integer} endChapter
- * @param {integer} endVerse
+ * @param {number} endChapter
+ * @param {number} endVerse
  * @param {boolean} isEnd
  */
 export function checkReadingPortion(
@@ -794,18 +794,18 @@ export function checkReadingPortion(
 /**
  * Takes tracking variables and determines whether adjustments need to be made to them, then returns the adjustments
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} dayEndIndex
- * @param {integer} maxIndex
- * @param {integer} leastIndex
- * @param {integer} endIndex
+ * @param {number} dayEndIndex
+ * @param {number} maxIndex
+ * @param {number} leastIndex
+ * @param {number} endIndex
  * @param {number} verseOverflow
  * @param {boolean} hasLooped
- * @param {integer} buffer
+ * @param {number} buffer
  * @param {boolean} isEnd
  * @param {ScheduleType} scheduleType
  *
  * @returns {object} result
- * @property {integer} result.dayEndIndex - Adjusted index for the end of this reading day
+ * @property {number} result.dayEndIndex - Adjusted index for the end of this reading day
  * @property {boolean} result.isEnd - Flag indicating if we have reached the end of the schedule (for this key at least)
  * @property {boolean} result.hasLooped - Flag indicating if we have passed the largest index and returned to the smallest index
  * @property {number} result.verseOverflow - Adjusted value keeping track of whether we should subtract verses from the next day or add to it
@@ -929,13 +929,13 @@ export function checkEnd(
 /**
  * Takes values for a schedule reading day and returns an array of values for use in a database transaction
  * @param {string} startBookName
- * @param {integer} startBookNumber
- * @param {integer} startChapter
- * @param {integer} startVerse
+ * @param {number} startBookNumber
+ * @param {number} startChapter
+ * @param {number} startVerse
  * @param {string} endBookName
- * @param {integer} endBookNumber
- * @param {integer} endChapter
- * @param {integer} endVerse
+ * @param {number} endBookNumber
+ * @param {number} endChapter
+ * @param {number} endVerse
  * @param {Date} date
  * @param {string} description
  * @param {VersePosition} versePosition
@@ -1009,9 +1009,9 @@ function createCustomReadingPortionArray(date, description) {
 /**
  * Given result values for a reading portion calls other helper functions to create a final array of values for insertion into schedule
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} dayStartIndex
+ * @param {number} dayStartIndex
  * @param {VersePosition} dayStartPosition
- * @param {integer} dayEndIndex
+ * @param {number} dayEndIndex
  * @param {VersePosition} dayEndPosition
  * @param {Date} date
  * @returns {Array}
@@ -1091,12 +1091,12 @@ export function createReadingPortion(
 /**
  * Given result values for a reading day calls other helper functions to create a final array of reading portion array values for insertion into schedule
  * @param {DBQueryResult} qryVerseIndex
- * @param {integer} dayStartIndex
- * @param {integer} dayEndIndex
+ * @param {number} dayStartIndex
+ * @param {number} dayEndIndex
  * @param {Date} date
  * @param {ScheduleType} scheduleType
- * @param {integer} leastIndex
- * @param {integer} maxIndex
+ * @param {number} leastIndex
+ * @param {number} maxIndex
  * @returns {Array<Array>}
  */
 export function createReadingPortions(
@@ -1327,9 +1327,9 @@ export function createReadingPortions(
  * @param {Database} bibleDB
  * @param {ScheduleType} scheduleType
  * @param {number} dur - Duration of the schedule, in years
- * @param {integer} bookId - Number of the bible book to start from (1-66)
- * @param {integer} chapter
- * @param {integer} verse
+ * @param {number} bookId - Number of the bible book to start from (1-66)
+ * @param {number} chapter
+ * @param {number} verse
  */
 export async function generateBibleSchedule(
   bibleDB,
