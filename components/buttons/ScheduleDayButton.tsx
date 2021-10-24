@@ -103,21 +103,14 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
       <View style={style.rowContainer}>
         <CheckBox
           testID={testID + '.checkBox'}
+          containerStyle={style.checkBox}
           checked={isFinishedState}
           onPress={_handleLongPress}
           checkedColor={colors.lightGray}
           uncheckedColor={colors.lightGray}
         />
         {hasTitle && (
-          <Text
-            style={[
-              styles.buttonText,
-              textStyle,
-              {
-                color: colors.lightGray,
-                fontWeight: 'bold',
-              },
-            ]}>
+          <Text style={[styles.buttonText, textStyle, style.title]}>
             {title}
           </Text>
         )}
@@ -126,11 +119,12 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
           style={[
             styles.buttonText,
             textStyle,
+            style.date,
             {
               color: color,
             },
           ]}>
-          {doesTrack ? compDate : '      '}
+          {doesTrack ? compDate : ''}
         </Text>
       </View>
       <Text
@@ -153,10 +147,15 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
 export default ScheduleDayButton;
 
 const style = StyleSheet.create({
+  checkBox: {position: 'absolute', left: 0},
   columnContainer: {
     alignItems: 'stretch',
     flexDirection: 'column',
     justifyContent: 'space-around',
+  },
+  date: {
+    position: 'absolute',
+    right: 0,
   },
   rowContainer: {
     alignContent: 'center',
@@ -167,5 +166,11 @@ const style = StyleSheet.create({
   readingPortion: {
     alignSelf: 'center',
     fontSize: 17,
+  },
+  title: {
+    color: colors.lightGray,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    width: '100%',
   },
 });

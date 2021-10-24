@@ -11,7 +11,7 @@ const checkedIcon = 'check-square-o';
 const uncheckedIcon = 'square-o';
 
 export default function CheckBox(props) {
-  const {checked, onPress, size, testID, title} = props;
+  const {checked, containerStyle, onPress, size, testID, title} = props;
   const checkedColor = props.checkedColor || colors.darkBlue;
   const uncheckedColor = props.uncheckedColor || colors.darkBlue;
 
@@ -20,7 +20,7 @@ export default function CheckBox(props) {
   const hasTitle = title ? true : false;
   return (
     <TouchableOpacity testID={testID} onPress={onPress}>
-      <View style={style.container}>
+      <View style={[containerStyle, style.container]}>
         <Icon name={iconName} color={iconColor} size={size || 25} />
         {hasTitle && <Text style={style.title}>{title}</Text>}
       </View>
