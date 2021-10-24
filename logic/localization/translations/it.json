@@ -100,14 +100,14 @@
       "approxDate": "{{about}}{{date}}{{after}}{{before}}",
       "about": "circa (ca)",
       "after": "Dopo",
-      "before": "prima"
+      "before": "Prima"
     },
     "ancientDate": "{{year}}o{{bceOrCe}}",
     "bce": "A.E.V",
     "ce": "E.V",
     "dateSpan": "{{startDate}}  -  {{endDate}}",
     "specialCases": {
-      "1": "\"In principio\" fino {{endYear}}",
+      "1": "\"In principio\" fino al {{endYear}}",
       "3": "1 Mese al {{endYear}}",
       "5": "2 Mesi al {{endYear}}",
       "8": "11 anni del governo dei Giudici dal intorno {{startYear}} al {{endYear}}",
@@ -122,7 +122,7 @@
   },
   "frequencies": {
     "daily": "Quotidiano",
-    "weekly": "settimanalmente",
+    "weekly": "Settimanalmente",
     "monthly": "Mensile",
     "never": "Mai"
   },
@@ -145,15 +145,15 @@
   },
   "missingTranslation": "La traduzione non esiste",
   "morePage": {
-    "about": "Di",
+    "about": "Riguardo",
     "contact": "Contatti",
-    "title": "Di Più",
+    "title": "Di più",
     "version": "Versione"
   },
   "notification": {
-    "baseTitle": "lettura quotidiana",
+    "baseTitle": "Lettura quotidiana",
     "bigText": "Vediamo cosa ti resta da fare oggi",
-    "message": "Facciamolo"
+    "message": "Studiamo"
   },
   "notificationsPage": {
     "title": "Notifiche",
@@ -163,7 +163,7 @@
   "notificationPage": {
     "deleteNotificationMessage": "Sei sicuro di voler eliminare la notifica \"{{notificationName}}\" ?"
   },
-  "openJWLibrary": "apri JW Library",
+  "openJWLibrary": "Apri JW Library",
   "ordinal": {
     "0": "imo",
     "1": "imo",
@@ -208,7 +208,7 @@
     "body2-1": "Non avere fretta, rifletti.",
     "subheading2-1": "Potresti farti queste domande:",
     "body2-2": "Cosa mi insegna questo riguardo a Geova Dio?",
-    "body2-3": "in che modo questo brano delle Scritture mi aiuta a comprendere il messaggio della Bibbia?",
+    "body2-3": "In ché modo questo brano delle Scritture mi aiuta a comprendere il messaggio della Bibbia?",
     "body2-4": "Come posso applicare questo punto nella mia vita?",
     "body2-5": "Come posso usare questi versetti per aiutare altri?",
     "subheading2-2": "immagina di essere nella scena:",
@@ -226,7 +226,7 @@
   "readingInfoPopup": {
     "readingInfo": "informazioni sulla lettura",
     "readingPortion": "Porzione da leggere ",
-    "timeCovered": "tempo impiegato",
+    "timeCovered": "Tempo impiegato",
     "whereWritten": "Dov'è scritto",
     "whenWritten": "Quando è stato scritto",
     "writers": "Scrittore /(i)"
@@ -260,7 +260,7 @@
     "recreateScheduleWarning": "Fare ciò richiederà ricreare questo programma. Sei sicuro di voler ricreare questo programma??"
   },
   "scheduleTransactions": {
-    "adjustedVersePrompt": "verso iniziale modificato da \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}perché la richiesta iniziale non era corretta."
+    "adjustedVersePrompt": "Verso iniziale modificato da \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}perché la richiesta iniziale non era corretta."
   },
   "scheduleTypePopup": {
     "scheduleType": "Tipo di programma",
@@ -274,7 +274,7 @@
     "customDescription": "Crea un programma personalizzato per una pubblicazione"
   },
   "settingsPage": {
-    "title": "Impostazioni",
+    "title": "impostazioni",
     "weeklyReadingResetDay": "Giorno per ripristinare la lettura settimanale:"
   },
   "thisMonth": "Questo mese",
@@ -285,12 +285,12 @@
   "warning": "Attenzione ",
   "weekdays": {
     "0": {"abrev": "Dom", "name": "Domenica"},
-    "1": {"abrev": "Lu", "name": "Lunedì"},
-    "2": {"abrev": "Ma", "name": "Martedì"},
-    "3": {"abrev": "Me", "name": "Mercoledì"},
+    "1": {"abrev": "Lun", "name": "Lunedì"},
+    "2": {"abrev": "Mar", "name": "Martedì"},
+    "3": {"abrev": "Mer", "name": "Mercoledì"},
     "4": {"abrev": "Gio", "name": "Giovedì"},
-    "5": {"abrev": "Ve", "name": "Venerdì"},
-    "6": {"abrev": "Sa", "name": "Sabato"}
+    "5": {"abrev": "Ven", "name": "Venerdì"},
+    "6": {"abrev": "Sab", "name": "Sabato"}
   },
   "old": "Vecchio ",
   "advanced": "Avanzato"
