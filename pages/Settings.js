@@ -1,28 +1,138 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {SafeAreaView, ScrollView, Switch, View} from 'react-native';
 
 import {Body} from '../components/text/Text';
 
 import styles, {colors} from '../styles/styles';
-import {translate} from '../logic/localization/localization';
+import {languages, translate} from '../logic/localization/localization';
 import {store} from '../data/Store/store';
 
-import {useUpdate} from '../logic/general';
+import {createPickerArray, useUpdate} from '../logic/general';
 import SettingsWrapper from '../components/SettingsWrapper';
 import WeekdayPicker from '../components/inputs/WeekdayPicker';
-import {log, updateValue} from '../data/Database/generalTransactions';
+import {log, runSQL, updateValue} from '../data/Database/generalTransactions';
 import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions';
+import Picker from '../components/inputs/CustomPicker';
 
 const pageTitle = 'settingsPage';
 
+const BreakLine = () => {
+  return (
+    <View
+      style={{borderWidth: 1, borderColor: colors.lightGray, width: '90%'}}
+    />
+  );
+};
+
+function WeeklyReadingSettings(props) {
+  const {isShown, toggleIsShown, readingResetDay, setReadingResetDay, testID} =
+    props;
+
+  const activeColor = colors.darkBlue;
+
+  const color = isShown ? activeColor : colors.gray;
+
+  return (
+    <SettingsWrapper
+      testID={testID}
+      noArrow
+      text={translate('reminders.weeklyReading.title')}>
+      <BreakLine />
+      <View style={{...styles.wrapperContent, width: '90%'}}>
+        <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
+          {translate('reminders.weeklyReading.showDaily')}
+        </Body>
+        <Switch
+          testID={testID + '.showWeeklySwitch'}
+          style={{alignSelf: 'flex-end'}}
+          onValueChange={toggleIsShown}
+          trackColor={{true: colors.lightBlue}}
+          thumbColor={color}
+          value={isShown}
+        />
+      </View>
+      <BreakLine />
+      <View style={{width: '90%'}}>
+        <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
+          {translate(pageTitle + '.weeklyReadingResetDay')}
+        </Body>
+        <WeekdayPicker
+          testID={testID + '.weekdayPicker'}
+          containerStyle={{alignSelf: 'flex-end'}}
+          onChange={setReadingResetDay}
+          currentValue={readingResetDay}
+        />
+      </View>
+    </SettingsWrapper>
+  );
+}
+
+function LanugagePicker(props) {
+  const {afterUpdate, language, testID, userDB} = props;
+
+  const languageTags = Object.keys(languages);
+  const languagesGeneralInfo = Object.values(languages);
+  const labels = languagesGeneralInfo.map((info) => info.language);
+
+  const languageArray = createPickerArray(...labels);
+
+  let currentValue = languageArray.filter((val) => {
+    return val.label === language;
+  });
+
+  currentValue = currentValue[0].value;
+
+  function setLanguage(value) {
+    const languageTag = languageTags[value];
+
+    let languageInfos = {};
+
+    languageTags.forEach(
+      (tag) =>
+        (languageInfos[tag] = {languageTag: tag, isRTL: languages[tag].isRTL}),
+    );
+
+    let languageInfo = JSON.stringify(languageInfos[languageTag]);
+
+    runSQL(
+      userDB,
+      'UPDATE tblUserPrefs SET Description=? WHERE Name="LanguageInfo"',
+      [languageInfo],
+    ).then(afterUpdate);
+  }
+
+  return (
+    <SettingsWrapper
+      testID={testID}
+      noArrow
+      text={translate('settingsPage.language')}>
+      <Picker
+        {...props}
+        testID={testID + '.languagePicker'}
+        onChange={setLanguage}
+        currentValue={currentValue}
+        values={languageArray}
+      />
+    </SettingsWrapper>
+  );
+}
+
 export default function Settings(props) {
   log('loaded Settings page');
+  const {navigation} = props;
+
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
   const {bibleDB, userDB, showDaily, weeklyReadingResetDay} = globalState.state;
 
   const afterUpdate = useUpdate(dispatch);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: translate('remindersPage.title'),
+    });
+  });
 
   function toggleIsShown() {
     updateValue(
@@ -68,58 +178,13 @@ export default function Settings(props) {
           setReadingResetDay={updateWeeklyReadingResetDay}
           toggleIsShown={toggleIsShown}
         />
+        <LanugagePicker
+          testID={pageTitle + '.languagePicker'}
+          afterUpdate={afterUpdate}
+          language={translate('language')}
+          userDB={userDB}
+        />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-function WeeklyReadingSettings(props) {
-  const {isShown, toggleIsShown, readingResetDay, setReadingResetDay, testID} =
-    props;
-
-  const activeColor = colors.darkBlue;
-
-  const color = isShown ? activeColor : colors.gray;
-
-  return (
-    <SettingsWrapper
-      testID={testID}
-      noArrow
-      text={translate('reminders.weeklyReading.title')}>
-      <BreakLine />
-      <View style={{...styles.wrapperContent, width: '90%'}}>
-        <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
-          {translate('reminders.weeklyReading.showDaily')}
-        </Body>
-        <Switch
-          testID={testID + '.showWeeklySwitch'}
-          style={{alignSelf: 'flex-end'}}
-          onValueChange={toggleIsShown}
-          trackColor={{true: colors.lightBlue}}
-          thumbColor={color}
-          value={isShown}
-        />
-      </View>
-      <BreakLine />
-      <View style={{width: '90%'}}>
-        <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
-          {translate(pageTitle + '.weeklyReadingResetDay')}
-        </Body>
-        <WeekdayPicker
-          testID={testID + '.weekdayPicker'}
-          containerStyle={{alignSelf: 'flex-end'}}
-          onChange={setReadingResetDay}
-          currentValue={readingResetDay}
-        />
-      </View>
-    </SettingsWrapper>
-  );
-}
-
-const BreakLine = () => {
-  return (
-    <View
-      style={{borderWidth: 1, borderColor: colors.lightGray, width: '90%'}}
-    />
-  );
-};

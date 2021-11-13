@@ -131,6 +131,7 @@
     "emptyList": "You have no more readings for the day",
     "title": "Home"
   },
+  "language": "English",
   "links": {
     "languageTag": "en",
     "hasStudyBible": true,
@@ -266,6 +267,7 @@
     "customDescription": "Create a custom schedule for a publication"
   },
   "settingsPage": {
+    "language": "Language",
     "title": "Settings",
     "weeklyReadingResetDay": "Day to reset weekly reading:"
   },

@@ -126,7 +126,6 @@ const ReminderWrapper = (props) => {
   }
 
   function onEditDone() {
-    console.log('resetVal', resetVal, 'resetValue', resetValue);
     setIsEditing(false);
     //Update reminder in the table
     const {newCompDate, newIsFinished} = setReminderCompDate(
@@ -425,12 +424,24 @@ export default function Reminders(props) {
   };
 
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    navigation.setOptions({
+      title: translate('remindersPage.title'),
+    });
+  });
+
+  useEffect(() => {
+    let didShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      _keyboardDidShow,
+    );
+    let didHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      _keyboardDidHide,
+    );
 
     return () => {
-      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+      didHideListener.remove();
+      didShowListener.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -494,7 +505,6 @@ export default function Reminders(props) {
       {column: 'ResetValue', value: resetValue},
       {column: 'CompletionDate', value: completionDate.toString()},
     ];
-    console.log(updates);
 
     for (let i = 0; i < updates.length; i++) {
       const update = updates[i];

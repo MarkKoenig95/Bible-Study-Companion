@@ -9,6 +9,10 @@ function incrementValue(key) {
   return {type: INCREMENT_VALUE, key: key};
 }
 
+export function setLanguageInfo(languageInfo) {
+  return updateValue('languageInfo', languageInfo);
+}
+
 export function setFirstRender(bool) {
   return updateValue('isFirstRender', bool);
 }

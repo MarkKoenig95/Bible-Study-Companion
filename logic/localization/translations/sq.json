@@ -130,6 +130,7 @@
     "never": "Kurrë"
   },
   "homePage": {"emptyList": "Ske më për të lexuar për sot", "title": "Shtëpia"},
+  "language": "Shqiptare",
   "links": {
     "languageTag": "sq",
     "hasStudyBible": false,
@@ -264,6 +265,7 @@
     "customDescription": "Krijoni një program të personalizuar për një botim"
   },
   "settingsPage": {
+    "language": "Gjuhe",
     "title": "Cilësimet",
     "weeklyReadingResetDay": "Dita për të rivendosur leximin javor:"
   },

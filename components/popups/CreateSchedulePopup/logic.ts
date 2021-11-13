@@ -118,6 +118,7 @@ export function useCreateSchedulePopup(props: {
       setPortionsPerDay('');
       setStartingPortion('1');
       setMaxPortion('');
+      setDoesTrack(true);
       setStartDate(new Date());
 
       setReadingPortionSelectedItems([]);

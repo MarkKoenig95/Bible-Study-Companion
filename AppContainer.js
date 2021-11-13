@@ -8,6 +8,7 @@ import BackgroundFetch from 'react-native-background-fetch';
 
 import {store} from './data/Store/store';
 import {
+  setLanguageInfo,
   setFirstRender,
   setUpdatePages,
   setUserDB,
@@ -18,7 +19,7 @@ import {
   incrementUpdatePages,
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
-import {log, getSettings} from './data/Database/generalTransactions';
+import {log, getSettings, runSQL} from './data/Database/generalTransactions';
 import {updateNotifications} from './data/Database/notificationTransactions';
 import {updateReminderDates} from './data/Database/reminderTransactions';
 
@@ -35,7 +36,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from './styles/styles';
 import {useNotifications} from './logic/notifications/NotifService';
 
-import {useLocalization, translate} from './logic/localization/localization';
+import {translate} from './logic/localization/localization';
 import {runQueries} from './logic/scheduleCreation';
 
 const Stack = createStackNavigator();
@@ -49,11 +50,7 @@ const Tabs = createBottomTabNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator screenOptions={navigationOptions}>
-      <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{title: translate('homePage.title')}}
-      />
+      <Stack.Screen name="Home" component={Home} options={{title: 'Home'}} />
     </Stack.Navigator>
   );
 }
@@ -64,7 +61,7 @@ function SchedulesStack() {
       <Stack.Screen
         name="Schedules"
         component={Schedules}
-        options={{title: translate('readingSchedules')}}
+        options={{title: 'Reading Schedules'}}
       />
       <Stack.Screen
         name="SchedulePage"
@@ -80,15 +77,11 @@ function SchedulesStack() {
 function MoreStack() {
   return (
     <Stack.Navigator screenOptions={navigationOptions}>
-      <Stack.Screen
-        name="More"
-        component={More}
-        options={{title: translate('morePage.title')}}
-      />
+      <Stack.Screen name="More" component={More} options={{title: 'More'}} />
       <Stack.Screen
         name="Notifications"
         component={Notifications}
-        options={{title: translate('notificationsPage.title')}}
+        options={{title: 'Notifications'}}
       />
       <Stack.Screen
         name="Notification"
@@ -100,12 +93,12 @@ function MoreStack() {
       <Stack.Screen
         name="Reminders"
         component={Reminders}
-        options={{title: translate('remindersPage.title')}}
+        options={{title: 'Reminders'}}
       />
       <Stack.Screen
         name="Settings"
         component={Settings}
-        options={{title: translate('settingsPage.title')}}
+        options={{title: 'Settings'}}
       />
     </Stack.Navigator>
   );
@@ -163,12 +156,13 @@ export default function AppContainer() {
 
   useEffect(() => {
     initializeData().then((data) => {
+      let {bibleDB, userDB} = data;
       log('Setting context values');
-      dispatch(setUserDB(data.userDB));
-      dispatch(setBibleDB(data.bibleDB));
+      dispatch(setUserDB(userDB));
+      dispatch(setBibleDB(bibleDB));
       dispatch(setNotification(notification));
-      backgroundRefreh(data.userDB, notification);
-      runQueries(data.bibleDB);
+      backgroundRefreh(userDB, notification);
+      runQueries(bibleDB);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -191,6 +185,16 @@ export default function AppContainer() {
       dispatch(setUpdatePages(0));
     }
     if (userDB) {
+      runSQL(
+        userDB,
+        'SELECT Description FROM tblUserPrefs WHERE Name="LanguageInfo";',
+      ).then((res) => {
+        let languageInfo = res.rows.item(0).Description;
+        if (languageInfo) {
+          languageInfo = JSON.parse(languageInfo);
+        }
+        dispatch(setLanguageInfo(languageInfo));
+      });
       updateNotifications(userDB, notification);
       updateReminderDates(userDB);
       getSettings(userDB).then((settings) => {
@@ -215,8 +219,6 @@ export default function AppContainer() {
     appState.current = nextAppState;
     setAppStateVisible(appState.current);
   };
-
-  useLocalization();
 
   return (
     <NavigationContainer>

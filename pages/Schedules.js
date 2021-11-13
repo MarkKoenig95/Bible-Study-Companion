@@ -19,6 +19,7 @@ import {
 import LoadingPopup from '../components/popups/LoadingPopup';
 import {WEEKLY_READING_TABLE_NAME, useUpdate} from '../logic/general';
 import ScheduleTypeSelectionPopup from '../components/popups/ScheduleTypeSelectionPopup';
+import {translate} from '../logic/localization/localization';
 
 let scheduleType;
 const pageTitle = 'schedulesPage';
@@ -46,6 +47,12 @@ export default function Schedules(props) {
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
 
   const [isLoading, setLoadingPopup] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: translate('readingSchedules'),
+    });
+  });
 
   useEffect(() => {
     //Set add button in nav bar with appropriate onPress attribute

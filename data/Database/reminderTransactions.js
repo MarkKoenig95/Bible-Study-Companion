@@ -63,7 +63,7 @@ export async function addReminder(
 
   //Check if the reminder already exists or not
   await runSQL(userDB, 'SELECT 1 FROM tblReminders WHERE Name=?;', [name]).then(
-    res => {
+    (res) => {
       nameExists = res.rows.length > 0;
     },
   );

@@ -127,9 +127,10 @@
     "never": "从不"
   },
   "homePage": {"emptyList": "今天的阅读部分都完成了", "title": "首页"},
+  "language": "中文 (简体)",
   "links": {
     "languageTag": "cmn-hans",
-    "hasStudyBible": false,
+    "hasStudyBible": true,
     "finderLocale": "CHS",
     "www": {
       "bible": "圣经",
@@ -261,6 +262,7 @@
     "customDescription": "创建一本出版物的自定义进度表"
   },
   "settingsPage": {
+    "language": "语言",
     "title": "设定",
     "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文"
   },

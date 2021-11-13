@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Linking, SafeAreaView, ScrollView} from 'react-native';
 
 import styles from '../styles/styles';
@@ -17,6 +17,12 @@ export default function More(props) {
   const globalState = useContext(store);
 
   const {appVersion} = globalState.state;
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: translate('morePage.title'),
+    });
+  });
 
   return (
     <SafeAreaView testID={pageTitle} style={styles.container}>

@@ -130,6 +130,7 @@
     "emptyList": "Non hai più letture per la giornata",
     "title": "Pagina Principale"
   },
+  "language": "Italiano",
   "links": {
     "languageTag": "it",
     "hasStudyBible": true,
@@ -274,7 +275,8 @@
     "customDescription": "Crea un programma personalizzato per una pubblicazione"
   },
   "settingsPage": {
-    "title": "impostazioni",
+    "language": "Linguaggio",
+    "title": "Impostazioni",
     "weeklyReadingResetDay": "Giorno per ripristinare la lettura settimanale:"
   },
   "thisMonth": "Questo mese",

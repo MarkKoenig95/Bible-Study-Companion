@@ -3,6 +3,17 @@ import {I18nManager} from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize'; // Use for caching/memoize for better performance
+import en from './translations/en.json';
+import it from './translations/it.json';
+import sq from './translations/sq.json';
+import zh from './translations/zh.json';
+
+export const languages = {
+  en: {language: en.language, isRTL: false},
+  it: {language: it.language, isRTL: false},
+  sq: {language: sq.language, isRTL: false},
+  zh: {language: zh.language, isRTL: false},
+};
 
 const translationGetters = {
   // lazy requires (metro bundler does not support symlinks)
@@ -20,14 +31,18 @@ const translator = memoize(
 export function translate() {
   return translator(...arguments);
 }
-
-const setI18nConfig = () => {
+/**
+ * @param {object | undefined} forceTranslation {languageTag: string, isRTL: boolean}
+ */
+const setI18nConfig = (forceTranslation) => {
   // fallback if no available language fits
   const fallback = {languageTag: 'en', isRTL: false};
 
-  const {languageTag, isRTL} =
-    RNLocalize.findBestAvailableLanguage(Object.keys(translationGetters)) ||
-    fallback;
+  const translation =
+    forceTranslation ||
+    RNLocalize.findBestAvailableLanguage(Object.keys(translationGetters));
+
+  const {languageTag, isRTL} = translation || fallback;
 
   // clear translation cache
   translator.cache.clear();
@@ -38,14 +53,18 @@ const setI18nConfig = () => {
   i18n.locale = languageTag;
 };
 
-export const useLocalization = () => {
+export const useLocalization = (forceTranslation) => {
   const [, updateState] = useState();
   const forceUpdate = useCallback(() => updateState({}), []);
 
-  setI18nConfig();
+  setI18nConfig(forceTranslation);
 
-  const handleLocalizationChange = () => {
-    setI18nConfig();
+  const handleLocalizationChange = (forceTranslation) => {
+    if (forceTranslation && !forceTranslation.languageTag) {
+      forceTranslation = null;
+    }
+
+    setI18nConfig(forceTranslation);
     forceUpdate();
   };
 
@@ -55,7 +74,7 @@ export const useLocalization = () => {
     return RNLocalize.removeEventListener('change', handleLocalizationChange);
   });
 
-  return {forceUpdate};
+  return {forceUpdate, handleLocalizationChange};
 };
 
 export function linkFormulator(type) {

@@ -246,6 +246,8 @@ export async function getSettings(userDB: Database) {
           break;
         case 'AppVersion':
           break;
+        case 'LanguageInfo':
+          break;
         default:
           console.log(
             'Name of tblUserPrefs item is not included in switch statement',

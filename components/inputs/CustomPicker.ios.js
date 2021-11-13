@@ -5,14 +5,8 @@ import CustomButton from '../buttons/CustomButton';
 import Text from '../text/Text';
 
 export default function CustomPicker(props) {
-  let {
-    containerStyle,
-    currentValue,
-    onChange,
-    testID,
-    TextComponent,
-    values,
-  } = props;
+  let {containerStyle, currentValue, onChange, testID, TextComponent, values} =
+    props;
   //The values prop is an array of objects with label and value keys i.e. [{value:0, label:'Valuable'}]
   TextComponent = TextComponent || Text;
   const [value, setValue] = useState(currentValue);
@@ -43,7 +37,7 @@ export default function CustomPicker(props) {
               setValue(itemValue);
             }}
             {...props}>
-            {values.map(val => (
+            {values.map((val) => (
               <Picker.Item
                 testID={testID + '.' + val.label}
                 key={Math.random() * 100000}

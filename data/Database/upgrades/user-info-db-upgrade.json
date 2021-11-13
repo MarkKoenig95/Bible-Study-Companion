@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "upgrades": {
     "to_v1": [
       [
@@ -50,6 +50,11 @@
         "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"AppVersion\", \"\", 0);"
       ]
     ],
-    "to_v3": [["ALTER TABLE tblSchedules ADD COLUMN StartDate DATE;"]]
+    "to_v3": [["ALTER TABLE tblSchedules ADD COLUMN StartDate DATE;"]],
+    "to_v4": [
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"LanguageInfo\", \"\", 0);"
+      ]
+    ]
   }
 }

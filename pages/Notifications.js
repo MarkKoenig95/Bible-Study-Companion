@@ -140,6 +140,12 @@ export default function Notifications(props) {
 
   const {notificationPopup} = useCreateNotificationPopup();
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: translate('notificationsPage.title'),
+    });
+  });
+
   //Set add button in nav bar with appropriate onPress attribute
   useEffect(() => {
     navigation.setOptions({

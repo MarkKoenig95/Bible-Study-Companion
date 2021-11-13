@@ -32,6 +32,7 @@ import LoadingPopup from '../components/popups/LoadingPopup';
 
 import styles from '../styles/styles';
 import {setAppVersion} from '../data/Store/actions';
+import {useLocalization} from '../logic/localization/localization';
 
 const pageTitle = 'homePage';
 
@@ -415,8 +416,14 @@ export default function Home(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {userDB, bibleDB, updatePages, weeklyReadingResetDay, showDaily} =
-    globalState.state;
+  const {
+    userDB,
+    bibleDB,
+    languageInfo,
+    updatePages,
+    weeklyReadingResetDay,
+    showDaily,
+  } = globalState.state;
   const [scheduleListItems, setScheduleListItems] = useState([]);
   const [weeklyReadingReset, setweeklyReadingReset] = useState();
   const [shouldShowDaily, setShouldShowDaily] = useState();
@@ -438,6 +445,14 @@ export default function Home(props) {
       null,
       pageTitle,
     );
+
+  useLocalization(languageInfo);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: translate('homePage.title'),
+    });
+  });
 
   //Set add and settings button in nav bar with appropriate onPress attribute
   useEffect(() => {
