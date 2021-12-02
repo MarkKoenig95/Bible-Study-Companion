@@ -144,8 +144,9 @@ describe('find max', () => {
   });
 
   // findMaxChapter
-  test('given a bible book find the number of the last chapter', () => {
-    expect(findMaxChapter(1)).toBe(50);
+  test('given a bible book find the number of the last chapter', async () => {
+    let maxChapter = await findMaxChapter(1, bibleDB);
+    expect(maxChapter).toBe(50);
   });
 });
 
