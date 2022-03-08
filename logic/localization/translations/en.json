@@ -118,9 +118,7 @@
       "43": "After prologue, {{startYear}} to {{endYear}}"
     }
   },
-  "donatePage": {
-    "title": "Donate"
-  },
+  "donatePage": {"title": "Donate"},
   "frequencies": {
     "daily": "Daily",
     "weekly": "Weekly",
@@ -198,17 +196,17 @@
     "heading1": "Pray before you read",
     "body1-1": "Ask Jehovah to put you in the proper frame of mind and to give you his Holy Spirit to help you understand and apply what you read.",
     "heading2": "Meditate on what you read",
-    "body2-1": "Don’t rush, read to understand.",
+    "body2-1": "Don't rush, read to understand.",
     "subheading2-1": "You could ask these questions:",
     "body2-2": "What does this tell me about Jehovah God?",
-    "body2-3": "How does this section of the Scriptures contribute to the Bible’s message?",
+    "body2-3": "How does this section of the Scriptures contribute to the Bible's message?",
     "body2-4": "How can I apply this in my life?",
     "body2-5": "How can I use these verses to help others?",
     "subheading2-2": "Imagine yourself in the scene:",
     "body2-6": "What would you see, hear, and smell?",
     "body2-7": "What may be the feelings of those involved?",
     "subheading2-3": "Do research in order to:",
-    "body2-8": "Understand the reading portion’s context.",
+    "body2-8": "Understand the reading portion's context.",
     "body2-9": "Understand difficult concepts clearly.",
     "heading3": "Apply what you read",
     "body3-1": "If we see the practical value of an activity, we benefit more from it.",
@@ -268,13 +266,28 @@
   },
   "settingsPage": {
     "language": "Language",
+    "memorialReading": {
+      "dayTimeEvents": "Daytime Events",
+      "eventsAfterSunset": "Events after sunset",
+      "options": {
+        "long": {
+          "title": "Long",
+          "description": "Starts on Nisan 8 and ends on Nisan 16 and includes more verses to read each day. Based on the schedule found in Apendix B12 of the New World Translation"
+        },
+        "short": {
+          "title": "Short",
+          "description": "Starts on Nisan 9 and ends on Nisan 16 and includes less verses to read each day. Based on the schedule found in the Examining the Scriptures Daily booklet"
+        }
+      },
+      "title": "Memorial Reading"
+    },
     "title": "Settings",
     "weeklyReadingResetDay": "Day to reset weekly reading:"
   },
   "thisMonth": "This Month",
   "thisWeek": "This Week",
   "today": "Today",
-  "updateDate": "2021-05-31T11:41:37.377Z",
+  "updateDate": "2022-02-20T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "ch", "verseAbrev": "v"},
   "warning": "Warning",
   "weekdays": {
@@ -285,5 +298,9 @@
     "4": {"abrev": "Th", "name": "Thursday"},
     "5": {"abrev": "Fr", "name": "Friday"},
     "6": {"abrev": "Sa", "name": "Saturday"}
+  },
+  "whatsNew": {
+    "title": "What's New",
+    "2022_02_20": "Memorial Bible Reading\n\r Go to: {{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
   }
 }

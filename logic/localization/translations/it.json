@@ -8,9 +8,9 @@
     "3": {"name": "Levitico", "whereWritten": "Deserto"},
     "4": {"name": "Numeri", "whereWritten": "Deserto e pianure di Moab"},
     "5": {"name": "Deuteronomio", "whereWritten": "Pianure di Moab"},
-    "6": {"name": "Giosuè", "whereWritten": "Canaan"},
+    "6": {"name": "Giosuè", "whereWritten": "Canaan "},
     "7": {"name": "Giudici", "whereWritten": "Israele"},
-    "8": {"name": "Ruth", "whereWritten": "Israele"},
+    "8": {"name": "Ruth ", "whereWritten": "Israele"},
     "9": {"name": "1 Samuele", "whereWritten": "Israele"},
     "10": {"name": "2 Samuele", "whereWritten": "Israele"},
     "11": {"name": "1 Re", "whereWritten": "Giuda"},
@@ -19,7 +19,7 @@
     "14": {"name": "2 Cronache", "whereWritten": "Gerusalemme (?)"},
     "15": {"name": "Esdra", "whereWritten": "Gerusalemme"},
     "16": {"name": "Neemia", "whereWritten": "Gerusalemme"},
-    "17": {"name": "Ester", "whereWritten": "Shushan, Elam"},
+    "17": {"name": "Ester", "whereWritten": "Shushan, Elam "},
     "18": {"name": "Giobbe", "whereWritten": "Deserto"},
     "19": {"name": "Salmi", "whereWritten": "Descrizione "},
     "20": {"name": "Proverbi", "whereWritten": "Gerusalemme"},
@@ -32,7 +32,7 @@
     "27": {"name": "Daniele", "whereWritten": "Babilonia"},
     "28": {"name": "Osea", "whereWritten": "Samaria (Distretto)"},
     "29": {"name": "Gioele", "whereWritten": "Giuda"},
-    "30": {"name": "Amos", "whereWritten": "Giuda"},
+    "30": {"name": "Amos ", "whereWritten": "Giuda"},
     "31": {"name": "Abdia", "whereWritten": "Descrizione "},
     "32": {"name": "Giona", "whereWritten": "Descrizione "},
     "33": {"name": "Michea", "whereWritten": "Giuda"},
@@ -49,14 +49,14 @@
     "44": {"name": "Atti", "whereWritten": "Roma"},
     "45": {"name": "Romani", "whereWritten": "Corinto"},
     "46": {"name": "1 Corinti", "whereWritten": "Efeso"},
-    "47": {"name": "2 Corinti", "whereWritten": "Macedonia"},
+    "47": {"name": "2 Corinti", "whereWritten": "Macedonia "},
     "48": {"name": "Galati", "whereWritten": "Corinto o Antiochia di siria"},
     "49": {"name": "Efesini", "whereWritten": "Roma"},
     "50": {"name": "Filippesi", "whereWritten": "Roma"},
     "51": {"name": "Colossesi", "whereWritten": "Roma"},
     "52": {"name": "1 Tessalonicesi", "whereWritten": "Corinto"},
     "53": {"name": "2 Tessalonicesi", "whereWritten": "Corinto"},
-    "54": {"name": "1 Timoteo", "whereWritten": "Macedonia"},
+    "54": {"name": "1 Timoteo", "whereWritten": "Macedonia "},
     "55": {"name": "2 Timoteo", "whereWritten": "Roma"},
     "56": {"name": "Tito", "whereWritten": "Macedonia (?) "},
     "57": {"name": "Filemone", "whereWritten": "Roma"},
@@ -93,7 +93,7 @@
     "startingPortionPhld": "{{portionDesc}} da cui vorresti iniziare",
     "startingVerse": "Versetto iniziale",
     "unfinished": "Si prega di compilare tutti i campi obbligatori con valori validi per creare un programma",
-    "startDate": "Data d'inizio "
+    "startDate": "Data d'inizio"
   },
   "date": {
     "approxDesc": {
@@ -117,9 +117,7 @@
       "43": "Dopo l’introduzione {{startYear}} al {{endYear}}"
     }
   },
-  "donatePage": {
-    "title": "Donare"
-  },
+  "donatePage": {"title": "Donare"},
   "frequencies": {
     "daily": "Quotidiano",
     "weekly": "Settimanalmente",
@@ -277,12 +275,27 @@
   "settingsPage": {
     "language": "Linguaggio",
     "title": "Impostazioni",
-    "weeklyReadingResetDay": "Giorno per ripristinare la lettura settimanale:"
+    "weeklyReadingResetDay": "Giorno per ripristinare la lettura settimanale:",
+    "memorialReading": {
+      "title": "La Lettura Commemorativa",
+      "dayTimeEvents": "Eventi diurni",
+      "eventsAfterSunset": "Eventi dopo il tramonto",
+      "options": {
+        "long": {
+          "title": "Lungo",
+          "description": "Inizia l'8 nisan e termina il 16 nisan e include più versetti da leggere ogni giorno.  Sulla base del programma che si trova nell'Appendice B12 della Traduzione del Nuovo Mondo"
+        },
+        "short": {
+          "title": "Breve",
+          "description": "Inizia il 9 nisan e termina il 16 nisan e include meno versetti da leggere ogni giorno.  In base al programma che si trova nell'opuscolo Esaminiamo le scritture "
+        }
+      }
+    }
   },
   "thisMonth": "Questo mese",
   "thisWeek": "Questa settimana",
   "today": "Oggi",
-  "updateDate": "2021-05-31T11:41:37.377Z",
+  "updateDate": "2022-02-20T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "Cap", "verseAbrev": "Vers"},
   "warning": "Attenzione ",
   "weekdays": {
@@ -295,5 +308,9 @@
     "6": {"abrev": "Sab", "name": "Sabato"}
   },
   "old": "Vecchio ",
-  "advanced": "Avanzato"
+  "advanced": "Avanzato",
+  "whatsNew": {
+    "title": "Cosa c'è di nuovo",
+    "2022_02_20": "Lettura biblica commemorativa \nVai a:{{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  }
 }

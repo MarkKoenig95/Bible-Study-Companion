@@ -4,12 +4,16 @@ import * as RNLocalize from 'react-native-localize';
 import i18n from 'i18n-js';
 import memoize from 'lodash.memoize'; // Use for caching/memoize for better performance
 import en from './translations/en.json';
+import es from './translations/es.json';
+import es_mx from './translations/es-mx.json';
 import it from './translations/it.json';
 import sq from './translations/sq.json';
 import zh from './translations/zh.json';
 
 export const languages = {
   en: {language: en.language, isRTL: false},
+  es: {language: es.language, isRTL: false},
+  'es-mx': {language: es_mx.language, isRTL: false},
   it: {language: it.language, isRTL: false},
   sq: {language: sq.language, isRTL: false},
   zh: {language: zh.language, isRTL: false},
@@ -18,6 +22,8 @@ export const languages = {
 const translationGetters = {
   // lazy requires (metro bundler does not support symlinks)
   en: () => require('./translations/en.json'),
+  es: () => require('./translations/es.json'),
+  'es-mx': () => require('./translations/es-mx.json'),
   it: () => require('./translations/it.json'),
   sq: () => require('./translations/sq.json'),
   zh: () => require('./translations/zh.json'),

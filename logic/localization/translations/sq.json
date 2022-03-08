@@ -1,6 +1,6 @@
 {
-  "actions": {"cancel": "Fshi ", "done": "U krye", "ok": "Në rregull"},
-  "appName": "Bibla Pragram Ndihmës për Studim",
+  "actions": {"cancel": "Fshi", "done": "U krye", "ok": "Në rregull"},
+  "appName": "Bibla Ndihmë për Studim",
   "bibleBook": "Libri i Biblës",
   "bibleBooks": {
     "1": {"name": "Zanafilla", "whereWritten": "Shkretëtirë"},
@@ -53,7 +53,10 @@
     "45": {"name": "Romakëve", "whereWritten": "Korint"},
     "46": {"name": "1 Korintasve", "whereWritten": "Efesianëve"},
     "47": {"name": "2 Korintasve", "whereWritten": "Maqedoni"},
-    "48": {"name": "Galatasve", "whereWritten": "Korint, ose Antioki e Sirisë"},
+    "48": {
+      "name": "Galatasve",
+      "whereWritten": "Korint, ose Antioki e Sirisë"
+    },
     "49": {"name": "Efesianëve", "whereWritten": "Romë"},
     "50": {"name": "Filipianëve", "whereWritten": "Romë"},
     "51": {"name": "Kolosianëve", "whereWritten": "Romë"},
@@ -120,16 +123,17 @@
       "43": "Pas hyrjes {{startYear}} deri {{endYear}}"
     }
   },
-  "donatePage": {
-    "title": "Dhuroj"
-  },
+  "donatePage": {"title": "Dhuroj"},
   "frequencies": {
     "daily": "Ditor",
     "weekly": "Javor",
     "monthly": "Mujor",
     "never": "Kurrë"
   },
-  "homePage": {"emptyList": "Ske më për të lexuar për sot", "title": "Shtëpia"},
+  "homePage": {
+    "emptyList": "Ske më për të lexuar për sot",
+    "title": "Shtëpia"
+  },
   "language": "Shqiptare",
   "links": {
     "languageTag": "sq",
@@ -267,12 +271,27 @@
   "settingsPage": {
     "language": "Gjuhe",
     "title": "Cilësimet",
-    "weeklyReadingResetDay": "Dita për të rivendosur leximin javor:"
+    "weeklyReadingResetDay": "Dita për të rivendosur leximin javor:",
+    "memorialReading": {
+      "title": "Leximi i përkujtimit",
+      "dayTimeEvents": "Ngjarjet para perëndimit të diellit",
+      "eventsAfterSunset": "Ngjarjet pas perëndimit të diellit",
+      "options": {
+        "long": {
+          "title": "I gjatë",
+          "description": "Fillon më 8 nisan dhe përfundon më 16 nisan dhe përfshin më shumë vargje për t'u lexuar çdo ditë.  Bazuar në programin që gjendet në Shtojcën B12 të Përkthimit Bota e Re"
+        },
+        "short": {
+          "title": "I shkurtër",
+          "description": "Fillon më 9 nisan dhe përfundon më 16 nisan dhe përfshin më pak vargje për t'u lexuar çdo ditë. Bazuar në programin që gjendet në Leximin e shkrimit të ditës tek aplikacioni JW library"
+        }
+      }
+    }
   },
   "thisMonth": "Këtë muaj",
   "thisWeek": "Këtë javë",
   "today": "Sot",
-  "updateDate": "2021-05-31T11:41:37.377Z",
+  "updateDate": "2022-02-20T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "Kp", "verseAbrev": "Vg"},
   "warning": "Kujdes",
   "weekdays": {
@@ -285,5 +304,9 @@
     "6": {"abrev": "Sht", "name": "E shtunë"}
   },
   "old": "e vjetër ",
-  "advanced": "Shtesë "
+  "advanced": "E Avancuar",
+  "whatsNew": {
+    "title": "Çfarë ka të re ",
+    "2022_02_20": "Përkujtuesinimleximit të biblës\nShko te:{{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  }
 }
