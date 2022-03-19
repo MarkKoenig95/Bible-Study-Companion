@@ -7,6 +7,7 @@ import {SCHEDULE_TYPES, VERSE_POSITION} from '../../logic/general';
 import {
   checkAnyVerseBuffer,
   checkEnd,
+  checkIfShouldSkipWeeklyReadingForMemorial,
   checkOrderedVerseBuffer,
   checkReadingPortion,
   checkResultPosition,
@@ -19,6 +20,8 @@ import {
   findVerseIndex,
   generateBibleSchedule,
   generateCustomSchedule,
+  getNewWeeklyReadingStartDateFromSkippedMemorialDate,
+  getWeeklyReadingIndexForMemorialWeek,
   runQueries,
   setAdjustedMessage,
   setScheduleParameters,
@@ -444,13 +447,11 @@ describe('given a bookId, chapter, and verse returns the index in the table corr
 
 // setScheduleParameters
 describe('given a duration, query object, and a schedule type returns parameters to be used for creating the bible reading schedule', () => {
-  /*
-  Tests:
-  Whole number and decimal number versions of a
-  Small Number
-  Large Number
-  For a thematic schedule and a non thematic schedule
-  */
+  //Tests:
+  //Whole number and decimal number versions of a
+  //Small Number
+  //Large Number
+  //For a thematic schedule and a non thematic schedule
 
   test('A small whole number duration for a Thematic Schedule', () => {
     let comparisonResult = {...thematicScheduleParametersResult};
@@ -771,22 +772,20 @@ describe('given a bible, book, chapter, and verse (originally provided by the us
 
 //checkVerseBuffer
 describe('given a database table query an index for an element in the query, and a number of verses given as a reasonable buffer checks if there is a verse that would be more fitting to end a reading portion on (the end of a chapter, or otherwise) within a space + or - the verse buffer. retruns an offset value if a better match is found, or the original value if none was found', () => {
-  /*
-  Tests:
-  qryChronologicalIndex
-  qryThematicIndex
-  tblVerseIndex
+  //Tests:
+  // qryChronologicalIndex
+  // qryThematicIndex
+  // tblVerseIndex
 
-  critical point = 0
-  small buffer = 1
-  average buffer = 20
-  large buffer = 417715
+  // critical point = 0
+  // small buffer = 1
+  // average buffer = 20
+  // large buffer = 417715
 
-  expected results
-  return 0
-  return a negetive number to set index to begining of current chapter
-  return a positive number to set index to begining of next chapter
-  */
+  // expected results
+  // return 0
+  // return a negetive number to set index to begining of current chapter
+  // return a positive number to set index to begining of next chapter
 
   test('A sequential table with a small buffer "0" (should return 0 as the adjustment)', () => {
     let index = 20;
@@ -935,13 +934,12 @@ describe('given a database table query an index for an element in the query, and
 
 // checkStartAndEndPositions
 describe('given a database table query, a start index, and an end index for a reading portion returns whether the start verse is the start of a chapter or not, and if the end verse is the end of a chapter or not', () => {
-  /*
-    Tests:
-    The function can have 4 different outputs:
-    startPosition can be start or middle
-    endPosition can be middle or end
-    and the combinations therin
-  */
+  // Tests:
+  // The function can have 4 different outputs:
+  // startPosition can be start or middle
+  // endPosition can be middle or end
+  // and the combinations therin
+
   test('startPosition should be start, endPosition should be end', () => {
     let {startPosition, endPosition} = checkStartAndEndPositions(
       tblVerseIndex,
@@ -2230,20 +2228,19 @@ test('insertReadingPortions', async () => {
 });
 
 describe('create bible reading schedule', () => {
-  /*
-  Tests:
-  Sequential
-    0.1 Year verse that exists (Genesis 1:1)
-    20 Year verse that doesn't exist (Malachi 100:100)
+  // Tests:
+  // Sequential
+  //   0.1 Year verse that exists (Genesis 1:1)
+  //   20 Year verse that doesn't exist (Malachi 100:100)
 
-  Chronological
-    0.1 Year verse that doesn't exist (Obadiah 100:100)
-    20 Year verse that exists (Genesis 1:1)
+  // Chronological
+  //   0.1 Year verse that doesn't exist (Obadiah 100:100)
+  //   20 Year verse that exists (Genesis 1:1)
 
-  Thematic
-    0.1 Year verse that exists (Genesis 1:1)
-    20 Year verse that doesn't exist (Revelation 100:100)
-  */
+  // Thematic
+  //   0.1 Year verse that exists (Genesis 1:1)
+  //   20 Year verse that doesn't exist (Revelation 100:100)
+
   let indices = {};
 
   beforeAll(() => {
@@ -2454,20 +2451,18 @@ describe('create bible reading schedule', () => {
 });
 
 describe('create custom reading schedule', () => {
-  /*
-    Tests:
-        startingPortion
-          a giant number 1,000,000,000,000,000
-          0
+  // Tests:
+  //     startingPortion
+  //       a giant number 1,000,000,000,000,000
+  //       0
 
-        maxPortion:
-          a giant number 1,000,000,000,000,000
-          a number less than starting portion 0
+  //     maxPortion:
+  //       a giant number 1,000,000,000,000,000
+  //       a number less than starting portion 0
 
-        portionsPerDay
-          a giant number 1,000,000,000,000,000
-          0
-  */
+  //     portionsPerDay
+  //       a giant number 1,000,000,000,000,000
+  //       0
 
   let indices = {};
   beforeAll(() => {
@@ -2523,4 +2518,194 @@ describe('create custom reading schedule', () => {
     thatDate.setHours(0, 0, 0, 0);
     expect(thatDate.toString()).toBe(today.toString());
   });
+});
+
+describe('Given the user chosen day to reset the weekly reading schedule and the date of the memorial test to see if we should skip the weekly reading schedule', () => {
+  const setSystemTime = (year, month, day) => {
+    //Month is zero index based for the date object so we need to adjust accordingly
+    jest.setSystemTime(new Date(year, month - 1, day, 0, 0, 0, 0).getTime());
+  };
+
+  const baseMemorialDate = new Date(2022, 3, 15, 0, 0, 0, 0); // April 15th 2022 at midnight
+  const baseWeeklyReadingStartDate = new Date(2021, 0, 1, 0, 0, 0, 0); // January 1st 2021 at midnight
+  const baseResetDayOfWeek = 4;
+
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  test('Now is before memorial', () => {
+    setSystemTime(2022, 3, 1);
+    let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+      baseResetDayOfWeek,
+      baseMemorialDate,
+      baseWeeklyReadingStartDate,
+    );
+    expect(shouldSkip).toBe(false);
+  });
+
+  describe('Past the memorial and Memorial is a Weekend day', () => {
+    beforeAll(() => {
+      setSystemTime(2022, 6, 1);
+    });
+
+    test('Saturday', () => {
+      let saturdayMemorialDate = new Date();
+      saturdayMemorialDate.setDate(baseMemorialDate.getDate() + 1); //April 16th 2022, a Saturday
+
+      let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+        baseResetDayOfWeek,
+        saturdayMemorialDate,
+        baseWeeklyReadingStartDate,
+      );
+
+      expect(shouldSkip).toBe(false);
+    });
+
+    test('Sunday', () => {
+      let sundayMemorialDate = new Date();
+      sundayMemorialDate.setDate(baseMemorialDate.getDate() + 1); //April 17th 2022, a Sunday
+
+      let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+        baseResetDayOfWeek,
+        sundayMemorialDate,
+        baseWeeklyReadingStartDate,
+      );
+
+      expect(shouldSkip).toBe(false);
+    });
+  });
+
+  test('Past the memorial and Weekly Reading start date is past the memorial', () => {
+    setSystemTime(2022, 6, 1);
+
+    let fakeWeeklyReadingStartDate = new Date(baseMemorialDate);
+    fakeWeeklyReadingStartDate.setMonth(8);
+
+    let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+      0,
+      baseMemorialDate,
+      fakeWeeklyReadingStartDate,
+    );
+    expect(shouldSkip).toBe(false);
+  });
+
+  describe('Past a time where we should skip the reading and weekly reading start date is not yet', () => {
+    test('Past the memorial', () => {
+      setSystemTime(2022, 6, 1);
+
+      let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+        baseResetDayOfWeek,
+        baseMemorialDate,
+        baseWeeklyReadingStartDate,
+      );
+
+      expect(shouldSkip).toBe(true);
+    });
+  });
+
+  describe('Should reset weekly reading this week', () => {
+    test('Reset day is Thursday and today is thursday', () => {
+      setSystemTime(2022, 4, 7); //Thursday the week before the memorial
+      let resetDay = 4;
+
+      let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+        resetDay,
+        baseMemorialDate,
+        baseWeeklyReadingStartDate,
+      );
+
+      expect(shouldSkip).toBe(true);
+    });
+
+    test('Reset day is Thursday and today is wednesday', () => {
+      setSystemTime(2022, 4, 6); //Thursday the week before the memorial
+      let resetDay = 4;
+
+      let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+        resetDay,
+        baseMemorialDate,
+        baseWeeklyReadingStartDate,
+      );
+
+      expect(shouldSkip).toBe(false);
+    });
+
+    test('Reset day is Thursday and today is Friday, but we have set the skip already', () => {
+      setSystemTime(2022, 4, 8); //Thursday the week before the memorial
+      let resetDay = 4;
+      let fakeWeeklyReadingStartDate = new Date(baseMemorialDate);
+      fakeWeeklyReadingStartDate.setMonth(8);
+
+      let shouldSkip = checkIfShouldSkipWeeklyReadingForMemorial(
+        resetDay,
+        baseMemorialDate,
+        fakeWeeklyReadingStartDate,
+      );
+
+      expect(shouldSkip).toBe(true);
+    });
+  });
+});
+
+describe('Given the memorial date return a new date to use as the weekly reading start date', () => {
+  test('Date is before correct week', () => {
+    const memorialDate = new Date(2022, 3, 9, 0, 0, 0, 0); // April 9th 2022 at midnight
+    const expectedWeeklyReadingStartDate = new Date(2022, 3, 18, 0, 0, 0, 0);
+
+    let newWeeklyStartDate =
+      getNewWeeklyReadingStartDateFromSkippedMemorialDate(memorialDate);
+
+    expect(newWeeklyStartDate.getTime()).toBeLessThan(
+      expectedWeeklyReadingStartDate.getTime(),
+    );
+  });
+
+  test('Date is correct week', () => {
+    const memorialDate = new Date(2022, 3, 15, 0, 0, 0, 0); // April 15th 2022 at midnight
+    const expectedWeeklyReadingStartDate = new Date(2022, 3, 18, 0, 0, 0, 0);
+
+    let newWeeklyStartDate =
+      getNewWeeklyReadingStartDateFromSkippedMemorialDate(memorialDate);
+
+    console.log(
+      'newWeeklyStartDate',
+      newWeeklyStartDate.toLocaleDateString(),
+      'expectedWeeklyReadingStartDate',
+      expectedWeeklyReadingStartDate.toLocaleDateString(),
+    );
+    expect(newWeeklyStartDate.getTime()).toBe(
+      expectedWeeklyReadingStartDate.getTime(),
+    );
+  });
+
+  test('Date is after correct week', () => {
+    const memorialDate = new Date(2022, 3, 17, 0, 0, 0, 0); // April 17th 2022 at midnight
+    const expectedWeeklyReadingStartDate = new Date(2022, 3, 18, 0, 0, 0, 0);
+
+    let newWeeklyStartDate =
+      getNewWeeklyReadingStartDateFromSkippedMemorialDate(memorialDate);
+
+    expect(newWeeklyStartDate.getTime()).toBeGreaterThan(
+      expectedWeeklyReadingStartDate.getTime(),
+    );
+  });
+});
+
+test('Given the date of the memorial the previous start date and index for the weekly reading schedule returns the week index for the week after the memorial', () => {
+  const newWeeklyStartDate = new Date(2022, 3, 18, 0, 0, 0, 0);
+  const weeklyReadingStartDate = new Date(2020, 7, 3, 0, 0, 0, 0);
+  const startIndex = 30;
+
+  let skipIndex = getWeeklyReadingIndexForMemorialWeek(
+    newWeeklyStartDate,
+    weeklyReadingStartDate,
+    startIndex,
+  );
+
+  expect(skipIndex).toBe(118);
 });

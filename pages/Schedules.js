@@ -170,15 +170,19 @@ export default function Schedules(props) {
                 key={item.ScheduleID}
                 text={item.ScheduleName}
                 onPress={() => {
-                  let table =
-                    item.CreationInfo === WEEKLY_READING_TABLE_NAME
-                      ? WEEKLY_READING_TABLE_NAME
-                      : formatScheduleTableName(item.ScheduleID);
+                  let creationInfo = item.CreationInfo;
+                  let tableName;
+                  if (creationInfo.slice(0, 3) === 'tbl') {
+                    tableName = creationInfo;
+                  } else {
+                    tableName = formatScheduleTableName(item.ScheduleID);
+                  }
+
                   navigation.navigate('SchedulePage', {
                     id: item.ScheduleID,
                     title: item.ScheduleName,
                     name: item.ScheduleName,
-                    table: table,
+                    table: tableName,
                   });
                 }}
               />

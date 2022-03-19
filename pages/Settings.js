@@ -11,7 +11,10 @@ import {createPickerArray, useUpdate} from '../logic/general';
 import SettingsWrapper from '../components/SettingsWrapper';
 import WeekdayPicker from '../components/inputs/WeekdayPicker';
 import {log, runSQL, updateValue} from '../data/Database/generalTransactions';
-import {createWeeklyReadingSchedule} from '../data/Database/scheduleTransactions';
+import {
+  createWeeklyReadingSchedule,
+  deleteMemorialReadingSchedules,
+} from '../data/Database/scheduleTransactions';
 import Picker from '../components/inputs/CustomPicker';
 
 const pageTitle = 'settingsPage';
@@ -117,6 +120,73 @@ function LanugagePicker(props) {
   );
 }
 
+function MemorialScheduleType(props) {
+  const {testID, afterUpdate, bibleDB, memorialScheduleType, userDB} = props;
+
+  const shortScheduleName = translate(
+    'settingsPage.memorialReading.options.short.title',
+  );
+  const shortScheduleDescription = translate(
+    'settingsPage.memorialReading.options.short.description',
+  );
+  const longScheduleName = translate(
+    'settingsPage.memorialReading.options.long.title',
+  );
+  const longScheduleDescription = translate(
+    'settingsPage.memorialReading.options.long.description',
+  );
+  const scheduleTypeLabels = [shortScheduleName, longScheduleName];
+  const scheduleTypeDescriptions = [
+    shortScheduleDescription,
+    longScheduleDescription,
+  ];
+
+  const scheduleTypeArray = createPickerArray(...scheduleTypeLabels);
+
+  let currentDescription = scheduleTypeDescriptions[memorialScheduleType];
+
+  async function setScheduleType(value) {
+    await runSQL(
+      userDB,
+      'UPDATE tblUserPrefs SET Value=? WHERE Name="MemorialScheduleType"',
+      [value],
+    );
+
+    await deleteMemorialReadingSchedules(bibleDB, userDB);
+
+    await runSQL(
+      userDB,
+      'UPDATE tblDates SET Description="INCOMPLETE" WHERE Name="UpcomingMemorial"',
+    );
+
+    afterUpdate();
+  }
+
+  console.log(
+    'scheduleTypeArray',
+    scheduleTypeArray,
+    'memorialScheduleType',
+    memorialScheduleType,
+  );
+
+  return (
+    <SettingsWrapper
+      testID={testID}
+      noArrow
+      text={translate('settingsPage.memorialReading.title')}>
+      <Picker
+        testID={testID + '.typePicker'}
+        onChange={setScheduleType}
+        currentValue={memorialScheduleType}
+        values={scheduleTypeArray}
+      />
+      <Body dark style={{alignSelf: 'flex-start', color: colors.darkBlue}}>
+        {currentDescription}
+      </Body>
+    </SettingsWrapper>
+  );
+}
+
 export default function Settings(props) {
   log('loaded Settings page');
   const {navigation} = props;
@@ -124,7 +194,13 @@ export default function Settings(props) {
   const globalState = useContext(store);
 
   const {dispatch} = globalState;
-  const {bibleDB, userDB, showDaily, weeklyReadingResetDay} = globalState.state;
+  const {
+    bibleDB,
+    userDB,
+    showDaily,
+    memorialScheduleType,
+    weeklyReadingResetDay,
+  } = globalState.state;
 
   const afterUpdate = useUpdate(dispatch);
 
@@ -182,6 +258,13 @@ export default function Settings(props) {
           testID={pageTitle + '.languagePicker'}
           afterUpdate={afterUpdate}
           language={translate('language')}
+          userDB={userDB}
+        />
+        <MemorialScheduleType
+          testID={pageTitle + '.memorialSchedule'}
+          afterUpdate={afterUpdate}
+          bibleDB={bibleDB}
+          memorialScheduleType={memorialScheduleType.value}
           userDB={userDB}
         />
       </ScrollView>

@@ -4,6 +4,7 @@ export interface Database {
   dbname: any;
   executeSql: Function;
   sqlBatch: (arg0: any[]) => Promise<any>;
+  close: () => void;
 }
 
 export interface DBQueryResult {

@@ -7,9 +7,13 @@ import {
 } from '../../logic/general';
 import {translate} from '../../logic/localization/localization';
 import {
+  checkIfShouldSkipWeeklyReadingForMemorial,
   generateBibleSchedule,
   generateCustomSchedule,
+  generateMemorialReadingSchedule,
   generateWeeklyReadingSchedule,
+  getNewWeeklyReadingStartDateFromSkippedMemorialDate,
+  getWeeklyReadingIndexForMemorialWeek,
 } from '../../logic/scheduleCreation';
 import {
   createPlaceholdersFromArray,
@@ -320,6 +324,226 @@ export async function addSchedule(
 }
 
 /**
+ * Given a status value writes that value to the correct field in the user database
+ * @param {Database} userDB
+ * @param {"COMPLETED" | "CREATED"} status
+ */
+async function setMemorialScheduleStatus(userDB, status) {
+  await runSQL(
+    userDB,
+    'UPDATE tblDates SET Description=? WHERE Name="UpcomingMemorial";',
+    [status],
+  );
+}
+
+/**
+ * Creates a shcedule which follows the last week of jesus life the week of the memorial
+ * @param {Database} bibleDB
+ * @param {Database} userDB
+ * @param {Date} upcomingMemorialDate
+ */
+async function createMemorialReadingSchedule(
+  bibleDB,
+  userDB,
+  upcomingMemorialDate,
+) {
+  let readingScheduleStartDate = new Date(upcomingMemorialDate);
+  readingScheduleStartDate.setHours(0, 0, 0, 0);
+  readingScheduleStartDate.setDate(upcomingMemorialDate.getDate() - 6);
+  log('Started creating schedule');
+  let qryUserPrefs = await runSQL(
+    userDB,
+    'SELECT Value FROM tblUserPrefs WHERE Name="MemorialScheduleType";',
+  );
+  log('Retrieved Memorial Schedule Type');
+  const memorialScheduleType = qryUserPrefs.rows.item(0).Value;
+  const daytimeScheduleTitleID = memorialScheduleType * 2 + 1;
+  const eveningScheduleTitleID = daytimeScheduleTitleID + 1;
+
+  let qryPartialScheduleTitles = await runSQL(
+    bibleDB,
+    'SELECT Title FROM tblPartialScheduleTitles WHERE ID=? OR ID=? ORDER BY ID ASC',
+    [daytimeScheduleTitleID, eveningScheduleTitleID],
+  );
+  log('Retrieved schedule titles');
+  const daytimeScheduleTableName = qryPartialScheduleTitles.rows.item(0).Title;
+  const eveningScheduleTableName = qryPartialScheduleTitles.rows.item(1).Title;
+
+  const daytimeScheduleName = translate(
+    'settingsPage.memorialReading.dayTimeEvents',
+  );
+  const eveningScheduleName = translate(
+    'settingsPage.memorialReading.eventsAfterSunset',
+  );
+
+  await runSQL(
+    userDB,
+    'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?);',
+    [
+      daytimeScheduleName,
+      SCHEDULE_TYPES.CHRONOLOGICAL,
+      daytimeScheduleTableName,
+    ],
+  ).then(() => {
+    log(daytimeScheduleName, 'inserted successfully');
+  });
+
+  await createScheduleTable(userDB, daytimeScheduleTableName);
+
+  await runSQL(
+    userDB,
+    'INSERT INTO tblSchedules (ScheduleName, HideCompleted, ScheduleType, CreationInfo) VALUES (?, 0, ?, ?);',
+    [
+      eveningScheduleName,
+      SCHEDULE_TYPES.CHRONOLOGICAL,
+      eveningScheduleTableName,
+    ],
+  ).then(() => {
+    log(eveningScheduleName, 'inserted successfully');
+  });
+
+  await createScheduleTable(userDB, eveningScheduleTableName);
+
+  let qryMemorialSchedules = await runSQL(
+    bibleDB,
+    'SELECT TitleID, StartVerseID, EndVerseID, ScheduleOrder FROM tblPartialSchedules WHERE TitleID=? OR TitleID=? ORDER BY ScheduleOrder ASC;',
+    [daytimeScheduleTitleID, eveningScheduleTitleID],
+  );
+
+  log('Retrieved schedule titles');
+
+  const {daytimeReadings, eveningReadings} = generateMemorialReadingSchedule(
+    readingScheduleStartDate,
+    qryMemorialSchedules,
+    daytimeScheduleTitleID,
+    eveningScheduleTitleID,
+  );
+
+  await insertReadingPortions(
+    userDB,
+    daytimeReadings,
+    daytimeScheduleTableName,
+    bibleScheduleValuesArray,
+  )
+    .then((wasSucessful) => {
+      if (!wasSucessful) {
+        console.log('Memorial reading Insert failed');
+      }
+    })
+    .catch(errorCB);
+
+  await insertReadingPortions(
+    userDB,
+    eveningReadings,
+    eveningScheduleTableName,
+    bibleScheduleValuesArray,
+  )
+    .then((wasSucessful) => {
+      if (!wasSucessful) {
+        console.log('Memorial reading Insert failed');
+      }
+    })
+    .catch(errorCB);
+}
+
+/**
+ * Deletes memorial reading schedule from database...
+ * @param {Database} bibleDB
+ * @param {Database} userDB
+ */
+export async function deleteMemorialReadingSchedules(bibleDB, userDB) {
+  let qryPartialScheduleTitles = await runSQL(
+    bibleDB,
+    'SELECT Title FROM tblPartialScheduleTitles WHERE ID BETWEEN ? AND ?',
+    [1, 4],
+  );
+
+  for (let i = 0; i < 4; i++) {
+    log(
+      'qryPartialScheduleTitles.rows.item(i)',
+      qryPartialScheduleTitles.rows.item(i),
+    );
+    const scheduleTitle = qryPartialScheduleTitles.rows.item(i).Title;
+    await runSQL(userDB, `DROP TABLE IF EXISTS ${scheduleTitle}`);
+    await runSQL(userDB, 'DELETE FROM tblSchedules WHERE CreationInfo=?;', [
+      scheduleTitle,
+    ]);
+  }
+}
+
+/**
+ * Creates a Bible reading schedule for the week of the memorial
+ * @param {Database} userDB
+ * @param {Database} bibleDB
+ */
+export async function handleMemorialReadingSchedule(userDB, bibleDB) {
+  log('Started handling memorial reading schedule');
+
+  let today = new Date();
+  let tblDates = await runSQL(
+    userDB,
+    'SELECT * FROM tblDates WHERE Name="UpcomingMemorial";',
+  );
+  let upcomingMemorialDate = new Date(tblDates.rows.item(0).Date);
+  log('upcomingMemorialDate', upcomingMemorialDate);
+
+  // The memorial is on Nisan 14th, our earliest schedule starts 6 days before it.
+  // We can make the schedule a little earlier to give them time to realize it's there maybe.
+  // So 12 days ahead of time?
+  let readingCreationDate = new Date(upcomingMemorialDate);
+  readingCreationDate.setHours(0, 0, 0, 0);
+  readingCreationDate.setDate(readingCreationDate.getDate() - 12);
+
+  let readingEndDate = new Date(upcomingMemorialDate);
+  readingEndDate.setHours(0, 0, 0, 0);
+  readingEndDate.setDate(readingEndDate.getDate() + 5);
+
+  let memorialScheduleStatus = tblDates.rows.item(0).Description;
+
+  const COMPLETED = 'COMPLETED';
+  const CREATED = 'CREATED';
+
+  let now = today.getTime();
+  let readingCreationTime = readingCreationDate.getTime();
+  let readingEndTime = readingEndDate.getTime();
+
+  log(
+    'now is',
+    today.toLocaleDateString(),
+    now,
+    'readingCreationTime is',
+    readingCreationDate.toLocaleDateString(),
+    readingCreationTime,
+    'readingEndTime is',
+    readingEndDate.toLocaleDateString(),
+    readingEndTime,
+    'memorialScheduleStatus is',
+    memorialScheduleStatus,
+  );
+
+  if (now < readingCreationTime) {
+    return;
+  }
+
+  log('Today is greater than reading creation time');
+
+  if (now > readingEndTime) {
+    if (memorialScheduleStatus !== COMPLETED) {
+      await setMemorialScheduleStatus(userDB, COMPLETED);
+      deleteMemorialReadingSchedules(bibleDB, userDB);
+    }
+    return;
+  }
+
+  log('Today is less than reading end time');
+
+  if (memorialScheduleStatus !== CREATED) {
+    await setMemorialScheduleStatus(userDB, CREATED);
+    createMemorialReadingSchedule(bibleDB, userDB, upcomingMemorialDate);
+  }
+}
+
+/**
  * Creates a Bible reading schedule based on the weekly Christian Life and Ministry meeting workbook
  * recreated on a user defined weekday each week (usually the day after their meeting)
  * @param {Database} userDB
@@ -375,7 +599,9 @@ export async function createWeeklyReadingSchedule(
   //The start date is always a monday of a schedule that would end late for the user.
   //We need to set the start date to compensate for this.
   let weekStartAligner = resetDayOfWeek - 8;
-  weeklyReadingStartDate.setDate(weekStartAligner);
+  weeklyReadingStartDate.setDate(
+    weeklyReadingStartDate.getDate() + weekStartAligner,
+  );
 
   let currentWeek = getWeeksBetween(weeklyReadingStartDate, date) + startIndex;
 
@@ -405,8 +631,6 @@ export async function createWeeklyReadingSchedule(
   );
 
   if (lastWeekRead < currentWeek || shouldForceUpdate) {
-    await updateDates(userDB, date, 'WeeklyReadingCurrent', () => {});
-
     //drop table from previous week
     await runSQL(userDB, `DROP TABLE IF EXISTS ${tableName};`);
 
@@ -415,6 +639,56 @@ export async function createWeeklyReadingSchedule(
       'DELETE FROM tblSchedules WHERE CreationInfo=? OR CreationInfo IS NULL;',
       [tableName],
     );
+
+    // Check if we should skip making weekly reading because of the day of the memorial
+    let qryDates = await runSQL(
+      userDB,
+      'SELECT Date FROM tblDates WHERE Name="UpcomingMemorial";',
+    );
+
+    let upcomingMemorialDate = new Date(qryDates.rows.item(0).Date);
+
+    let actualWeeklyReadingStartDate = new Date(weeklyReadingStart.Date);
+    let shouldSkipForMemorial = checkIfShouldSkipWeeklyReadingForMemorial(
+      resetDayOfWeek,
+      upcomingMemorialDate,
+      actualWeeklyReadingStartDate,
+    );
+
+    if (shouldSkipForMemorial) {
+      let newWeeklyStartDate =
+        getNewWeeklyReadingStartDateFromSkippedMemorialDate(
+          upcomingMemorialDate,
+        );
+
+      if (
+        actualWeeklyReadingStartDate.getTime() === newWeeklyStartDate.getTime()
+      ) {
+        return;
+      }
+
+      await updateDates(
+        userDB,
+        newWeeklyStartDate,
+        'WeeklyReadingStart',
+        () => {},
+      );
+
+      let skipIndex = getWeeklyReadingIndexForMemorialWeek(
+        newWeeklyStartDate,
+        actualWeeklyReadingStartDate,
+        startIndex,
+      );
+
+      await runSQL(userDB, 'UPDATE tblDates SET Description=? WHERE Name=?;', [
+        skipIndex,
+        'WeeklyReadingStart',
+      ]);
+
+      return;
+    }
+
+    await updateDates(userDB, date, 'WeeklyReadingCurrent', () => {});
 
     let scheduleName = translate('reminders.weeklyReading.title');
 
@@ -563,7 +837,7 @@ export async function renameSchedule(userDB, curScheduleName, newScheduleName) {
  */
 export async function updateDates(userDB, date, name, afterUpdate = () => {}) {
   await runSQL(userDB, 'UPDATE tblDates SET Date=? WHERE Name=?;', [
-    date.toString(),
+    date.toISOString(),
     name,
   ]).then(afterUpdate);
 }

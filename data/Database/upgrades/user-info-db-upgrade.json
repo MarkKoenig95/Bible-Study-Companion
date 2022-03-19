@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "upgrades": {
     "to_v1": [
       [
@@ -54,6 +54,14 @@
     "to_v4": [
       [
         "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"LanguageInfo\", \"\", 0);"
+      ]
+    ],
+    "to_v5": [
+      [
+        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"UpcomingMemorial\", \"\", \"@{upcomingMemorialDate}\");"
+      ],
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"MemorialScheduleType\", \"Short is 0 Long is 1\", 0);"
       ]
     ]
   }

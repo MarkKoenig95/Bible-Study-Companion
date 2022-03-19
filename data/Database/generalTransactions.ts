@@ -197,6 +197,9 @@ export async function appVersion(userDB: Database) {
     userDB,
     'SELECT Description FROM tblUserPrefs WHERE Name="AppVersion";',
   ).then((res) => {
+    if (!res) {
+      return;
+    }
     prevVersion = res.rows.item(0).Description;
   });
 
@@ -213,28 +216,45 @@ export async function appVersion(userDB: Database) {
 /** Returns the user_version of the given database */
 export async function getVersion(DB: Database) {
   let result = await runSQL(DB, 'PRAGMA user_version;');
+  let userVersion;
 
-  return result.rows.item(0).user_version;
+  if (result) {
+    userVersion = result.rows.item(0).user_version;
+  }
+
+  return userVersion;
 }
 
 /** A centralized query function to make other code cleaner, more readable, and to centralize error handling */
 export async function runSQL(DB: Database, sql: string, args: any[] = []) {
-  let [result]: DBQueryResult[] = await DB.executeSql(sql, args).catch(errorCB);
+  log('DB', DB.dbname, 'sql', sql, 'args', args);
+
+  let results: DBQueryResult[] = await DB.executeSql(sql, args).catch(errorCB);
+  let result: DBQueryResult | undefined;
+
+  try {
+    result = results[0];
+  } catch (e) {
+    console.error(e);
+  }
 
   return result;
 }
 
 /**
  * Returns an object with the items from tblUserPrefs as the keys
- * @property {boolean} showDaily.Value - Should the home page show the daily portion of the weekly reading
- * @property {integer} weeklyReadingResetDay.Value - The day of the week to recreate the weekly reading schedule
+ * @property {boolean} showDaily.value - Should the home page show the daily portion of the weekly reading
+ * @property {integer} weeklyReadingResetDay.value - The day of the week to recreate the weekly reading schedule
+ * @property {integer} memorialScheduleType.value - The type of memorial schedule the user has selected
  */
 export async function getSettings(userDB: Database) {
   let showDaily = {id: -1, value: false};
   let weeklyReadingResetDay = {id: -1, value: -1};
+  let memorialScheduleType = {id: -1, value: -1};
 
   let tblUserPrefs = await runSQL(userDB, 'SELECT * FROM tblUserPrefs;');
-  if (tblUserPrefs.rows.length > 0) {
+
+  if (tblUserPrefs && tblUserPrefs.rows.length > 0) {
     for (let i = 0; i < tblUserPrefs.rows.length; i++) {
       const pref = tblUserPrefs.rows.item(i);
       switch (pref.Name) {
@@ -248,16 +268,20 @@ export async function getSettings(userDB: Database) {
           break;
         case 'LanguageInfo':
           break;
+        case 'MemorialScheduleType':
+          memorialScheduleType = {id: pref.ID, value: pref.Value};
+          break;
         default:
           console.log(
             'Name of tblUserPrefs item is not included in switch statement',
+            pref.Name,
           );
           break;
       }
     }
   }
 
-  return {showDaily, weeklyReadingResetDay};
+  return {showDaily, memorialScheduleType, weeklyReadingResetDay};
 }
 
 async function replaceDB(db: Database) {
@@ -266,6 +290,8 @@ async function replaceDB(db: Database) {
 
   var path = LocalDBPath + '/' + dbName;
 
+  db.close();
+
   await RNFS.unlink(path)
     .then(() => {
       console.log('FILE DELETED');
@@ -273,16 +299,14 @@ async function replaceDB(db: Database) {
     .catch((err) => {
       console.log(err.message);
     });
+
   //@ts-ignore
-  await SQLite.openDatabase({
+  DB = await SQLite.openDatabase({
     name: dbName,
     createFromLocation: 1,
-  })
-    .then((newDB: any) => {
-      log('Replaced old database with', newDB);
-      DB = newDB;
-    })
-    .catch(errorCB);
+  }).catch(errorCB);
+
+  log('Replaced old database with', db);
 
   return DB;
 }
@@ -297,10 +321,14 @@ function setDatabaseParameters(upgradeJSON: any) {
         case 'baseTime':
           let time = new Date(2020, 0, 1, 8, 0, 0);
           return time.toISOString();
+        case 'upcomingMemorialDate':
+          // April 15th 2022
+          // See below (NOTE: the middle number for month starts at 0. so April is 3)
+          let memorialDate = new Date(2022, 3, 15);
+          return memorialDate.toISOString();
         case 'weeklyReadingStartDate':
-          //This year we will start at August 3rd. This refers to the 30th day in the schedule
-          //This way I don't have to fuss with the memorial reading and stuff
-          //See below (NOTE: the middle number for month starts at 0. so august is 7)
+          // August 3rd 2020
+          // See below (NOTE: the middle number for month starts at 0. so August is 7)
           let weekReadDate = new Date(2020, 7, 3);
           return weekReadDate.toISOString();
         case 'weeklyReadingStartOrder':

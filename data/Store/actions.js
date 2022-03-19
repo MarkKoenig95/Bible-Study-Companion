@@ -45,6 +45,10 @@ export function setAppVersion(appVersion) {
   return updateValue('appVersion', appVersion);
 }
 
+export function setMemorialScheduleType(memorialScheduleType) {
+  return updateValue('memorialScheduleType', memorialScheduleType);
+}
+
 export function setWeeklyReadingResetDay(weeklyReadingResetDay) {
   return updateValue('weeklyReadingResetDay', weeklyReadingResetDay);
 }

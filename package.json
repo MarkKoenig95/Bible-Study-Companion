@@ -1,6 +1,6 @@
 {
   "name": "bible-study-companion",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -16,8 +16,8 @@
     "pod-install-update": "cd ios && pod install --repo-update",
     "start": "react-native start",
     "test": "jest",
-    "e2e-ios": "detox build -c ios.sim.release && detox test -c ios.sim.release -l warn",
-    "e2e-android": "detox build -c android.emu.release && detox test -c android.emu.release -l warn",
+    "e2e-ios": "echo \"\n\n\n Because of stupid things set your system time to March 31st, 2021 before running these tests\n\n\n\" && detox build -c ios.sim.release && detox test -c ios.sim.release -l warn",
+    "e2e-android": "echo \"\n\n\n Because of stupid things set your system time to March 31st, 2021 before running these tests\n\n\n\" && detox build -c android.emu.release && detox test -c android.emu.release -l warn",
     "lint": "eslint .",
     "update-version": "react-native-version --never-amend"
   },

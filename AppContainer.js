@@ -17,6 +17,7 @@ import {
   setShowDaily,
   setWeeklyReadingResetDay,
   incrementUpdatePages,
+  setMemorialScheduleType,
 } from './data/Store/actions';
 import {BibleInfoDB, UserInfoDB} from './data/Database/Database';
 import {log, getSettings, runSQL} from './data/Database/generalTransactions';
@@ -198,10 +199,11 @@ export default function AppContainer() {
       updateNotifications(userDB, notification);
       updateReminderDates(userDB);
       getSettings(userDB).then((settings) => {
-        let {showDaily, weeklyReadingResetDay} = settings;
+        let {showDaily, memorialScheduleType, weeklyReadingResetDay} = settings;
 
         dispatch(setShowDaily(showDaily));
         dispatch(setWeeklyReadingResetDay(weeklyReadingResetDay));
+        dispatch(setMemorialScheduleType(memorialScheduleType));
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

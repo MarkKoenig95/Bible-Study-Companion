@@ -1,6 +1,6 @@
 import {log, searchQuery, runSQL} from '../data/Database/generalTransactions';
 import {translate} from './localization/localization';
-import {SCHEDULE_TYPES, VERSE_POSITION} from './general';
+import {getWeeksBetween, SCHEDULE_TYPES, VERSE_POSITION} from './general';
 
 const prefix = 'scheduleTransactions.';
 
@@ -701,7 +701,7 @@ export function checkStartAndEndPositions(qryVerseIndex, startIndex, endIndex) {
   let maxVerse = findMaxVerse(endBookId, endChapter);
   let endPosition = endVerse === maxVerse ? end : middle;
 
-  return {startPosition: startPosition, endPosition: endPosition};
+  return {startPosition, endPosition};
 }
 
 /**
@@ -1591,6 +1591,87 @@ export function generateWeeklyReadingSchedule(weeklyReadingInfo, date) {
 }
 
 /**
+ * Given the correct information generates reading day items for input to a reading schedule
+ * @param {Date} readingScheduleStartDate
+ * @param {DBQueryResult} qryMemorialSchedules
+ * @param {number} daytimeScheduleTitleID
+ * @param {number} eveningScheduleTitleID
+ * @returns {daytimeReadings: ReadingPortion[], eveningReadings: ReadingPortion[]}
+ */
+export function generateMemorialReadingSchedule(
+  readingScheduleStartDate,
+  qryMemorialSchedules,
+  daytimeScheduleTitleID,
+  eveningScheduleTitleID,
+) {
+  let daytimeReadings = [];
+  let eveningReadings = [];
+  let index = 0;
+  let trackDate = new Date(readingScheduleStartDate);
+
+  log('Started generating memorial reading schedule');
+
+  for (let order = 0; order < 10; order++) {
+    let isLooking = true;
+    let checkNum = 0;
+
+    log('day', order, 'index', index);
+    log('daytimeReadings', daytimeReadings, 'eveningReadings', eveningReadings);
+
+    while (isLooking || checkNum < 1000) {
+      checkNum++;
+      let item = qryMemorialSchedules.rows.item(index);
+
+      if (!item) {
+        break;
+      }
+      log('item', item, 'order', order);
+      if (item.ScheduleOrder !== order) {
+        isLooking = false;
+        break;
+      }
+
+      index++;
+
+      let startIndex = item.StartVerseID - 1;
+      let endIndex = item.EndVerseID - 1;
+
+      const {startPosition, endPosition} = checkStartAndEndPositions(
+        tblVerseIndex,
+        startIndex,
+        endIndex,
+      );
+
+      log('day', order, 'dayStartIndex', startIndex, 'dayEndIndex', endIndex);
+
+      let temp = createReadingPortion(
+        tblVerseIndex,
+        startIndex,
+        startPosition,
+        endIndex,
+        endPosition,
+        trackDate,
+      );
+
+      if (item.TitleID === daytimeScheduleTitleID) {
+        daytimeReadings.push(temp);
+      } else if (item.TitleID === eveningScheduleTitleID) {
+        eveningReadings.push(temp);
+      } else {
+        console.error(
+          'The title ID for the memorial schedule is not as expected it is',
+          item.TitleID,
+        );
+      }
+    }
+
+    trackDate.setDate(trackDate.getDate() + 1);
+  }
+
+  return {daytimeReadings, eveningReadings};
+}
+
+/**
  * Creates a schedule for reading a publication such as a book or magazine breaking it up by user specified "portions" (Article, Page, Chapter, etc.)
  * @param {number} startingPortion - (Must be between 0 and 1,000,000,000,000,000) The portion to begin the schedule from
  * @param {number} maxPortion - The number of the last portion in the publication
@@ -1657,4 +1738,81 @@ export function generateCustomSchedule(
   }
 
   return readingPortions;
+}
+
+//------------------------------------------- Other Logic -------------------------------------------
+
+/**
+ * Given the neccessary information returns true or false if the weekly reading should be skipped for the week of the memorial
+ * @param {0|1|2|3|4|5|6} resetDayOfWeek
+ * @param {Date} upcomingMemorialDate
+ * @param {Date} weeklyReadingStartDate
+ * @returns {boolean}
+ */
+export function checkIfShouldSkipWeeklyReadingForMemorial(
+  resetDayOfWeek,
+  upcomingMemorialDate,
+  weeklyReadingStartDate,
+) {
+  let today = new Date();
+  let weekToSkip = new Date(upcomingMemorialDate);
+  let memorialDay = weekToSkip.getDay();
+
+  if (memorialDay === 0 || memorialDay === 6) {
+    return false;
+  }
+
+  let weeklyReadingResetOffset = resetDayOfWeek - memorialDay;
+  weekToSkip.setDate(weekToSkip.getDate() - 7 + weeklyReadingResetOffset);
+
+  if (today.getTime() < weekToSkip.getTime()) {
+    return false;
+  }
+
+  let weekAfterWeekToSkip = new Date(weekToSkip);
+  weekAfterWeekToSkip.setDate(weekAfterWeekToSkip.getDate() + 7);
+
+  if (
+    today.getTime() > weekAfterWeekToSkip.getTime() &&
+    weeklyReadingStartDate.getTime() >= upcomingMemorialDate.getTime()
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * @param {Date} memorialDate
+ * @returns {Date}
+ */
+export function getNewWeeklyReadingStartDateFromSkippedMemorialDate(
+  memorialDate,
+) {
+  //We want to set this to a monday since that's the day of the week that the weekly reading actually starts
+  let newWeeklyReadingStartDate = new Date(memorialDate);
+  let weekdayAdjustment = 8 - memorialDate.getDay();
+  newWeeklyReadingStartDate.setDate(memorialDate.getDate() + weekdayAdjustment);
+
+  return newWeeklyReadingStartDate;
+}
+
+/**
+ * @param {Date} newWeeklyReadingStartDate
+ * @param {Date} weeklyReadingStartDate
+ * @param {number} startIndex
+ * @returns {number}
+ */
+export function getWeeklyReadingIndexForMemorialWeek(
+  newWeeklyReadingStartDate,
+  weeklyReadingStartDate,
+  startIndex,
+) {
+  //We have to subtract 1 from the total since we are skipping a week. That's the whole reason why we are doing this.
+  let newIndex =
+    getWeeksBetween(weeklyReadingStartDate, newWeeklyReadingStartDate) +
+    startIndex -
+    1;
+
+  return newIndex;
 }

@@ -117,9 +117,7 @@
       "43": "序言后：{{startYear}}-{{endYear}}"
     }
   },
-  "donatePage": {
-    "title": "捐款"
-  },
+  "donatePage": {"title": "捐款"},
   "frequencies": {
     "daily": "每天",
     "weekly": "每周",
@@ -264,12 +262,27 @@
   "settingsPage": {
     "language": "语言",
     "title": "设定",
-    "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文"
+    "weeklyReadingResetDay": "要在哪一天重新本周的阅读经文",
+    "memorialReading": {
+      "title": "Memorial Reading",
+      "dayTimeEvents": "Daytime Events",
+      "eventsAfterSunset": "Events after sunset",
+      "options": {
+        "long": {
+          "title": "Long",
+          "description": "Starts on Nisan 8 and ends on Nisan 16 and includes more verses to read each day. Based on the schedule found in Apendix B12 of the New World Translation"
+        },
+        "short": {
+          "title": "Short",
+          "description": "Starts on Nisan 9 and ends on Nisan 16 and includes less verses to read each day. Based on the schedule found in the Examining the Scriptures Daily booklet"
+        }
+      }
+    }
   },
   "thisMonth": "这个月",
   "thisWeek": "这周",
   "today": "今天",
-  "updateDate": "2021-05-31T11:41:37.377Z",
+  "updateDate": "2022-02-21T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "章", "verseAbrev": "节"},
   "warning": "请注意",
   "weekdays": {
@@ -282,5 +295,9 @@
     "6": {"abrev": "六", "name": "周六"}
   },
   "advanced": "前进",
-  "old": "老的"
+  "old": "老的",
+  "whatsNew": {
+    "title": "What's New",
+    "2022_02_20": "Memorial Bible Reading\n\r Go to: {{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  }
 }

@@ -17,15 +17,10 @@ class Database {
   }
 
   async getConnection() {
-    let DB;
-    await SQLite.openDatabase(this.openArgs)
-      .then(async (db) => {
-        await upgradeDB(db, this.upgradeJSON).then((res) => {
-          console.log('Database', this.openArgs.name, 'OPENED');
-          DB = res;
-        });
-      })
-      .catch(errorCB);
+    let db = await SQLite.openDatabase(this.openArgs).catch(errorCB);
+    let DB = await upgradeDB(db, this.upgradeJSON).catch(errorCB);
+
+    console.log('Database', this.openArgs.name, 'OPENED');
 
     return DB;
   }

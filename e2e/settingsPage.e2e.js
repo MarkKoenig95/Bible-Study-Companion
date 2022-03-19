@@ -1,6 +1,6 @@
 /* eslint-env detox/detox, jest */
 import {scrollUntilVisible, setPicker, waitForMS} from './helpers/general';
-// * Note to tester, I programmed this on March 31st, 2021. As of this writing I am not sure how to set
+// * NOTE: I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the time being
 // * this test will be based on that date.
 // TODO: Add jest.useFakeTimers('modern') or something to make this work without dumb workarouds to deal with stupid Apple

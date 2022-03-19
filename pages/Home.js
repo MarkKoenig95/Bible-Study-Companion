@@ -11,6 +11,7 @@ import {
 import {
   formatScheduleTableName,
   createWeeklyReadingSchedule,
+  handleMemorialReadingSchedule,
 } from '../data/Database/scheduleTransactions';
 import {
   useUpdate,
@@ -139,14 +140,14 @@ export async function populateScheduleButtons(
     const scheduleName = schedule.ScheduleName;
     const creationInfo = schedule.CreationInfo;
     let tableName;
-    if (creationInfo !== WEEKLY_READING_TABLE_NAME && creationInfo) {
-      tableName = formatScheduleTableName(id);
-    } else {
-      if (!shouldShowDaily) {
+
+    if (creationInfo.slice(0, 3) === 'tbl') {
+      if (creationInfo === WEEKLY_READING_TABLE_NAME && !shouldShowDaily) {
         continue;
-      } else {
-        tableName = WEEKLY_READING_TABLE_NAME;
       }
+      tableName = creationInfo;
+    } else {
+      tableName = formatScheduleTableName(id);
     }
 
     let completionDate;
@@ -215,13 +216,23 @@ export async function populateWeeklyReading(
   let title = translate('reminders.weeklyReading.title');
   let listItems = [];
 
+  //TODO: Make pages update after creation of these schedules if we do create them. .then(whatever)
   await createWeeklyReadingSchedule(userDB, bibleDB, weeklyReadingReset);
+  let table;
 
-  let table = await runSQL(
-    userDB,
-    `SELECT * FROM ${tableName}
+  try {
+    table = await runSQL(
+      userDB,
+      `SELECT * FROM ${tableName}
        ORDER BY ReadingDayID ASC;`,
-  );
+    );
+  } catch (e) {
+    console.warn(e);
+  }
+
+  if (!table) {
+    return [];
+  }
 
   let innerListItems = [];
   if (table.rows.length > 0) {
@@ -277,6 +288,8 @@ export async function populateHomeList(
   let thisMonthTitle = translate('thisMonth');
   let otherTitle = translate('other');
 
+  await handleMemorialReadingSchedule(userDB, bibleDB);
+
   // -------------------------- Populate daily reminders --------------------------
   await populateReminders(
     userDB,
@@ -322,10 +335,12 @@ export async function populateHomeList(
     weeklyReadingReset,
     updatePages,
   ).then((results) => {
-    results.map((res) => {
-      log('weekly reading is', res);
-      thisWeekListItems.push(res);
-    });
+    if (results.length > 0) {
+      results.map((res) => {
+        log('weekly reading is', res);
+        thisWeekListItems.push(res);
+      });
+    }
   });
 
   await populateReminders(
