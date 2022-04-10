@@ -1,0 +1,309 @@
+{
+  "ordinal": {
+    "0": ".",
+    "1": ".",
+    "2": ".",
+    "3": ".",
+    "4": ".",
+    "5": ".",
+    "6": ".",
+    "7": ".",
+    "8": ".",
+    "9": ".",
+    "special": { "count": 0 },
+    "after": true
+  },
+  "appName": "Bibliatanulmányozási segéd",
+  "actions": { "cancel": "Mégsem", "done": "Kész", "ok": "Rendben" },
+  "advanced": "Haladó",
+  "bibleBook": "Bibliai könyv",
+  "bibleBooks": {
+    "1": { "name": "1Mózes", "whereWritten": "puszta" },
+    "2": { "name": "2Mózes", "whereWritten": "puszta" },
+    "3": { "name": "3Mózes", "whereWritten": "puszta" },
+    "4": { "name": "4Mózes", "whereWritten": "puszta és Moáb síksága" },
+    "5": { "name": "5Mózes", "whereWritten": "Moáb síksága" },
+    "6": { "name": "Józsué", "whereWritten": "Kánaán" },
+    "7": { "name": "Bírák", "whereWritten": "Izrael" },
+    "8": { "name": "Ruth ", "whereWritten": "Izrael" },
+    "9": { "name": "1Sámuel", "whereWritten": "Izrael" },
+    "10": { "name": "2Sámuel", "whereWritten": "Izrael" },
+    "11": { "name": "1Királyok", "whereWritten": "Júda" },
+    "12": { "name": "2Királyok", "whereWritten": "Júda és Egyiptom" },
+    "13": { "name": "1Krónikák", "whereWritten": "Jeruzsálem (?)" },
+    "14": { "name": "2Krónikák", "whereWritten": "Jeruzsálem (?)" },
+    "15": { "name": "Ezsdrás", "whereWritten": "Jeruzsálem" },
+    "16": { "name": "Nehémiás", "whereWritten": "Jeruzsálem" },
+    "17": { "name": "Eszter", "whereWritten": "Susán, Elám" },
+    "18": { "name": "Jób", "whereWritten": "puszta" },
+    "19": { "name": "Zsoltárok", "whereWritten": " " },
+    "20": { "name": "Példabeszédek", "whereWritten": "Jeruzsálem" },
+    "21": { "name": "Prédikátor", "whereWritten": "Jeruzsálem" },
+    "22": { "name": "Énekek éneke", "whereWritten": "Jeruzsálem" },
+    "23": { "name": "Ézsaiás", "whereWritten": "Jeruzsálem" },
+    "24": { "name": "Jeremiás", "whereWritten": "Júda, Egyiptom" },
+    "25": { "name": "Siralmak", "whereWritten": "Jeruzsálem közelében" },
+    "26": { "name": "Ezékiel", "whereWritten": "Babilon" },
+    "27": { "name": "Dániel", "whereWritten": "Babilon" },
+    "28": { "name": "Hóseás", "whereWritten": "Szamária területe" },
+    "29": { "name": "Jóel", "whereWritten": "Júda" },
+    "30": { "name": "Ámós", "whereWritten": "Júda" },
+    "31": { "name": "Abdiás", "whereWritten": " " },
+    "32": { "name": "Jónás", "whereWritten": " " },
+    "33": { "name": "Mikeás", "whereWritten": "Júda" },
+    "34": { "name": "Náhum", "whereWritten": "Júda" },
+    "35": { "name": "Habakuk", "whereWritten": "Júda" },
+    "36": { "name": "Sofóniás", "whereWritten": "Júda" },
+    "37": { "name": "Aggeus", "whereWritten": "újjáépített Jeruzsálem" },
+    "38": { "name": "Zakariás", "whereWritten": "újjáépített Jeruzsálem" },
+    "39": { "name": "Malakiás", "whereWritten": "újjáépített Jeruzsálem" },
+    "40": { "name": "Máté", "whereWritten": "Izrael" },
+    "41": { "name": "Márk", "whereWritten": "Róma" },
+    "42": { "name": "Lukács", "whereWritten": "Cezárea" },
+    "43": { "name": "János", "whereWritten": "Efézus vagy környéke" },
+    "44": { "name": "Cselekedetek", "whereWritten": "Róma" },
+    "45": { "name": "Róma", "whereWritten": "Korintusz" },
+    "46": { "name": "1Korintusz", "whereWritten": "Efézus" },
+    "47": { "name": "2Korintusz", "whereWritten": "Makedónia" },
+    "48": {
+      "name": "Galácia",
+      "whereWritten": "Korintusz vagy a szíriai Antiókia"
+    },
+    "49": { "name": "Efézus", "whereWritten": "Róma" },
+    "50": { "name": "Filippi", "whereWritten": "Róma" },
+    "51": { "name": "Kolosszé", "whereWritten": "Róma" },
+    "52": { "name": "1Tesszalonika", "whereWritten": "Korintusz" },
+    "53": { "name": "2Tesszalonika", "whereWritten": "Korintusz" },
+    "54": { "name": "1Timóteusz", "whereWritten": "Makedónia" },
+    "55": { "name": "2Timóteusz", "whereWritten": "Róma" },
+    "56": { "name": "Titusz", "whereWritten": "Makedónia (?)" },
+    "57": { "name": "Filemon", "whereWritten": "Róma" },
+    "58": { "name": "Héberek", "whereWritten": "Róma" },
+    "59": { "name": "Jakab", "whereWritten": "Jeruzsálem" },
+    "60": { "name": "1Péter", "whereWritten": "Babilon" },
+    "61": { "name": "2Péter", "whereWritten": "Babilon (?)" },
+    "62": { "name": "1János", "whereWritten": "Efézus vagy környéke" },
+    "63": { "name": "2János", "whereWritten": "Efézus vagy környéke" },
+    "64": { "name": "3János", "whereWritten": "Efézus vagy környéke" },
+    "65": { "name": "Júdás", "whereWritten": "Izrael (?)" },
+    "66": { "name": "Jelenések", "whereWritten": "Pátmosz" }
+  },
+  "buttonsPopup": { "title": "Olvasandó rész" },
+  "createSchedulePopup": {
+    "createSchedule": "Ütemterv létrehozása",
+    "readingPortionDescPhld": "Olvasandó rész leírása",
+    "readingPortionDesc": {
+      "article": "Cikk",
+      "chapter": "Fejezet",
+      "page": "Oldal",
+      "paragraph": "Bekezdés",
+      "title": "Olvasandó rész leírása"
+    },
+    "numberOfPortions": "A(z) {{portionDesc}}  -ak/-ek száma ",
+    "numberOfPortionsPhld": "Az összes {{portionDesc}} száma",
+    "portionsPerDay": "{{portionDesc}}-ak/-ek száma naponta",
+    "portionsPerDayPhld": "Hány {{portionDesc}}-(e)t szeretnél elolvasni naponta?",
+    "startingPortion": "Első {{portionDesc}}",
+    "startingPortionPhld": "A(z) {{portionDesc}}  amivel kezdeni szeretnél",
+    "scheduleName": "Ütemterv neve",
+    "scheduleDuration": "Ütemterv hossza",
+    "scheduleDurPhld": "Hány év alatt szeretnéd befejezni az olvasást?",
+    "shouldTrack": "Dátumok megjelenítése",
+    "startDate": "Kezdő dátum",
+    "startingVerse": "Kezdő vers",
+    "unfinished": "Kérjük, minden kötelező mezőt töltsön ki"
+  },
+  "date": {
+    "approxDesc": {
+      "about": "kb.",
+      "after": "után",
+      "before": "előtt",
+      "approxDate": "{{about}}{{date}}   {{before}}{{after}}  "
+    },
+    "bce": "i.e.",
+    "ce": "i.sz.",
+    "ancientDate": " {{bceOrCe}}     {{year}}",
+    "dateSpan": "{{startDate}}  - {{endDate}}",
+    "specialCases": {
+      "1": " \"Kezdetben\"-től {{endYear}} -ig",
+      "3": "  1 hónap ({{endYear}})",
+      "5": " 2 hónap ({{endYear}})",
+      "8": "A bírák uralmából 11 év {{startYear}} to {{endYear}}",
+      "13": "Az 1Krónikák 9:44 utáni rész: kb. {{startYear}} -{{endYear}}",
+      "18": "Több mint 140 év {{startYear}} és  {{endYear}}  között",
+      "37": "112 nap ({{endYear}})",
+      "43": "A  bevezető utáni rész: {{startYear}} - {{endYear}}"
+    }
+  },
+  "homePage": {
+    "emptyList": "Mára nincs több olvasnivaló",
+    "title": "Kezdőképernyő"
+  },
+  "links": {
+    "languageTag": "hu",
+    "hasStudyBible": true,
+    "finderLocale": "H",
+    "www": {
+      "bible": "biblia",
+      "books": "books",
+      "how-to-read-the-bible": "hogyan-olvasd-a-bibliat",
+      "introduction": "ismerd-meg-isten-szavat",
+      "library": "konyvtar"
+    },
+    "wol": { "lp-e": "lp-h", "r1": "r17" }
+  },
+  "donatePage": { "title": "Támogatás" },
+  "language": "Angol",
+  "missingTranslation": "Fordítás nem elérhető",
+  "notification": {
+    "baseTitle": "Napi bibliaolvasás",
+    "bigText": "Nézd meg mit kell még ma elolvasnod!",
+    "message": "Kezdjük!"
+  },
+  "notificationsPage": {
+    "title": "Értesítések",
+    "notificationName": "Értesítés címe",
+    "notificationPopupTitle": "Új értesítés készítése"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": "Biztosan törölni szeretnéd a \"{{notificationName}}\" értesítést?"
+  },
+  "morePage": {
+    "about": "Rólunk",
+    "contact": "Kapcsolat",
+    "title": "Több",
+    "version": "Verzió"
+  },
+  "old": "Régi",
+  "openJWLibrary": "JW Library megnyitása",
+  "prompts": {
+    "setNotification": "Értesítés ebben az időpontban:",
+    "nameTaken": "Ez az elnevezés már foglalt",
+    "markCompleted": "Készre jelölés",
+    "markPreviousRead": "A kiválasztott rész olvasottnak lett jelölve. Szeretnéd olvasottnak jelölni az összes korábbit is?",
+    "scheduleRecreatedMessage": "Az ütemezésedet újra elkészítettük. Kérjük, hasonlítsd össze az új ütemezést az eredetivel (régi), hogy megbizonyosodhass arról, hogy semmi sem veszett el. Utána töröld a régi ütemezést.",
+    "scheduleRecreatedTitle": "Újraütemezve"
+  },
+  "readingRemindersPopup": {
+    "readingReminders": "Olvasási emlékeztetők",
+    "heading0": "Teremts megfelelő körülményeket!",
+    "body0-1": "Próbálj csendes helyet találni.",
+    "body0-2": "(Esetleg állítsd a telefont néma üzemmódba)",
+    "heading1": "Imádkozz, mielőtt olvasol!",
+    "body1-1": "Kérd Jehovát, hogy segítsen ráhangolódnod az olvasásra és adjon a szent szelleméből, hogy megértsd és alkalmazni tudd a tanultakat.",
+    "heading2": "Elmélkedj az olvasottakon",
+    "body2-1": "Ne siess, úgy olvasd, hogy megértsd.",
+    "subheading2-1": "Megkérdezheted ezeket:",
+    "body2-2": "Mit tanít ez a rész Jehováról?",
+    "body2-3": "Hogyan kapcsolódik ez a rész a Biblia fő mondanivalójához?",
+    "body2-4": "Hogyan tudom alkalmazni, amit olvastam?",
+    "body2-5": "Hogyan tudok másoknak segíteni az olvasottakkal?",
+    "subheading2-2": "Képzeld bele magad a történetbe:",
+    "body2-6": "Mit látsz és hallasz, és milyen szagokat érzel?",
+    "body2-7": "Milyen érzéseik lehetnek a történet szereplőinek?",
+    "subheading2-3": "Végezz kutatást, hogy:",
+    "body2-8": "Megértsd az elolvasott rész összefüggéseit.",
+    "body2-9": "Tisztán megértsd a bonyolult fogalmakat",
+    "heading3": "Alkalmazd a tanultakat",
+    "body3-1": "Ha megértjük, hogy egy tevékenységnek milyen gyakorlati haszna van, még inkább a javunkra tudjuk fordítani.",
+    "body3-2": "Alkalmaznunk kell az életünkben a tanultakat, hogy megértsük, hogy hogyan tudunk vele segíteni másoknak.",
+    "subheading3-1": "Emlékeztetők forrásai:",
+    "body3-3": "Kérjük, nézd meg ezeket a hivatkozásokat, hogy jobban megértsd a megvizsgált gondolatokat"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "Információk",
+    "readingPortion": "Elolvasandó",
+    "timeCovered": "Időtartam",
+    "whereWritten": "Az írás helye",
+    "whenWritten": "Az írás befejezése",
+    "writers": "Író(k)"
+  },
+  "readingSchedules": "Olvasási ütemezés",
+  "reminders": {
+    "completeReminderMessage": "Biztosan késznek szeretnéd jelölni ezt az értesítőt: \"{{reminderName}}\" ?",
+    "dailyReading": "Napi olvasás",
+    "dailyText": "Napiszöveg",
+    "midweekMeetingStudy": "Hétközbeni összejövetel",
+    "reminder": "Emlékeztető",
+    "weekendMeetingStudy": "Hétvégi összejövetel",
+    "weeklyReading": {
+      "title": "Heti olvasás",
+      "showDaily": "Mutasd a heti olvasás napi adagját"
+    }
+  },
+  "frequencies": {
+    "daily": "Napi",
+    "weekly": "Heti",
+    "monthly": "Havi",
+    "never": "Soha"
+  },
+  "remindersPage": {
+    "completed": "Kész {{desc}}",
+    "deleteReminderMessage": "Biztosan törölni szeretnéd ezt az értesítőt: \"{{reminderName}}\" ?",
+    "every": "Minden: ",
+    "name": "Név: ",
+    "reminderPopupTitle": "Új emlékeztető készítése",
+    "repeats": "Ismétlődés:",
+    "title": "Emlékezetők"
+  },
+  "schedules": "Ütemezés",
+  "schedulePage": {
+    "deleteScheduleMessage": "Biztosan törölni szeretnéd ezt az ütemezést: \"{{scheduleName}}\" ?",
+    "hideCompleted": "Készek elrejtése",
+    "recreateScheduleWarning": "Ehhez újra létre kell hozni ezt az ütemtervet. Biztosan létrehozza újra?"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "A kezdő vers módosítva lett \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\"-ról \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\"-re, mert ez a vers nem létezik."
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "Ütemezés típusa",
+    "sequential": "Elejétől a végéig",
+    "sequentialDescription": "Olvasd a Bibliát 1Mózestől a Jelenésekig",
+    "chronological": "Időrendben",
+    "chronologicalDescription": "Olvasd a Bibliát abban a sorrendben, ahogy az események megtörténtek. (KÍSÉRLETI: Ha eltérést talál, kérem jelezze)",
+    "thematic": "Téma szerint",
+    "thematicDescription": "Minden nap olvass más részt a Bibliából hetente: 1. nap – Törvény, 2. nap – Történelem, 3.  nap – Zsoltárok, 4. nap – Költészet, 5. nap – Próféciák, 6. nap – Evangéliumok, 7. nap – Levelek",
+    "custom": "Egyedi",
+    "customDescription": "Egyedi ütemezés készítése egy kiadványhoz"
+  },
+  "settingsPage": {
+    "title": "Beállítások",
+    "weeklyReadingResetDay": "Heti bibliaolvasás visszaállításának napja:",
+    "language": "Nyelv",
+    "memorialReading": {
+      "title": "Memorial Reading",
+      "dayTimeEvents": "Daytime Events",
+      "eventsAfterSunset": "Events after sunset",
+      "options": {
+        "long": {
+          "title": "Long",
+          "description": "Starts on Nisan 8 and ends on Nisan 16 and includes more verses to read each day. Based on the schedule found in Apendix B12 of the New World Translation"
+        },
+        "short": {
+          "title": "Short",
+          "description": "Starts on Nisan 9 and ends on Nisan 16 and includes less verses to read each day. Based on the schedule found in the Examining the Scriptures Daily booklet"
+        }
+      }
+    }
+  },
+  "today": "Ma",
+  "thisWeek": "Ez a hét",
+  "thisMonth": "Ez a hónap",
+  "other": "Egyéb",
+  "versePicker": { "chapterAbrev": "fej.", "verseAbrev": "v." },
+  "warning": "Figyelmeztetés",
+  "weekdays": {
+    "0": { "abrev": "Va", "name": "Vasárnap" },
+    "1": { "abrev": "Hé", "name": "Hétfő" },
+    "2": { "abrev": "Ke", "name": "Kedd" },
+    "3": { "abrev": "Sze", "name": "Szerda" },
+    "4": { "abrev": "Cs", "name": "Csütörtök" },
+    "5": { "abrev": "Pé", "name": "Péntek" },
+    "6": { "abrev": "Szo", "name": "Szombat" }
+  },
+  "whatsNew": {
+    "title": "What's New",
+    "2022_02_20": "Memorial Bible Reading\n\r Go to: {{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  },
+  "updateDate": "2022-02-20T11:41:37.377Z"
+}

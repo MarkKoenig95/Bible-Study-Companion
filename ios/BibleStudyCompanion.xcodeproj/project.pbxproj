@@ -76,6 +76,8 @@
 		2D02E4901E0B4A5D006451C7 /* BibleStudyCompanion-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BibleStudyCompanion-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		42F7B9BB1DAC34FBDE260C9F /* Pods-BibleStudyCompanion-BibleStudyCompanionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-BibleStudyCompanionTests.release.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-BibleStudyCompanionTests/Pods-BibleStudyCompanion-BibleStudyCompanionTests.release.xcconfig"; sourceTree = "<group>"; };
 		4BB8B6E583583B6A5094533F /* Pods-BibleStudyCompanion-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-tvOSTests/Pods-BibleStudyCompanion-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		50380F5228034B7400CC5395 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		50380F5328034B7400CC5395 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5089F1CA27CB210E009378AC /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		5089F1CB27CB210E009378AC /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		5089F1CC27CB219F009378AC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 				sq,
 				"es-419",
 				es,
+				hu,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -725,6 +728,7 @@
 				2549099426085B9B00C6D598 /* sq */,
 				5089F1CA27CB210E009378AC /* es-419 */,
 				5089F1CC27CB219F009378AC /* es */,
+				50380F5228034B7400CC5395 /* hu */,
 			);
 			name = LaunchScreen.xib;
 			path = BibleStudyCompanion;
@@ -739,6 +743,7 @@
 				2549099526085B9B00C6D598 /* sq */,
 				5089F1CB27CB210E009378AC /* es-419 */,
 				5089F1CD27CB21A0009378AC /* es */,
+				50380F5328034B7400CC5395 /* hu */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

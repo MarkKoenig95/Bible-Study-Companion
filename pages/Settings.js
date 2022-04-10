@@ -206,7 +206,7 @@ export default function Settings(props) {
 
   useEffect(() => {
     navigation.setOptions({
-      title: translate('remindersPage.title'),
+      title: translate('settingsPage.title'),
     });
   });
 
