@@ -15,6 +15,10 @@ export async function loadData(bibleDB: Database, tableName = 'tblBibleBooks') {
   let results = await runSQL(bibleDB, `SELECT * FROM ${tableName};`);
   let items = [];
 
+  if (!results) {
+    return [];
+  }
+
   for (let i = 0; i < results.rows.length; ++i) {
     let item = results.rows.item(i);
 
@@ -55,7 +59,9 @@ export async function queryMaxInfo(bibleDB: Database, bookNumber: number) {
     [bookNumber, maxChapter],
   )
     .then((res) => {
-      maxVerse = res.rows.item(0).MaxVerse;
+      if (res) {
+        maxVerse = res.rows.item(0).MaxVerse;
+      }
     })
     .catch(errorCB);
 
@@ -254,12 +260,12 @@ export function useReadingInfoPopup() {
     message: '',
     cb: () => {},
     readingDayID: 0,
-    startBookNumber: 0,
-    startChapter: 0,
-    startVerse: 0,
-    endBookNumber: 0,
-    endChapter: 0,
-    endVerse: 0,
+    startBookNumber: 1,
+    startChapter: 1,
+    startVerse: 1,
+    endBookNumber: 1,
+    endChapter: 1,
+    endVerse: 1,
   };
 
   const [readingPopup, setReadingPopup] = useState(baseReadingPopup);

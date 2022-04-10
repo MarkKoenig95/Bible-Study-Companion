@@ -13,7 +13,7 @@ import {BibleBookInfo, PopupProps, InfoSection} from './types';
 const prefix = 'readingInfoPopup.';
 
 const blankInfo: BibleBookInfo = {
-  id: 0,
+  id: 1,
   name: '',
   whereWritten: '',
   whenWritten: '',
