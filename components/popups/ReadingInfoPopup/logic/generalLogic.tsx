@@ -69,9 +69,9 @@ export async function queryMaxInfo(bibleDB: Database, bookNumber: number) {
 }
 
 export function formatDate(
-  start: Boolean,
+  start: String,
   startApproxDesc: String,
-  end: Boolean,
+  end: String,
   endApproxDesc: String,
   bibleBookID: number,
 ) {
@@ -93,6 +93,8 @@ export function formatDate(
       startYear: startYear,
       endYear: endYear,
     });
+
+    return date;
   }
 
   if (end && end !== start) {
