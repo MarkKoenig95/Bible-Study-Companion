@@ -13,7 +13,6 @@ import LoadingPopup from '../../components/popups/LoadingPopup';
 import {ReadingItem} from '../../data/Database/types';
 import useSchedulePage from './logic';
 import {SchedulePageProps} from './types';
-import {SCHEDULE_TYPES} from '../../logic/general';
 
 let flatListRef: any;
 
@@ -30,12 +29,13 @@ function SchedulePage(props: SchedulePageProps) {
     closeMessagePopup,
     completedHidden,
     firstUnfinished,
+    getItemLayout,
+    initialScrollIndex,
     isLoading,
     listItems,
     messagePopup,
     openRemindersPopup,
     pageTitle,
-    scheduleType,
     settingsPopupIsDisplayed,
     shouldTrack,
     ScheduleListPopups,
@@ -89,29 +89,8 @@ function SchedulePage(props: SchedulePageProps) {
           ref={(ref) => {
             flatListRef = ref;
           }}
-          getItemLayout={(data, index) => {
-            let isChrono = scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL;
-            let length = 85;
-
-            if (isChrono) {
-              if (completedHidden) {
-                return {
-                  length: 0,
-                  offset: 0,
-                  index,
-                };
-              }
-
-              let avgReadingsPerDay = 1.5;
-              length = Math.round(length * avgReadingsPerDay);
-            }
-
-            return {
-              length: length,
-              offset: length * index,
-              index,
-            };
-          }}
+          initialScrollIndex={initialScrollIndex.current}
+          getItemLayout={getItemLayout}
           renderItem={({item, index}: {item: ReadingItem[]; index: number}) => {
             let firstUnfinishedID = firstUnfinished
               ? firstUnfinished.ReadingDayID

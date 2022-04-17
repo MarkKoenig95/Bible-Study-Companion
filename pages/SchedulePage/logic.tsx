@@ -1,4 +1,11 @@
-import React, {useContext, useState, useEffect, useCallback} from 'react';
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react';
 import {Alert, View} from 'react-native';
 import {translate} from '../../logic/localization/localization';
 
@@ -27,7 +34,11 @@ import {
 } from '../../logic/general';
 import useScheduleButtonsList from '../../components/ScheduleButtonsList/useScheduleButtonsList';
 
-import {DBReadingItem, ReadingItem} from '../../data/Database/types';
+import {
+  BibleReadingItem,
+  DBReadingItem,
+  ReadingItem,
+} from '../../data/Database/types';
 import {SchedulePageProps} from './types';
 
 const pageTitle = 'schedulePage';
@@ -35,6 +46,128 @@ const baseItem: DBReadingItem | undefined = undefined;
 const baseListItems: ReadingItem[][] = [];
 const baseScheduleType: ScheduleType | undefined = undefined;
 const baseBooleanState: boolean | undefined = undefined;
+
+function useItemLayout(
+  firstUnfinished: DBReadingItem | undefined,
+  completedHidden: boolean,
+  scheduleType: ScheduleType | undefined,
+  initialScrollIndex: MutableRefObject<number>,
+) {
+  const baseReadingInfoRef = {
+    currentOffset: 0,
+    prevEndBibleBook: 0,
+  };
+
+  const layoutData = useRef([{length: 0, offset: 0, index: 0}]);
+
+  const getLayoutData = (data: BibleReadingItem[][]) => {
+    const length = 77.33;
+
+    let readingInfo = {...baseReadingInfoRef};
+    let layouts = data.map((items: BibleReadingItem[], idx) => {
+      let {currentOffset, prevEndBibleBook} = readingInfo;
+      let curEndBibleBook = items[0].endBookNumber;
+      currentOffset += length;
+      let currentLength = length;
+
+      if (
+        firstUnfinished &&
+        items[0].readingDayID === firstUnfinished.ReadingDayID
+      ) {
+        initialScrollIndex.current = idx;
+      }
+
+      if (items.length === 1) {
+        readingInfo = {
+          currentOffset,
+          prevEndBibleBook: curEndBibleBook,
+        };
+
+        let result = {
+          length: length,
+          offset: currentOffset,
+          index: idx,
+        };
+
+        return result;
+      }
+
+      for (let i = 1; i < items.length; i++) {
+        const item = items[i];
+
+        if (
+          firstUnfinished &&
+          item.readingDayID === firstUnfinished.ReadingDayID
+        ) {
+          initialScrollIndex.current = idx;
+        }
+
+        let curStartBibleBook = item.startBookNumber;
+        curEndBibleBook = item.endBookNumber;
+
+        if (curStartBibleBook === prevEndBibleBook) {
+          readingInfo.prevEndBibleBook = curEndBibleBook;
+          continue;
+        }
+
+        currentOffset += 20.33;
+        currentLength += 20.33;
+
+        readingInfo.prevEndBibleBook = curEndBibleBook;
+      }
+
+      readingInfo = {
+        currentOffset: currentOffset,
+        prevEndBibleBook: curEndBibleBook,
+      };
+
+      let result = {
+        length: currentLength,
+        offset: currentOffset,
+        index: idx,
+      };
+
+      return result;
+    });
+    return layouts;
+  };
+
+  const getItemLayout = (
+    data: ReadingItem[][] | null | undefined,
+    index: number,
+  ) => {
+    let length = 77.33;
+    let isChrono = scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL;
+
+    if (completedHidden) {
+      initialScrollIndex.current = 0;
+    }
+
+    if (!isChrono) {
+      return {
+        length: length,
+        offset: length * index,
+        index,
+      };
+    }
+
+    const bibleReadingItemData = data as BibleReadingItem[][];
+
+    if (index === 0 && layoutData.current.length < 2) {
+      if (data) {
+        layoutData.current = getLayoutData(bibleReadingItemData);
+      }
+    }
+
+    if (layoutData.current[index]) {
+      return layoutData.current[index];
+    } else {
+      return {index, length: 0, offset: 0};
+    }
+  };
+
+  return getItemLayout;
+}
 
 export default function useSchedulePage(
   props: SchedulePageProps,
@@ -56,6 +189,15 @@ export default function useSchedulePage(
   const [startDate, setStartDate] = useState(new Date());
   const [isLoading, setLoadingPopup] = useState(false);
   const [firstUnfinished, setFirstUnfinished] = useState(baseItem);
+
+  const initialScrollIndex = useRef(0);
+
+  initialScrollIndex.current =
+    !completedHidden &&
+    scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL &&
+    firstUnfinished
+      ? firstUnfinished.ReadingDayID
+      : 0;
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
   const [settingsPopupIsDisplayed, toggleSettingsPopupIsDisplayed] =
@@ -131,6 +273,13 @@ export default function useSchedulePage(
     [afterUpdate, bibleDB, navigation, openMessagePopup, scheduleName, userDB],
   );
 
+  const getItemLayout = useItemLayout(
+    firstUnfinished,
+    completedHidden,
+    scheduleType,
+    initialScrollIndex,
+  );
+
   //Set delete and settings buttons in nav bar with appropriate onPress attributes
   useEffect(() => {
     navigation.setOptions({
@@ -186,7 +335,10 @@ export default function useSchedulePage(
       userDB,
       `SELECT * FROM ${tableName} WHERE IsFinished=0 LIMIT 1;`,
     ).then((res) => {
-      setFirstUnfinished(res.rows.item(0));
+      if (res) {
+        let result = res.rows.item(0) as DBReadingItem;
+        setFirstUnfinished(result);
+      }
     });
   }, [tableName, userDB, updatePages]);
 
@@ -238,15 +390,9 @@ export default function useSchedulePage(
       !completedHidden
     ) {
       setTimeout(() => {
-        let ID = firstUnfinished.ReadingDayID - 1;
-        let index =
-          scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL
-            ? ID
-            : Math.floor(ID / 3);
-
         flatListRef.scrollToIndex({
           animated: false,
-          index: index,
+          index: initialScrollIndex.current,
           viewOffset: 0,
           viewPosition: 0.2,
         });
@@ -261,6 +407,8 @@ export default function useSchedulePage(
     _handleStartDateChange,
     closeMessagePopup,
     completedHidden,
+    getItemLayout,
+    initialScrollIndex,
     isLoading,
     firstUnfinished,
     listItems,

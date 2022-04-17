@@ -99,7 +99,17 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
       testID={testID}
       style={[style.columnContainer, style, {display: display}]}
       onPress={_handlePress}
-      onLongPress={_handleLongPress}>
+      onLongPress={_handleLongPress}
+      // NOTE: Use this for sizing (For instance with the FlatList component
+      // onLayout={(event: {
+      //   nativeEvent: {
+      //     layout: {x: number; y: number; width: number; height: number};
+      //   };
+      // }) => {
+      //   let {x, y, width, height} = event.nativeEvent.layout;
+      //   console.log('layout', x, y, width, height);
+      // }}
+    >
       <View style={style.rowContainer}>
         <CheckBox
           testID={testID + '.checkBox'}

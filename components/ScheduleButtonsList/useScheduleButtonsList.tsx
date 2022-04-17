@@ -11,7 +11,11 @@ import {
   setOneScheduleButton,
 } from './logic';
 
-import {Database} from '../../data/Database/types';
+import {
+  BibleReadingItem,
+  Database,
+  ReadingItem,
+} from '../../data/Database/types';
 
 export default function useScheduleButtonsList(
   userDB: Database,
@@ -73,7 +77,11 @@ export default function useScheduleButtonsList(
   );
 
   const setScheduleButtons = useCallback(
-    (items, index, firstUnfinishedID: number | undefined = Infinity) => {
+    (
+      items: ReadingItem[] | BibleReadingItem[],
+      index: number,
+      firstUnfinishedID: number | undefined = Infinity,
+    ) => {
       let commonArguments = {
         closeReadingPopup,
         completedHidden,
@@ -93,11 +101,13 @@ export default function useScheduleButtonsList(
         });
       }
 
+      const bibleItems = items as BibleReadingItem[];
+
       return setMultipleScheduleButtons({
         ...commonArguments,
         buttonsPopup,
         index,
-        items,
+        items: bibleItems,
         markButtonInPopupComplete,
         openButtonsPopup,
         updateButtonReadings,
