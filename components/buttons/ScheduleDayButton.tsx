@@ -1,4 +1,11 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {StyleSheet, TextStyle, View} from 'react-native';
 
 import CheckBox from './CheckBox';
@@ -21,6 +28,8 @@ interface ScheduleDayButtonProps {
   textStyle?: TextStyle;
   title: string;
   update: number;
+  readingPortionWidth: number;
+  setReadingPortionWidth: Dispatch<SetStateAction<number>>;
 }
 
 const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
@@ -37,6 +46,8 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
     textStyle,
     title,
     update,
+    readingPortionWidth,
+    setReadingPortionWidth,
   } = props;
 
   const [isDatePassed, setIsDatePassed] = useState(false);
@@ -99,57 +110,60 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
       testID={testID}
       style={[style.columnContainer, style, {display: display}]}
       onPress={_handlePress}
-      onLongPress={_handleLongPress}
       // NOTE: Use this for sizing (For instance with the FlatList component
-      // onLayout={(event: {
-      //   nativeEvent: {
-      //     layout: {x: number; y: number; width: number; height: number};
-      //   };
-      // }) => {
-      //   let {x, y, width, height} = event.nativeEvent.layout;
-      //   console.log('layout', x, y, width, height);
-      // }}
-    >
-      <View style={style.rowContainer}>
-        <CheckBox
-          testID={testID + '.checkBox'}
-          containerStyle={style.checkBox}
-          checked={isFinishedState}
-          onPress={_handleLongPress}
-          checkedColor={colors.lightGray}
-          uncheckedColor={colors.lightGray}
-        />
-        {hasTitle && (
-          <Text style={[styles.buttonText, textStyle, style.title]}>
-            {title}
+      onLayout={(event: {
+        nativeEvent: {
+          layout: {x: number; y: number; width: number; height: number};
+        };
+      }) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        let {x, y, width, height} = event.nativeEvent.layout;
+        if (
+          !readingPortionWidth &&
+          typeof setReadingPortionWidth === 'function'
+        ) {
+          setReadingPortionWidth(width - 90);
+        }
+      }}
+      onLongPress={_handleLongPress}>
+      <View style={[style.rowContainer, {width: '100%'}]}>
+        <View style={[style.columnContainer, {alignItems: 'flex-start'}]}>
+          {hasTitle && <Text style={[textStyle, style.title]}>{title}</Text>}
+          <Text
+            testID={testID + '.readingPortion'}
+            style={[
+              style.readingPortion,
+              textStyle,
+              {
+                color: !isFinishedState ? colors.darkGray : colors.lightGray,
+                textDecorationLine: !isFinishedState ? 'none' : 'line-through',
+                width: readingPortionWidth || 'auto',
+              },
+            ]}>
+            {readingPortion}
           </Text>
-        )}
-        <Text
-          testID={testID + '.completionDate'}
-          style={[
-            styles.buttonText,
-            textStyle,
-            style.date,
-            {
-              color: color,
-            },
-          ]}>
-          {doesTrack ? compDate : ''}
-        </Text>
+        </View>
+        <View style={[style.columnContainer, {alignItems: 'flex-end'}]}>
+          <Text
+            testID={testID + '.completionDate'}
+            style={[
+              styles.buttonText,
+              textStyle,
+              {
+                color: color,
+              },
+            ]}>
+            {doesTrack ? compDate : ' '}
+          </Text>
+          <CheckBox
+            testID={testID + '.checkBox'}
+            checked={isFinishedState}
+            onPress={_handleLongPress}
+            checkedColor={colors.lightGray}
+            uncheckedColor={colors.lightGray}
+          />
+        </View>
       </View>
-      <Text
-        testID={testID + '.readingPortion'}
-        style={[
-          styles.buttonText,
-          style.readingPortion,
-          textStyle,
-          {
-            color: !isFinishedState ? colors.darkGray : colors.lightGray,
-            textDecorationLine: !isFinishedState ? 'none' : 'line-through',
-          },
-        ]}>
-        {readingPortion}
-      </Text>
     </CustomButton>
   );
 });
@@ -157,30 +171,22 @@ const ScheduleDayButton = React.memo((props: ScheduleDayButtonProps) => {
 export default ScheduleDayButton;
 
 const style = StyleSheet.create({
-  checkBox: {position: 'absolute', left: 0},
   columnContainer: {
-    alignItems: 'stretch',
     flexDirection: 'column',
     justifyContent: 'space-around',
   },
-  date: {
-    position: 'absolute',
-    right: 0,
-  },
   rowContainer: {
-    alignContent: 'center',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     justifyContent: 'space-between',
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   readingPortion: {
-    alignSelf: 'center',
-    fontSize: 17,
+    fontSize: 19,
   },
   title: {
     color: colors.lightGray,
     fontWeight: 'bold',
-    textAlign: 'center',
-    width: '100%',
   },
 });

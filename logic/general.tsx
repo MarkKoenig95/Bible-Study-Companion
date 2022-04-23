@@ -209,17 +209,28 @@ export function pageBack(navigation: {
 async function recreateAllUserSchedules(userDB: Database, bibleDB: Database) {
   const tblSchedules = await runSQL(userDB, 'SELECT * FROM tblSchedules;');
 
+  if (!tblSchedules) {
+    return;
+  }
+
   for (let i = 0; i < tblSchedules.rows.length; i++) {
     const tableInfo: ScheduleInfo = tblSchedules.rows.item(i);
     const creationInfo = tableInfo.CreationInfo;
     const tableName = formatScheduleTableName(tableInfo.ScheduleID);
 
-    if (creationInfo === WEEKLY_READING_TABLE_NAME || !creationInfo) continue;
+    if (creationInfo === WEEKLY_READING_TABLE_NAME || !creationInfo) {
+      continue;
+    }
 
     let firstItem = await runSQL(
       userDB,
       `SELECT CompletionDate FROM ${tableName} WHERE ReadingDayID=1;`,
     );
+
+    if (!firstItem) {
+      continue;
+    }
+
     let itemInfo: DBReadingItem | DBBibleReadingItem = firstItem.rows.item(0);
     let compDate = new Date(itemInfo.CompletionDate);
     let compDateIsADate = !isNaN(compDate.getTime());

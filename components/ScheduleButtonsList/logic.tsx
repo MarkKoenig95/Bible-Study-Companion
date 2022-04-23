@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 import {Alert} from 'react-native';
 
 import ScheduleButton from './ScheduleButton';
@@ -27,6 +27,8 @@ interface SetScheduleButtonsArgs {
   tableName: string;
   testID: string;
   updatePages: number;
+  readingPortionWidth: number;
+  setReadingPortionWidth: Dispatch<SetStateAction<number>>;
 }
 
 interface SetOneButtonArgs extends SetScheduleButtonsArgs {
@@ -143,6 +145,8 @@ export function setOneScheduleButton(args: SetOneButtonArgs) {
     tableName,
     testID,
     updatePages,
+    readingPortionWidth,
+    setReadingPortionWidth,
   } = args;
   let thisTableName;
   let title;
@@ -162,6 +166,8 @@ export function setOneScheduleButton(args: SetOneButtonArgs) {
         onUpdateReadStatus={onUpdateReadStatus}
         openReadingPopup={openReadingPopup}
         closeReadingPopup={closeReadingPopup}
+        readingPortionWidth={readingPortionWidth}
+        setReadingPortionWidth={setReadingPortionWidth}
       />
     );
   }
@@ -178,6 +184,8 @@ export function setOneScheduleButton(args: SetOneButtonArgs) {
       readingPortion={item.readingPortion}
       title={item.title}
       update={item.updateValue}
+      readingPortionWidth={readingPortionWidth}
+      setReadingPortionWidth={setReadingPortionWidth}
     />
   );
 }
@@ -195,6 +203,8 @@ export function createButtonList(args: CreateButtonListArgs) {
     tableName,
     testID,
     updatePages,
+    readingPortionWidth,
+    setReadingPortionWidth,
   } = args;
 
   const firstItem = items[0];
@@ -260,6 +270,8 @@ export function createButtonList(args: CreateButtonListArgs) {
       onUpdateReadStatus: onUpdate,
       openReadingPopup: openReadingPopup,
       closeReadingPopup: closeReadingPopup,
+      readingPortionWidth,
+      setReadingPortionWidth,
     });
   }
 
@@ -317,6 +329,8 @@ export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
     testID,
     updateButtonReadings,
     updatePages,
+    readingPortionWidth,
+    setReadingPortionWidth,
   } = args;
 
   const {
@@ -341,6 +355,8 @@ export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
     tableName,
     testID,
     updatePages,
+    readingPortionWidth,
+    setReadingPortionWidth,
   });
 
   const firstPortion = items[0].readingPortion;
@@ -383,6 +399,8 @@ export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
           readingDayIDs,
         );
       }}
+      readingPortionWidth={readingPortionWidth}
+      setReadingPortionWidth={setReadingPortionWidth}
     />
   );
 }

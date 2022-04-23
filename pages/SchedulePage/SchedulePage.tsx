@@ -30,16 +30,17 @@ function SchedulePage(props: SchedulePageProps) {
     completedHidden,
     firstUnfinished,
     getItemLayout,
-    initialScrollIndex,
     isLoading,
     listItems,
     messagePopup,
     openRemindersPopup,
     pageTitle,
+    readingPortionWidth,
     settingsPopupIsDisplayed,
     shouldTrack,
     ScheduleListPopups,
     scheduleName,
+    setReadingPortionWidth,
     setScheduleButtons,
     startDate,
     toggleSettingsPopupIsDisplayed,
@@ -89,13 +90,18 @@ function SchedulePage(props: SchedulePageProps) {
           ref={(ref) => {
             flatListRef = ref;
           }}
-          initialScrollIndex={initialScrollIndex.current}
           getItemLayout={getItemLayout}
           renderItem={({item, index}: {item: ReadingItem[]; index: number}) => {
             let firstUnfinishedID = firstUnfinished
               ? firstUnfinished.ReadingDayID
               : Infinity;
-            return setScheduleButtons(item, index, firstUnfinishedID);
+            return setScheduleButtons(
+              item,
+              index,
+              firstUnfinishedID,
+              readingPortionWidth,
+              setReadingPortionWidth,
+            );
           }}
         />
       </View>

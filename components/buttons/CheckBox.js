@@ -19,11 +19,19 @@ export default function CheckBox(props) {
   const iconColor = checked ? checkedColor : uncheckedColor;
   const hasTitle = title ? true : false;
   return (
-    <TouchableOpacity testID={testID} onPress={onPress}>
-      <View style={[containerStyle, style.container]}>
-        <Icon name={iconName} color={iconColor} size={size || 25} />
-        {hasTitle && <Text style={style.title}>{title}</Text>}
-      </View>
+    <TouchableOpacity
+      testID={testID}
+      style={[
+        containerStyle,
+        {
+          height: size,
+          width: size,
+        },
+        style.container,
+      ]}
+      onPress={onPress}>
+      <Icon name={iconName} color={iconColor} size={size || 25} />
+      {hasTitle && <Text style={style.title}>{title}</Text>}
     </TouchableOpacity>
   );
 }

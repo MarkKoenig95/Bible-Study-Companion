@@ -782,11 +782,11 @@ export function checkReadingPortion(
   } else if (isStartAndEnd) {
     // Here we have the different books
     // Since the positions of the verses are start and end, then this includes the entire span of chapters
-    resultString = `${startBook} ${startChapter}-${endBook} ${endChapter}`;
+    resultString = `${startBook} ${startChapter} - ${endBook} ${endChapter}`;
   } else {
     // Here we have the different books
     // Since the position of one of these verses is in the middle we elaborate the verses to be read
-    resultString = `${startBook} ${startChapter}:${startVerse}-${endBook} ${endChapter}:${endVerse}`;
+    resultString = `${startBook} ${startChapter}:${startVerse} - ${endBook} ${endChapter}:${endVerse}`;
   }
   return {description: resultString, position: resultPosition};
 }

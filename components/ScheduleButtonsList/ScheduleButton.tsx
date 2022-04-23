@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 
 import ScheduleDayButton from '../buttons/ScheduleDayButton';
 
@@ -16,6 +16,8 @@ export interface ScheduleButtonProps {
   testID: string;
   title: string;
   update: number;
+  readingPortionWidth: number;
+  setReadingPortionWidth: Dispatch<SetStateAction<number>>;
 }
 
 export default function ScheduleButton(props: ScheduleButtonProps) {
@@ -30,6 +32,8 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
     testID,
     title,
     update,
+    readingPortionWidth,
+    setReadingPortionWidth,
   } = props;
 
   let isDelayed = false;
@@ -83,6 +87,8 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
       update={update}
       onLongPress={onLongPress}
       onPress={onPress}
+      readingPortionWidth={readingPortionWidth}
+      setReadingPortionWidth={setReadingPortionWidth}
     />
   );
 }

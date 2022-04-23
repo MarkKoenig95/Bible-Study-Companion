@@ -390,7 +390,7 @@ describe('check created schedules', () => {
     await expect(element(by.id('schedulePage.Section 1'))).toBeVisible();
     await expect(
       element(by.id('schedulePage.Section 1.completionDate')),
-    ).toHaveText('      ');
+    ).toHaveText(' ');
   });
 
   it('checks that sequential schedule was created correctly', async () => {

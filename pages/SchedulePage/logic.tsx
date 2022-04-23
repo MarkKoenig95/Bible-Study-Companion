@@ -51,7 +51,7 @@ function useItemLayout(
   firstUnfinished: DBReadingItem | undefined,
   completedHidden: boolean,
   scheduleType: ScheduleType | undefined,
-  initialScrollIndex: MutableRefObject<number>,
+  initialScrollIndexRef: MutableRefObject<number>,
 ) {
   const baseReadingInfoRef = {
     currentOffset: 0,
@@ -61,7 +61,7 @@ function useItemLayout(
   const layoutData = useRef([{length: 0, offset: 0, index: 0}]);
 
   const getLayoutData = (data: BibleReadingItem[][]) => {
-    const length = 77.33;
+    const length = 82.33;
 
     let readingInfo = {...baseReadingInfoRef};
     let layouts = data.map((items: BibleReadingItem[], idx) => {
@@ -74,7 +74,7 @@ function useItemLayout(
         firstUnfinished &&
         items[0].readingDayID === firstUnfinished.ReadingDayID
       ) {
-        initialScrollIndex.current = idx;
+        initialScrollIndexRef.current = idx;
       }
 
       if (items.length === 1) {
@@ -99,7 +99,7 @@ function useItemLayout(
           firstUnfinished &&
           item.readingDayID === firstUnfinished.ReadingDayID
         ) {
-          initialScrollIndex.current = idx;
+          initialScrollIndexRef.current = idx;
         }
 
         let curStartBibleBook = item.startBookNumber;
@@ -110,8 +110,8 @@ function useItemLayout(
           continue;
         }
 
-        currentOffset += 20.33;
-        currentLength += 20.33;
+        currentOffset += 25.33;
+        currentLength += 25.33;
 
         readingInfo.prevEndBibleBook = curEndBibleBook;
       }
@@ -136,11 +136,11 @@ function useItemLayout(
     data: ReadingItem[][] | null | undefined,
     index: number,
   ) => {
-    let length = 77.33;
+    let length = 82.33;
     let isChrono = scheduleType === SCHEDULE_TYPES.CHRONOLOGICAL;
 
     if (completedHidden) {
-      initialScrollIndex.current = 0;
+      initialScrollIndexRef.current = 0;
     }
 
     if (!isChrono) {
@@ -189,15 +189,20 @@ export default function useSchedulePage(
   const [startDate, setStartDate] = useState(new Date());
   const [isLoading, setLoadingPopup] = useState(false);
   const [firstUnfinished, setFirstUnfinished] = useState(baseItem);
+  const [readingPortionWidth, setReadingPortionWidth] = useState(0);
 
-  const initialScrollIndex = useRef(0);
+  const initialScrollIndexRef = useRef(0);
 
-  initialScrollIndex.current =
+  initialScrollIndexRef.current =
     !completedHidden &&
     scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL &&
     firstUnfinished
       ? firstUnfinished.ReadingDayID
       : 0;
+
+  const [initialScrollIndex, setInitialScrollIndex] = useState(
+    initialScrollIndexRef.current,
+  );
 
   const {messagePopup, openMessagePopup, closeMessagePopup} = useMessagePopup();
   const [settingsPopupIsDisplayed, toggleSettingsPopupIsDisplayed] =
@@ -277,7 +282,7 @@ export default function useSchedulePage(
     firstUnfinished,
     completedHidden,
     scheduleType,
-    initialScrollIndex,
+    initialScrollIndexRef,
   );
 
   //Set delete and settings buttons in nav bar with appropriate onPress attributes
@@ -389,16 +394,27 @@ export default function useSchedulePage(
       typeof scheduleType !== 'undefined' &&
       !completedHidden
     ) {
+      if (initialScrollIndexRef.current > 0) {
+        setInitialScrollIndex(initialScrollIndexRef.current);
+      }
+
       setTimeout(() => {
         flatListRef.scrollToIndex({
           animated: false,
-          index: initialScrollIndex.current,
+          index: initialScrollIndexRef.current || initialScrollIndex,
           viewOffset: 0,
           viewPosition: 0.2,
         });
       }, 500);
     }
-  }, [completedHidden, firstUnfinished, flatListRef, listItems, scheduleType]);
+  }, [
+    completedHidden,
+    firstUnfinished,
+    flatListRef,
+    initialScrollIndex,
+    listItems,
+    scheduleType,
+  ]);
 
   return {
     _handleScheduleNameChange,
@@ -408,18 +424,18 @@ export default function useSchedulePage(
     closeMessagePopup,
     completedHidden,
     getItemLayout,
-    initialScrollIndex,
     isLoading,
     firstUnfinished,
     listItems,
     messagePopup,
     openRemindersPopup,
     pageTitle,
-    scheduleType,
+    readingPortionWidth,
     settingsPopupIsDisplayed,
     shouldTrack,
     ScheduleListPopups,
     scheduleName,
+    setReadingPortionWidth,
     setScheduleButtons,
     startDate,
     toggleSettingsPopupIsDisplayed,

@@ -152,7 +152,7 @@ describe('basic schedule page functions', () => {
     //When there is no date I make the text 6 spaces to retain spacing
     await expect(
       element(by.id(prefix + 'Genesis 1-29.completionDate')),
-    ).toHaveText('      ');
+    ).toHaveText(' ');
   });
 
   it('should scroll to the end of a schedule list and checks if the last item is there', async () => {
@@ -206,7 +206,7 @@ describe('bible schedule page', () => {
   it('marks a reading portion complete with longPress', async () => {
     await shouldCompleteReadingWithLongPress(
       prefix,
-      'Leviticus 10-Numbers 4',
+      'Leviticus 10 - Numbers 4',
       waitTime,
       'Cancel',
     );
@@ -214,14 +214,14 @@ describe('bible schedule page', () => {
 
   it('checks the hide completed button functionality', async () => {
     await expect(
-      element(by.id(prefix + 'Leviticus 10-Numbers 4')),
+      element(by.id(prefix + 'Leviticus 10 - Numbers 4')),
     ).not.toBeVisible();
   });
 
   it('marks a reading portions complete with the checkBox', async () => {
     await shouldCompleteReadingWithCheckbox(
       prefix,
-      'Exodus 23-Leviticus 9',
+      'Exodus 23 - Leviticus 9',
       waitTime,
       'Cancel',
     );
@@ -336,23 +336,23 @@ describe('mark earlier portions complete', async () => {
   });
 
   it('should mark all earlier reading portions than a selected portion complete using the checkbox', async () => {
-    await element(by.id(prefix + 'Hebrews 10-Revelation 17.checkBox')).tap();
+    await element(by.id(prefix + 'Hebrews 10 - Revelation 17.checkBox')).tap();
 
     await pressAlertAction('OK');
 
     await expect(
-      element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
+      element(by.id(prefix + 'Ephesians 5 - Hebrews 9')),
     ).not.toBeVisible();
 
     await expect(
-      element(by.id(prefix + 'Hebrews 10-Revelation 17')),
+      element(by.id(prefix + 'Hebrews 10 - Revelation 17')),
     ).not.toBeVisible();
 
     await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();
   });
 
   it('should mark all earlier reading portions than a selected portion complete using the reading info popup', async () => {
-    await element(by.id(prefix + 'Ephesians 5-Hebrews 9')).tap();
+    await element(by.id(prefix + 'Ephesians 5 - Hebrews 9')).tap();
 
     await scrollUntilVisible(
       by.id(prefix + 'readingInfoPopup.confirmButton'),
@@ -366,29 +366,29 @@ describe('mark earlier portions complete', async () => {
     await pressAlertAction('OK');
 
     await expect(
-      element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
+      element(by.id(prefix + 'Ephesians 5 - Hebrews 9')),
     ).not.toBeVisible();
 
     await expect(
-      element(by.id(prefix + 'Hebrews 10-Revelation 17')),
+      element(by.id(prefix + 'Hebrews 10 - Revelation 17')),
     ).toBeVisible();
 
     await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();
   });
 
   it('should not mark all reading portions earlier than a selected portion complete', async () => {
-    await element(by.id(prefix + 'Hebrews 10-Revelation 17.checkBox')).tap();
+    await element(by.id(prefix + 'Hebrews 10 - Revelation 17.checkBox')).tap();
 
     await pressAlertAction('Cancel');
 
     await element(by.id(prefix + 'buttonList')).scrollTo('bottom');
 
     await expect(
-      element(by.id(prefix + 'Ephesians 5-Hebrews 9')),
+      element(by.id(prefix + 'Ephesians 5 - Hebrews 9')),
     ).toBeVisible();
 
     await expect(
-      element(by.id(prefix + 'Hebrews 10-Revelation 17')),
+      element(by.id(prefix + 'Hebrews 10 - Revelation 17')),
     ).not.toBeVisible();
 
     await expect(element(by.id(prefix + 'Revelation 18-22'))).toBeVisible();

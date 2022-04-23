@@ -19,11 +19,26 @@ interface ButtonsPopupProps {
 export default function ButtonsPopup(props: ButtonsPopupProps) {
   const {buttonsPopupState} = props;
   const {buttons} = buttonsPopupState;
+  const [popupWidth, setPopupWidth] = useState(0);
+
   return (
     <Popup {...props} title={translate('buttonsPopup.title')}>
-      <View style={{width: '95%'}}>
+      <View
+        style={{width: '95%'}}
+        onLayout={(event: {
+          nativeEvent: {
+            layout: {x: number; y: number; width: number; height: number};
+          };
+        }) => {
+          let {width} = event.nativeEvent.layout;
+          let leftAndRightMarginsWidth = 100;
+
+          if (!popupWidth || popupWidth) {
+            setPopupWidth(width - leftAndRightMarginsWidth);
+          }
+        }}>
         {buttons.map((btn: ScheduleButtonProps) => (
-          <ScheduleButton {...btn} />
+          <ScheduleButton {...btn} readingPortionWidth={popupWidth} />
         ))}
       </View>
     </Popup>

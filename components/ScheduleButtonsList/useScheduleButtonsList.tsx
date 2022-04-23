@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import {Dispatch, SetStateAction, useCallback} from 'react';
 import useScheduleListPopups from './useScheduleListPopups';
 import {
   updateMultipleReadStatus,
@@ -81,6 +81,8 @@ export default function useScheduleButtonsList(
       items: ReadingItem[] | BibleReadingItem[],
       index: number,
       firstUnfinishedID: number | undefined = Infinity,
+      readingPortionWidth: number = 0,
+      setReadingPortionWidth: Dispatch<SetStateAction<number>>,
     ) => {
       let commonArguments = {
         closeReadingPopup,
@@ -98,6 +100,8 @@ export default function useScheduleButtonsList(
         return setOneScheduleButton({
           ...commonArguments,
           item: items[0],
+          readingPortionWidth,
+          setReadingPortionWidth,
         });
       }
 
@@ -111,6 +115,8 @@ export default function useScheduleButtonsList(
         markButtonInPopupComplete,
         openButtonsPopup,
         updateButtonReadings,
+        readingPortionWidth,
+        setReadingPortionWidth,
       });
     },
     [

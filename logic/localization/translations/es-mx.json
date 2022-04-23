@@ -119,8 +119,8 @@
     },
     "bce": "a.e.c.",
     "ce": "c.",
-    "ancientDate": "{{year}}   a.e.   {{bceOrCe}}",
-    "dateSpan": "{{startDate}} -   {{endDate}}",
+    "ancientDate": "{{year}}  {{bceOrCe}}",
+    "dateSpan": "{{startDate}}  -  {{endDate}}",
     "specialCases": {
       "1": "\"En el principio\" {{endYear}}",
       "3": "1 mes {{endYear}}",
@@ -150,7 +150,7 @@
     "wol": {"lp-e": "lp-s", "r1": "r4"}
   },
   "donatePage": {"title": "Donación"},
-  "language": "Inglés",
+  "language": "Español (México)",
   "missingTranslation": "la Traducción no existe",
   "notification": {
     "baseTitle": "Lectura diaria",
