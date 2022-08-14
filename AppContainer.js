@@ -232,6 +232,7 @@ export default function AppContainer() {
           tabBarHideOnKeyboard: true,
           tabBarStyle: {
             backgroundColor: colors.lightGray,
+            height: 100,
             paddingBottom: tabPaddingBottom,
           },
           headerShown: false,
