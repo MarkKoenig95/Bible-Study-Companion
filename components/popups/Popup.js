@@ -11,12 +11,13 @@ export default function Popup(props) {
   const [spacing, setSpacing] = useState(0);
 
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    let listeners = [
+      Keyboard.addListener('keyboardDidShow', _keyboardDidShow),
+      Keyboard.addListener('keyboardDidHide', _keyboardDidHide),
+    ];
 
     return () => {
-      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+      listeners.forEach((listener) => listener?.remove?.());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

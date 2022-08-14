@@ -172,10 +172,10 @@ export default function AppContainer() {
   const [, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
+    let listener = AppState.addEventListener('change', _handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
+      listener.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -225,15 +225,16 @@ export default function AppContainer() {
   return (
     <NavigationContainer>
       <Tabs.Navigator
-        tabBarOptions={{
-          activeTintColor: colors.darkBlue,
-          inactiveTintColor: colors.smoke,
-          labelStyle: {fontSize: 13, marginTop: labelMarginTop},
-          keyboardHidesTabBar: true,
-          tabStyle: {
+        screenOptions={{
+          tabBarActiveTintColor: colors.darkBlue,
+          tabBarInactiveTintColor: colors.smoke,
+          tabBarlabelStyle: {fontSize: 13, marginTop: labelMarginTop},
+          tabBarHideOnKeyboard: true,
+          tabBarStyle: {
+            backgroundColor: colors.lightGray,
             paddingBottom: tabPaddingBottom,
           },
-          style: {backgroundColor: colors.lightGray, height: 100},
+          headerShown: false,
         }}>
         <Tabs.Screen
           name="HomeStack"

@@ -430,18 +430,13 @@ export default function Reminders(props) {
   });
 
   useEffect(() => {
-    let didShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      _keyboardDidShow,
-    );
-    let didHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      _keyboardDidHide,
-    );
+    let listeners = [
+      Keyboard.addListener('keyboardDidShow', _keyboardDidShow),
+      Keyboard.addListener('keyboardDidHide', _keyboardDidHide),
+    ];
 
     return () => {
-      didHideListener.remove();
-      didShowListener.remove();
+      listeners.forEach((listener) => listener?.remove?.());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

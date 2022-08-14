@@ -162,13 +162,6 @@ function MemorialScheduleType(props) {
     afterUpdate();
   }
 
-  console.log(
-    'scheduleTypeArray',
-    scheduleTypeArray,
-    'memorialScheduleType',
-    memorialScheduleType,
-  );
-
   return (
     <SettingsWrapper
       testID={testID}
