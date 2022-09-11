@@ -4,18 +4,18 @@
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios//Build/Products/Release-iphonesimulator/BibleStudyCompanion.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Release -scheme BibleStudyCompanion -destination id=0F61AED1-28BF-4E53-858E-8634260ED47E",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Release -scheme BibleStudyCompanion -destination id=1DEA9629-930B-4075-91CD-95187DB32C5B",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 12"
+        "type": "iPhone 13"
       }
     },
     "ios.sim.debug": {
       "binaryPath": "ios/Build/Products/Debug-iphonesimulator/BibleStudyCompanion.app",
-      "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=0F61AED1-28BF-4E53-858E-8634260ED47E",
+      "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=1DEA9629-930B-4075-91CD-95187DB32C5B",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 12"
+        "type": "iPhone 13"
       }
     },
     "ios.none": {
@@ -23,7 +23,7 @@
       "build": "RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion ",
       "type": "ios.none",
       "device": {
-        "type": "iPhone 12"
+        "type": "iPhone 13"
       },
       "session": {
         "server": "ws://localhost:8099",

@@ -6,6 +6,7 @@ import memoize from 'lodash.memoize'; // Use for caching/memoize for better perf
 import en from './translations/en.json';
 import es from './translations/es.json';
 import es_mx from './translations/es-mx.json';
+import fr from './translations/fr.json';
 import hu from './translations/hu.json';
 import it from './translations/it.json';
 import sq from './translations/sq.json';
@@ -15,6 +16,7 @@ export const languages = {
   en: {language: en.language, isRTL: false},
   es: {language: es.language, isRTL: false},
   'es-mx': {language: es_mx.language, isRTL: false},
+  fr: {language: fr.language, isRTL: false},
   hu: {language: hu.language, isRTL: false},
   it: {language: it.language, isRTL: false},
   sq: {language: sq.language, isRTL: false},
@@ -26,6 +28,7 @@ const translationGetters = {
   en: () => require('./translations/en.json'),
   es: () => require('./translations/es.json'),
   'es-mx': () => require('./translations/es-mx.json'),
+  fr: () => require('./translations/fr.json'),
   it: () => require('./translations/it.json'),
   hu: () => require('./translations/hu.json'),
   sq: () => require('./translations/sq.json'),

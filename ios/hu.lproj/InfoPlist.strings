@@ -1,9 +1,0 @@
-/* 
-  InfoPlist.strings
-  Bible Study Companion
-
-  Created by Mark Koenig on 2/2/21.
-  
-*/
-"CFBundleDisplayName" = "Bibliatanulmányozási segéd";
-"CFBundleName" = "Bibliatanulmányozási segéd";

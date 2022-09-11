@@ -1,0 +1,312 @@
+{
+  "ordinal": {
+    "0": "ème",
+    "1": "ème",
+    "2": "ème",
+    "3": "ème",
+    "4": "ème",
+    "5": "ème",
+    "6": "ème",
+    "7": "ème",
+    "8": "ème",
+    "9": "ème",
+    "special": { "0": "", "1": "er", "2": "ème", "count": 3 },
+    "after": true
+  },
+  "appName": "Compagnon à l'étude Biblique",
+  "actions": { "cancel": "Retour", "done": "Continuer", "ok": "D'accord" },
+  "advanced": "Avancer",
+  "bibleBook": "Livre de la Bible",
+  "bibleBooks": {
+    "1": { "name": "Genèse", "whereWritten": "Désert" },
+    "2": { "name": "Exode", "whereWritten": "Désert" },
+    "3": { "name": "Lévitique", "whereWritten": "Désert" },
+    "4": { "name": "Nombres", "whereWritten": "Désert et plaines de Moab" },
+    "5": { "name": "Deutéronome", "whereWritten": "Plaines de Moab" },
+    "6": { "name": "Josué", "whereWritten": "Canaan" },
+    "7": { "name": "Juges", "whereWritten": "Israël" },
+    "8": { "name": "Ruth", "whereWritten": "Israël" },
+    "9": { "name": "1 Samuel", "whereWritten": "Israël" },
+    "10": { "name": "2 Samuel", "whereWritten": "Israël" },
+    "11": { "name": "1 Rois", "whereWritten": "Juda" },
+    "12": { "name": "2 Rois", "whereWritten": "Juda et Égypte" },
+    "13": { "name": "1 Chroniques", "whereWritten": "Jérusalem (?)" },
+    "14": { "name": "2 Chroniques", "whereWritten": "Jérusalem (?)" },
+    "15": { "name": "Esdras", "whereWritten": "Jérusalem" },
+    "16": { "name": "Néhémie", "whereWritten": "Jérusalem" },
+    "17": { "name": "Esther", "whereWritten": " Suse, Élam" },
+    "18": { "name": "Job", "whereWritten": "Désert" },
+    "19": { "name": "Psaumes", "whereWritten": " " },
+    "20": { "name": "Proverbes", "whereWritten": "Jérusalem" },
+    "21": { "name": "Ecclésiaste", "whereWritten": "Jérusalem" },
+    "22": { "name": "Chant de Salomon", "whereWritten": "Jérusalem" },
+    "23": { "name": "Isaïe", "whereWritten": "Jérusalem" },
+    "24": { "name": "Jérémie", "whereWritten": "Juda ; Égypte" },
+    "25": {
+      "name": "Lamentations",
+      "whereWritten": "À proximité de Jérusalem"
+    },
+    "26": { "name": "Ézéchiel", "whereWritten": "Babylone" },
+    "27": { "name": "Daniel", "whereWritten": "Babylone" },
+    "28": { "name": "Osée", "whereWritten": "Samarie (District)" },
+    "29": { "name": "Joël", "whereWritten": "Juda" },
+    "30": { "name": "Amos", "whereWritten": "Juda" },
+    "31": { "name": "Abdias", "whereWritten": " " },
+    "32": { "name": "Jonas", "whereWritten": " " },
+    "33": { "name": "Michée", "whereWritten": "Juda" },
+    "34": { "name": "Nahum", "whereWritten": "Juda" },
+    "35": { "name": "Habacuc", "whereWritten": "Juda" },
+    "36": { "name": "Sophonie", "whereWritten": "Juda" },
+    "37": { "name": "Aggée", "whereWritten": "Jérusalem reconstruite" },
+    "38": { "name": "Zacharie", "whereWritten": "Jérusalem reconstruite" },
+    "39": { "name": "Malachie", "whereWritten": "Jérusalem reconstruite" },
+    "40": { "name": "Matthieu", "whereWritten": "Israël" },
+    "41": { "name": "Marc", "whereWritten": "Rome" },
+    "42": { "name": "Luc", "whereWritten": "Césarée" },
+    "43": { "name": "Jean", "whereWritten": "Éphèse, ou à proximité" },
+    "44": { "name": "Actes", "whereWritten": "Rome" },
+    "45": { "name": "Romains", "whereWritten": "Corinthe" },
+    "46": { "name": "1 Corinthiens", "whereWritten": "Éphèse" },
+    "47": { "name": "2 Corinthiens", "whereWritten": "Macédoine" },
+    "48": {
+      "name": "Galates",
+      "whereWritten": "Corinthe ou Antioche de Syrie"
+    },
+    "49": { "name": "Éphésiens", "whereWritten": "Rome" },
+    "50": { "name": "Philippiens", "whereWritten": "Rome" },
+    "51": { "name": "Colossiens", "whereWritten": "Rome" },
+    "52": { "name": "1 Thessaloniciens", "whereWritten": "Corinthe" },
+    "53": { "name": "2 Thessaloniciens", "whereWritten": "Corinthe" },
+    "54": { "name": "1 Timothée", "whereWritten": "Macédoine" },
+    "55": { "name": "2 Timothée", "whereWritten": "Rome" },
+    "56": { "name": "Tite", "whereWritten": "Macédoine (?)" },
+    "57": { "name": "Philémon", "whereWritten": "Rome" },
+    "58": { "name": "Hébreux", "whereWritten": "Rome" },
+    "59": { "name": "Jacques", "whereWritten": "Jérusalem" },
+    "60": { "name": "1 Pierre", "whereWritten": "Babylone" },
+    "61": { "name": "2 Pierre", "whereWritten": "Babylone (?)" },
+    "62": { "name": "1 Jean", "whereWritten": "Éphèse, ou à proximité" },
+    "63": { "name": "2 Jean", "whereWritten": "Éphèse, ou à proximité" },
+    "64": { "name": "3 Jean", "whereWritten": "Éphèse, ou à proximité" },
+    "65": { "name": "Jude", "whereWritten": "Israël (?)" },
+    "66": { "name": "Révélation", "whereWritten": "Patmos" }
+  },
+  "buttonsPopup": { "title": "Portions à Lire" },
+  "createSchedulePopup": {
+    "createSchedule": "Créer un Programme",
+    "readingPortionDescPhld": "Description de la Portion à Lire",
+    "readingPortionDesc": {
+      "article": "Article",
+      "chapter": "Chapitre",
+      "page": "Page",
+      "paragraph": "Paragraphe",
+      "title": "Description de la Portion à Lire"
+    },
+    "numberOfPortions": "Nombre de (d') {{portionDesc}}s",
+    "numberOfPortionsPhld": "  Nombre Total de (d') {{portionDesc}}s dans la Publication",
+    "portionsPerDay": "{{portionDesc}}s Par Jour",
+    "portionsPerDayPhld": "Combien de (d') {{portionDesc}}s à lire chaque jour ?",
+    "startingPortion": "{{portionDesc}} de Départ",
+    "startingPortionPhld": "Le, La (l') {{portionDesc}} d'où vous voulez commencer",
+    "scheduleName": "Nom du Programme",
+    "scheduleDuration": "Durée du Programme",
+    "scheduleDurPhld": "Combien de temps le programme devrait-il durer du début à la fin ?",
+    "shouldTrack": "Suivi des dates de lecture ?",
+    "startDate": "Date de Départ",
+    "startingVerse": "Verset de Départ",
+    "unfinished": "Veuillez remplir tous les champs obligatoires avec des valeurs valides pour créer un programme"
+  },
+  "date": {
+    "approxDesc": {
+      "about": "Vers",
+      "after": "Après",
+      "before": "Avant",
+      "approxDate": "{{about}}{{after}}{{before}}  {{date}}"
+    },
+    "bce": "(AV. N. È.)",
+    "ce": "(De N. È)",
+    "ancientDate": "{{year}}  {{bceOrCe}}",
+    "dateSpan": "{{startDate}}  -  {{endDate}}",
+    "specialCases": {
+      "1": "« Au commencement » jusqu’à {{endYear}}",
+      "3": "1 mois en {{endYear}}",
+      "5": "2 mois en{{endYear}}",
+      "8": "11 ans de la période des juges de {{startYear}} à {{endYear}}",
+      "13": "Après 1 Chroniques 9:44 vers{{startYear}} à {{endYear}}",
+      "18": "Plus de 140 années entre{{startYear}} et {{endYear}}",
+      "37": "112 jours en{{endYear}}",
+      "43": "Après prologue, {{startYear}} à {{endYear}}"
+    }
+  },
+  "homePage": {
+    "emptyList": "Vous n'avez plus de lectures pour la journée",
+    "title": "Accueil"
+  },
+  "links": {
+    "languageTag": "fr",
+    "hasStudyBible": true,
+    "finderLocale": "F",
+    "www": {
+      "bible": "bible",
+      "books": "books",
+      "how-to-read-the-bible": "comment-lire-la-bible",
+      "introduction": "introduction",
+      "library": "biblioth%C3%A8que"
+    },
+    "wol": { "lp-e": "lp-f", "r1": "r30" }
+  },
+  "donatePage": { "title": "Dons" },
+  "language": "Français",
+  "missingTranslation": "La traduction n'existe pas",
+  "notification": {
+    "baseTitle": "Lecture quotidienne",
+    "bigText": "Voyons ce qu'il te reste à faire aujourd'hui",
+    "message": "Allons-y"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notificationName": "Nom de la notification",
+    "notificationPopupTitle": "Créer une nouvelle notification"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": " Etes-vous sûr de vouloir supprimer la notification : {{notificationName}} ?"
+  },
+  "morePage": {
+    "about": "À propos",
+    "contact": "Nous contacter",
+    "title": "Plus",
+    "version": "Version"
+  },
+  "old": "Ancien",
+  "openJWLibrary": "Ouvrir JW Library",
+  "prompts": {
+    "setNotification": "Définir une notification pour :",
+    "nameTaken": "Veuillez sélectionner un nom que vous n'avez pas utilisé",
+    "markCompleted": "Marquer Terminé",
+    "markPreviousRead": "La lecture que vous avez demandée a été marquée comme terminée. Souhaitez-vous également marquer toutes les lectures précédentes comme terminées ?",
+    "scheduleRecreatedMessage": "Votre programme a été recréé. Veuillez comparer le nouveau programme avec le programme d'origine (ancien) pour vous assurer qu'aucune information n'a été perdue, puis supprimez l'ancien programme",
+    "scheduleRecreatedTitle": "Programme recréé"
+  },
+  "readingRemindersPopup": {
+    "readingReminders": "Rappels de lecture",
+    "heading0": "Créer le bon environnement",
+    "body0-1": "Trouvez un endroit calme et sans distractions",
+    "body0-2": "(Peut-être mettre votre téléphone en mode silencieux)",
+    "heading1": "Priez avant de lire",
+    "body1-1": "Demandez à Jéhovah de vous mettre dans le bon état d'esprit et de vous donner son Esprit Saint pour vous aider à comprendre et à appliquer ce que vous lisez.",
+    "heading2": "Méditez sur ce que vous lisez",
+    "body2-1": "Ne vous précipitez pas, lisez calmement pour comprendre.",
+    "subheading2-1": "Vous pourriez vous poser ces questions :",
+    "body2-2": "Qu'est-ce que cela m'apprend au sujet de Jéhovah Dieu ?",
+    "body2-3": "Comment cette section des Écritures contribue-t-elle au message de la Bible ?",
+    "body2-4": "Comment puis-je appliquer cela dans ma vie ?",
+    "body2-5": "Comment puis-je utiliser ces versets pour aider les autres ?",
+    "subheading2-2": "Imaginez-vous dans la scène :",
+    "body2-6": "Que verriez-vous, entendriez-vous et sentiriez-vous ?",
+    "body2-7": "Quels peuvent être les sentiments des personnes impliquées ?",
+    "subheading2-3": "Faites des recherches pour :",
+    "body2-8": "Comprendre le contexte de la portion à lire",
+    "body2-9": "Comprendre facilement les notions compliqué.",
+    "heading3": "Appliquez ce que vous lisez",
+    "body3-1": "Si nous voyons la valeur pratique d'une activité, nous en bénéficions davantage.",
+    "body3-2": "Nous devons prendre des mesures pour appliquer, ce que nous avons appris, dans notre vie et comprendre comment nous pouvons utiliser ce que nous avons appris pour aider les autres.",
+    "subheading3-1": "Rappels de :",
+    "body3-3": "Veuillez consulter ces liens pour mieux comprendre les pensées exprimées"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "Informations de lecture",
+    "readingPortion": "Portion à lire",
+    "timeCovered": "Période couverte",
+    "whereWritten": "Lieux d'écriture",
+    "whenWritten": "Date d'écriture",
+    "writers": "Écrivain(s)"
+  },
+  "readingSchedules": "Programme de lecture",
+  "reminders": {
+    "completeReminderMessage": "Voulez-vous vraiment marquer le rappel \"{{reminderName}}\" comme terminé ?",
+    "dailyReading": "Lecture quotidienne",
+    "dailyText": "Texte du jour",
+    "midweekMeetingStudy": "Étude pour la réunion de milieu de semaine",
+    "reminder": "Rappel",
+    "weekendMeetingStudy": "Étude pour la réunion de fin de semaine",
+    "weeklyReading": {
+      "title": "Lecture pour la semaine",
+      "showDaily": "Afficher la portion quotidienne pour la lecture de la semaine"
+    }
+  },
+  "frequencies": {
+    "daily": "Quotidien",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "never": "Jamais"
+  },
+  "remindersPage": {
+    "completed": "Terminé {{desc}}",
+    "deleteReminderMessage": "Voulez-vous vraiment supprimer le rappel \"{{reminderName}}\" ?",
+    "every": "Tous les :",
+    "name": "Nom :",
+    "reminderPopupTitle": "Créer un nouveau rappel",
+    "repeats": "Répétition :",
+    "title": "Rappels"
+  },
+  "schedules": "Programme",
+  "schedulePage": {
+    "deleteScheduleMessage": "Êtes-vous sûr de vouloir supprimer le programme \"{{scheduleName}}\" ?",
+    "hideCompleted": "Masquer Terminé",
+    "recreateScheduleWarning": "Pour ce faire, il faudra recréer ce programme. Voulez-vous vraiment recréer ce programme ?"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "Verset de début ajusté de \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" à \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" car la demande initiale était hors limites."
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "Type de programme",
+    "sequential": "Séquentiel",
+    "sequentialDescription": "Lire la Bible de la Genèse à Révélation",
+    "chronological": "Chronologique",
+    "chronologicalDescription": "Lisez la Bible dans l'ordre dans lequel les événements se sont produits. (EXPÉRIMENTAL : Si vous trouvez une anomalie, veuillez me contacter)",
+    "thematic": "Thématique",
+    "thematicDescription": "Chaque jour, lisez une section différente de la Bible dans un cycle hebdomadaire : Jour 1 - La Loi, 2 - Histoire, 3 - Psaumes, 4 - Poésie, 5 - Prophétie, 6 - Evangiles, 7 - Lettres",
+    "custom": "Personnalisé",
+    "customDescription": "Créer un programme personnalisé pour une publication"
+  },
+  "settingsPage": {
+    "title": "Réglages",
+    "weeklyReadingResetDay": "Jour de réinitialisation de la lecture hebdomadaire :",
+    "language": "Langue",
+    "memorialReading": {
+      "title": "Lecture pour le mémorial",
+      "dayTimeEvents": "Jour des évènements",
+      "eventsAfterSunset": "Événements après le coucher du soleil",
+      "options": {
+        "long": {
+          "title": "Long",
+          "description": "Commence le 8 Nisan, se termine le 16 Nisan et comprend plus de versets à lire chaque jour. Basé sur le calendrier trouvé dans l'annexe B12 de la Traduction du monde nouveau"
+        },
+        "short": {
+          "title": "Court",
+          "description": "Commence le 9 Nisan, se termine le 16 Nisan et comprend moins de versets à lire chaque jour. Basé sur le programme trouvé dans le livret Examiner les Écritures quotidiennement"
+        }
+      }
+    }
+  },
+  "today": "Aujourd'hui",
+  "thisWeek": "Cette semaine",
+  "thisMonth": "Ce mois-ci",
+  "other": "Autre",
+  "versePicker": { "chapterAbrev": "ch", "verseAbrev": "v" },
+  "warning": "Attention",
+  "weekdays": {
+    "0": { "abrev": "Di", "name": "Dimanche" },
+    "1": { "abrev": "Lu", "name": "Lundi" },
+    "2": { "abrev": "Ma", "name": "Mardi" },
+    "3": { "abrev": "Mer", "name": "Mercredi" },
+    "4": { "abrev": "Je", "name": "Jeudi" },
+    "5": { "abrev": "Ve", "name": "Vendredi" },
+    "6": { "abrev": "Sa", "name": "Samedi" }
+  },
+  "whatsNew": {
+    "title": "Quoi de neuf",
+    "2022_02_20": "Lecture biblique du mémorial, allez à {{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  },
+  "updateDate": "2022-02-20T11:41:37.377Z"
+}

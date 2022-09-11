@@ -231,9 +231,10 @@ export default function AppContainer() {
           tabBarlabelStyle: {fontSize: 13, marginTop: labelMarginTop},
           tabBarHideOnKeyboard: true,
           tabBarStyle: {
+            height: 90,
             backgroundColor: colors.lightGray,
-            height: 100,
             paddingBottom: tabPaddingBottom,
+            paddingBottom: 20,
           },
           headerShown: false,
         }}>
