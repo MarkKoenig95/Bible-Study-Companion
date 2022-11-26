@@ -138,8 +138,8 @@ android {
         applicationId "com.biblestudycompanion"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 33
-        versionName "1.3.1"
+        versionCode 34
+        versionName "1.3.2"
         testBuildType System.getProperty('testBuildType', 'debug') // Detox reccommended
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox reccommended
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
