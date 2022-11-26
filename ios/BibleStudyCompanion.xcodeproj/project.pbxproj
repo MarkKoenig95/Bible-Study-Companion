@@ -48,13 +48,6 @@
 		508F61F128CEBEC70014DB87 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		508F61F228CEBEC70014DB87 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		50ED84BE28CD55BF00E54EA6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		50ED84C028CD55CA00E54EA6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		50ED84C128CD55CD00E54EA6 /* sq */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sq; path = sq.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		50ED84C228CD55D000E54EA6 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
-		50ED84C428CD55D300E54EA6 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		50ED84C528CD55D500E54EA6 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		50ED84C628CD55D900E54EA6 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		50ED84C728CD55DC00E54EA6 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-BibleStudyCompanion.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion.release.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion/Pods-BibleStudyCompanion.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; path = "Target Support Files/Pods-BibleStudyCompanion-BibleStudyCompanionTests/Pods-BibleStudyCompanion-BibleStudyCompanionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-BibleStudyCompanion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BibleStudyCompanion.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -472,13 +465,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				50ED84BE28CD55BF00E54EA6 /* Base */,
-				50ED84C028CD55CA00E54EA6 /* en */,
-				50ED84C128CD55CD00E54EA6 /* sq */,
-				50ED84C228CD55D000E54EA6 /* zh-Hans */,
-				50ED84C428CD55D300E54EA6 /* fr */,
-				50ED84C528CD55D500E54EA6 /* hu */,
-				50ED84C628CD55D900E54EA6 /* it */,
-				50ED84C728CD55DC00E54EA6 /* es */,
 			);
 			name = LaunchScreen.storyboard;
 			path = BibleStudyCompanion;
