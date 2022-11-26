@@ -1,9 +1,16 @@
 /* eslint-env detox/detox, jest */
+import {waitUntilLoaded} from './helpers/general';
+
+var waitTime = 1000;
+var OS;
+
 beforeAll(async () => {
+  OS = device.getPlatform();
+  if (OS !== 'ios') {
+    waitTime *= 5;
+  }
   await device.launchApp({permissions: {notifications: 'YES'}});
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(40000);
+  await waitUntilLoaded(waitTime);
 });
 
 describe('opening pages', () => {

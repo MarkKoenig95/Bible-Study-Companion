@@ -4,18 +4,18 @@
   "configurations": {
     "ios.sim.release": {
       "binaryPath": "ios//Build/Products/Release-iphonesimulator/BibleStudyCompanion.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Release -scheme BibleStudyCompanion -destination id=1DEA9629-930B-4075-91CD-95187DB32C5B",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Release -scheme BibleStudyCompanion -destination id=5B597CC6-6678-409B-869D-14305EF59E33",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 13"
+        "type": "iPhone 14"
       }
     },
     "ios.sim.debug": {
       "binaryPath": "ios/Build/Products/Debug-iphonesimulator/BibleStudyCompanion.app",
-      "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=1DEA9629-930B-4075-91CD-95187DB32C5B",
+      "build": "xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion -destination id=5B597CC6-6678-409B-869D-14305EF59E33",
       "type": "ios.simulator",
       "device": {
-        "type": "iPhone 13"
+        "type": "iPhone 14"
       }
     },
     "ios.none": {
@@ -23,7 +23,7 @@
       "build": "RN_SRC_EXT=e2e.js xcodebuild -workspace ios/BibleStudyCompanion.xcworkspace -configuration Debug -scheme BibleStudyCompanion ",
       "type": "ios.none",
       "device": {
-        "type": "iPhone 13"
+        "type": "iPhone 14"
       },
       "session": {
         "server": "ws://localhost:8099",
@@ -35,7 +35,7 @@
       "build": "cd android && RN_SRC_EXT=e2e.js ./gradlew app:assembleDebug  app:assembleAndroidTest -DtestBuildType=debug && cd ..",
       "type": "android.emulator",
       "device": {
-        "avdName": "Pixel_3a_API_29"
+        "avdName": "Pixel_4_XL_API_29"
       }
     },
     "android.emu.release": {
@@ -43,7 +43,7 @@
       "build": "cd android && RN_SRC_EXT=e2e.js ./gradlew  app:assembleRelease  app:assembleAndroidTest -DtestBuildType=release && cd ..",
       "type": "android.emulator",
       "device": {
-        "avdName": "Pixel_3a_API_29"
+        "avdName": "Pixel_4_XL_API_29"
       }
     }
   }

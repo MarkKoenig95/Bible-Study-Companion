@@ -80,6 +80,15 @@ export async function setPicker(pickerID, value, OS) {
   await setters[OS](pickerID, value);
 }
 
+export async function waitUntilLoaded(waitTime) {
+  await waitFor(element(by.id('tabs.homePage')))
+    .toBeVisible()
+    .withTimeout(8 * waitTime);
+  await waitFor(element(by.text('Daily Text')))
+    .toBeVisible()
+    .withTimeout(8 * waitTime);
+}
+
 async function setTimePickerAndroid(parentID, time) {
   let hourText = '' + time.getHours();
   let minuteText = '' + time.getMinutes();

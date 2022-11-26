@@ -140,6 +140,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 33
         versionName "1.3.1"
+        testBuildType System.getProperty('testBuildType', 'debug') // Detox reccommended
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox reccommended
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -268,6 +270,8 @@ android {
 }
 
 dependencies {
+    androidTestImplementation('com.wix:detox:+') // Detox reccomended
+    implementation 'androidx.appcompat:appcompat:1.1.0' // Detox reccomended
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion
@@ -289,8 +293,6 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
-
-    androidTestImplementation('com.wix:detox:+')
 
     if (enableHermes) {
         //noinspection GradleDynamicVersion

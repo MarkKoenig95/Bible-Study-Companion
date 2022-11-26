@@ -123,10 +123,10 @@ export async function shouldCompleteReadingInButtonPopup(
 ) {
   const completionFunctions = {
     longPress: async () => {
-      element(by.id(parentID + portionToComp)).longPress();
+      await element(by.id(parentID + portionToComp)).longPress();
     },
     checkBox: async () => {
-      element(by.id(parentID + portionToComp + '.checkBox')).tap();
+      await element(by.id(parentID + portionToComp + '.checkBox')).tap();
     },
   };
   await shouldOpenReadingButtonsPopup(parentID, startPortion);

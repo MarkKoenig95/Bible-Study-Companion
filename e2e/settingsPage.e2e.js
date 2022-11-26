@@ -1,5 +1,10 @@
 /* eslint-env detox/detox, jest */
-import {scrollUntilVisible, setPicker, waitForMS} from './helpers/general';
+import {
+  scrollUntilVisible,
+  setPicker,
+  waitForMS,
+  waitUntilLoaded,
+} from './helpers/general';
 // * NOTE: I programmed this on March 31st, 2021. As of this writing I am not sure how to set
 // * the time for the ios simulator other than changing the time of the computer. So for the time being
 // * this test will be based on that date.
@@ -32,9 +37,7 @@ beforeEach(async () => {
   });
 
   //Once this element shows up we know that the database has been set up
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(waitTime * 40);
+  await waitUntilLoaded(waitTime);
 
   await navigateToSettingsPage();
 });
@@ -47,9 +50,7 @@ describe('Weekly reading settings', () => {
     // Not working as intended for now. Putting in this temporary workaround for the moment
     await device.launchApp({newInstance: true});
     await waitForMS(3 * waitTime);
-    await waitFor(element(by.text('Daily Text')))
-      .toBeVisible()
-      .withTimeout(waitTime * 40);
+    await waitUntilLoaded(waitTime);
     // ------------------------------------------------------------------------------------
 
     await scrollUntilVisible(
@@ -69,9 +70,7 @@ describe('Weekly reading settings', () => {
     // Not working as intended for now. Putting in this temporary workaround for the moment
     await device.launchApp({newInstance: true});
     await waitForMS(3 * waitTime);
-    await waitFor(element(by.text('Daily Text')))
-      .toBeVisible()
-      .withTimeout(waitTime * 40);
+    await waitUntilLoaded(waitTime);
     // ------------------------------------------------------------------------------------
 
     await expect(element(by.id('homePage.Numbers 15:1-14'))).not.toBeVisible();
@@ -81,11 +80,7 @@ describe('Weekly reading settings', () => {
     await setPicker(prefix + 'weeklyReading.weekdayPicker', 'Wednesday', OS);
     await waitForMS(3 * waitTime);
 
-    await element(by.id('tabs.homePage')).tap();
-
-    await waitFor(element(by.text('Daily Text')))
-      .toBeVisible()
-      .withTimeout(4 * waitTime);
+    await waitUntilLoaded(waitTime);
 
     await scrollUntilVisible(
       by.id('homePage.multiPortionStartingWith.Numbers 17:1-10'),

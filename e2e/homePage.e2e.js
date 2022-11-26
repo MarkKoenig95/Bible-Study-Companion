@@ -1,5 +1,9 @@
 /* eslint-env detox/detox, jest */
-import {scrollUntilVisible, waitForMS} from './helpers/general';
+import {
+  scrollUntilVisible,
+  waitForMS,
+  waitUntilLoaded,
+} from './helpers/general';
 import {
   shouldOpenReadingReminders,
   shouldOpenReadingInfoPopup,
@@ -28,9 +32,7 @@ beforeEach(async () => {
     permissions: {notifications: 'YES'},
   });
 
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(4 * waitTime);
+  await waitUntilLoaded(waitTime);
 });
 
 describe('Check sections', () => {

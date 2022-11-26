@@ -1,5 +1,5 @@
 /* eslint-env detox/detox, jest */
-import {goBack, setDateTimePicker} from './helpers/general';
+import {goBack, setDateTimePicker, waitUntilLoaded} from './helpers/general';
 const prefix = 'notificationsPage.';
 var waitTime = 1000;
 var OS;
@@ -23,9 +23,7 @@ beforeEach(async () => {
   await device.installApp();
   await device.launchApp({permissions: {notifications: 'YES'}});
 
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(waitTime * 8);
+  await waitUntilLoaded(waitTime);
 
   await element(by.id('tabs.morePage')).tap();
   await element(by.id('morePage.notifications')).tap();

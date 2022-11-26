@@ -2,6 +2,7 @@
 import {
   scrollUntilVisible,
   setDateTimePicker,
+  waitUntilLoaded,
   waitForMS,
 } from './helpers/general';
 
@@ -21,9 +22,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await device.launchApp({newInstance: true});
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(waitTime * 8);
+  await waitUntilLoaded(waitTime);
   await element(by.id('tabs.schedulesPage')).tap();
   await waitFor(element(by.id(prefix + 'list')))
     .toBeVisible()

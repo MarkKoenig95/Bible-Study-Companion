@@ -304,7 +304,7 @@ describe('bible schedule page', () => {
   });
 });
 
-describe('mark earlier portions complete', async () => {
+describe('mark earlier portions complete', () => {
   beforeEach(async () => {
     await device.launchApp({
       delete: true,

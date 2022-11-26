@@ -21,6 +21,9 @@ DerivedData
 *.ipa
 *.xcuserstate
 artifacts/
+ios/BibleStudyCompanion-emboiczgzrnwwcayulefetjnjpns
+ios/ModuleCache.noindex
+ios/SymbolCache.noindex
 
 # Android/IntelliJ
 #

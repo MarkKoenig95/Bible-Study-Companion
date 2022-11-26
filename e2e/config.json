@@ -1,4 +1,12 @@
 {
+  "transform": {
+    "^.+\\.[jt]sx?$": [
+      "babel-jest",
+      {
+        "configFile": "./babel.config.js"
+      }
+    ]
+  },
   "testEnvironment": "./environment",
   "testRunner": "jest-circus/runner",
   "testTimeout": 120000,

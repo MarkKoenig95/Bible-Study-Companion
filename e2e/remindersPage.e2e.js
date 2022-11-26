@@ -1,4 +1,4 @@
-import {setPicker} from './helpers/general';
+import {setPicker, waitUntilLoaded} from './helpers/general';
 
 /* eslint-env detox/detox, jest */
 const prefix = 'remindersPage.';
@@ -16,9 +16,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await device.launchApp({delete: true, permissions: {notifications: 'YES'}});
 
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(waitTime * 8);
+  await waitUntilLoaded(waitTime);
 
   await element(by.id('tabs.morePage')).tap();
   await element(by.id('morePage.reminders')).tap();

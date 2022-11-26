@@ -1,3 +1,5 @@
+const {waitUntilLoaded} = require('./helpers/general');
+
 /* eslint-env detox/detox, jest */
 const prefix = 'morePage.';
 var waitTime = 1000;
@@ -13,9 +15,7 @@ beforeAll(async () => {
   await device.launchApp({permissions: {notifications: 'YES'}});
 
   //Once this element shows up we know that the database has been set up
-  await waitFor(element(by.text('Daily Text')))
-    .toBeVisible()
-    .withTimeout(40000);
+  await waitUntilLoaded(waitTime);
 });
 
 describe('General funcitonality', () => {
@@ -25,9 +25,7 @@ describe('General funcitonality', () => {
       permissions: {notifications: 'YES'},
     });
 
-    await waitFor(element(by.text('Daily Text')))
-      .toBeVisible()
-      .withTimeout(40000);
+    await waitUntilLoaded(waitTime);
 
     await element(by.id('tabs.morePage')).tap();
   });

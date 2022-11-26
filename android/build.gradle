@@ -8,6 +8,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 31
         targetSdkVersion = 31
+        kotlinVersion = '1.5.31' // (Detox reccomended change)
 
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
@@ -26,6 +27,7 @@ buildscript {
         classpath('com.google.gms:google-services:4.3.3')
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("de.undercouch:gradle-download-task:5.0.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion") // (Detox reccomended change)
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -58,6 +60,9 @@ allprojects {
             }
         }
         google()
+        maven { // (Detox reccomended change)
+            url("$rootDir/../node_modules/detox/Detox-android")
+        }
         maven { url 'https://www.jitpack.io' }
     }
 }
