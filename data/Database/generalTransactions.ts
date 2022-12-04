@@ -322,9 +322,9 @@ function setDatabaseParameters(upgradeJSON: any) {
           let time = new Date(2020, 0, 1, 8, 0, 0);
           return time.toISOString();
         case 'upcomingMemorialDate':
-          // April 15th 2022
+          // April 4th 2023
           // See below (NOTE: the middle number for month starts at 0. so April is 3)
-          let memorialDate = new Date(2022, 3, 15);
+          let memorialDate = new Date(2023, 3, 4);
           return memorialDate.toISOString();
         case 'weeklyReadingStartDate':
           // August 3rd 2020
