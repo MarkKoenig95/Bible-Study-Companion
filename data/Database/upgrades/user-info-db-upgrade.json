@@ -66,7 +66,10 @@
     ],
     "to_v6": [
       [
-        "INSERT INTO tblDates(Name, Description, Date) VALUES (\"UpcomingMemorial\", \"\", \"@{upcomingMemorialDate}\");"
+        "UPDATE tblDates SET Description = \"@{weeklyReadingStartOrder}\", Date = \"@{weeklyReadingStartDate}\" WHERE Name = \"WeeklyReadingStart\";"
+      ],
+      [
+        "UPDATE tblDates SET Date = \"@{upcomingMemorialDate}\" WHERE Name = \"UpcomingMemorial\";"
       ]
     ]
   }

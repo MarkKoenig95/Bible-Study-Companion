@@ -1520,6 +1520,7 @@ export function generateWeeklyReadingSchedule(
   let dayEndPosition;
 
   for (let i = 0; i < 7; i++) {
+    let shouldEnd = false;
     if (pointer > weeklyReadingInfo.rows.length - 1) continue;
 
     dayStartPosition = i === 0 ? VERSE_POSITION.START : VERSE_POSITION.MIDDLE;
@@ -1528,9 +1529,10 @@ export function generateWeeklyReadingSchedule(
     pointer += versesPerDay;
     let dayEndIndex = pointer;
 
-    //TODO: Make a test case for if both indexes are the same what happens
-    if (i >= 6) {
+    //TODO: Make more comprehensive test cases without assumptions that the readings days will never be less than 6 etc.
+    if (i >= 6 || dayEndIndex > weeklyReadingInfo.rows.length - 1) {
       dayEndIndex = weeklyReadingInfo.rows.length - 1;
+      shouldEnd = true;
     }
 
     log('day', i, 'dayStartIndex', dayStartIndex, 'dayEndIndex', dayEndIndex);
@@ -1545,6 +1547,8 @@ export function generateWeeklyReadingSchedule(
     );
 
     portions.push(temp);
+
+    if (shouldEnd) break;
 
     date.setDate(date.getDate() + 1);
     pointer++;

@@ -328,11 +328,11 @@ function setDatabaseParameters(upgradeJSON: any) {
           return memorialDate.toISOString();
         case 'weeklyReadingStartDate':
           // August 3rd 2020
-          // See below (NOTE: the middle number for month starts at 0. so August is 7)
-          let weekReadDate = new Date(2020, 7, 3);
+          // See below (NOTE: the middle number for month starts at 0. so December is 11)
+          let weekReadDate = new Date(2022, 11, 26);
           return weekReadDate.toISOString();
         case 'weeklyReadingStartOrder':
-          return 30;
+          return 154;
         case 'dailyReading':
           return translate('reminders.dailyReading');
         case 'dailyText':
