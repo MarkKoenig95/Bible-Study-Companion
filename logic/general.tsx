@@ -224,7 +224,7 @@ async function recreateAllUserSchedules(userDB: Database, bibleDB: Database) {
 
     let firstItem = await runSQL(
       userDB,
-      `SELECT CompletionDate FROM ${tableName} WHERE ReadingDayID=1;`,
+      `SELECT CompletionDate FROM ${tableName} WHERE ID=1;`,
     );
 
     if (!firstItem) {

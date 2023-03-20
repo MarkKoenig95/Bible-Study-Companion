@@ -261,7 +261,7 @@ export function useReadingInfoPopup() {
     title: '',
     message: '',
     cb: () => {},
-    readingDayID: 0,
+    ID: 0,
     startBookNumber: 1,
     startChapter: 1,
     startVerse: 1,
@@ -288,7 +288,7 @@ export function useReadingInfoPopup() {
       endVerse: number,
       readingPortion: string,
       isFinished: boolean,
-      readingDayID: number,
+      ID: number,
       cb: () => void,
       tableName: string,
     ) => {
@@ -303,7 +303,7 @@ export function useReadingInfoPopup() {
         endVerse,
         readingPortion,
         isFinished,
-        readingDayID,
+        ID,
         cb,
         tableName,
       }));

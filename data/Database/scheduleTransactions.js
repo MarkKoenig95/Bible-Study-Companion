@@ -17,6 +17,7 @@ import {
 } from '../../logic/scheduleCreation';
 import {
   createPlaceholdersFromArray,
+  createTable,
   errorCB,
   log,
   runSQL,
@@ -118,32 +119,31 @@ export async function createScheduleTable(userDB, tableName, scheduleType) {
   let SQL;
 
   if (scheduleType !== SCHEDULE_TYPES.CUSTOM) {
-    SQL = `CREATE TABLE IF NOT EXISTS ${tableName}
-              (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
-              StartBookName VARCHAR(20), 
-              StartBookNumber TINYINT, 
-              StartChapter TINYINT, 
-              StartVerse TINYINT,
-              EndBookName VARCHAR(20), 
-              EndBookNumber TINYINT, 
-              EndChapter TINYINT, 
-              EndVerse TINYINT,
-              VersePosition TINYINT DEFAULT ${VERSE_POSITION.MIDDLE},
-              CompletionDate DATE,
-              ReadingPortion VARCHAR(20), 
-              IsFinished BOOLEAN DEFAULT 0);`;
+    createTable(userDB, tableName, [
+      'StartBookName VARCHAR(20)',
+      'StartBookNumber TINYINT',
+      'StartChapter TINYINT',
+      'StartVerse TINYINT',
+      'EndBookName VARCHAR(20)',
+      'EndBookNumber TINYINT',
+      'EndChapter TINYINT',
+      'EndVerse TINYINT',
+      `VersePosition TINYINT DEFAULT ${VERSE_POSITION.MIDDLE}`,
+      'CompletionDate DATE',
+      'ReadingPortion VARCHAR(20)',
+      'IsFinished BOOLEAN DEFAULT 0',
+    ]).then(() => {
+      log('Table', tableName, 'created successfully');
+    });
   } else {
-    SQL = `CREATE TABLE IF NOT EXISTS ${tableName}
-              (ReadingDayID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-              CompletionDate DATE,
-              ReadingPortion VARCHAR(20), 
-              IsFinished BOOLEAN DEFAULT 0);`;
+    createTable(userDB, tableName, [
+      'CompletionDate DATE',
+      'ReadingPortion VARCHAR(20)',
+      'IsFinished BOOLEAN DEFAULT 0',
+    ]).then(() => {
+      log('Table', tableName, 'created successfully');
+    });
   }
-
-  //Create a table for this new schedule based on the formated name
-  await runSQL(userDB, SQL).then(() => {
-    log('Table', tableName, 'created successfully');
-  });
 
   return;
 }
@@ -772,7 +772,7 @@ export function updateReadStatus(
 ) {
   let bool = status ? 1 : 0;
 
-  runSQL(userDB, `UPDATE ${tableName} SET IsFinished=? WHERE ReadingDayID=?;`, [
+  runSQL(userDB, `UPDATE ${tableName} SET IsFinished=? WHERE ID=?;`, [
     bool,
     id,
   ]).then(afterUpdate);
@@ -809,7 +809,7 @@ export async function updateMultipleReadStatus(
 
   await runSQL(
     userDB,
-    `UPDATE ${tableName} SET IsFinished=? WHERE ReadingDayID<=? AND ReadingDayID>=?;`,
+    `UPDATE ${tableName} SET IsFinished=? WHERE ID<=? AND ID>=?;`,
     [bool, endID, startID],
   );
 }
@@ -933,8 +933,8 @@ export async function setDoesTrack(userDB, scheduleName, doesTrack) {
  * @returns {Array<object>} - An array of objects with startIndex and endIndex keys indicating the span of unbroken completed portions
  */
 export function findFinishedPortionSpans(schedule, startIndex, endIndex) {
-  let startID = schedule.rows.item(startIndex).ReadingDayID;
-  let endID = schedule.rows.item(endIndex).ReadingDayID;
+  let startID = schedule.rows.item(startIndex).ID;
+  let endID = schedule.rows.item(endIndex).ID;
   let idDifference = endID - startID;
   let indexDifference = endIndex - startIndex;
 
@@ -950,8 +950,8 @@ export function findFinishedPortionSpans(schedule, startIndex, endIndex) {
   // Merge the last of the left with the first of the right if the IDs only differ by one, keep the rest
   let lastOfLeft = left[left.length - 1];
   let firstOfRight = right[0];
-  let lastOfLeftID = schedule.rows.item(lastOfLeft.endIndex).ReadingDayID;
-  let firstOfRightID = schedule.rows.item(firstOfRight.startIndex).ReadingDayID;
+  let lastOfLeftID = schedule.rows.item(lastOfLeft.endIndex).ID;
+  let firstOfRightID = schedule.rows.item(firstOfRight.startIndex).ID;
 
   if (lastOfLeftID === firstOfRightID - 1) {
     left.pop();
@@ -1014,7 +1014,7 @@ export async function findCorrespondingIndex(
     if (res.rows.length > 0) {
       let item = res.rows.item(0);
 
-      correspondingIndex = item.ReadingDayID - 1;
+      correspondingIndex = item.ID - 1;
     }
   });
 
@@ -1048,8 +1048,8 @@ async function getIndicesForBibleSchedule(
 }
 
 async function getIndicesForCustomSchedule(startPortion, endPortion) {
-  let startIndex = startPortion.ReadingDayID;
-  let endIndex = endPortion.ReadingDayID;
+  let startIndex = startPortion.ID;
+  let endIndex = endPortion.ID;
 
   return {startIndex, endIndex};
 }

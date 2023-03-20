@@ -93,7 +93,7 @@ function SchedulePage(props: SchedulePageProps) {
           getItemLayout={getItemLayout}
           renderItem={({item, index}: {item: ReadingItem[]; index: number}) => {
             let firstUnfinishedID = firstUnfinished
-              ? firstUnfinished.ReadingDayID
+              ? firstUnfinished.ID
               : Infinity;
             return setScheduleButtons(
               item,

@@ -87,7 +87,7 @@ test('populateScheduleButtons', async () => {
 
   let item = result[0][0];
 
-  expect(item.ReadingDayID).toBe(1);
+  expect(item.ID).toBe(1);
   expect(item.ReadingPortion).toBe('Portion 1');
   expect(item.IsFinished).toBe(0);
   expect(item.title).toBe(scheduleName);
@@ -102,7 +102,7 @@ test('populateWeeklyReading', async () => {
   let item = result[0][0];
 
   expect(result[0].length).toBe(7);
-  expect(item.ReadingDayID).toBe(1);
+  expect(item.ID).toBe(1);
   expect(item.StartBookName).toBe('Numbers');
   expect(item.StartBookNumber).toBe(4);
   expect(item.StartChapter).toBe(9);
@@ -121,7 +121,7 @@ test('populateWeeklyReading', async () => {
 
   let finalItem = result[0][6];
 
-  expect(finalItem.ReadingDayID).toBe(7);
+  expect(finalItem.ID).toBe(7);
   expect(finalItem.CompletionDate).toBe('2021-03-09T16:00:00.000Z');
   expect(finalItem.ReadingPortion).toBe('Numbers 10:32-36');
 });

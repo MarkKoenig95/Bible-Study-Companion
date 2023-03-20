@@ -60,11 +60,11 @@ const toggleButtonFinishedState = (
 
 const modifyButtonsPopupStateForScheduleDay = (
   prevButtonsPopupState: ButtonsPopupState,
-  readingDayID: number,
+  ID: number,
 ) => {
-  const {readingDayIDs} = prevButtonsPopupState;
+  const {IDs} = prevButtonsPopupState;
 
-  let indexOfID = readingDayIDs.findIndex((id: number) => id === readingDayID);
+  let indexOfID = IDs.findIndex((id: number) => id === ID);
 
   let returnState = prevButtonsPopupState;
 
@@ -75,7 +75,7 @@ const baseState: ButtonsPopupState = {
   areButtonsFinished: [],
   buttons: [],
   isDisplayed: false,
-  readingDayIDs: [],
+  IDs: [],
   tableName: '',
 };
 
@@ -89,21 +89,21 @@ export function useButtonsPopup() {
   }, []);
 
   const openButtonsPopup = useCallback(
-    (buttons, tableName, areButtonsFinished = [], readingDayIDs = []) => {
+    (buttons, tableName, areButtonsFinished = [], IDs = []) => {
       setButtonsPopup({
         areButtonsFinished,
         buttons,
         isDisplayed: true,
-        readingDayIDs,
+        IDs,
         tableName,
       });
     },
     [],
   );
 
-  const markButtonInPopupComplete = useCallback((readingDayID: number) => {
+  const markButtonInPopupComplete = useCallback((ID: number) => {
     setButtonsPopup((prevValue) => {
-      return modifyButtonsPopupStateForScheduleDay(prevValue, readingDayID);
+      return modifyButtonsPopupStateForScheduleDay(prevValue, ID);
     });
   }, []);
 

@@ -686,8 +686,8 @@ describe('match finished portions between DIFFERENT, COMPLEX schedules starting 
     let origScheduleLength = origScheduleFinished.rows.length;
 
     let idDifference =
-      newScheduleFinished.rows.item(newScheduleLength - 1).ReadingDayID -
-      newScheduleFinished.rows.item(0).ReadingDayID;
+      newScheduleFinished.rows.item(newScheduleLength - 1).ID -
+      newScheduleFinished.rows.item(0).ID;
     //Expect that the finished portions are not continuous
     expect(idDifference).toBeGreaterThan(newScheduleLength);
 
@@ -839,7 +839,7 @@ describe('Test an odd edge case for matching finished portions', () => {
 
     await runSQL(
       userDB,
-      `UPDATE ${origTableName} SET EndBookNumber=?, EndChapter=?, EndVerse=?, IsFinished=? WHERE ReadingDayID=?`,
+      `UPDATE ${origTableName} SET EndBookNumber=?, EndChapter=?, EndVerse=?, IsFinished=? WHERE ID=?`,
       [13, 1, 1, 1, 2],
     );
 

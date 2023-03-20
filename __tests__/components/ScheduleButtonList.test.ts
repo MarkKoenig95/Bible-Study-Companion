@@ -8,7 +8,7 @@ import {VersePosition} from '../../logic/general';
 
 let onUpdateReadStatus: OnUpdateReadStatus = (
   status: boolean,
-  readingDayID: number,
+  ID: number,
   tableName: string,
   isAfterFirstUnfinished: boolean,
 ) => {};
@@ -22,12 +22,12 @@ let openReadingPopup: OpenReadingInfoPopup = (
   endVerse: number,
   readingPortion: string,
   isFinished: boolean,
-  readingDayID: number,
+  ID: number,
   callback: () => void,
   tableName: string,
 ) => {};
 
-let markButtonInPopupComplete = (readingDayID) => {};
+let markButtonInPopupComplete = (ID) => {};
 
 let blankCreateListArgs = {
   closeReadingPopup: () => {},
@@ -56,7 +56,7 @@ let blankItemFields = {
 
 let item1: BibleReadingItem = {
   ...blankItemFields,
-  readingDayID: 1,
+  ID: 1,
   startBookNumber: 1,
   startBookName: 'Genesis',
   startChapter: 1,
@@ -71,7 +71,7 @@ let item1: BibleReadingItem = {
 
 let item2: BibleReadingItem = {
   ...blankItemFields,
-  readingDayID: 2,
+  ID: 2,
   startBookNumber: 1,
   startBookName: 'Genesis',
   startChapter: 3,
@@ -86,7 +86,7 @@ let item2: BibleReadingItem = {
 
 let item3: BibleReadingItem = {
   ...blankItemFields,
-  readingDayID: 2,
+  ID: 2,
   startBookNumber: 1,
   startBookName: 'Genesis',
   startChapter: 5,
@@ -101,7 +101,7 @@ let item3: BibleReadingItem = {
 
 let item4: BibleReadingItem = {
   ...blankItemFields,
-  readingDayID: 3,
+  ID: 3,
   startBookNumber: 13,
   startBookName: '1 Chronicles',
   startChapter: 1,

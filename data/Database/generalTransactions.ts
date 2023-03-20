@@ -45,6 +45,23 @@ export async function updateValue(
   ).then(afterUpdate);
 }
 
+export async function createTable(
+  DB: Database,
+  tableName: string,
+  args: string[],
+) {
+  let sqlString =
+    'CREATE TABLE IF NOT EXISTS ' +
+    tableName +
+    ' (' +
+    'ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ' +
+    "CreatedTime DATETIME NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP, 'localtime')), " +
+    "UpdatedTime DATETIME NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP, 'localtime')), " +
+    args.join(', ') +
+    ');';
+  await runSQL(DB, sqlString);
+}
+
 export function createPlaceholdersFromArray(array: any[]) {
   let values: any[] = [];
   const thisFunc = (innerArray: any[]) => {
@@ -91,7 +108,7 @@ export function convertDBItemToJSItem(
     completionDate: new Date(item.CompletionDate),
     doesTrack,
     isFinished: !!item.IsFinished,
-    readingDayID: item.ReadingDayID,
+    ID: item.ID,
     onLongPress: () => {},
     onPress: () => {},
     tableName: '',
@@ -164,7 +181,7 @@ export async function loadData(
     const item: DBReadingItem | DBBibleReadingItem = results.rows.item(i);
     if (completedHidden && item.IsFinished) continue;
 
-    if (item.ReadingDayID) {
+    if (item.ID) {
       const newItem = convertDBItemToJSItem(item, doesTrack);
 
       if (newItem.completionDate.getTime() === previousDate.getTime()) {

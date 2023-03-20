@@ -38,12 +38,12 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
 
   let isDelayed = false;
 
-  const isAfterFirstUnfinished = item.readingDayID > firstUnfinishedID;
+  const isAfterFirstUnfinished = item.ID > firstUnfinishedID;
 
   const onLongPress = () => {
     onUpdateReadStatus(
       item.isFinished,
-      item.readingDayID,
+      item.ID,
       tableName,
       isAfterFirstUnfinished,
     );
@@ -64,7 +64,7 @@ export default function ScheduleButton(props: ScheduleButtonProps) {
         bibleItem.endVerse,
         bibleItem.readingPortion,
         bibleItem.isFinished,
-        bibleItem.readingDayID,
+        bibleItem.ID,
         () => {
           onLongPress();
           closeReadingPopup();

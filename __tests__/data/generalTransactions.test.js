@@ -1,6 +1,7 @@
 import SQLite from 'react-native-sqlite-storage';
 import {
   appVersion,
+  createTable,
   getSettings,
   getVersion,
   runSQL,
@@ -35,7 +36,7 @@ test('Upgrade User DB and check version', async () => {
     resetDay = res.rows.item(0).Value;
   });
 
-  expect(version).toBe(3);
+  expect(version).toBe(6);
   expect(resetDay).toBe(4);
 });
 
@@ -50,14 +51,14 @@ test('appVersion run 1', async () => {
   let {prevVersion, currVersion} = await appVersion(userDB);
 
   expect(prevVersion).toBe('');
-  expect(currVersion).toBe('1.1.0');
+  expect(currVersion).toBe('1.3.2');
 });
 
 test('appVersion run 2', async () => {
   let {prevVersion, currVersion} = await appVersion(userDB);
 
-  expect(prevVersion).toBe('1.1.0');
-  expect(currVersion).toBe('1.1.0');
+  expect(prevVersion).toBe('1.3.2');
+  expect(currVersion).toBe('1.3.2');
 });
 
 test('updateValue', async () => {
@@ -68,4 +69,29 @@ test('updateValue', async () => {
     'SELECT Name FROM tblUserPrefs WHERE ID=1;',
   );
   expect(result.rows.item(0).Name).toBe('Changed');
+});
+
+test('createTable', async () => {
+  await createTable(userDB, 'tblNewTable', ['Name VARCHAR(20) UNIQUE']);
+
+  await runSQL(
+    userDB,
+    'INSERT INTO tblNewTable (Name) VALUES ("Hello World!")',
+  );
+
+  let result = await runSQL(userDB, 'SELECT * FROM tblNewTable;');
+
+  let ct = new Date(result.rows.item(0).CreatedTime);
+  let ut = new Date(result.rows.item(0).UpdatedTime);
+  let today = new Date();
+
+  expect(result.rows.item(0).Name).toBe('Hello World!');
+  expect(ct.getFullYear()).toBe(today.getFullYear());
+  expect(ct.getMonth()).toBe(today.getMonth());
+  expect(ct.getDate()).toBe(today.getDate());
+  expect(ct.getHours()).toBe(today.getHours());
+  expect(ut.getFullYear()).toBe(today.getFullYear());
+  expect(ut.getMonth()).toBe(today.getMonth());
+  expect(ut.getDate()).toBe(today.getDate());
+  expect(ut.getHours()).toBe(today.getHours());
 });

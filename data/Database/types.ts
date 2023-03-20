@@ -17,7 +17,7 @@ export interface DBQueryResult {
 export interface DBReadingItem {
   CompletionDate: string;
   IsFinished: 0 | 1;
-  ReadingDayID: number;
+  ID: number;
   ReadingPortion: string;
 }
 
@@ -38,7 +38,7 @@ export interface ReadingItem {
   completionDate: Date;
   doesTrack: boolean;
   isFinished: boolean;
-  readingDayID: number;
+  ID: number;
   onLongPress: () => void;
   onPress: () => void;
   tableName: string;

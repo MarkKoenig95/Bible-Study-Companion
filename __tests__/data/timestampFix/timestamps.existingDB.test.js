@@ -1,15 +1,12 @@
 import SQLite from 'react-native-sqlite-storage';
-import {
-  appVersion,
-  upgradeDB,
-} from '../../../data/Database/generalTransactions';
-import {addReminder} from '../../../data/Database/reminderTransactions';
+import {appVersion, upgradeDB} from '../../data/Database/generalTransactions';
+import {addReminder} from '../../data/Database/reminderTransactions';
 import {
   addSchedule,
   updateMultipleReadStatus,
-} from '../../../data/Database/scheduleTransactions';
-import upgradeJSON from '../../../data/Database/upgrades/user-info-db-upgrade.json';
-import {FREQS, SCHEDULE_TYPES} from '../../../logic/general';
+} from '../../data/Database/scheduleTransactions';
+import upgradeJSON from '../../data/Database/upgrades/user-info-db-upgrade.json';
+import {FREQS, SCHEDULE_TYPES} from '../../logic/general';
 
 let userDB;
 let bibleDB;
@@ -21,14 +18,15 @@ beforeAll(async () => {
   // node_modules folder and reinstall I want this link that I can reference back to
   // https://github.com/facebook/jest/issues/10221#issuecomment-654687396
 
-  userDB = SQLite.openDatabase('e2e_UserInfo.db');
+  userDB = SQLite.openDatabase('old_UserInfo.db');
   userDB.deleteDB();
   bibleDB = SQLite.openDatabase('BibleStudyCompanion.db');
-  userDB = SQLite.openDatabase('e2e_UserInfo.db');
+  userDB = SQLite.openDatabase('old_UserInfo.db');
 
   await upgradeDB(userDB, upgradeJSON);
   await appVersion(userDB);
 
+  jest.setSystemTime(new Date(2022, 2, 10, 8, 10, 30, 0));
   await addSchedule(
     userDB,
     bibleDB,
@@ -48,6 +46,7 @@ beforeAll(async () => {
     () => {},
   );
 
+  jest.setSystemTime(new Date(2022, 3, 11, 10, 43, 21, 0));
   await addSchedule(
     userDB,
     bibleDB,
@@ -67,6 +66,7 @@ beforeAll(async () => {
     () => {},
   );
 
+  jest.setSystemTime(new Date(2022, 5, 6, 3, 59, 59, 0));
   await addSchedule(
     userDB,
     bibleDB,
@@ -86,6 +86,7 @@ beforeAll(async () => {
     () => {},
   );
 
+  jest.setSystemTime(new Date(2023, 1, 10, 0, 0, 0, 0));
   await addSchedule(
     userDB,
     bibleDB,

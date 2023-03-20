@@ -9,14 +9,14 @@ export type OpenReadingInfoPopup = (
   endVerse: number,
   readingPortion: string,
   isFinished: boolean,
-  readingDayID: number,
+  ID: number,
   callback: () => void,
   tableName: string,
 ) => void;
 
 export type OnUpdateReadStatus = (
   status: boolean,
-  readingDayID: number,
+  ID: number,
   tableName: string,
   isAfterFirstUnfinished: boolean,
 ) => void;
@@ -25,6 +25,6 @@ export interface ButtonsPopupState {
   areButtonsFinished: boolean[];
   buttons: ScheduleButtonProps[];
   isDisplayed: boolean;
-  readingDayIDs: number[];
+  IDs: number[];
   tableName: string;
 }

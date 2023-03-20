@@ -157,7 +157,7 @@ export async function populateScheduleButtons(
       userDB,
       `SELECT * FROM ${tableName}
          WHERE IsFinished=0
-         ORDER BY ReadingDayID ASC
+         ORDER BY ID ASC
          LIMIT 1;`,
     ).then((res) => {
       if (res.rows.length > 0) {
@@ -169,7 +169,7 @@ export async function populateScheduleButtons(
       userDB,
       `SELECT * FROM ${tableName}
          WHERE CompletionDate=?
-         ORDER BY ReadingDayID ASC;`,
+         ORDER BY ID ASC;`,
       [completionDate],
     );
 
@@ -224,7 +224,7 @@ export async function populateWeeklyReading(
     table = await runSQL(
       userDB,
       `SELECT * FROM ${tableName}
-       ORDER BY ReadingDayID ASC;`,
+       ORDER BY ID ASC;`,
     );
   } catch (e) {
     console.warn(e);

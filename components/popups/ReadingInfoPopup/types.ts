@@ -34,7 +34,7 @@ export interface ReadingPopupState {
   startBookNumber: number;
   startChapter: number;
   startVerse: number;
-  readingDayID: number;
+  ID: number;
   readingPortion: string;
   tableName: string;
   title: string;

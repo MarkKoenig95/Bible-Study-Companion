@@ -70,10 +70,7 @@ function useItemLayout(
       currentOffset += length;
       let currentLength = length;
 
-      if (
-        firstUnfinished &&
-        items[0].readingDayID === firstUnfinished.ReadingDayID
-      ) {
+      if (firstUnfinished && items[0].ID === firstUnfinished.ID) {
         initialScrollIndexRef.current = idx;
       }
 
@@ -95,10 +92,7 @@ function useItemLayout(
       for (let i = 1; i < items.length; i++) {
         const item = items[i];
 
-        if (
-          firstUnfinished &&
-          item.readingDayID === firstUnfinished.ReadingDayID
-        ) {
+        if (firstUnfinished && item.ID === firstUnfinished.ID) {
           initialScrollIndexRef.current = idx;
         }
 
@@ -197,7 +191,7 @@ export default function useSchedulePage(
     !completedHidden &&
     scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL &&
     firstUnfinished
-      ? firstUnfinished.ReadingDayID
+      ? firstUnfinished.ID
       : 0;
 
   const [initialScrollIndex, setInitialScrollIndex] = useState(

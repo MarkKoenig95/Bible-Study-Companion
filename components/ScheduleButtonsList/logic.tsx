@@ -37,19 +37,19 @@ interface SetOneButtonArgs extends SetScheduleButtonsArgs {
 
 interface CreateButtonListArgs extends SetScheduleButtonsArgs {
   items: BibleReadingItem[];
-  markButtonInPopupComplete: (readingDayID: number) => void;
+  markButtonInPopupComplete: (ID: number) => void;
 }
 
 interface SetMultipleButtonsArgs extends SetScheduleButtonsArgs {
   buttonsPopup: ButtonsPopupState;
   index: number;
   items: BibleReadingItem[];
-  markButtonInPopupComplete: (readingDayID: number) => void;
+  markButtonInPopupComplete: (ID: number) => void;
   openButtonsPopup: (
     buttons: Element[],
     tableName: string,
     areButtonsFinished: boolean[],
-    readingDayIDs: number[],
+    IDs: number[],
   ) => void;
   updateButtonReadings: (
     tableName: string,
@@ -217,7 +217,7 @@ export function createButtonList(args: CreateButtonListArgs) {
   let completionDate = firstItem.completionDate;
 
   let buttons: Element[] = [];
-  let readingDayIDs: number[] = [];
+  let IDs: number[] = [];
   let areButtonsFinished: boolean[] = [];
   let prevUnhiddenBookNumber = 0;
   let prevBookNum = 0;
@@ -240,7 +240,7 @@ export function createButtonList(args: CreateButtonListArgs) {
       prevUnhiddenBookNumber = prevBookNum;
     }
 
-    readingDayIDs.push(item.readingDayID);
+    IDs.push(item.ID);
 
     isFinished = tempIsFinished && isFinished;
 
@@ -249,13 +249,13 @@ export function createButtonList(args: CreateButtonListArgs) {
     const onUpdate = (
       ...args: [
         status: boolean,
-        readingDayID: number,
+        ID: number,
         tableName: string,
         isAfterFirstUnfinished: boolean,
       ]
     ) => {
       onUpdateReadStatus(...args);
-      markButtonInPopupComplete(item.readingDayID);
+      markButtonInPopupComplete(item.ID);
     };
 
     buttons.push({
@@ -307,7 +307,7 @@ export function createButtonList(args: CreateButtonListArgs) {
     completionDate,
     doesTrack,
     isFinished,
-    readingDayIDs,
+    IDs,
     readingPortions,
     thisTableName,
     title,
@@ -339,7 +339,7 @@ export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
     completionDate,
     doesTrack,
     isFinished,
-    readingDayIDs,
+    IDs,
     readingPortions,
     thisTableName,
     title,
@@ -373,8 +373,8 @@ export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
       title={title}
       update={updatePages}
       onLongPress={() => {
-        let firstID = readingDayIDs[0];
-        let lastID = readingDayIDs[readingDayIDs.length - 1];
+        let firstID = IDs[0];
+        let lastID = IDs[IDs.length - 1];
         let isAfterFirstUnfinished = firstID > firstUnfinishedID;
 
         if (isAfterFirstUnfinished && !isFinished) {
@@ -392,12 +392,7 @@ export function setMultipleScheduleButtons(args: SetMultipleButtonsArgs) {
         updateButtonReadings(thisTableName, firstID, lastID, isFinished);
       }}
       onPress={() => {
-        openButtonsPopup(
-          buttons,
-          thisTableName,
-          areButtonsFinished,
-          readingDayIDs,
-        );
+        openButtonsPopup(buttons, thisTableName, areButtonsFinished, IDs);
       }}
       readingPortionWidth={readingPortionWidth}
       setReadingPortionWidth={setReadingPortionWidth}

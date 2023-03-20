@@ -40,17 +40,15 @@ export default function useScheduleButtonsList(
   } = useScheduleListPopups(testID);
 
   const onUpdateReadStatus = useCallback(
-    (status, readingDayID, tableName, isAfterFirstUnfinished) => {
-      readingDayID = readingDayID || readingPopup.readingDayID;
+    (status, ID, tableName, isAfterFirstUnfinished) => {
+      ID = ID || readingPopup.ID;
 
       const updateOne = () => {
-        updateReadStatus(userDB, tableName, readingDayID, !status, afterUpdate);
+        updateReadStatus(userDB, tableName, ID, !status, afterUpdate);
       };
 
       const updateMultiple = () => {
-        updateMultipleReadStatus(userDB, tableName, readingDayID).then(
-          afterUpdate,
-        );
+        updateMultipleReadStatus(userDB, tableName, ID).then(afterUpdate);
       };
 
       if (isAfterFirstUnfinished && !status) {
@@ -60,7 +58,7 @@ export default function useScheduleButtonsList(
 
       updateOne();
     },
-    [readingPopup.readingDayID, afterUpdate, userDB],
+    [readingPopup.ID, afterUpdate, userDB],
   );
 
   const updateButtonReadings = useCallback(
