@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "upgrades": {
     "to_v1": [
       [
@@ -65,6 +65,14 @@
       ]
     ],
     "to_v6": [
+      [
+        "UPDATE tblDates SET Description = \"@{weeklyReadingStartOrder}\", Date = \"@{weeklyReadingStartDate}\" WHERE Name = \"WeeklyReadingStart\";"
+      ],
+      [
+        "UPDATE tblDates SET Date = \"@{upcomingMemorialDate}\" WHERE Name = \"UpcomingMemorial\";"
+      ]
+    ],
+    "to_v7": [
       [
         "UPDATE tblDates SET Description = \"@{weeklyReadingStartOrder}\", Date = \"@{weeklyReadingStartDate}\" WHERE Name = \"WeeklyReadingStart\";"
       ],

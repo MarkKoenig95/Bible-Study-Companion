@@ -339,17 +339,17 @@ function setDatabaseParameters(upgradeJSON: any) {
           let time = new Date(2020, 0, 1, 8, 0, 0);
           return time.toISOString();
         case 'upcomingMemorialDate':
-          // April 4th 2023
-          // See below (NOTE: the middle number for month starts at 0. so April is 3)
-          let memorialDate = new Date(2023, 3, 4);
+          // March 24th 2024
+          // See below (NOTE: the middle number for month starts at 0. so March is 2)
+          let memorialDate = new Date(2024, 2, 24);
           return memorialDate.toISOString();
         case 'weeklyReadingStartDate':
-          // August 3rd 2020
+          // December 18th 2023
           // See below (NOTE: the middle number for month starts at 0. so December is 11)
-          let weekReadDate = new Date(2022, 11, 26);
+          let weekReadDate = new Date(2023, 11, 18);
           return weekReadDate.toISOString();
         case 'weeklyReadingStartOrder':
-          return 154;
+          return 204;
         case 'dailyReading':
           return translate('reminders.dailyReading');
         case 'dailyText':
