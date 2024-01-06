@@ -155,22 +155,22 @@ describe('find max', () => {
 
 // findNearestVerse
 describe('given a bible book, a chapter, and a verse check if the combination exists, if not, find the closest matching verse', () => {
-  it('checks larger chapter', () => {
-    let [bookId, chapter, verse] = findNearestVerse(1, 200, 1);
+  it('checks larger chapter', async () => {
+    let [bookId, chapter, verse] = await findNearestVerse(1, 200, 1);
     expect(bookId).toBe(2);
     expect(chapter).toBe(1);
     expect(verse).toBe(1);
   });
 
-  it('checks larger verse', () => {
-    let [bookId, chapter, verse] = findNearestVerse(39, 1, 200);
+  it('checks larger verse', async () => {
+    let [bookId, chapter, verse] = await findNearestVerse(39, 1, 200);
     expect(bookId).toBe(39);
     expect(chapter).toBe(2);
     expect(verse).toBe(1);
   });
 
-  it('checks larger chapter and a larger verse', () => {
-    let [bookId, chapter, verse] = findNearestVerse(66, 200, 200);
+  it('checks larger chapter and a larger verse', async () => {
+    let [bookId, chapter, verse] = await findNearestVerse(66, 200, 200);
     expect(bookId).toBe(1);
     expect(chapter).toBe(1);
     expect(verse).toBe(1);
@@ -1146,7 +1146,7 @@ describe('given information on the start verse and end verse returns the overall
       25,
       true,
     );
-    expect(description).toBe('Genesis 50-Exodus 1');
+    expect(description).toBe('Genesis 50 - Exodus 1');
     expect(position).toBe(VERSE_POSITION.START_AND_END);
   });
 
@@ -1161,7 +1161,7 @@ describe('given information on the start verse and end verse returns the overall
       20,
       false,
     );
-    expect(description).toBe('Genesis 50:1-Exodus 2:20');
+    expect(description).toBe('Genesis 50:1 - Exodus 2:20');
     expect(position).toBe(VERSE_POSITION.START);
   });
 
@@ -1176,7 +1176,7 @@ describe('given information on the start verse and end verse returns the overall
       20,
       false,
     );
-    expect(description).toBe('Genesis 50:10-Exodus 2:20');
+    expect(description).toBe('Genesis 50:10 - Exodus 2:20');
     expect(position).toBe(VERSE_POSITION.MIDDLE);
   });
 
@@ -1191,7 +1191,7 @@ describe('given information on the start verse and end verse returns the overall
       20,
       true,
     );
-    expect(description).toBe('Genesis 50:10-Exodus 2:20');
+    expect(description).toBe('Genesis 50:10 - Exodus 2:20');
     expect(position).toBe(VERSE_POSITION.END);
   });
 });
@@ -1718,7 +1718,7 @@ describe('createReadingPortions', () => {
       19,
       33,
       22,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       'Psalms 33',
       3,
     ];
@@ -1732,7 +1732,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       14,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:1-14',
       0,
     ];
@@ -1746,7 +1746,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       25,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:24-25',
       1,
     ];
@@ -1760,7 +1760,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       19,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:17-19',
       1,
     ];
@@ -1774,7 +1774,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       28,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:26-28',
       2,
     ];
@@ -1788,7 +1788,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       22,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 10:22',
       1,
     ];
@@ -1802,7 +1802,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       1,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 10:1',
       0,
     ];
@@ -1816,7 +1816,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       3,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 7:11-8:3',
       1,
     ];
@@ -1830,7 +1830,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       16,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 8:11-16',
       1,
     ];
@@ -1844,7 +1844,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       6,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 8:4-6',
       1,
     ];
@@ -1858,7 +1858,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       18,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 8:17-18',
       2,
     ];
@@ -1872,7 +1872,7 @@ describe('createReadingPortions', () => {
       14,
       9,
       21,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 9:21',
       1,
     ];
@@ -1915,7 +1915,7 @@ describe('createReadingPortions', () => {
       19,
       33,
       22,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       'Psalms 33',
       3,
     ];
@@ -1929,7 +1929,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       14,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:1-14',
       0,
     ];
@@ -1943,7 +1943,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       25,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:24-25',
       1,
     ];
@@ -1957,7 +1957,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       19,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:17-19',
       1,
     ];
@@ -1971,7 +1971,7 @@ describe('createReadingPortions', () => {
       11,
       9,
       28,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 9:26-28',
       2,
     ];
@@ -1985,7 +1985,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       22,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 10:22',
       1,
     ];
@@ -1999,7 +1999,7 @@ describe('createReadingPortions', () => {
       11,
       10,
       13,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '1 Kings 10:1-13',
       0,
     ];
@@ -2013,7 +2013,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       3,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 7:11-8:3',
       1,
     ];
@@ -2027,7 +2027,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       16,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 8:11-16',
       1,
     ];
@@ -2041,7 +2041,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       6,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 8:4-6',
       1,
     ];
@@ -2055,7 +2055,7 @@ describe('createReadingPortions', () => {
       14,
       8,
       18,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 8:17-18',
       2,
     ];
@@ -2069,7 +2069,7 @@ describe('createReadingPortions', () => {
       14,
       9,
       21,
-      '2021-01-31T16:00:00.000Z',
+      '2021-02-01T06:00:00.000Z',
       '2 Chronicles 9:21',
       1,
     ];
@@ -2404,7 +2404,9 @@ describe('create bible reading schedule', () => {
     expect(readingPortions[0][indices.ReadingPortion]).toBe('Genesis 1-37');
     expect(thisDate.toString()).toBe(today.toString());
 
-    expect(readingPortions[43][indices.ReadingPortion]).toBe('1 John 2-Jude 1');
+    expect(readingPortions[43][indices.ReadingPortion]).toBe(
+      '1 John 2 - Jude 1',
+    );
 
     today.setDate(today.getDate() + 41);
 

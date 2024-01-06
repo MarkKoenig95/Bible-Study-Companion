@@ -130,7 +130,7 @@ test('getValueArraysFromItem', () => {
   let item = {
     ID: 4,
     Name: 'notification',
-    NextNotifDate: 'Wed Mar 10 2021 08:00:00 GMT+0800 (China Standard Time)',
+    NextNotifDate: 'Wed Mar 10 2021 08:00:00',
     IsNotificationActive: 1,
     IsDay0Active: 1,
     IsDay1Active: 1,
@@ -139,13 +139,13 @@ test('getValueArraysFromItem', () => {
     IsDay4Active: 1,
     IsDay5Active: 1,
     IsDay6Active: 1,
-    Day0Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
-    Day1Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
-    Day2Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
-    Day3Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
-    Day4Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
-    Day5Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
-    Day6Time: 'Tue Mar 09 2021 08:00:00 GMT+0800 (China Standard Time)',
+    Day0Time: 'Tue Mar 09 2021 08:00:00',
+    Day1Time: 'Tue Mar 09 2021 08:00:00',
+    Day2Time: 'Tue Mar 09 2021 08:00:00',
+    Day3Time: 'Tue Mar 09 2021 08:00:00',
+    Day4Time: 'Tue Mar 09 2021 08:00:00',
+    Day5Time: 'Tue Mar 09 2021 08:00:00',
+    Day6Time: 'Tue Mar 09 2021 08:00:00',
   };
 
   let {days, times} = getValueArraysFromItem(item);

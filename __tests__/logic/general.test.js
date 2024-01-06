@@ -13,7 +13,7 @@ import {
 beforeAll(() => {
   jest.useFakeTimers('modern');
 
-  jest.setSystemTime(new Date('04 Feb 2021 00:12:00 GMT').getTime());
+  jest.setSystemTime(new Date('04 Feb 2021 12:00:00 GMT').getTime());
 });
 
 afterAll(() => {

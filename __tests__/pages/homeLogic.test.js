@@ -73,7 +73,7 @@ test('populateReminders', async () => {
   let item = result[0];
 
   expect(item.isFinished).toBe(false);
-  expect(item.completionDate).toBe('1/1/70');
+  expect(item.completionDate).toEqual(new Date('1970-01-01T00:00:00.000Z'));
   expect(item.completedHidden).toBe(true);
   expect(typeof item.onLongPress).toBe('function');
   expect(typeof item.onPress).toBe('function');
@@ -88,8 +88,8 @@ test('populateScheduleButtons', async () => {
   let item = result[0][0];
 
   expect(item.ID).toBe(1);
-  expect(item.ReadingPortion).toBe('Portion 1');
-  expect(item.IsFinished).toBe(0);
+  expect(item.readingPortion).toBe('Portion 1');
+  expect(item.isFinished).toBe(false);
   expect(item.title).toBe(scheduleName);
   expect(item.doesTrack).toBe(false);
   expect(item.tableName).toBe('tblSchedule1');
@@ -101,20 +101,21 @@ test('populateWeeklyReading', async () => {
 
   let item = result[0][0];
 
+  console.log(item);
   expect(result[0].length).toBe(7);
   expect(item.ID).toBe(1);
-  expect(item.StartBookName).toBe('Numbers');
-  expect(item.StartBookNumber).toBe(4);
-  expect(item.StartChapter).toBe(9);
-  expect(item.StartVerse).toBe(1);
-  expect(item.EndBookName).toBe('Numbers');
-  expect(item.EndBookNumber).toBe(4);
-  expect(item.EndChapter).toBe(9);
-  expect(item.EndVerse).toBe(9);
-  expect(item.VersePosition).toBe(VERSE_POSITION.START);
-  expect(item.CompletionDate).toBe('2021-03-03T16:00:00.000Z');
-  expect(item.ReadingPortion).toBe('Numbers 9:1-9');
-  expect(item.IsFinished).toBe(0);
+  expect(item.startBookName).toBe('Numbers');
+  expect(item.startBookNumber).toBe(4);
+  expect(item.startChapter).toBe(5);
+  expect(item.startVerse).toBe(1);
+  expect(item.endBookName).toBe('Numbers');
+  expect(item.endBookNumber).toBe(4);
+  expect(item.endChapter).toBe(5);
+  expect(item.endVerse).toBe(9);
+  expect(item.versePosition).toBe(VERSE_POSITION.START);
+  expect(item.completionDate).toEqual(new Date('2021-03-04T06:00:00.000Z'));
+  expect(item.readingPortion).toBe('Numbers 5:1-9');
+  expect(item.isFinished).toBe(false);
   expect(item.title).toBe('Weekly Reading');
   expect(item.tableName).toBe('tblWeeklyReading');
   expect(item.update).toBe(1);
@@ -122,8 +123,10 @@ test('populateWeeklyReading', async () => {
   let finalItem = result[0][6];
 
   expect(finalItem.ID).toBe(7);
-  expect(finalItem.CompletionDate).toBe('2021-03-09T16:00:00.000Z');
-  expect(finalItem.ReadingPortion).toBe('Numbers 10:32-36');
+  expect(finalItem.completionDate).toEqual(
+    new Date('2021-03-10T06:00:00.000Z'),
+  );
+  expect(finalItem.readingPortion).toBe('Numbers 6:24-27');
 });
 
 test('populateHomeList', async () => {

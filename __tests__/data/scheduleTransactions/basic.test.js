@@ -153,8 +153,8 @@ test('getScheduleSettings', async () => {
 test('loadData', async () => {
   let result = await loadData(userDB, tableName, true);
 
-  expect(result[0][0].ReadingPortion).toBe('Genesis 1-3');
-  expect(result[365][0].ReadingPortion).toBe('Revelation 22');
+  expect(result[0][0].readingPortion).toBe('Genesis 1-3');
+  expect(result[365][0].readingPortion).toBe('Revelation 22');
 });
 
 test('createWeeklyReadingSchedule', async () => {
@@ -186,7 +186,7 @@ test('createWeeklyReadingSchedule forced', async () => {
 });
 
 test('updateDates', async () => {
-  let date = new Date(2021, 2, 3, 4, 5, 6, 7).toString();
+  let date = new Date(2021, 2, 3, 4, 5, 6, 7);
 
   await updateDates(userDB, date, 'WeeklyReadingCurrent', () => {});
 
@@ -195,7 +195,7 @@ test('updateDates', async () => {
     'SELECT * FROM tblDates WHERE Name="WeeklyReadingCurrent"',
   );
 
-  expect(date).toBe(result.rows.item(0).Date);
+  expect(date).toEqual(new Date(result.rows.item(0).Date));
 });
 
 test('set a span of portions to "Read"', async () => {

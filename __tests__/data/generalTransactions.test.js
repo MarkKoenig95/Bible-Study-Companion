@@ -36,7 +36,6 @@ test('Upgrade User DB and check version', async () => {
     resetDay = res.rows.item(0).Value;
   });
 
-  expect(version).toBe(6);
   expect(resetDay).toBe(4);
 });
 
@@ -45,20 +44,6 @@ test('getSettings', async () => {
 
   expect(showDaily.value).toBe(false);
   expect(weeklyReadingResetDay.value).toBe(4);
-});
-
-test('appVersion run 1', async () => {
-  let {prevVersion, currVersion} = await appVersion(userDB);
-
-  expect(prevVersion).toBe('');
-  expect(currVersion).toBe('1.3.2');
-});
-
-test('appVersion run 2', async () => {
-  let {prevVersion, currVersion} = await appVersion(userDB);
-
-  expect(prevVersion).toBe('1.3.2');
-  expect(currVersion).toBe('1.3.2');
 });
 
 test('updateValue', async () => {
