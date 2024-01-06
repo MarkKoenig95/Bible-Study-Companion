@@ -179,9 +179,9 @@ export async function loadData(
 
   for (let i = 0; i < results.rows.length; ++i) {
     const item: DBReadingItem | DBBibleReadingItem = results.rows.item(i);
-    if (completedHidden && item.IsFinished) continue;
 
-    if (item.ID) {
+    if (item.ReadingPortion) {
+      if (completedHidden && item.IsFinished) continue;
       const newItem = convertDBItemToJSItem(item, doesTrack);
 
       if (newItem.completionDate.getTime() === previousDate.getTime()) {

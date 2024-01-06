@@ -9,6 +9,7 @@ import {
 import {
   Database,
   DBBibleReadingItem,
+  DBQueryResult,
   DBReadingItem,
   ScheduleInfo,
 } from '../data/Database/types';
@@ -218,7 +219,10 @@ async function recreateAllUserSchedules(userDB: Database, bibleDB: Database) {
     const creationInfo = tableInfo.CreationInfo;
     const tableName = formatScheduleTableName(tableInfo.ScheduleID);
 
-    if (creationInfo === WEEKLY_READING_TABLE_NAME || !creationInfo) {
+    if (
+      (creationInfo as string) === WEEKLY_READING_TABLE_NAME ||
+      !creationInfo
+    ) {
       continue;
     }
 
@@ -255,7 +259,7 @@ export function removeElementFromArrayAtIndex(array: any[], index: number) {
 }
 
 // !!! ----------------------------------------- D.O.A. Depricated On Arival -----------------------------------------
-export async function legacyBugFixFor110(
+export async function legacyBugFixForv1_1_0(
   userDB: Database,
   bibleDB: Database,
   prevVersion: string,
@@ -273,4 +277,65 @@ export async function legacyBugFixFor110(
     translate('prompts.scheduleRecreatedTitle'),
     translate('prompts.scheduleRecreatedMessage'),
   );
+}
+
+export async function legacyBugFixForv1_3_3(
+  userDB: Database,
+  prevVersion: string,
+) {
+  if (!versionIsLessThan(prevVersion, '1.3.3')) return;
+
+  let tableName = '';
+
+  //Get the user's list of reading schedules
+  let schedules = (await runSQL(
+    userDB,
+    'SELECT * FROM tblSchedules',
+  )) as DBQueryResult;
+
+  //Loop through the list and select the first reading portion that is not completed
+  for (let i = 0; i < schedules.rows.length; i++) {
+    const schedule = schedules.rows.item(i);
+    const id = schedule.ScheduleID;
+    const creationInfo = schedule.CreationInfo;
+    let tableName;
+
+    if (creationInfo.slice(0, 3) === 'tbl') {
+      if (creationInfo === WEEKLY_READING_TABLE_NAME) {
+        continue;
+      }
+      tableName = creationInfo;
+    } else {
+      tableName = formatScheduleTableName(id);
+    }
+
+    let testItem = (await runSQL(
+      userDB,
+      `SELECT * FROM ${tableName} LIMIT 1`,
+    )) as DBQueryResult;
+
+    if (testItem.rows.item(0).CreatedTime) continue;
+
+    await runSQL(
+      userDB,
+      `ALTER TABLE ${tableName}
+            RENAME COLUMN ReadingDayID to ID;`,
+    );
+
+    await runSQL(
+      userDB,
+      `ALTER TABLE ${tableName}
+            ADD COLUMN CreatedTime 
+            DATETIME NOT NULL DEFAULT 
+            "2023-01-01 00:00:00";`,
+    );
+
+    await runSQL(
+      userDB,
+      `ALTER TABLE ${tableName}
+            ADD COLUMN UpdatedTime 
+            DATETIME NOT NULL DEFAULT 
+            "2023-01-01 00:00:00";`,
+    );
+  }
 }

@@ -34,6 +34,8 @@ let tblVerseIndex;
 let qryChronologicalIndex;
 let qryThematicIndex;
 
+SQLite.enablePromise(true);
+
 const tableName = 'tblTest';
 const date = new Date(2021, 1, 1);
 
@@ -111,15 +113,15 @@ const otherScheduleParametersResult = {
   },
 };
 
-function getUserDB() {
+async function getUserDB() {
   if (userDB) {
     userDB.deleteDB();
   }
-  userDB = SQLite.openDatabase('scheduleCreation_UserInfo.db');
+  userDB = await SQLite.openDatabase('scheduleCreation_UserInfo.db');
 }
 
 async function setScheduleTable(scheduleType) {
-  getUserDB();
+  await getUserDB();
 
   await createScheduleTable(userDB, tableName, scheduleType);
 }
@@ -127,7 +129,7 @@ async function setScheduleTable(scheduleType) {
 beforeAll(async () => {
   bibleDB = SQLite.openDatabase('BibleStudyCompanion.db');
 
-  getUserDB();
+  await getUserDB();
 
   await runQueries(bibleDB).then((res) => {
     tblVerseIndex = res.tblVerseIndex;

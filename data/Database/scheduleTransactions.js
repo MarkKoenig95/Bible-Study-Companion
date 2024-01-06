@@ -119,7 +119,7 @@ export async function createScheduleTable(userDB, tableName, scheduleType) {
   let SQL;
 
   if (scheduleType !== SCHEDULE_TYPES.CUSTOM) {
-    createTable(userDB, tableName, [
+    await createTable(userDB, tableName, [
       'StartBookName VARCHAR(20)',
       'StartBookNumber TINYINT',
       'StartChapter TINYINT',
@@ -136,7 +136,7 @@ export async function createScheduleTable(userDB, tableName, scheduleType) {
       log('Table', tableName, 'created successfully');
     });
   } else {
-    createTable(userDB, tableName, [
+    await createTable(userDB, tableName, [
       'CompletionDate DATE',
       'ReadingPortion VARCHAR(20)',
       'IsFinished BOOLEAN DEFAULT 0',

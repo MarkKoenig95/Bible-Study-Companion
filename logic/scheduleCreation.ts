@@ -36,7 +36,7 @@ var tblVerseIndex: DBQueryResult | undefined;
 var qryChronologicalOrder: DBQueryResult | undefined;
 var qryChronologicalIndex: DBQueryResult | undefined;
 var qryThematicOrder: DBQueryResult | undefined;
-var qryIndex: DBQueryResult | undefined;
+var qryThematicIndex: DBQueryResult | undefined;
 var qryThematicCount: DBQueryResult | undefined;
 let qryThematicLeastIndices: DBQueryResult | undefined;
 
@@ -96,7 +96,7 @@ export async function runQueries(bibleDB: Database) {
   if (!qryThematicOrder) {
     qryThematicOrder = await runSQL(bibleDB, 'SELECT * FROM qryThematicOrder;');
     if (qryThematicOrder) {
-      qryIndex = createQryOrderIndex(qryThematicOrder);
+      qryThematicIndex = createQryOrderIndex(qryThematicOrder);
     }
   }
 
@@ -118,7 +118,7 @@ export async function runQueries(bibleDB: Database) {
     qryMaxChapters,
     qryMaxVerses,
     qryThematicCount,
-    qryIndex,
+    qryThematicIndex,
     qryThematicLeastIndices,
     qryThematicOrder,
   };
@@ -292,7 +292,7 @@ function setQryVerseIndex(scheduleType: ScheduleType) {
       tempQuery = qryChronologicalIndex;
       break;
     case SCHEDULE_TYPES.THEMATIC:
-      tempQuery = qryIndex;
+      tempQuery = qryThematicIndex;
       break;
     default:
       console.log('Schedule Type was not defined');
@@ -856,7 +856,7 @@ export function checkEnd(
   if (!isEnd) {
     let checkVerseBuffer = checkAnyVerseBuffer;
 
-    if ((scheduleType = SCHEDULE_TYPES.SEQUENTIAL)) {
+    if (scheduleType === SCHEDULE_TYPES.SEQUENTIAL) {
       checkVerseBuffer = checkOrderedVerseBuffer;
     } else if (
       scheduleType !== SCHEDULE_TYPES.CHRONOLOGICAL &&

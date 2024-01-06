@@ -17,7 +17,8 @@ import {
   useUpdate,
   FREQS,
   WEEKLY_READING_TABLE_NAME,
-  legacyBugFixFor110,
+  legacyBugFixForv1_1_0,
+  legacyBugFixForv1_3_3,
 } from '../logic/general';
 import {translate} from '../logic/localization/localization';
 import {store} from '../data/Store/store';
@@ -497,13 +498,14 @@ export default function Home(props) {
     });
 
     if (userDB && bibleDB) {
-      appVersion(userDB).then(({prevVersion, currVersion}) => {
+      appVersion(userDB).then(async ({prevVersion, currVersion}) => {
         dispatch(setAppVersion(currVersion));
         if (!prevVersion) {
           navToSchedules();
         }
 
-        legacyBugFixFor110(userDB, bibleDB, prevVersion, setIsLoading);
+        legacyBugFixForv1_1_0(userDB, bibleDB, prevVersion, setIsLoading);
+        await legacyBugFixForv1_3_3(userDB, prevVersion);
       });
     }
   }, [bibleDB, dispatch, navigation, userDB]);
