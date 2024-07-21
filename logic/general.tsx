@@ -66,12 +66,6 @@ export enum Error {
 
 export const ERROR = {NAME_TAKEN: Error.NameTaken};
 
-export function openJWLibrary() {
-  const appLink =
-    Platform.OS === 'ios' ? 'jwpub://' : 'http://jwlibrary.jw.org';
-  Linking.openURL(appLink);
-}
-
 export function arraysMatch(arr1: any[], arr2: any[]) {
   // Check if the arrays are the same length
   if (arr1.length !== arr2.length) {

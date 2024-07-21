@@ -25,7 +25,6 @@ import {store} from '../data/Store/store';
 
 import IconButton from '../components/buttons/IconButton';
 import TextButton from '../components/buttons/TextButton';
-import JWLibButton from '../components/buttons/JWLibButton';
 import {SubHeading} from '../components/text/Text';
 import useScheduleButtonsList from '../components/ScheduleButtonsList/useScheduleButtonsList';
 import SectionListHeader from '../components/SectionListHeader';
@@ -484,7 +483,6 @@ export default function Home(props) {
     navigation.setOptions({
       headerRight: () => (
         <View testID={pageTitle + '.header'} style={styles.navHeaderContainer}>
-          <JWLibButton testID={pageTitle + '.header.jwLibraryButton'} />
           <IconButton
             testID={pageTitle + '.header.addScheduleButton'}
             buttonStyle={styles.navHeaderButton}
