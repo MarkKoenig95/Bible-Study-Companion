@@ -22,7 +22,7 @@ export default function CustomPicker(props) {
         testID={testID + '.showButton'}
         style={{width: 175}}
         onPress={() => {
-          setShowPicker(!showPicker);
+          setShowPicker(true);
         }}>
         {!showPicker ? (
           <TextComponent dark>{values[value].label}</TextComponent>
