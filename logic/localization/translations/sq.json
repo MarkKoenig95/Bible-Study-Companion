@@ -1,6 +1,6 @@
 {
   "actions": {"cancel": "Fshi", "done": "U krye", "ok": "Në rregull"},
-  "appName": "Bibla Ndihmë për Studim",
+  "appName": "Bibla Ndihmë për Studimin Personal",
   "bibleBook": "Libri i Biblës",
   "bibleBooks": {
     "1": {"name": "Zanafilla", "whereWritten": "Shkretëtirë"},
@@ -53,10 +53,7 @@
     "45": {"name": "Romakëve", "whereWritten": "Korint"},
     "46": {"name": "1 Korintasve", "whereWritten": "Efesianëve"},
     "47": {"name": "2 Korintasve", "whereWritten": "Maqedoni"},
-    "48": {
-      "name": "Galatasve",
-      "whereWritten": "Korint, ose Antioki e Sirisë"
-    },
+    "48": {"name": "Galatasve", "whereWritten": "Korint, ose Antioki e Sirisë"},
     "49": {"name": "Efesianëve", "whereWritten": "Romë"},
     "50": {"name": "Filipianëve", "whereWritten": "Romë"},
     "51": {"name": "Kolosianëve", "whereWritten": "Romë"},
@@ -109,11 +106,11 @@
       "before": "Para"
     },
     "ancientDate": "{{year}}  {{bceOrCe}}",
-    "bce": "P.E.S",
+    "bce": "P. E. S",
     "ce": "E.S",
-    "dateSpan": "{{startDate}}  -  {{endDate}}",
+    "dateSpan": "{{startDate}}  fillimi-data {{endDate}}",
     "specialCases": {
-      "1": "“Në fillim të” deri {{endYear}}",
+      "1": "Në fillim të - deri {{endYear}}",
       "3": "1 Muaj në {{endYear}}",
       "5": "2 Muaj në {{endYear}}",
       "8": "11 Vitet e gjykimit të Gjykatësve {{startYear}}  deri në {{endYear}}",
@@ -131,10 +128,10 @@
     "never": "Kurrë"
   },
   "homePage": {
-    "emptyList": "Ske më për të lexuar për sot",
+    "emptyList": "S'ke më për të lexuar për sot",
     "title": "Shtëpia"
   },
-  "language": "Shqiptare",
+  "language": "Shqip",
   "links": {
     "languageTag": "sq",
     "hasStudyBible": false,
@@ -158,7 +155,7 @@
   "notification": {
     "baseTitle": "Leximi i ditës",
     "bigText": "Le të shohim se çfarë ke për të kryer akoma sot",
-    "message": "Eja ta kryejmë"
+    "message": "Koha e studimit"
   },
   "notificationsPage": {
     "title": "Njoftime",
@@ -190,10 +187,10 @@
     "markCompleted": "Shëno të përfunduarat",
     "markPreviousRead": "Leximi që keni kërkuar u shënua i plotë. Dëshiron të shënoni të gjitha leximet e mëparshme për të përfunduar gjithashtu?  ",
     "scheduleRecreatedMessage": "Skeda juaj u rikrijua. Ju lutemi krahasoni skedën e re me skedën origjinale (të vjetër) për të siguruar që asnjë informacion të mos humbasë, dhe pastaj fshini orarin e vjetër. ",
-    "scheduleRecreatedTitle": "Skeda u  Rifreskua"
+    "scheduleRecreatedTitle": "Skeda u Rifreskua"
   },
   "readingRemindersPopup": {
-    "readingReminders": "Kujtesa e leximit",
+    "readingReminders": "Përkujtuesi i leximit",
     "heading0": "Krijoni mjedisin e duhur\n\n( Shiko linkun e mëposhtëm për më tepër )",
     "body0-1": "Gjeni një vendndodhje që është e qetë dhe pa shpërqendrime\n\n( Shiko linkun e mëposhtëm për më tepër )",
     "body0-2": "(Ndoshta mund të vendosësh telefonin në modalitetin i heshtur)",
@@ -215,7 +212,7 @@
     "heading3": "Zbato ato që lexon\n\n( Shiko linkun e mëposhtëm për më tepër )",
     "body3-1": "Nëse shohim vlerën praktike të një aktiviteti, përfitojmë më shumë nga ajo.\n\n( Shiko linkun e mëposhtëm për më tepër )",
     "body3-2": "Duhet të ndërmarrim veprime për të zbatuar në jetën tonë atë që kemi mësuar, dhe të kuptojmë se si mund të përdorim atë informacion për të ndihmuar të tjerët.\n\n( Shiko linkun e mëposhtëm për më tepër )",
-    "subheading3-1": "Burimi i informacionit rrjedh nga :",
+    "subheading3-1": "Burimi i informacionit rrjedh nga:",
     "body3-3": "Të lutem kliko tek linku për të pasur kuptueshmëri më të qartë mbi mendimet e shprehura"
   },
   "readingInfoPopup": {
@@ -228,11 +225,11 @@
   },
   "readingSchedules": "Programet",
   "reminders": {
-    "completeReminderMessage": "Jeni i sigurt që dëshironi të shënoni kujtesë \"{{reminderName}}\" përfunduar?",
+    "completeReminderMessage": "Jeni i sigurt që dëshironi ta shënoni në kujtesë “{{reminderName}}” përfunduar?",
     "dailyReading": "Leximi i ditës",
     "dailyText": "Shkrimi i ditës",
-    "midweekMeetingStudy": "Studimi i mbledhjes së meajavës ",
-    "reminder": "Kujtues",
+    "midweekMeetingStudy": "Studimi i mbledhjes së mesjavës",
+    "reminder": "Përkujtues",
     "weekendMeetingStudy": "Studimi i Mbledhjes së fundjavës",
     "weeklyReading": {
       "title": "Leximi i mbledhjes javore",
@@ -241,7 +238,7 @@
   },
   "remindersPage": {
     "completed": "U krye {{desc}}",
-    "deleteReminderMessage": "Jeni i sigurt që dëshironi ta fshihni \"{{reminderName}}\" kujtesë?",
+    "deleteReminderMessage": "Jeni i sigurt që dëshironi ta fshihni “{{reminderName}}” kujtesë?",
     "every": "Çdo: ",
     "name": "Titullo: ",
     "reminderPopupTitle": "Krijo një kujtesë të re",
@@ -250,7 +247,7 @@
   },
   "schedules": "Programet",
   "schedulePage": {
-    "deleteScheduleMessage": "A je i bindur se dëshiron ta fshish” \"{{scheduleName}}\" programi?",
+    "deleteScheduleMessage": "A je i bindur se dëshiron ta fshish “{{scheduleName}}” programin?",
     "hideCompleted": "Fshi atë që është e kryer",
     "recreateScheduleWarning": "Të bësh këtë do të kërkojë rikrijimin e kësaj skede. Jeni i sigurt që dëshironi të rikrijoni këtë skedë?"
   },
@@ -269,7 +266,7 @@
     "customDescription": "Krijoni një program të personalizuar për një botim"
   },
   "settingsPage": {
-    "language": "Gjuhe",
+    "language": "Gjuha",
     "title": "Cilësimet",
     "weeklyReadingResetDay": "Dita për të rivendosur leximin javor:",
     "memorialReading": {
@@ -291,17 +288,17 @@
   "thisMonth": "Këtë muaj",
   "thisWeek": "Këtë javë",
   "today": "Sot",
-  "updateDate": "2022-02-20T11:41:37.377Z",
+  "updateDate": "2022-02-21T11:41:37.377Z",
   "versePicker": {"chapterAbrev": "Kp", "verseAbrev": "Vg"},
   "warning": "Kujdes",
   "weekdays": {
-    "0": {"abrev": "Die", "name": "E diel"},
+    "0": {"abrev": "Dl", "name": "E diel"},
     "1": {"abrev": "Hën", "name": "E hënë"},
     "2": {"abrev": "Mar", "name": "E martë"},
     "3": {"abrev": "Mër", "name": "E mërkurrë"},
     "4": {"abrev": "Enj", "name": "E enjte"},
-    "5": {"abrev": "Prt", "name": "E premte"},
-    "6": {"abrev": "Sht", "name": "E shtunë"}
+    "5": {"abrev": "Pre.", "name": "E premte"},
+    "6": {"abrev": "Shtun.", "name": "E shtunë"}
   },
   "old": "e vjetër ",
   "advanced": "E Avancuar",

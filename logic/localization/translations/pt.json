@@ -1,0 +1,306 @@
+{
+  "ordinal": {
+    "0": "º",
+    "1": "º",
+    "2": "º",
+    "3": "º",
+    "4": "º",
+    "5": "º",
+    "6": "º",
+    "7": "º",
+    "8": "º",
+    "9": "º",
+    "special": {"count": 0},
+    "after": true
+  },
+  "appName": "Companheiro de estudo da Bíblia",
+  "actions": {"cancel": "Cancelar", "done": "Feito", "ok": "OK"},
+  "advanced": "Avançado",
+  "bibleBook": "Livro Bíblico ",
+  "bibleBooks": {
+    "1": {"name": "Génesis", "whereWritten": "Deserto"},
+    "2": {"name": "Êxodo", "whereWritten": "Deserto"},
+    "3": {"name": "Levítico", "whereWritten": "Deserto"},
+    "4": {"name": "Números", "whereWritten": "Deserto e planícies de Moabe"},
+    "5": {"name": "Deuteronómio", "whereWritten": "Planícies de Moabe"},
+    "6": {"name": "Josué", "whereWritten": "Canaã"},
+    "7": {"name": "Juízes", "whereWritten": "Israel"},
+    "8": {"name": "Rute", "whereWritten": "Israel"},
+    "9": {"name": "1 Samuel", "whereWritten": "Israel"},
+    "10": {"name": "2 Samuel", "whereWritten": "Israel"},
+    "11": {"name": "1 Reis", "whereWritten": "Judá"},
+    "12": {"name": "2 Reis", "whereWritten": "Judá e Egito"},
+    "13": {"name": "1 Crónicas", "whereWritten": "Jerusalém (?)"},
+    "14": {"name": "2 Crónicas", "whereWritten": "Jerusalém (?)"},
+    "15": {"name": "Esdras", "whereWritten": "Jerusalém"},
+    "16": {"name": "Neemias", "whereWritten": "Jerusalém"},
+    "17": {"name": "Ester", "whereWritten": "Susã, Elão"},
+    "18": {"name": "Jó", "whereWritten": "Deserto"},
+    "19": {"name": "Salmos", "whereWritten": ""},
+    "20": {"name": "Provérbios", "whereWritten": "Jerusalém"},
+    "21": {"name": "Eclesiastes", "whereWritten": "Jerusalém"},
+    "22": {"name": "Cântico de Salomão", "whereWritten": "Jerusalém"},
+    "23": {"name": "Isaías", "whereWritten": "Jerusalém"},
+    "24": {"name": "Jeremias", "whereWritten": "Judá; Egito"},
+    "25": {"name": "Lamentações", "whereWritten": "Perto de Jerusalém"},
+    "26": {"name": "Ezequiel", "whereWritten": "Babilónia"},
+    "27": {"name": "Daniel", "whereWritten": "Babilónia"},
+    "28": {"name": "Oseias", "whereWritten": "Samaria (Distrito de)"},
+    "29": {"name": "Joel", "whereWritten": "Judá"},
+    "30": {"name": "Amós", "whereWritten": "Judá"},
+    "31": {"name": "Obadias", "whereWritten": ""},
+    "32": {"name": "Jonas", "whereWritten": ""},
+    "33": {"name": "Miqueias", "whereWritten": "Judá"},
+    "34": {"name": "Naum", "whereWritten": "Judá"},
+    "35": {"name": "Habacuque", "whereWritten": "Judá"},
+    "36": {"name": "Sofonias", "whereWritten": "Judá"},
+    "37": {"name": "Ageu", "whereWritten": "Jerusalém reconstruída"},
+    "38": {"name": "Zacarias", "whereWritten": "Jerusalém reconstruída"},
+    "39": {"name": "Malaquias", "whereWritten": "Jerusalém reconstruída"},
+    "40": {"name": "Mateus", "whereWritten": "Israel"},
+    "41": {"name": "Marcos", "whereWritten": "Roma"},
+    "42": {"name": "Lucas", "whereWritten": "Cesareia"},
+    "43": {"name": "João", "whereWritten": "Éfeso, ou perto"},
+    "44": {"name": "Atos", "whereWritten": "Roma"},
+    "45": {"name": "Romanos", "whereWritten": "Corinto"},
+    "46": {"name": "1 Coríntios", "whereWritten": "Éfeso"},
+    "47": {"name": "2 Coríntios", "whereWritten": "Macedónia"},
+    "48": {"name": "Gálatas", "whereWritten": "Corinto ou Antioquia da Síria"},
+    "49": {"name": "Efésios", "whereWritten": "Roma"},
+    "50": {"name": "Filipenses", "whereWritten": "Roma"},
+    "51": {"name": "Colossenses", "whereWritten": "Roma"},
+    "52": {"name": "1 Tessalonicenses", "whereWritten": "Corinto"},
+    "53": {"name": "2 Tessalonicenses", "whereWritten": "Corinto"},
+    "54": {"name": "1 Timóteo", "whereWritten": "Macedónia"},
+    "55": {"name": "2 Timóteo", "whereWritten": "Roma"},
+    "56": {"name": "Tito", "whereWritten": "Macedónia (?)"},
+    "57": {"name": "Filémon", "whereWritten": "Roma"},
+    "58": {"name": "Hebreus", "whereWritten": "Roma"},
+    "59": {"name": "Tiago", "whereWritten": "Jerusalém"},
+    "60": {"name": "1 Pedro", "whereWritten": "Babilónia"},
+    "61": {"name": "2 Pedro", "whereWritten": "Babilónia (?)"},
+    "62": {"name": "1 João", "whereWritten": "Éfeso, ou perto"},
+    "63": {"name": "2 João", "whereWritten": "Éfeso, ou perto"},
+    "64": {"name": "3 João", "whereWritten": "Éfeso, ou perto"},
+    "65": {"name": "Judas", "whereWritten": "Israel (?)"},
+    "66": {"name": "Apocalipse", "whereWritten": "Patmos"}
+  },
+  "buttonsPopup": {"title": "Partes de leitura"},
+  "createSchedulePopup": {
+    "createSchedule": "Criar Programa",
+    "readingPortionDescPhld": "Descrição da parte da leitura",
+    "readingPortionDesc": {
+      "article": "Artigo",
+      "chapter": "Capítulo",
+      "page": "Página",
+      "paragraph": "Parágrafo",
+      "title": "Descrição da parte da leitura"
+    },
+    "numberOfPortions": " Número de s {{portionDesc}}",
+    "numberOfPortionsPhld": "Número total de {{portionDesc}}",
+    "portionsPerDay": "{{portionDesc}}s por dia",
+    "portionsPerDayPhld": "Quantos {{portionDesc}}s para ler todos os dias",
+    "startingPortion": "Começar{{portionDesc}}",
+    "startingPortionPhld": "{{portionDesc}} gostaria de começar a partir de",
+    "scheduleName": "Nome do programa",
+    "scheduleDuration": "Duração do Programa",
+    "scheduleDurPhld": "Quantos anos deve durar o programa do início ao fim?",
+    "shouldTrack": "Registar datas de leitura?",
+    "startDate": "Data de início",
+    "startingVerse": "Versículo inicial",
+    "unfinished": "Preencha todos os campos obrigatórios com valores válidos para iniciar um programa"
+  },
+  "date": {
+    "approxDesc": {
+      "about": "Sobre",
+      "after": "Depois de",
+      "before": "Antes de",
+      "approxDate": "{{after}}{{about}} {{before}} {{date}}"
+    },
+    "bce": "A.C.D",
+    "ce": "E.C",
+    "ancientDate": "{{year}} {{bceOrCe}}  ",
+    "dateSpan": "{{startDate}} - {{endDate}}",
+    "specialCases": {
+      "1": "“No princípio” para{{endYear}}",
+      "3": "1 mês em {{endYear}}",
+      "5": "2 meses em {{endYear}}",
+      "8": "11 anos de governo dos juízes desde cerca de {{startYear}}a{{endYear}}",
+      "13": "Depois de 1 Crónicas 9:44: cerca de {{startYear}} a{{endYear}}",
+      "18": "Mais de 140 anos entre {{startYear}} e{{endYear}}",
+      "37": "112 dias em {{endYear}}",
+      "43": "Depois do prólogo, {{startYear}} a{{endYear}}"
+    }
+  },
+  "homePage": {
+    "emptyList": "Não tem mais leituras para o dia",
+    "title": "Início"
+  },
+  "links": {
+    "languageTag": "pt",
+    "hasStudyBible": true,
+    "finderLocale": "T",
+    "www": {
+      "bible": "biblia",
+      "books": "livros",
+      "how-to-read-the-bible": "how-to-read-the-bible",
+      "introduction": "introduction",
+      "library": "biblioteca"
+    },
+    "wol": {"lp-e": "lp-t", "r1": "r5"}
+  },
+  "donatePage": {"title": "Doar"},
+  "language": "Português",
+  "missingTranslation": "A tradução não existe",
+  "notification": {
+    "baseTitle": "Leitura diária",
+    "bigText": "Vamos ver o que te resta fazer hoje",
+    "message": "Vamos a isso"
+  },
+  "notificationsPage": {
+    "title": "Notificações",
+    "notificationName": "Nome da notificação",
+    "notificationPopupTitle": "Criar nova notificação"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": "Tem a certeza de que pretende apagar ”{{notificationName}}“ notificação?"
+  },
+  "morePage": {
+    "about": "Sobre",
+    "contact": "Contacto",
+    "title": "Mais",
+    "version": "Versão"
+  },
+  "old": "Antiga",
+  "openJWLibrary": "Abrir JW Library",
+  "prompts": {
+    "setNotification": "Definir notificação para: ",
+    "nameTaken": "Seleccione um nome que ainda não tenha utilizado",
+    "markCompleted": "Marca concluída",
+    "markPreviousRead": "A leitura que pediu foi marcada como completa. Gostaria de marcar também como completas todas as leituras anteriores a esta?",
+    "scheduleRecreatedMessage": "O seu programa foi recriado. Compare o novo programa com o programa original (Antigo) para se certificar de que não se perdeu nenhuma informação e, em seguida, elimine o programa antigo.",
+    "scheduleRecreatedTitle": "Programa Recriado"
+  },
+  "readingRemindersPopup": {
+    "readingReminders": "Lembretes de leitura",
+    "heading0": "Crie o ambiente certo",
+    "body0-1": "Encontre um local calmo e sem distrações",
+    "body0-2": "(Talvez colocar o telemóvel no modo silencioso)",
+    "heading1": "Ore antes de ler",
+    "body1-1": "Peça a Jeová que o coloque no estado de espírito adequado e que lhe dê o seu Espírito Santo para o ajudar a compreender e a aplicar o que lê.",
+    "heading2": "Meditar sobre o que leu",
+    "body2-1": "Não se apresse, leia para compreender.",
+    "subheading2-1": "Pode fazer estas perguntas:",
+    "body2-2": "O que é que isto me ensina sobre Jeová Deus?",
+    "body2-3": "Como é que esta secção das Escrituras contribui para a mensagem da Bíblia?",
+    "body2-4": "Como posso aplicar isto na minha vida?",
+    "body2-5": "Como é que posso usar estes versículos para ajudar os outros?",
+    "subheading2-2": "Imagine-se na cena:",
+    "body2-6": "O que é que veria, ouviria e cheiraria?",
+    "body2-7": "Quais podem ser os sentimentos das pessoas envolvidas?",
+    "subheading2-3": "Faça pesquisa para:",
+    "body2-8": "Compreenda o contexto da parte da leitura.",
+    "body2-9": "Compreenda claramente os conceitos difíceis.",
+    "heading3": "Aplique o que leu",
+    "body3-1": "Se virmos o valor prático de uma atividade, beneficiamos mais com ela.",
+    "body3-2": "Precisamos de tomar medidas para aplicar o que aprendemos na nossa vida e compreender como podemos utilizar o que aprendemos para ajudar os outros.",
+    "subheading3-1": "Lembretes derivados de:",
+    "body3-3": "Para compreender melhor as reflexões expressas, consulte os links"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "Informações da leitura",
+    "readingPortion": "Parte de leitura",
+    "timeCovered": "Tempo abrangido",
+    "whereWritten": "Onde foi escrito",
+    "whenWritten": "Quando escrito",
+    "writers": "Escritor(es)"
+  },
+  "readingSchedules": "Programas de leitura",
+  "reminders": {
+    "completeReminderMessage": "Tem a certeza de que pretende marcar o lembrete ”{{reminderName}}“ completo?",
+    "dailyReading": "Leitura diária",
+    "dailyText": "Texto diário",
+    "midweekMeetingStudy": "Estudo Reunião \"Meio da Semana",
+    "reminder": "Lembrete",
+    "weekendMeetingStudy": "Estudo Reunião \"Fim de Semana\"",
+    "weeklyReading": {
+      "title": "Leitura semanal",
+      "showDaily": "Mostrar parte diária da leitura semanal"
+    }
+  },
+  "frequencies": {
+    "daily": "Diária",
+    "weekly": "Semanal",
+    "monthly": "Mensal",
+    "never": "Nunca"
+  },
+  "remindersPage": {
+    "completed": "Concluída{{desc}}",
+    "deleteReminderMessage": "Tem a certeza de que pretende apagar ”{{reminderName}}“lembrete?",
+    "every": "Todos:",
+    "name": "Nome: ",
+    "reminderPopupTitle": "Criar novo lembrete",
+    "repeats": "Repete-se: ",
+    "title": "Lembretes"
+  },
+  "schedules": "Programas",
+  "schedulePage": {
+    "deleteScheduleMessage": "Tem a certeza de que pretende apagar ”{{scheduleName}}\" programa?",
+    "hideCompleted": "Ocultar Concluído",
+    "recreateScheduleWarning": "Fazer isto requer recriar este programa. Tem a certeza de que pretende recriar este programa?"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "Verso inicial ajustado de ”{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" a\"{{startBibleBook}} {{startChapter}}{{startVerse}}:\" because initial request was out of bounds."
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "Tipo de programa",
+    "sequential": "Sequencial",
+    "sequentialDescription": "Ler a Bíblia de Génesis a Apocalipse",
+    "chronological": "Cronológica",
+    "chronologicalDescription": "Leia a Bíblia pela ordem em que os acontecimentos ocorreram. (EXPERIMENTAL: Se encontrar alguma discrepância, contacte-me)",
+    "thematic": "Tema",
+    "thematicDescription": "Cada dia, leia uma secção diferente da Bíblia num ciclo semanal: Dia 1 - A Lei, 2 - História, 3 - Salmos, 4 - Poesia, 5 - Profecia, 6 - Evangelhos, 7 - Cartas",
+    "custom": "Personalizado",
+    "customDescription": "Criar um programa personalizado para uma publicação"
+  },
+  "settingsPage": {
+    "title": "Configurações",
+    "weeklyReadingResetDay": "Dia para repor a leitura semanal:",
+    "language": "Idioma",
+    "memorialReading": {
+      "title": "Leitura do Memorial",
+      "dayTimeEvents": "Eventos diurnos",
+      "eventsAfterSunset": "Eventos depois do pôr do sol",
+      "options": {
+        "long": {
+          "title": "Longa",
+          "description": "Começa a 8 de Nisã e termina a 16 de Nisã e inclui mais versículos para ler em cada dia. Baseado no calendário que se encontra no Apêndice B12 da Tradução do Novo Mundo"
+        },
+        "short": {
+          "title": "Curta",
+          "description": "Começa a 9 de Nisã e termina a 16 de Nisã e inclui menos versículos para ler em cada dia. Baseado no horário encontrado no folheto Examinando as Escrituras Diariamente"
+        }
+      }
+    }
+  },
+  "today": "Hoje",
+  "thisWeek": "Esta semana",
+  "thisMonth": "Este mês",
+  "other": "Outros",
+  "versePicker": {"chapterAbrev": "cap", "verseAbrev": "ver"},
+  "warning": "Aviso",
+  "weekdays": {
+    "0": {"abrev": "Dom", "name": "Domingo"},
+    "1": {"abrev": "Seg", "name": "Segunda-Feira"},
+    "2": {"abrev": "Ter", "name": "Terça-Feira"},
+    "3": {"abrev": "Qua", "name": "Quarta-Feira"},
+    "4": {"abrev": "Qui", "name": "Quinta-Feira"},
+    "5": {"abrev": "Sex", "name": "Sexta-Feira"},
+    "6": {"abrev": "Sab", "name": "Sábado"}
+  },
+  "whatsNew": {
+    "title": "Novidades",
+    "2022_02_20": "Leitura da Bíblia Memorial ir para: {{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  },
+  "updateDate": "2022-02-20T11:41:37.377Z"
+}

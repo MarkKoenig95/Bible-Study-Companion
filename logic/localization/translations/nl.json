@@ -1,0 +1,306 @@
+{
+  "ordinal": {
+    "0": "th",
+    "1": "st",
+    "2": "nd",
+    "3": "rd",
+    "4": "th",
+    "5": "th",
+    "6": "th",
+    "7": "th",
+    "8": "th",
+    "9": "th",
+    "special": {"count": 0},
+    "after": true
+  },
+  "appName": "Bijbelleesschema",
+  "actions": {"cancel": "Annuleren", "done": "Gedaan", "ok": "OK"},
+  "advanced": "Geavanceerd",
+  "bibleBook": "Bijbelboek",
+  "bibleBooks": {
+    "1": {"name": "Genesis", "whereWritten": "Woestijn"},
+    "2": {"name": "Exodus", "whereWritten": "Woestijn"},
+    "3": {"name": "Leviticus", "whereWritten": "Woestijn"},
+    "4": {"name": "Numeri", "whereWritten": "Woestijn en vlakte van Moab"},
+    "5": {"name": "Deuteronomium", "whereWritten": "Vlakte van Moab"},
+    "6": {"name": "Jozua", "whereWritten": "Kanaän"},
+    "7": {"name": "Rechters", "whereWritten": "Israël"},
+    "8": {"name": "Ruth", "whereWritten": "Israël"},
+    "9": {"name": "1 Samuël", "whereWritten": "Israël"},
+    "10": {"name": "2 Samuël", "whereWritten": "Israël"},
+    "11": {"name": "1 Koningen", "whereWritten": "Juda"},
+    "12": {"name": "2 Koningen", "whereWritten": "Juda and Egypte"},
+    "13": {"name": "1 Kronieken", "whereWritten": "Jeruzalem (?)"},
+    "14": {"name": "2 Kronieken", "whereWritten": "Jeruzalem (?)"},
+    "15": {"name": "Ezra", "whereWritten": "Jeruzalem"},
+    "16": {"name": "Nehemia", "whereWritten": "Jeruzalem"},
+    "17": {"name": "Esther", "whereWritten": "Susan, Elam"},
+    "18": {"name": "Job", "whereWritten": "Woestijn"},
+    "19": {"name": "Psalmen", "whereWritten": ""},
+    "20": {"name": "Spreuken", "whereWritten": "Jeruzalem"},
+    "21": {"name": "Prediker", "whereWritten": "Jeruzalem"},
+    "22": {"name": "Hooglied", "whereWritten": "Jeruzalem"},
+    "23": {"name": "Jesaja", "whereWritten": "Jeruzalem"},
+    "24": {"name": "Jeremia", "whereWritten": "Juda, Egypte"},
+    "25": {"name": "Klaagliederen", "whereWritten": "Bij Jeruzalem"},
+    "26": {"name": "Ezechiël", "whereWritten": "Babylon"},
+    "27": {"name": "Daniël", "whereWritten": "Babylon"},
+    "28": {"name": "Hosea", "whereWritten": "Samaria (district)"},
+    "29": {"name": "Joël", "whereWritten": "Juda"},
+    "30": {"name": "Amos", "whereWritten": "Juda"},
+    "31": {"name": "Obadja", "whereWritten": ""},
+    "32": {"name": "Jona", "whereWritten": ""},
+    "33": {"name": "Micha", "whereWritten": "Juda"},
+    "34": {"name": "Nahum", "whereWritten": "Juda"},
+    "35": {"name": "Habakuk", "whereWritten": "Juda"},
+    "36": {"name": "Zefanja", "whereWritten": "Juda"},
+    "37": {"name": "Haggaï", "whereWritten": "Jeruzalem"},
+    "38": {"name": "Zacharia", "whereWritten": "Jeruzalem"},
+    "39": {"name": "Maleachi", "whereWritten": "Jeruzalem"},
+    "40": {"name": "Mattheüs", "whereWritten": "Israel"},
+    "41": {"name": "Markus", "whereWritten": "Rome"},
+    "42": {"name": "Lukas", "whereWritten": "Cesarea"},
+    "43": {"name": "Johannes", "whereWritten": "In of bij Efeze"},
+    "44": {"name": "Handelingen", "whereWritten": "Rome"},
+    "45": {"name": "Romeinen", "whereWritten": "Korinthe"},
+    "46": {"name": "1 Korinthiërs", "whereWritten": "Efeze"},
+    "47": {"name": "2 Korinthiërs", "whereWritten": "Macedonië"},
+    "48": {"name": "Galaten", "whereWritten": "Korinthe of Syrisch Antiochië"},
+    "49": {"name": "Efeziërs", "whereWritten": "Rome"},
+    "50": {"name": "Filippenzen", "whereWritten": "Rome"},
+    "51": {"name": "Kolossenzen", "whereWritten": "Rome"},
+    "52": {"name": "1 Thessalonicenzen", "whereWritten": "Korinthe"},
+    "53": {"name": "2 Thessalonicenzen", "whereWritten": "Korinthe"},
+    "54": {"name": "1 Timotheüs", "whereWritten": "Macedonië"},
+    "55": {"name": "2 Timotheüs", "whereWritten": "Rome"},
+    "56": {"name": "Titus", "whereWritten": "Macedonië (?)"},
+    "57": {"name": "Filemon", "whereWritten": "Rome"},
+    "58": {"name": "Hebreeën", "whereWritten": "Rome"},
+    "59": {"name": "Jakobus", "whereWritten": "Jeruzalem"},
+    "60": {"name": "1 Petrus", "whereWritten": "Babylon"},
+    "61": {"name": "2 Petrus", "whereWritten": "Babylon (?)"},
+    "62": {"name": "1 Johannes", "whereWritten": "In of bij Efeze"},
+    "63": {"name": "2 Johannes", "whereWritten": "In of bij Efeze"},
+    "64": {"name": "3 Johannes", "whereWritten": "In of bij Efeze"},
+    "65": {"name": "Judas", "whereWritten": "Israël (?)"},
+    "66": {"name": "Openbaring", "whereWritten": "Patmos"}
+  },
+  "buttonsPopup": {"title": "Reading Portions"},
+  "createSchedulePopup": {
+    "createSchedule": "Create Schedule",
+    "readingPortionDescPhld": "Description of reading portion",
+    "readingPortionDesc": {
+      "article": "Article",
+      "chapter": "Chapter",
+      "page": "Page",
+      "paragraph": "Paragraph",
+      "title": "Reading Portion Description"
+    },
+    "numberOfPortions": "Number of {{portionDesc}}s",
+    "numberOfPortionsPhld": "Total number of {{portionDesc}}s in publication",
+    "portionsPerDay": "{{portionDesc}}s Per Day",
+    "portionsPerDayPhld": "How many {{portionDesc}}s to read each day",
+    "startingPortion": "Starting {{portionDesc}}",
+    "startingPortionPhld": "{{portionDesc}} you would like to start from",
+    "scheduleName": "Schedule Name",
+    "scheduleDuration": "Schedule Duration",
+    "scheduleDurPhld": "How many years the schedule should last from start to finish?",
+    "shouldTrack": "Track reading dates?",
+    "startDate": "Start date",
+    "startingVerse": "Starting Verse",
+    "unfinished": "Please fill in all of the required fields with valid values to make a schedule"
+  },
+  "date": {
+    "approxDesc": {
+      "about": "About",
+      "after": "After",
+      "before": "Before",
+      "approxDate": "{{about}}{{after}}{{before}} {{date}}"
+    },
+    "bce": "B.C.E.",
+    "ce": "C.E.",
+    "ancientDate": "{{year}} {{bceOrCe}}",
+    "dateSpan": "{{startDate}} - {{endDate}}",
+    "specialCases": {
+      "1": "\"In the begining\" to {{endYear}}",
+      "3": "1 Month in {{endYear}}",
+      "5": "2 Months in {{endYear}}",
+      "8": "11 Years of Judges rule from about {{startYear}} to {{endYear}}",
+      "13": "After 1 Chronicles 9:44: about {{startYear}} to {{endYear}}",
+      "18": "Over 140 years between {{startYear}} and {{endYear}}",
+      "37": "112 days in {{endYear}}",
+      "43": "After prologue, {{startYear}} to {{endYear}}"
+    }
+  },
+  "homePage": {
+    "emptyList": "You have no more readings for the day",
+    "title": "Home"
+  },
+  "links": {
+    "languageTag": "nl",
+    "hasStudyBible": true,
+    "finderLocale": "O",
+    "www": {
+      "bible": "bijbel",
+      "books": "boeken",
+      "how-to-read-the-bible": "hoe-de-bijbel-te-lezen",
+      "introduction": "introductie",
+      "library": "bibliotheek"
+    },
+    "wol": {"lp-e": "lp-o", "r1": "r18"}
+  },
+  "donatePage": {"title": "Donate"},
+  "language": "Nederlands",
+  "missingTranslation": "Translation doesn't exist",
+  "notification": {
+    "baseTitle": "Daily Reading",
+    "bigText": "Let's see what you have left to do today",
+    "message": "Let's do it"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "notificationName": "Notification Name",
+    "notificationPopupTitle": "Create New Notification"
+  },
+  "notificationPage": {
+    "deleteNotificationMessage": "Are you sure you want to delete \"{{notificationName}}\" notification?"
+  },
+  "morePage": {
+    "about": "About",
+    "contact": "Contact",
+    "title": "More",
+    "version": "Version"
+  },
+  "old": "Old",
+  "openJWLibrary": "Open JW Library",
+  "prompts": {
+    "setNotification": "Set notification for: ",
+    "nameTaken": "Please select a name you haven't used",
+    "markCompleted": "Mark Completed",
+    "markPreviousRead": "The reading you requested was marked complete. Would you like to mark all readings previous to it complete as well?",
+    "scheduleRecreatedMessage": "Your schedule was recreated. Please compare the new schedule with the original schedule (Old) to make sure no information was lost and then delete the old schedule.",
+    "scheduleRecreatedTitle": "Schedule Recreated"
+  },
+  "readingRemindersPopup": {
+    "readingReminders": "Reading Reminders",
+    "heading0": "Create the right surroundings",
+    "body0-1": "Find a location that is quiet and free from distractions",
+    "body0-2": "(Perhaps put your phone into silent mode)",
+    "heading1": "Pray before you read",
+    "body1-1": "Ask Jehovah to put you in the proper frame of mind and to give you his Holy Spirit to help you understand and apply what you read.",
+    "heading2": "Meditate on what you read",
+    "body2-1": "Don't rush, read to understand.",
+    "subheading2-1": "You could ask these questions:",
+    "body2-2": "What does this tell me about Jehovah God?",
+    "body2-3": "How does this section of the Scriptures contribute to the Bible's message?",
+    "body2-4": "How can I apply this in my life?",
+    "body2-5": "How can I use these verses to help others?",
+    "subheading2-2": "Imagine yourself in the scene:",
+    "body2-6": "What would you see, hear, and smell?",
+    "body2-7": "What may be the feelings of those involved?",
+    "subheading2-3": "Do research in order to:",
+    "body2-8": "Understand the reading portion's context.",
+    "body2-9": "Understand difficult concepts clearly.",
+    "heading3": "Apply what you read",
+    "body3-1": "If we see the practical value of an activity, we benefit more from it.",
+    "body3-2": "We need to take action to apply what we learned in our life and understand how we can use what we learned to help others.",
+    "subheading3-1": "Reminders derived from:",
+    "body3-3": "Please go to those links to get a deeper understanding of the thoughts expressed"
+  },
+  "readingInfoPopup": {
+    "readingInfo": "Reading Info",
+    "readingPortion": "Reading Portion",
+    "timeCovered": "Time Covered",
+    "whereWritten": "Where Written",
+    "whenWritten": "When Written",
+    "writers": "Writer(s)"
+  },
+  "readingSchedules": "Reading Schedules",
+  "reminders": {
+    "completeReminderMessage": "Are you sure you want to mark reminder \"{{reminderName}}\" complete?",
+    "dailyReading": "Daily Reading",
+    "dailyText": "Daily Text",
+    "midweekMeetingStudy": "Midweek Meeting Study",
+    "reminder": "Reminder",
+    "weekendMeetingStudy": "Weekend Meeting Study",
+    "weeklyReading": {
+      "title": "Weekly Reading",
+      "showDaily": "Show daily portion of weekly reading"
+    }
+  },
+  "frequencies": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "never": "Never"
+  },
+  "remindersPage": {
+    "completed": "Completed {{desc}}",
+    "deleteReminderMessage": "Are you sure you want to delete \"{{reminderName}}\" reminder?",
+    "every": "Every: ",
+    "name": "Name: ",
+    "reminderPopupTitle": "Create New Reminder",
+    "repeats": "Repeats: ",
+    "title": "Reminders"
+  },
+  "schedules": "Schedules",
+  "schedulePage": {
+    "deleteScheduleMessage": "Are you sure you want to delete \"{{scheduleName}}\" schedule?",
+    "hideCompleted": "Hide Completed",
+    "recreateScheduleWarning": "Doing this will require recreating this schedule. Are you sure you want to recreate this schedule?"
+  },
+  "scheduleTransactions": {
+    "adjustedVersePrompt": "Adjusted start verse from \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" to \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds."
+  },
+  "scheduleTypePopup": {
+    "scheduleType": "Schedule Type",
+    "sequential": "Sequential",
+    "sequentialDescription": "Read the bible from Genesis to Revelation",
+    "chronological": "Chronological",
+    "chronologicalDescription": "Read the bible in the order in which events occurred. (EXPERIMENTAL: If you find a discrepency please contact me)",
+    "thematic": "Thematic",
+    "thematicDescription": "Each day, read from a different section of the Bible in a weekly cycle: Day 1 - The Law, 2 - History, 3 - Psalms, 4 - Poetry, 5 - Prophecy, 6 - Gospels, 7 - Letters",
+    "custom": "Custom",
+    "customDescription": "Create a custom schedule for a publication"
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "weeklyReadingResetDay": "Day to reset weekly reading:",
+    "language": "Taal",
+    "memorialReading": {
+      "title": "Memorial Reading",
+      "dayTimeEvents": "Daytime Events",
+      "eventsAfterSunset": "Events after sunset",
+      "options": {
+        "long": {
+          "title": "Long",
+          "description": "Starts on Nisan 8 and ends on Nisan 16 and includes more verses to read each day. Based on the schedule found in Apendix B12 of the New World Translation"
+        },
+        "short": {
+          "title": "Short",
+          "description": "Starts on Nisan 9 and ends on Nisan 16 and includes less verses to read each day. Based on the schedule found in the Examining the Scriptures Daily booklet"
+        }
+      }
+    }
+  },
+  "today": "Vandaag",
+  "thisWeek": "Deze week",
+  "thisMonth": "Deze maand",
+  "other": "Andere",
+  "versePicker": {"chapterAbrev": "hfst", "verseAbrev": "v"},
+  "warning": "Waarschuwing",
+  "weekdays": {
+    "0": {"abrev": "zo", "name": "zondag"},
+    "1": {"abrev": "ma", "name": "maandag"},
+    "2": {"abrev": "di", "name": "dinsdag"},
+    "3": {"abrev": "wo", "name": "woensdag"},
+    "4": {"abrev": "do", "name": "donderdag"},
+    "5": {"abrev": "vr", "name": "vrijdag"},
+    "6": {"abrev": "za", "name": "zaterdag"}
+  },
+  "whatsNew": {
+    "title": "What's New",
+    "2022_02_20": "Memorial Bible Reading\n\r Go to: {{morePageTitle}} > {{settingsPageTitle}} > {{memorialReadingSettingTitle}}"
+  },
+  "updateDate": "2022-02-20T11:41:37.377Z"
+}
