@@ -80,3 +80,32 @@ test('createTable', async () => {
   expect(ut.getDate()).toBe(today.getDate());
   expect(ut.getHours()).toBe(today.getHours());
 });
+
+test('Update Table Trigger', async () => {
+  a = async () => {
+    now = new Date();
+    future = new Date();
+    future.setSeconds(now.getSeconds() + 1);
+    while (now.getSeconds() < future.getSeconds()) {
+      now = new Date();
+      if (now.getSeconds() == future.getSeconds()) {
+        break;
+      }
+    }
+    return true;
+  };
+  let r = await a();
+  console.log(r);
+  await runSQL(
+    userDB,
+    'UPDATE tblNewTable SET Name = "Goodbye World!" WHERE ID = 1',
+  );
+
+  let result = await runSQL(userDB, 'SELECT * FROM tblNewTable;');
+
+  let ct = new Date(result.rows.item(0).CreatedTime);
+  let ut = new Date(result.rows.item(0).UpdatedTime);
+
+  expect(result.rows.item(0).Name).toBe('Goodbye World!');
+  expect(ct.getTime()).not.toBe(ut.getTime());
+});

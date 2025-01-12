@@ -60,6 +60,15 @@ export async function createTable(
     args.join(', ') +
     ');';
   await runSQL(DB, sqlString);
+
+  let updateTrigger =
+    `CREATE TRIGGER aft_${tableName}_insert AFTER UPDATE ON ${tableName} ` +
+    'BEGIN ' +
+    `UPDATE ${tableName} SET UpdatedTime = datetime(CURRENT_TIMESTAMP, 'localtime')` +
+    'WHERE ID=OLD.ID;' +
+    'END;';
+
+  await runSQL(DB, updateTrigger);
 }
 
 export function createPlaceholdersFromArray(array: any[]) {
@@ -333,23 +342,24 @@ function setDatabaseParameters(upgradeJSON: any) {
     JSON.stringify(upgradeJSON).replace(/@\{(\w+)\}/g, (match, group) => {
       switch (group) {
         case 'baseDate':
-          let date = new Date(0);
+          let date = new Date();
+          date.setDate(date.getDate() - 2);
           return date.toISOString();
         case 'baseTime':
           let time = new Date(2020, 0, 1, 8, 0, 0);
           return time.toISOString();
         case 'upcomingMemorialDate':
-          // March 24th 2024
-          // See below (NOTE: the middle number for month starts at 0. so March is 2)
-          let memorialDate = new Date(2024, 2, 24);
+          // April 12th 2025
+          // See below (NOTE: the middle number for month starts at 0. so April is 4)
+          let memorialDate = new Date(2025, 3, 12);
           return memorialDate.toISOString();
         case 'weeklyReadingStartDate':
-          // December 18th 2023
+          // December 30th 2024
           // See below (NOTE: the middle number for month starts at 0. so December is 11)
-          let weekReadDate = new Date(2023, 11, 18);
+          let weekReadDate = new Date(2024, 11, 30);
           return weekReadDate.toISOString();
         case 'weeklyReadingStartOrder':
-          return 204;
+          return 258;
         case 'dailyReading':
           return translate('reminders.dailyReading');
         case 'dailyText':
