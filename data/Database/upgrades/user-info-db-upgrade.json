@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "upgrades": {
     "to_v1": [
       [
@@ -78,6 +78,17 @@
       ],
       [
         "UPDATE tblDates SET Date = \"@{upcomingMemorialDate}\" WHERE Name = \"UpcomingMemorial\";"
+      ]
+    ],
+    "to_v8": [
+      [
+        "UPDATE tblDates SET Description = \"@{weeklyReadingStartOrder}\", Date = \"@{weeklyReadingStartDate}\" WHERE Name = \"WeeklyReadingStart\";"
+      ],
+      [
+        "UPDATE tblDates SET Date = \"@{upcomingMemorialDate}\" WHERE Name = \"UpcomingMemorial\";"
+      ],
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"UUID\", \"@{UUID}\", 0);"
       ]
     ]
   }
