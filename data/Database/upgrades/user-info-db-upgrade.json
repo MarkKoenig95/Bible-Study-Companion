@@ -86,6 +86,9 @@
       ],
       [
         "UPDATE tblDates SET Date = \"@{upcomingMemorialDate}\" WHERE Name = \"UpcomingMemorial\";"
+      ],
+      [
+        "INSERT INTO tblUserPrefs(Name, Description, Value) VALUES (\"UUID\", \"@{UUID}\", 0);"
       ]
     ]
   }

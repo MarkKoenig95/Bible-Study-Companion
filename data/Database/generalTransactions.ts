@@ -13,6 +13,7 @@ import {
   ReadingItem,
 } from './types';
 import {checkReadingPortion} from '../../logic/scheduleCreation';
+import {randomUUID} from 'crypto';
 const {version}: {version: string} = require('../../package.json');
 const shouldLog = false;
 
@@ -376,6 +377,8 @@ function setDatabaseParameters(upgradeJSON: any) {
           return FREQS.WEEKLY;
         case 'monthly':
           return FREQS.MONTHLY;
+        case 'UUID':
+          return randomUUID();
       }
     }),
   );
