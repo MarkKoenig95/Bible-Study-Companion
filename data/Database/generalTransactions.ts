@@ -13,7 +13,7 @@ import {
   ReadingItem,
 } from './types';
 import {checkReadingPortion} from '../../logic/scheduleCreation';
-import {randomUUID} from 'crypto';
+import uuid from 'react-native-uuid';
 const {version}: {version: string} = require('../../package.json');
 const shouldLog = false;
 
@@ -378,7 +378,7 @@ function setDatabaseParameters(upgradeJSON: any) {
         case 'monthly':
           return FREQS.MONTHLY;
         case 'UUID':
-          return randomUUID();
+          return uuid.v4();
       }
     }),
   );
