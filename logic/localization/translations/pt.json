@@ -122,7 +122,7 @@
     "ancientDate": "{{year}} {{bceOrCe}}  ",
     "dateSpan": "{{startDate}} - {{endDate}}",
     "specialCases": {
-      "1": "“No princípio” para{{endYear}}",
+      "1": "\"No princípio\" para{{endYear}}",
       "3": "1 mês em {{endYear}}",
       "5": "2 meses em {{endYear}}",
       "8": "11 anos de governo dos juízes desde cerca de {{startYear}}a{{endYear}}",
@@ -163,7 +163,7 @@
     "notificationPopupTitle": "Criar nova notificação"
   },
   "notificationPage": {
-    "deleteNotificationMessage": "Tem a certeza de que pretende apagar ”{{notificationName}}“ notificação?"
+    "deleteNotificationMessage": "Tem a certeza de que pretende apagar \"{{notificationName}}\" notificação?"
   },
   "morePage": {
     "about": "Sobre",
@@ -217,12 +217,12 @@
   },
   "readingSchedules": "Programas de leitura",
   "reminders": {
-    "completeReminderMessage": "Tem a certeza de que pretende marcar o lembrete ”{{reminderName}}“ completo?",
+    "completeReminderMessage": "Tem a certeza de que pretende marcar o lembrete \"{{reminderName}}\" completo?",
     "dailyReading": "Leitura diária",
     "dailyText": "Texto diário",
-    "midweekMeetingStudy": "Estudo Reunião \"Meio da Semana",
+    "midweekMeetingStudy": "Estudo Reunião Meio da Semana",
     "reminder": "Lembrete",
-    "weekendMeetingStudy": "Estudo Reunião \"Fim de Semana\"",
+    "weekendMeetingStudy": "Estudo Reunião Fim de Semana",
     "weeklyReading": {
       "title": "Leitura semanal",
       "showDaily": "Mostrar parte diária da leitura semanal"
@@ -236,7 +236,7 @@
   },
   "remindersPage": {
     "completed": "Concluída{{desc}}",
-    "deleteReminderMessage": "Tem a certeza de que pretende apagar ”{{reminderName}}“lembrete?",
+    "deleteReminderMessage": "Tem a certeza de que pretende apagar \"{{reminderName}}\" lembrete?",
     "every": "Todos:",
     "name": "Nome: ",
     "reminderPopupTitle": "Criar novo lembrete",
@@ -245,12 +245,12 @@
   },
   "schedules": "Programas",
   "schedulePage": {
-    "deleteScheduleMessage": "Tem a certeza de que pretende apagar ”{{scheduleName}}\" programa?",
+    "deleteScheduleMessage": "Tem a certeza de que pretende apagar \"{{scheduleName}}\" programa?",
     "hideCompleted": "Ocultar Concluído",
     "recreateScheduleWarning": "Fazer isto requer recriar este programa. Tem a certeza de que pretende recriar este programa?"
   },
   "scheduleTransactions": {
-    "adjustedVersePrompt": "Verso inicial ajustado de ”{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" a\"{{startBibleBook}} {{startChapter}}{{startVerse}}:\" because initial request was out of bounds."
+    "adjustedVersePrompt": "Verso inicial ajustado de \"{{initialBibleBook}} {{initialChapter}}:{{initialVerse}}\" a \"{{startBibleBook}} {{startChapter}}:{{startVerse}}\" because initial request was out of bounds."
   },
   "scheduleTypePopup": {
     "scheduleType": "Tipo de programa",

@@ -232,7 +232,7 @@
   },
   "readingSchedules": "Orari di lettura",
   "reminders": {
-    "completeReminderMessage": "  Desideri contraseggnarlo come completato?{{reminderName}} ",
+    "completeReminderMessage": "Desideri contraseggnarlo come completato? {{reminderName}}",
     "dailyReading": "Lettura quotidiana",
     "dailyText": "Testo quotidiano",
     "midweekMeetingStudy": "Studio delle riunioni infrasettimanali",

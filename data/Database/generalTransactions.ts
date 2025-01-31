@@ -15,7 +15,7 @@ import {
 import {checkReadingPortion} from '../../logic/scheduleCreation';
 import uuid from 'react-native-uuid';
 const {version}: {version: string} = require('../../package.json');
-const shouldLog = false;
+const shouldLog = true;
 
 SQLite.enablePromise(true);
 
