@@ -217,7 +217,7 @@
   },
   "readingSchedules": "Programme de lecture",
   "reminders": {
-    "completeReminderMessage": "Voulez-vous vraiment marquer le rappel \"{{reminderName}}\" comme terminé ?",
+    "completeReminderMessage": "Voulez-vous vraiment marquer le rappel \"{{reminderName}}\" comme terminé?",
     "dailyReading": "Lecture quotidienne",
     "dailyText": "Texte du jour",
     "midweekMeetingStudy": "Étude pour la réunion de milieu de semaine",
