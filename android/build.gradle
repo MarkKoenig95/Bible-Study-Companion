@@ -6,8 +6,8 @@ buildscript {
     ext {
         buildToolsVersion = "31.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        compileSdkVersion = 34
+        targetSdkVersion = 34
         kotlinVersion = '1.9.22' // (Detox reccomended change: '1.5.31')
 
         if (System.properties['os.arch'] == "aarch64") {
