@@ -15,7 +15,7 @@ import {
 import {checkReadingPortion} from '../../logic/scheduleCreation';
 import uuid from 'react-native-uuid';
 const {version}: {version: string} = require('../../package.json');
-const shouldLog = true;
+const shouldLog = false;
 
 SQLite.enablePromise(true);
 
@@ -350,17 +350,17 @@ function setDatabaseParameters(upgradeJSON: any) {
           let time = new Date(2020, 0, 1, 8, 0, 0);
           return time.toISOString();
         case 'upcomingMemorialDate':
-          // April 12th 2025
-          // See below (NOTE: the middle number for month starts at 0. so April is 4)
-          let memorialDate = new Date(2025, 3, 12);
+          // April 2nd 2026
+          // See below (NOTE: the middle number for month starts at 0. so April is 3)
+          let memorialDate = new Date(2026, 3, 2);
           return memorialDate.toISOString();
         case 'weeklyReadingStartDate':
-          // December 30th 2024
+          // January 5th 2026
           // See below (NOTE: the middle number for month starts at 0. so December is 11)
-          let weekReadDate = new Date(2024, 11, 30);
+          let weekReadDate = new Date(2026, 0, 5);
           return weekReadDate.toISOString();
         case 'weeklyReadingStartOrder':
-          return 258;
+          return 311;
         case 'dailyReading':
           return translate('reminders.dailyReading');
         case 'dailyText':
